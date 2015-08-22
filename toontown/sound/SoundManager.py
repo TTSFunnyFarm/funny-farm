@@ -2,91 +2,89 @@ from pandac.PandaModules import *
 from toontown.toonbase import FFTime
 
 class SoundManager:
-	
-	def __init__(self):
-		self.musicList = map(
-			base.loadMusic, [
-				'phase_4/audio/bgm/minigame_race.ogg',
-				'phase_3/audio/bgm/ff_theme.ogg',
-				'phase_3/audio/bgm/ff_theme_winter.ogg',
-				'phase_3/audio/bgm/ff_theme_halloween.ogg',
-				'phase_3/audio/bgm/create_a_toon.ogg',
-				'phase_6/audio/bgm/OZ_SZ.ogg',
-				'phase_14/audio/bgm/FF_nbrhood.ogg',
-				'phase_14/audio/bgm/FF_SZ.ogg', 
-				'phase_14/audio/bgm/FF_SZ_activity.ogg',
-				'phase_14/audio/bgm/SS_nbrhood.ogg',
-				'phase_14/audio/bgm/SS_SZ.ogg'
-			]
-		)
 
-	def playMusic(self, music, volume=1.0):
-		self.stopAllMusic()
-		base.playMusic(music, looping=1, volume=volume)
+    def __init__(self):
+        self.musicList = map(
+                base.loadMusic, [
+                        'phase_4/audio/bgm/minigame_race.ogg',
+                        'phase_3/audio/bgm/ff_theme.ogg',
+                        'phase_3/audio/bgm/ff_theme_winter.ogg',
+                        'phase_3/audio/bgm/ff_theme_halloween.ogg',
+                        'phase_3/audio/bgm/create_a_toon.ogg',
+                        'phase_6/audio/bgm/OZ_SZ.ogg',
+                        'phase_14/audio/bgm/FF_nbrhood.ogg',
+                        'phase_14/audio/bgm/FF_SZ.ogg',
+                        'phase_14/audio/bgm/FF_SZ_activity.ogg',
+                        'phase_14/audio/bgm/SS_nbrhood.ogg',
+                        'phase_14/audio/bgm/SS_SZ.ogg'
+                ]
+        )
 
-	def stopAllMusic(self):
-		for x in self.musicList:
-			x.stop()
+    def playMusic(self, music, volume=1.0):
+        self.stopAllMusic()
+        base.playMusic(music, looping=1, volume=volume)
 
-	def startLogin(self):
-		self.playMusic(self.musicList[0])
+    def stopAllMusic(self):
+        for x in self.musicList:
+            x.stop()
 
-	def stopLogin(self):
-		self.musicList[0].stop()
+    def startLogin(self):
+        self.playMusic(self.musicList[0])
 
-	def startPAT(self):
-		if FFTime.isWinter():
-			self.playMusic(self.musicList[2])
-		elif FFTime.isHalloween():
-			self.playMusic(self.musicList[3])
-		else:
-			self.playMusic(self.musicList[1])
+    def stopLogin(self):
+        self.musicList[0].stop()
 
-	def stopPAT(self):
-		self.musicList[1].stop()
-		self.musicList[2].stop()
-		self.musicList[3].stop()
+    def startPAT(self):
+        if FFTime.isWinter():
+            self.playMusic(self.musicList[2])
+        elif FFTime.isHalloween():
+            self.playMusic(self.musicList[3])
+        else:
+            self.playMusic(self.musicList[1])
 
-	def startMAT(self):
-		self.playMusic(self.musicList[4])
+    def stopPAT(self):
+        self.musicList[1].stop()
+        self.musicList[2].stop()
+        self.musicList[3].stop()
 
-	def stopMAT(self):
-		self.musicList[4].stop()
+    def startMAT(self):
+        self.playMusic(self.musicList[4])
 
-	def startTutorial(self):
-		self.playMusic(self.musicList[5], volume=0.5)
+    def stopMAT(self):
+        self.musicList[4].stop()
 
-	def stopTutorial(self):
-		self.musicList[5].stop()
+    def startTutorial(self):
+        self.playMusic(self.musicList[5], volume=0.5)
 
-	def startFFNbrhood(self):
-		self.playMusic(self.musicList[6])
+    def stopTutorial(self):
+        self.musicList[5].stop()
 
-	def stopFFNbrhood(self):
-		self.musicList[6].stop()
+    def startFFNbrhood(self):
+        self.playMusic(self.musicList[6])
 
-	def startFFSZ(self):
-		self.playMusic(self.musicList[7], volume=0.5)
+    def stopFFNbrhood(self):
+        self.musicList[6].stop()
 
-	def stopFFSZ(self):
-		self.musicList[7].stop()
+    def startFFSZ(self):
+        self.playMusic(self.musicList[7], volume=0.5)
 
-	def startFFActivity(self):
-		self.playMusic(self.musicList[8])
+    def stopFFSZ(self):
+        self.musicList[7].stop()
 
-	def stopFFActivity(self):
-		self.musicList[8].stop()
+    def startFFActivity(self):
+        self.playMusic(self.musicList[8])
 
-	def startSSNbrhood(self):
-		self.playMusic(self.musicList[9])
+    def stopFFActivity(self):
+        self.musicList[8].stop()
 
-	def stopSSNbrhood(self):
-		self.musicList[9].stop()
+    def startSSNbrhood(self):
+        self.playMusic(self.musicList[9])
 
-	def startSSSZ(self):
-		self.playMusic(self.musicList[10], volume=0.5)
+    def stopSSNbrhood(self):
+        self.musicList[9].stop()
 
-	def stopSSSZ(self):
-		self.musicList[10].stop()
+    def startSSSZ(self):
+        self.playMusic(self.musicList[10], volume=0.5)
 
-
+    def stopSSSZ(self):
+        self.musicList[10].stop()

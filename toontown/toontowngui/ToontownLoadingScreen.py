@@ -19,7 +19,7 @@ class ToontownLoadingScreen:
         self.initGui.find('**/fg').setScale(render2d, VBase3(1))
         self.initGui.find('**/bar_shadow').setScale(render2d, VBase3(1))
         self.initGui.find('**/fg').setBin('fixed', 20)
-        
+
         if FFTime.isWinter():
             self.gui = loader.loadModel('phase_3/models/gui/progress-background_christmas')
             self.logo = loader.loadModel('phase_3/models/gui/toontown-logo_christmas')
@@ -31,7 +31,7 @@ class ToontownLoadingScreen:
         else:
             self.gui = loader.loadModel('phase_3/models/gui/progress-background')
             self.logo = loader.loadModel('phase_3/models/gui/toontown-logo')
-        
+
         self.logo.reparentTo(self.gui)
         self.banner = loader.loadModel('phase_3/models/gui/toon_council').find('**/scroll')
         self.banner.reparentTo(self.gui)
@@ -50,10 +50,10 @@ class ToontownLoadingScreen:
         self.banner.removeNode()
         self.logo.removeNode()
         self.gui.removeNode()
-    
+
     def getTip(self, tipCategory):
         return TTLocalizer.TipTitle + '\n' + random.choice(TTLocalizer.TipDict.get(tipCategory))
-    
+
     def resetSettings(self):
         self.title.setPos(-1.1, 0, -0.77)
         self.title['text_align'] = TextNode.ALeft
@@ -101,5 +101,3 @@ class ToontownLoadingScreen:
     def tick(self):
         self.__count = self.__count + 1
         self.waitBar.update(self.__count)
-
-

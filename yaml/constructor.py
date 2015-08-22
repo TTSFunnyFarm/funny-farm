@@ -287,7 +287,7 @@ class SafeConstructor(BaseConstructor):
             return str(value).decode('base64')
         except (binascii.Error, UnicodeEncodeError), exc:
             raise ConstructorError(None, None,
-                    "failed to decode base64 data: %s" % exc, node.start_mark) 
+                    "failed to decode base64 data: %s" % exc, node.start_mark)
 
     timestamp_regexp = re.compile(
             ur'''^(?P<year>[0-9][0-9][0-9][0-9])
@@ -476,7 +476,7 @@ class Constructor(SafeConstructor):
         return long(self.construct_yaml_int(node))
 
     def construct_python_complex(self, node):
-       return complex(self.construct_scalar(node))
+        return complex(self.construct_scalar(node))
 
     def construct_python_tuple(self, node):
         return tuple(self.construct_sequence(node))
@@ -672,4 +672,3 @@ Constructor.add_multi_constructor(
 Constructor.add_multi_constructor(
     u'tag:yaml.org,2002:python/object/new:',
     Constructor.construct_python_object_new)
-

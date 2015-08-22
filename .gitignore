@@ -4,3 +4,6 @@ __pycache__/
 
 # PyCharm IDE:
 .idea
+
+# Misc. files
+reindent.py

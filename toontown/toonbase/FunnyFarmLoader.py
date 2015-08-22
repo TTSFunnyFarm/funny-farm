@@ -95,5 +95,3 @@ class FunnyFarmLoader(Loader.Loader):
         ret = Loader.Loader.loadMusic(self, soundPath)
         self.tick()
         return ret
-
-

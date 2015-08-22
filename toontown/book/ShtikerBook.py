@@ -6,304 +6,301 @@ from toontown.toonbase import TTLocalizer
 from otp.nametag import NametagGlobals
 
 class ShtikerBook(DirectFrame):
-	notify = directNotify.newCategory('ShtikerBook')
+    notify = directNotify.newCategory('ShtikerBook')
 
-	def __init__(self):
-		DirectFrame.__init__(self, relief=None, sortOrder=DGG.BACKGROUND_SORT_INDEX)
-		self.initialiseoptions(ShtikerBook)
-		self.pages = []
-		self.pageTabs = []
-		self.currPage = 1
-		self.currPageTab = 1
-		self.pageTabFrame = DirectFrame(parent=self, relief=None, pos=(0.93, 1, 0.575), scale=1.25)
-		self.pageTabFrame.hide()
-		self.isOpen = 0
-		self.esc = False
-		self.__shown = 0
-		self.hide()
-		self.setPos(0, 0, 0.1)
+    def __init__(self):
+        DirectFrame.__init__(self, relief=None, sortOrder=DGG.BACKGROUND_SORT_INDEX)
+        self.initialiseoptions(ShtikerBook)
+        self.pages = []
+        self.pageTabs = []
+        self.currPage = 1
+        self.currPageTab = 1
+        self.pageTabFrame = DirectFrame(parent=self, relief=None, pos=(0.93, 1, 0.575), scale=1.25)
+        self.pageTabFrame.hide()
+        self.isOpen = 0
+        self.esc = False
+        self.__shown = 0
+        self.hide()
+        self.setPos(0, 0, 0.1)
 
-	def enter(self):
-		if self.isOpen:
-			return
-		self.isOpen = 1
-		base.localAvatar.exitOpenBook()
-		base.localAvatar.enterReadBook()
-		base.playSfx(self.openSound)
-		base.disableMouse()
-		base.render.hide()
-		base.setBackgroundColor(0.05, 0.15, 0.4)
-		self.__setButtonVisibility()
-		self.show()
-		self.showPageArrows()
-		self.pageTabFrame.show()
-		if self.esc:
-			self.setPage(self.pages[0])
-		else:
-			self.setPage(self.pages[self.currPage])
-		self.accept(ToontownGlobals.StickerBookHotkey, self.close)
-		self.accept(ToontownGlobals.OptionsPageHotkey, self.close)
-		self.accept('arrow_right', self.__rightArrow)
-		self.accept('arrow_left', self.__leftArrow)
+    def enter(self):
+        if self.isOpen:
+            return
+        self.isOpen = 1
+        base.localAvatar.exitOpenBook()
+        base.localAvatar.enterReadBook()
+        base.playSfx(self.openSound)
+        base.disableMouse()
+        base.render.hide()
+        base.setBackgroundColor(0.05, 0.15, 0.4)
+        self.__setButtonVisibility()
+        self.show()
+        self.showPageArrows()
+        self.pageTabFrame.show()
+        if self.esc:
+            self.setPage(self.pages[0])
+        else:
+            self.setPage(self.pages[self.currPage])
+        self.accept(ToontownGlobals.StickerBookHotkey, self.close)
+        self.accept(ToontownGlobals.OptionsPageHotkey, self.close)
+        self.accept('arrow_right', self.__rightArrow)
+        self.accept('arrow_left', self.__leftArrow)
 
-	def exit(self):
-		if not self.isOpen:
-			return
-		self.isOpen = 0
-		base.playSfx(self.closeSound)
-		self.pages[self.currPage].exit()
-		base.render.show()
-		base.setBackgroundColor(ToontownGlobals.DefaultBackgroundColor)
-		gsg = base.win.getGsg()
-		if gsg:
-			base.render.prepareScene(gsg)
-		self.hide()
-		self.hideButton()
-		self.pageTabFrame.hide()
-		self.ignore(ToontownGlobals.StickerBookHotkey)
-		self.ignore(ToontownGlobals.OptionsPageHotkey)
-		self.ignore('arrow_right')
-		self.ignore('arrow_left')
+    def exit(self):
+        if not self.isOpen:
+            return
+        self.isOpen = 0
+        base.playSfx(self.closeSound)
+        self.pages[self.currPage].exit()
+        base.render.show()
+        base.setBackgroundColor(ToontownGlobals.DefaultBackgroundColor)
+        gsg = base.win.getGsg()
+        if gsg:
+            base.render.prepareScene(gsg)
+        self.hide()
+        self.hideButton()
+        self.pageTabFrame.hide()
+        self.ignore(ToontownGlobals.StickerBookHotkey)
+        self.ignore(ToontownGlobals.OptionsPageHotkey)
+        self.ignore('arrow_right')
+        self.ignore('arrow_left')
 
-	def load(self):
-		bookModel = loader.loadModel('phase_3.5/models/gui/stickerbook_gui')
-		self['image'] = bookModel.find('**/big_book')
-		self['image_scale'] = (2, 1, 1.5)
-		self.resetFrameSize()
-		self.bookOpenButton = DirectButton(image=(bookModel.find('**/BookIcon_CLSD'), bookModel.find('**/BookIcon_OPEN'), bookModel.find('**/BookIcon_RLVR')), relief=None, pos=(-0.158, 0, 0.17), parent=base.a2dBottomRight, scale=0.305, command=self.open)
-		self.bookCloseButton = DirectButton(image=(bookModel.find('**/BookIcon_OPEN'), bookModel.find('**/BookIcon_CLSD'), bookModel.find('**/BookIcon_RLVR2')), relief=None, pos=(-0.158, 0, 0.17), parent=base.a2dBottomRight, scale=0.305, command=self.close)
-		self.bookOpenButton.hide()
-		self.bookCloseButton.hide()
-		self.nextArrow = DirectButton(parent=self, relief=None, image=(bookModel.find('**/arrow_button'), bookModel.find('**/arrow_down'), bookModel.find('**/arrow_rollover')), scale=(0.1, 0.1, 0.1), pos=(0.838, 0, -0.661), command=self.__rightArrow)
-		self.prevArrow = DirectButton(parent=self, relief=None, image=(bookModel.find('**/arrow_button'), bookModel.find('**/arrow_down'), bookModel.find('**/arrow_rollover')), scale=(-0.1, 0.1, 0.1), pos=(-0.838, 0, -0.661), command=self.__leftArrow)
-		bookModel.removeNode()
-		self.openSound = base.loadSfx('phase_3.5/audio/sfx/GUI_stickerbook_open.ogg')
-		self.closeSound = base.loadSfx('phase_3.5/audio/sfx/GUI_stickerbook_delete.ogg')
-		self.pageSound = base.loadSfx('phase_3.5/audio/sfx/GUI_stickerbook_turn.ogg')
-		return
+    def load(self):
+        bookModel = loader.loadModel('phase_3.5/models/gui/stickerbook_gui')
+        self['image'] = bookModel.find('**/big_book')
+        self['image_scale'] = (2, 1, 1.5)
+        self.resetFrameSize()
+        self.bookOpenButton = DirectButton(image=(bookModel.find('**/BookIcon_CLSD'), bookModel.find('**/BookIcon_OPEN'), bookModel.find('**/BookIcon_RLVR')), relief=None, pos=(-0.158, 0, 0.17), parent=base.a2dBottomRight, scale=0.305, command=self.open)
+        self.bookCloseButton = DirectButton(image=(bookModel.find('**/BookIcon_OPEN'), bookModel.find('**/BookIcon_CLSD'), bookModel.find('**/BookIcon_RLVR2')), relief=None, pos=(-0.158, 0, 0.17), parent=base.a2dBottomRight, scale=0.305, command=self.close)
+        self.bookOpenButton.hide()
+        self.bookCloseButton.hide()
+        self.nextArrow = DirectButton(parent=self, relief=None, image=(bookModel.find('**/arrow_button'), bookModel.find('**/arrow_down'), bookModel.find('**/arrow_rollover')), scale=(0.1, 0.1, 0.1), pos=(0.838, 0, -0.661), command=self.__rightArrow)
+        self.prevArrow = DirectButton(parent=self, relief=None, image=(bookModel.find('**/arrow_button'), bookModel.find('**/arrow_down'), bookModel.find('**/arrow_rollover')), scale=(-0.1, 0.1, 0.1), pos=(-0.838, 0, -0.661), command=self.__leftArrow)
+        bookModel.removeNode()
+        self.openSound = base.loadSfx('phase_3.5/audio/sfx/GUI_stickerbook_open.ogg')
+        self.closeSound = base.loadSfx('phase_3.5/audio/sfx/GUI_stickerbook_delete.ogg')
+        self.pageSound = base.loadSfx('phase_3.5/audio/sfx/GUI_stickerbook_turn.ogg')
+        return
 
-	def unload(self):
-		loader.unloadModel('phase_3.5/models/gui/stickerbook_gui')
-		self.destroy()
-		self.bookOpenButton.destroy()
-		del self.bookOpenButton
-		self.bookCloseButton.destroy()
-		del self.bookCloseButton
-		self.nextArrow.destroy()
-		del self.nextArrow
-		self.prevArrow.destroy()
-		del self.prevArrow
-		for page in self.pages:
-			page.unload()
-		del self.pages
-		for pageTab in self.pageTabs:
-			pageTab.destroy()
-		del self.pageTabs
-		del self.currPageTab
-		del self.openSound
-		del self.closeSound
-		del self.pageSound
+    def unload(self):
+        loader.unloadModel('phase_3.5/models/gui/stickerbook_gui')
+        self.destroy()
+        self.bookOpenButton.destroy()
+        del self.bookOpenButton
+        self.bookCloseButton.destroy()
+        del self.bookCloseButton
+        self.nextArrow.destroy()
+        del self.nextArrow
+        self.prevArrow.destroy()
+        del self.prevArrow
+        for page in self.pages:
+            page.unload()
+        del self.pages
+        for pageTab in self.pageTabs:
+            pageTab.destroy()
+        del self.pageTabs
+        del self.currPageTab
+        del self.openSound
+        del self.closeSound
+        del self.pageSound
 
-	def addPage(self, page, pageName = 'Page'):
-		pageIndex = 0
-		self.pages.append(page)
-		pageIndex = len(self.pages) - 1
-		page.setBook(self)
-		page.setPageName(pageName)
-		page.reparentTo(self)
-		self.addPageTab(page, pageIndex, pageName)
+    def addPage(self, page, pageName = 'Page'):
+        pageIndex = 0
+        self.pages.append(page)
+        pageIndex = len(self.pages) - 1
+        page.setBook(self)
+        page.setPageName(pageName)
+        page.reparentTo(self)
+        self.addPageTab(page, pageIndex, pageName)
 
-	def addPageTab(self, page, pageIndex, pageName = 'Page'):
-		tabIndex = len(self.pageTabs)
+    def addPageTab(self, page, pageIndex, pageName = 'Page'):
+        tabIndex = len(self.pageTabs)
 
-		def goToPage():
-			messenger.send('wakeup')
-			base.playSfx(self.pageSound)
-			self.setPage(page)
+        def goToPage():
+            messenger.send('wakeup')
+            base.playSfx(self.pageSound)
+            self.setPage(page)
 
-		yOffset = 0.07 * pageIndex
-		iconGeom = None
-		iconImage = None
-		iconScale = 1
-		iconColor = Vec4(1)
-		buttonPressedCommand = goToPage
-		extraArgs = []
-		if pageName == TTLocalizer.OptionsPageTitle:
-			iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
-			iconGeom = iconModels.find('**/switch')
-			iconModels.detachNode()
-		elif pageName == TTLocalizer.ShardPageTitle:
-			iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
-			iconGeom = iconModels.find('**/district')
-			iconModels.detachNode()
-		elif pageName == TTLocalizer.MapPageTitle:
-			iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
-			iconGeom = iconModels.find('**/teleportIcon')
-			iconModels.detachNode()
-		elif pageName == TTLocalizer.InventoryPageTitle:
-			iconModels = loader.loadModel('phase_3.5/models/gui/inventory_icons')
-			iconGeom = iconModels.find('**/inventory_tart')
-			iconScale = 7
-			iconModels.detachNode()
-		elif pageName == TTLocalizer.QuestPageToonTasks:
-			iconModels = loader.loadModel('phase_3.5/models/gui/stickerbook_gui')
-			iconGeom = iconModels.find('**/questCard')
-			iconScale = 0.9
-			iconModels.detachNode()
-		elif pageName == TTLocalizer.TrackPageShortTitle:
-			iconGeom = iconModels = loader.loadModel('phase_3.5/models/gui/filmstrip')
-			iconScale = 1.1
-			iconColor = Vec4(0.7, 0.7, 0.7, 1)
-			iconModels.detachNode()
-		elif pageName == TTLocalizer.SuitPageTitle:
-			iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
-			iconGeom = iconModels.find('**/gui_gear')
-			iconModels.detachNode()
-		elif pageName == TTLocalizer.FishPageTitle:
-			iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
-			iconGeom = iconModels.find('**/fish')
-			iconModels.detachNode()
-		elif pageName == TTLocalizer.GardenPageTitle:
-			iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
-			iconGeom = iconModels.find('**/gardenIcon')
-			iconModels.detachNode()
-		elif pageName == TTLocalizer.DisguisePageTitle:
-			iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
-			iconGeom = iconModels.find('**/disguise2')
-			iconColor = Vec4(0.7, 0.7, 0.7, 1)
-			iconModels.detachNode()
-		elif pageName == TTLocalizer.NPCFriendPageTitle:
-			iconModels = loader.loadModel('phase_3.5/models/gui/playingCard')
-			iconImage = iconModels.find('**/card_back')
-			iconGeom = iconModels.find('**/logo')
-			iconScale = 0.22
-			iconModels.detachNode()
-		elif pageName == TTLocalizer.KartPageTitle:
-			iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
-			iconGeom = iconModels.find('**/kartIcon')
-			iconModels.detachNode()
-		elif pageName == TTLocalizer.GolfPageTitle:
-			iconModels = loader.loadModel('phase_6/models/golf/golf_gui')
-			iconGeom = iconModels.find('**/score_card_icon')
-			iconModels.detachNode()
-		elif pageName == TTLocalizer.EventsPageName:
-			iconModels = loader.loadModel('phase_4/models/parties/partyStickerbook')
-			iconGeom = iconModels.find('**/Stickerbook_PartyIcon')
-			iconModels.detachNode()
-		elif pageName == TTLocalizer.PhotoPageTitle:
-			iconGeom = iconModels = loader.loadModel('phase_4/models/minigames/photogame_filmroll')
-			iconScale = (1.9, 1.5, 1.5)
-			iconModels.detachNode()
-		elif pageName == TTLocalizer.NewsPageName:
-			iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
-			iconGeom = iconModels.find('**/tt_t_gui_sbk_newsPageTab')
-			iconModels.detachNode()
-			buttonPressedCommand = self.goToNewsPage
-			extraArgs = [page]
-		if pageName == TTLocalizer.OptionsPageTitle:
-			pageName = TTLocalizer.OptionsTabTitle
-		pageTab = DirectButton(parent=self.pageTabFrame, relief=DGG.RAISED, frameSize=(-0.575,
-		 0.575,
-		 -0.575,
-		 0.575), borderWidth=(0.05, 0.05), text=('',
-		 '',
-		 pageName,
-		 ''), text_align=TextNode.ALeft, text_pos=(1, -0.2), text_scale=TTLocalizer.SBpageTab, text_fg=(1, 1, 1, 1), text_shadow=(0, 0, 0, 1), image=iconImage, image_scale=iconScale, geom=iconGeom, geom_scale=iconScale, geom_color=iconColor, pos=(0, 0, -yOffset), scale=0.06, command=buttonPressedCommand, extraArgs=extraArgs)
-		self.pageTabs.insert(pageIndex, pageTab)
-		return
+        yOffset = 0.07 * pageIndex
+        iconGeom = None
+        iconImage = None
+        iconScale = 1
+        iconColor = Vec4(1)
+        buttonPressedCommand = goToPage
+        extraArgs = []
+        if pageName == TTLocalizer.OptionsPageTitle:
+            iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
+            iconGeom = iconModels.find('**/switch')
+            iconModels.detachNode()
+        elif pageName == TTLocalizer.ShardPageTitle:
+            iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
+            iconGeom = iconModels.find('**/district')
+            iconModels.detachNode()
+        elif pageName == TTLocalizer.MapPageTitle:
+            iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
+            iconGeom = iconModels.find('**/teleportIcon')
+            iconModels.detachNode()
+        elif pageName == TTLocalizer.InventoryPageTitle:
+            iconModels = loader.loadModel('phase_3.5/models/gui/inventory_icons')
+            iconGeom = iconModels.find('**/inventory_tart')
+            iconScale = 7
+            iconModels.detachNode()
+        elif pageName == TTLocalizer.QuestPageToonTasks:
+            iconModels = loader.loadModel('phase_3.5/models/gui/stickerbook_gui')
+            iconGeom = iconModels.find('**/questCard')
+            iconScale = 0.9
+            iconModels.detachNode()
+        elif pageName == TTLocalizer.TrackPageShortTitle:
+            iconGeom = iconModels = loader.loadModel('phase_3.5/models/gui/filmstrip')
+            iconScale = 1.1
+            iconColor = Vec4(0.7, 0.7, 0.7, 1)
+            iconModels.detachNode()
+        elif pageName == TTLocalizer.SuitPageTitle:
+            iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
+            iconGeom = iconModels.find('**/gui_gear')
+            iconModels.detachNode()
+        elif pageName == TTLocalizer.FishPageTitle:
+            iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
+            iconGeom = iconModels.find('**/fish')
+            iconModels.detachNode()
+        elif pageName == TTLocalizer.GardenPageTitle:
+            iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
+            iconGeom = iconModels.find('**/gardenIcon')
+            iconModels.detachNode()
+        elif pageName == TTLocalizer.DisguisePageTitle:
+            iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
+            iconGeom = iconModels.find('**/disguise2')
+            iconColor = Vec4(0.7, 0.7, 0.7, 1)
+            iconModels.detachNode()
+        elif pageName == TTLocalizer.NPCFriendPageTitle:
+            iconModels = loader.loadModel('phase_3.5/models/gui/playingCard')
+            iconImage = iconModels.find('**/card_back')
+            iconGeom = iconModels.find('**/logo')
+            iconScale = 0.22
+            iconModels.detachNode()
+        elif pageName == TTLocalizer.KartPageTitle:
+            iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
+            iconGeom = iconModels.find('**/kartIcon')
+            iconModels.detachNode()
+        elif pageName == TTLocalizer.GolfPageTitle:
+            iconModels = loader.loadModel('phase_6/models/golf/golf_gui')
+            iconGeom = iconModels.find('**/score_card_icon')
+            iconModels.detachNode()
+        elif pageName == TTLocalizer.EventsPageName:
+            iconModels = loader.loadModel('phase_4/models/parties/partyStickerbook')
+            iconGeom = iconModels.find('**/Stickerbook_PartyIcon')
+            iconModels.detachNode()
+        elif pageName == TTLocalizer.PhotoPageTitle:
+            iconGeom = iconModels = loader.loadModel('phase_4/models/minigames/photogame_filmroll')
+            iconScale = (1.9, 1.5, 1.5)
+            iconModels.detachNode()
+        elif pageName == TTLocalizer.NewsPageName:
+            iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
+            iconGeom = iconModels.find('**/tt_t_gui_sbk_newsPageTab')
+            iconModels.detachNode()
+            buttonPressedCommand = self.goToNewsPage
+            extraArgs = [page]
+        if pageName == TTLocalizer.OptionsPageTitle:
+            pageName = TTLocalizer.OptionsTabTitle
+        pageTab = DirectButton(parent=self.pageTabFrame, relief=DGG.RAISED, frameSize=(-0.575,
+         0.575,
+         -0.575,
+         0.575), borderWidth=(0.05, 0.05), text=('',
+         '',
+         pageName,
+         ''), text_align=TextNode.ALeft, text_pos=(1, -0.2), text_scale=TTLocalizer.SBpageTab, text_fg=(1, 1, 1, 1), text_shadow=(0, 0, 0, 1), image=iconImage, image_scale=iconScale, geom=iconGeom, geom_scale=iconScale, geom_color=iconColor, pos=(0, 0, -yOffset), scale=0.06, command=buttonPressedCommand, extraArgs=extraArgs)
+        self.pageTabs.insert(pageIndex, pageTab)
+        return
 
-	def setPage(self, page, enterPage = True):
-		if self.currPage is not None:
-			self.pages[self.currPage].exit()
-		self.currPage = self.pages.index(page)
-		self.setPageTabIndex(self.currPage)
-		if enterPage:
-			self.showPageArrows()
-			page.enter()
-		return
+    def setPage(self, page, enterPage = True):
+        if self.currPage is not None:
+            self.pages[self.currPage].exit()
+        self.currPage = self.pages.index(page)
+        self.setPageTabIndex(self.currPage)
+        if enterPage:
+            self.showPageArrows()
+            page.enter()
+        return
 
-	def setPageTabIndex(self, pageTabIndex):
-		if self.currPageTab is not None and pageTabIndex != self.currPageTab:
-			self.pageTabs[self.currPageTab]['relief'] = DGG.RAISED
-		self.currPageTab = pageTabIndex
-		self.pageTabs[self.currPageTab]['relief'] = DGG.SUNKEN
-		return
+    def setPageTabIndex(self, pageTabIndex):
+        if self.currPageTab is not None and pageTabIndex != self.currPageTab:
+            self.pageTabs[self.currPageTab]['relief'] = DGG.RAISED
+        self.currPageTab = pageTabIndex
+        self.pageTabs[self.currPageTab]['relief'] = DGG.SUNKEN
+        return
 
-	def __rightArrow(self):
-		base.playSfx(self.pageSound)
-		if self.currPage == 0:
-			self.setPage(self.pages[1])
-		elif self.currPage == 1:
-			self.setPage(self.pages[2])
+    def __rightArrow(self):
+        base.playSfx(self.pageSound)
+        if self.currPage == 0:
+            self.setPage(self.pages[1])
+        elif self.currPage == 1:
+            self.setPage(self.pages[2])
 
-	def __leftArrow(self):
-		base.playSfx(self.pageSound)
-		if self.currPage == 2:
-			self.setPage(self.pages[1])
-		elif self.currPage == 1:
-			self.setPage(self.pages[0])
+    def __leftArrow(self):
+        base.playSfx(self.pageSound)
+        if self.currPage == 2:
+            self.setPage(self.pages[1])
+        elif self.currPage == 1:
+            self.setPage(self.pages[0])
 
-	def showPageArrows(self):
-		if self.currPage == 0:
-			self.prevArrow.hide()
-			self.nextArrow.show()
-		elif self.currPage == len(self.pages) - 1:
-			self.prevArrow.show()
-			self.nextArrow.hide()
-		else:
-			self.prevArrow.show()
-			self.nextArrow.show()
+    def showPageArrows(self):
+        if self.currPage == 0:
+            self.prevArrow.hide()
+            self.nextArrow.show()
+        elif self.currPage == len(self.pages) - 1:
+            self.prevArrow.show()
+            self.nextArrow.hide()
+        else:
+            self.prevArrow.show()
+            self.nextArrow.show()
 
-	def showButton(self):
-		self.__shown = 1
-		self.__setButtonVisibility()
-		self.accept(ToontownGlobals.StickerBookHotkey, self.open)
-		self.accept(ToontownGlobals.OptionsPageHotkey, self.open, [True])
+    def showButton(self):
+        self.__shown = 1
+        self.__setButtonVisibility()
+        self.accept(ToontownGlobals.StickerBookHotkey, self.open)
+        self.accept(ToontownGlobals.OptionsPageHotkey, self.open, [True])
 
-	def hideButton(self):
-		self.__shown = 0
-		self.__setButtonVisibility()
-		self.ignore(ToontownGlobals.StickerBookHotkey)
-		self.ignore(ToontownGlobals.OptionsPageHotkey)
+    def hideButton(self):
+        self.__shown = 0
+        self.__setButtonVisibility()
+        self.ignore(ToontownGlobals.StickerBookHotkey)
+        self.ignore(ToontownGlobals.OptionsPageHotkey)
 
-	def __setButtonVisibility(self):
-		if self.isOpen:
-			self.bookOpenButton.hide()
-			self.bookCloseButton.show()
-		elif self.__shown:
-			self.bookOpenButton.show()
-			self.bookCloseButton.hide()
-		else:
-			self.bookOpenButton.hide()
-			self.bookCloseButton.hide()
+    def __setButtonVisibility(self):
+        if self.isOpen:
+            self.bookOpenButton.hide()
+            self.bookCloseButton.show()
+        elif self.__shown:
+            self.bookOpenButton.show()
+            self.bookCloseButton.hide()
+        else:
+            self.bookOpenButton.hide()
+            self.bookCloseButton.hide()
 
-	def open(self, esc=False):
-		self.esc = esc
-		base.localAvatar.disableAvatarControls()
-		base.localAvatar.endAllowPies()
-		base.localAvatar.enterOpenBook()
-		Sequence(Wait(base.localAvatar.track.getDuration() - 0.1), Func(self.enter)).start()
+    def open(self, esc=False):
+        self.esc = esc
+        base.localAvatar.disableAvatarControls()
+        base.localAvatar.endAllowPies()
+        base.localAvatar.enterOpenBook()
+        Sequence(Wait(base.localAvatar.track.getDuration() - 0.1), Func(self.enter)).start()
 
-	def close(self):
-		self.exit()
-		base.localAvatar.exitReadBook()
-		base.localAvatar.enterCloseBook(callback=self.__handleClose)
+    def close(self):
+        self.exit()
+        base.localAvatar.exitReadBook()
+        base.localAvatar.enterCloseBook(callback=self.__handleClose)
 
-	def exitFunnyFarm(self):
-		self.exit()
-		base.localAvatar.exitReadBook()
-		base.localAvatar.enterCloseBook(callback=base.cr.exitTheTooniverse)
+    def exitFunnyFarm(self):
+        self.exit()
+        base.localAvatar.exitReadBook()
+        base.localAvatar.enterCloseBook(callback=base.cr.exitTheTooniverse)
 
-	def teleportTo(self, zoneId):
-		self.exit()
-		base.localAvatar.exitReadBook()
-		base.localAvatar.enterCloseBook(callback=base.cr.teleportTo, extraArgs=[zoneId])
+    def teleportTo(self, zoneId):
+        self.exit()
+        base.localAvatar.exitReadBook()
+        base.localAvatar.enterCloseBook(callback=base.cr.teleportTo, extraArgs=[zoneId])
 
-	def __handleClose(self):
-		self.showButton()
-		base.localAvatar.exitCloseBook()
-		base.localAvatar.enableAvatarControls()
-		base.localAvatar.beginAllowPies()
-
-	
-
+    def __handleClose(self):
+        self.showButton()
+        base.localAvatar.exitCloseBook()
+        base.localAvatar.enableAvatarControls()
+        base.localAvatar.beginAllowPies()
