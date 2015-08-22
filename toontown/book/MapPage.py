@@ -61,7 +61,10 @@ class MapPage(ShtikerPage.ShtikerPage):
 	def enter(self):
 		ShtikerPage.ShtikerPage.enter(self)
 		if base.cr.playGame.hood:
-			self.safeZoneButton.hide()
+			if base.cr.playGame.hood.zoneId == FunnyFarmGlobals.SecretArea:
+				self.safeZoneButton.show()
+			else:
+				self.safeZoneButton.hide()
 		else:
 			self.safeZoneButton.show()
 		zoneId = base.localAvatar.getZoneId()

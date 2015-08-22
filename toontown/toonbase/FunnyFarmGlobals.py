@@ -16,6 +16,7 @@ MoonlitMeadow = 5000
 RicketyRoad = 3100
 WintryWay = 4100
 BreezyBend = 5100
+SecretArea = 3200
 FFHoodText = 'Funny Farm\nPlayground'
 FCHoodText = 'Funny Farm Central'
 SSHoodText = 'Silly Springs\nPlayground'
@@ -24,6 +25,7 @@ CVHoodText = 'Chilly Village\nPlayground'
 CVStreetText = 'Cilly Village\nWintry Way'
 MMHoodText = 'Moonlit Meadow\nPlayground'
 MMStreetText = 'Moonlit Meadow\nBreezy Bend'
+SecretAreaText = '???'
 
 def getVar(var):
 	return globals()[var]
@@ -45,6 +47,8 @@ def getHoodNameFromId(zoneId):
 		return ('Chilly Village', 'Wintry Way')
 	elif zoneId == BreezyBend:
 		return ('Moonlit Meadow', 'Breezy Bend')
+	elif zoneId == SecretArea:
+		return ('???', '')
 
 SpawnPoints = {
 	FunnyFarm : [
@@ -67,6 +71,9 @@ SpawnPoints = {
 		(Point3(23, 30, 0), Vec3(180, 0, 0)),
 		(Point3(-23, 30, 0), Vec3(180, 0, 0)),
 		(Point3(50, -10, 0), Vec3(90, 0, 0))
+	],
+	SecretArea : [
+		(Point3(0, -20, 0), Vec3(0, 0, 0))
 	]
 }
 

@@ -16,7 +16,8 @@ class SoundManager:
 				'phase_14/audio/bgm/FF_SZ.ogg', 
 				'phase_14/audio/bgm/FF_SZ_activity.ogg',
 				'phase_14/audio/bgm/SS_nbrhood.ogg',
-				'phase_14/audio/bgm/SS_SZ.ogg'
+				'phase_14/audio/bgm/SS_SZ.ogg',
+				'phase_12/audio/bgm/Bossbot_Entry_v2.ogg'
 			]
 		)
 
@@ -88,5 +89,11 @@ class SoundManager:
 
 	def stopSSSZ(self):
 		self.musicList[10].stop()
+
+	def startSecretArea(self):
+		self.playMusic(self.musicList[11])
+
+	def stopSecretArea(self):
+		self.musicList[11].stop()
 
 

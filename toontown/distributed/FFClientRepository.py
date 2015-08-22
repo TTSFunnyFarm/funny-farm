@@ -103,6 +103,8 @@ class FFClientRepository(ClientRepository):
 			self.playGame.enterFCHood()
 		elif zoneId == FunnyFarmGlobals.SillySprings:
 			self.playGame.enterSSHood()
+		elif zoneId == FunnyFarmGlobals.SecretArea:
+			self.playGame.enterSecretArea()
 		else:
 			self.playGame.notify.warning('zoneId ' + str(zoneId) + ' does not exist. Going to Funny Farm..')
 			self.playGame.enterFFHood()

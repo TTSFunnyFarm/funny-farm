@@ -123,7 +123,7 @@ class NameShop(StateData.StateData):
 
 	def createAvatar(self):
 		self.dna = self.toon.getRawDNA()
-		self.toonData = ToonData(self.index, self.dna, self.name, 15, 15, 0, 40, [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000)
+		self.toonData = ToonData(self.index, self.dna, self.name, 15, 15, 0, 40, 0, 12000, [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000)
 		dataMgr.saveToonData(self.toonData, playToken)
 		dataMgr.createLocalAvatar(self.toonData)
 

@@ -357,6 +357,7 @@ class Suit(Avatar.Avatar):
         self.isDisguised = 0
         self.isWaiter = 0
         self.isRental = 0
+        self.isElite = 0
         return
 
     def delete(self):
@@ -765,6 +766,23 @@ class Suit(Avatar.Avatar):
         modelRoot.find('**/legs').setTexture(legTex, 1)
         modelRoot.find('**/hands').setTexture(handTex, 1)
 
+    def makeElite(self, modelRoot = None):
+        if not modelRoot:
+            modelRoot = self
+        self.isElite = 1
+        torsoTex = loader.loadTexture('phase_3.5/maps/e_blazer.jpg')
+        torsoTex.setMinfilter(Texture.FTLinearMipmapLinear)
+        torsoTex.setMagfilter(Texture.FTLinear)
+        legTex = loader.loadTexture('phase_3.5/maps/e_leg.jpg')
+        legTex.setMinfilter(Texture.FTLinearMipmapLinear)
+        legTex.setMagfilter(Texture.FTLinear)
+        armTex = loader.loadTexture('phase_3.5/maps/e_sleeve.jpg')
+        armTex.setMinfilter(Texture.FTLinearMipmapLinear)
+        armTex.setMagfilter(Texture.FTLinear)
+        modelRoot.find('**/torso').setTexture(torsoTex, 1)
+        modelRoot.find('**/arms').setTexture(armTex, 1)
+        modelRoot.find('**/legs').setTexture(legTex, 1)
+
     def generateHead(self, headType):
         if config.GetBool('want-new-cogs', 0):
             filePrefix, phase = HeadModelDict[self.style.body]
@@ -931,6 +949,8 @@ class Suit(Avatar.Avatar):
 
                 if self.isWaiter:
                     self.makeWaiter(self.loseActor)
+                elif self.isElite:
+                    self.makeElite(self.loseActor)
                 else:
                     self.setSuitClothes(self.loseActor)
             else:
@@ -986,10 +1006,10 @@ class Suit(Avatar.Avatar):
             bb.setTwoSided(1)
 
         self.setName(TTLocalizer.Skeleton)
-        nameInfo = TTLocalizer.SuitBaseNameWithLevel % {'name': self.name,
-         'dept': self.getStyleDept(),
-         'level': self.getActualLevel()}
-        self.setDisplayName(nameInfo)
+        #nameInfo = TTLocalizer.SuitBaseNameWithLevel % {'name': self.name,
+         #'dept': self.getStyleDept(),
+         #'level': self.getActualLevel()}
+        #self.setDisplayName(nameInfo)
         self.leftHand = self.find('**/joint_Lhold')
         self.rightHand = self.find('**/joint_Rhold')
         self.shadowJoint = self.find('**/joint_shadow')

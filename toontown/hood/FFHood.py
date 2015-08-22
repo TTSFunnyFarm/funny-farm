@@ -2,7 +2,7 @@ from pandac.PandaModules import *
 from direct.actor.Actor import Actor
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
-from toontown.hood.ToonHood import ToonHood
+from ToonHood import ToonHood
 from toontown.toonbase import FFTime
 from toontown.building import Door
 from toontown.battle import BattleParticles
@@ -62,7 +62,7 @@ class FFHood(ToonHood):
 		self.sky.setScale(1.5)
 		self.fish = Actor('phase_4/models/props/exteriorfish-zero', {'chan': 'phase_4/models/props/exteriorfish-swim'})
 		self.fish.reparentTo(self.geom.find('**/PetShopExterior_TT.egg'))
-		self.fish.pose('chan', 0)
+		self.fish.loop('chan')
 		self.trolley = Trolley.Trolley()
 		self.trolley.setup()
 		self.restockSfx = loader.loadSfx('phase_9/audio/sfx/CHQ_SOS_pies_restock.ogg')
@@ -104,7 +104,6 @@ class FFHood(ToonHood):
 		self.acceptOnce('enterToonHallDoorTrigger', self.__handleToonHall)
 		self.acceptOnce('enterMickeyDoorTrigger', self.__handleMickeyHouse)
 		self.acceptOnce('enterMinnieDoorTrigger', self.__handleMinnieHouse)
-		self.fish.loop('chan')
 		self.trolley.addActive()
 
 	def __givePies(self, entry):

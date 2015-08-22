@@ -7,6 +7,7 @@ from toontown.tutorial import Tutorial
 from toontown.hood import FFHood
 from toontown.hood import FCHood
 from toontown.hood import SSHood
+from toontown.hood import SecretArea
 from toontown.town import SSStreet
 from toontown.building import Door
 from toontown.building import PetShopInterior
@@ -81,6 +82,13 @@ class PlayGame(DirectObject):
 		self.place = place
 		self.place.loadNextFloor()
 
+	def enterSecretArea(self):
+		self.hood = SecretArea.SecretArea()
+		loader.beginBulkLoad('???', '???', 400, TTLocalizer.TIP_GENERAL)
+		self.hood.load()
+		loader.endBulkLoad('???')
+		self.hood.enter()
+
 	def enterRandomMinigame(self):
 		if hasattr(self.hood, 'geom'):
 			ModelPool.garbageCollect()
@@ -94,6 +102,8 @@ class PlayGame(DirectObject):
 		self.minigame.announceGenerate()
 
 	def exitMinigame(self):
+		ModelPool.garbageCollect()
+		TexturePool.garbageCollect()
 		self.minigame.delete()
 		self.minigame = None
 
@@ -103,6 +113,8 @@ class PlayGame(DirectObject):
 		self.purchase.enter()
 
 	def exitMinigamePurchase(self):
+		ModelPool.garbageCollect()
+		TexturePool.garbageCollect()
 		self.purchase.exitPurchase()
 		self.purchase.exit()
 		self.purchase.unload()
