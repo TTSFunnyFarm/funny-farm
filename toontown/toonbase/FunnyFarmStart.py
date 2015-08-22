@@ -113,4 +113,4 @@ class FunnyFarmStart:
 __builtin__.start = FunnyFarmStart()
 Injector.openInjector()
 
-run()
+base.run()
