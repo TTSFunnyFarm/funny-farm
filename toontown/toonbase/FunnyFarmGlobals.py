@@ -31,10 +31,6 @@ def getVar(var):
 	return globals()[var]
 
 def getHoodNameFromId(zoneId):
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> origin/master
 	if zoneId == FunnyFarm:
 		return ('Funny Farm', 'Playground')
 	elif zoneId == FunnyFarmCentral:
@@ -51,7 +47,6 @@ def getHoodNameFromId(zoneId):
 		return ('Chilly Village', 'Wintry Way')
 	elif zoneId == BreezyBend:
 		return ('Moonlit Meadow', 'Breezy Bend')
-<<<<<<< HEAD
 	elif zoneId == SecretArea:
 		return ('???', '')
 
@@ -80,72 +75,6 @@ SpawnPoints = {
 	SecretArea : [
 		(Point3(0, -20, 0), Vec3(0, 0, 0))
 	]
-=======
-    if zoneId == FunnyFarm:
-        return ('Funny Farm', 'Playground')
-    elif zoneId == FunnyFarmCentral:
-        return ('Funny Farm Central', '')
-    elif zoneId == SillySprings:
-        return ('Silly Springs', 'Playground')
-    elif zoneId == ChillyVillage:
-        return ('Chilly Village', 'Playground')
-    elif zoneId == MoonlitMeadow:
-        return ('Moonlit Meadow', 'Playground')
-    elif zoneId == RicketyRoad:
-        return ('Silly Springs', 'Rickety Road')
-    elif zoneId == WintryWay:
-        return ('Chilly Village', 'Wintry Way')
-    elif zoneId == BreezyBend:
-        return ('Moonlit Meadow', 'Breezy Bend')
-
-SpawnPoints = {
-        FunnyFarm : [
-                (Point3(-70, 0, 0), Vec3(270, 0, 0)),
-                (Point3(70, 0, 0), Vec3(90, 0, 0)),
-                (Point3(0, -60, 0), Vec3(0, 0, 0)),
-                (Point3(0, 60, 0), Vec3(180, 0, 0)),
-                (Point3(-65, 60, 0), Vec3(225, 0, 0))
-        ],
-        FunnyFarmCentral : [
-                (Point3(0, 0, 0), Vec3(0, 0, 0)),
-                (Point3(60, -50, 0), Vec3(45, 0, 0)),
-                (Point3(-60, -50, 0), Vec3(315, 0, 0)),
-                (Point3(-55, 55, 0), Vec3(225, 0, 0)),
-                (Point3(55, 55, 0), Vec3(135, 0, 0))
-        ],
-        SillySprings : [
-                (Point3(0, -35, 0), Vec3(0, 0, 0)),
-                (Point3(-50, -5, 0), Vec3(300, 0, 0)),
-                (Point3(23, 30, 0), Vec3(180, 0, 0)),
-                (Point3(-23, 30, 0), Vec3(180, 0, 0)),
-                (Point3(50, -10, 0), Vec3(90, 0, 0))
-        ]
->>>>>>> origin/master
-=======
-
-SpawnPoints = {
-	FunnyFarm : [
-		(Point3(-70, 0, 0), Vec3(270, 0, 0)),
-		(Point3(70, 0, 0), Vec3(90, 0, 0)),
-		(Point3(0, -60, 0), Vec3(0, 0, 0)),
-		(Point3(0, 60, 0), Vec3(180, 0, 0)),
-		(Point3(-65, 60, 0), Vec3(225, 0, 0))
-	],
-	FunnyFarmCentral : [
-		(Point3(0, 0, 0), Vec3(0, 0, 0)),
-		(Point3(60, -50, 0), Vec3(45, 0, 0)),
-		(Point3(-60, -50, 0), Vec3(315, 0, 0)),
-		(Point3(-55, 55, 0), Vec3(225, 0, 0)),
-		(Point3(55, 55, 0), Vec3(135, 0, 0))
-	],
-	SillySprings : [
-		(Point3(0, -35, 0), Vec3(0, 0, 0)),
-		(Point3(-50, -5, 0), Vec3(300, 0, 0)),
-		(Point3(23, 30, 0), Vec3(180, 0, 0)),
-		(Point3(-23, 30, 0), Vec3(180, 0, 0)),
-		(Point3(50, -10, 0), Vec3(90, 0, 0))
-	]
->>>>>>> origin/master
 }
 
 nametagFonts = []

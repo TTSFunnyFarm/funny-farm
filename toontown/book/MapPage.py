@@ -58,8 +58,6 @@ class MapPage(ShtikerPage.ShtikerPage):
 		self.goHomeButton.destroy()
 		ShtikerPage.ShtikerPage.unload(self)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 	def enter(self):
 		ShtikerPage.ShtikerPage.enter(self)
 		if base.cr.playGame.hood:
@@ -67,12 +65,6 @@ class MapPage(ShtikerPage.ShtikerPage):
 				self.safeZoneButton.show()
 			else:
 				self.safeZoneButton.hide()
-=======
-	def enter(self):
-		ShtikerPage.ShtikerPage.enter(self)
-		if base.cr.playGame.hood:
-			self.safeZoneButton.hide()
->>>>>>> origin/master
 		else:
 			self.safeZoneButton.show()
 		zoneId = base.localAvatar.getZoneId()
@@ -80,15 +72,6 @@ class MapPage(ShtikerPage.ShtikerPage):
 		self.hoodLabel.show()
 		self.hoodLabel['text'] = TTLocalizer.MapPageYouAreHere % currZone
 		self.accept('safeZoneTeleport', self.book.teleportTo)
-<<<<<<< HEAD
-=======
-    def unload(self):
-        self.safeZoneButton.destroy()
-        self.goHomeButton.destroy()
-        ShtikerPage.ShtikerPage.unload(self)
->>>>>>> origin/master
-=======
->>>>>>> origin/master
 
 	def exit(self):
 		ShtikerPage.ShtikerPage.exit(self)

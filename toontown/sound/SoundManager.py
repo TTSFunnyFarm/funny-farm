@@ -2,10 +2,6 @@ from pandac.PandaModules import *
 from toontown.toonbase import FFTime
 
 class SoundManager:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> origin/master
 	
 	def __init__(self):
 		self.musicList = map(
@@ -20,18 +16,11 @@ class SoundManager:
 				'phase_14/audio/bgm/FF_SZ.ogg', 
 				'phase_14/audio/bgm/FF_SZ_activity.ogg',
 				'phase_14/audio/bgm/SS_nbrhood.ogg',
-<<<<<<< HEAD
 				'phase_14/audio/bgm/SS_SZ.ogg',
-				'phase_12/audio/bgm/Bossbot_Entry_v2.ogg'
-			]
-		)
-=======
->>>>>>> origin/master
-=======
+				'phase_12/audio/bgm/Bossbot_Entry_v2.ogg',
 				'phase_14/audio/bgm/SS_SZ.ogg'
 			]
 		)
->>>>>>> origin/master
 
 	def playMusic(self, music, volume=1.0):
 		self.stopAllMusic()
@@ -102,18 +91,8 @@ class SoundManager:
 	def stopSSSZ(self):
 		self.musicList[10].stop()
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 	def startSecretArea(self):
 		self.playMusic(self.musicList[11])
 
 	def stopSecretArea(self):
 		self.musicList[11].stop()
-
-=======
-    def startSSSZ(self):
-        self.playMusic(self.musicList[10], volume=0.5)
->>>>>>> origin/master
-=======
->>>>>>> origin/master
-
