@@ -5028,5 +5028,3 @@ def bossCogFrontAttack(self):
     force0.setActive(1)
     f0.addForce(force0)
     self.addForceGroup(f0)
-
-
