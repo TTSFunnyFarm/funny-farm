@@ -101,3 +101,4 @@ class ScalarToken(Token):
         self.start_mark = start_mark
         self.end_mark = end_mark
         self.style = style
+

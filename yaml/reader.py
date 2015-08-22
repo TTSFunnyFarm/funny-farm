@@ -187,3 +187,4 @@ class Reader(object):
 #    psyco.bind(Reader)
 #except ImportError:
 #    pass
+
