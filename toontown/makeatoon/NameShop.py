@@ -14,6 +14,9 @@ import os
 class NameShop(StateData.StateData):
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/master
 	def __init__(self, doneEvent, index):
 		StateData.StateData.__init__(self, doneEvent)
 		self.index = index
@@ -124,7 +127,11 @@ class NameShop(StateData.StateData):
 
 	def createAvatar(self):
 		self.dna = self.toon.getRawDNA()
+<<<<<<< HEAD
 		self.toonData = ToonData(self.index, self.dna, self.name, 15, 15, 0, 40, 0, 12000, [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000)
+=======
+		self.toonData = ToonData(self.index, self.dna, self.name, 15, 15, 0, 40, [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000)
+>>>>>>> origin/master
 		dataMgr.saveToonData(self.toonData, playToken)
 		dataMgr.createLocalAvatar(self.toonData)
 
@@ -160,6 +167,7 @@ class NameShop(StateData.StateData):
 	def __openTutorialDialog(self, choice = 0):
 		self.promptTutorialDialog.destroy()
 		self.__handleDone(choice)
+<<<<<<< HEAD
 =======
     def __init__(self, doneEvent, index):
         StateData.StateData.__init__(self, doneEvent)
@@ -307,4 +315,6 @@ class NameShop(StateData.StateData):
     def __openTutorialDialog(self, choice = 0):
         self.promptTutorialDialog.destroy()
         self.__handleDone(choice)
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master

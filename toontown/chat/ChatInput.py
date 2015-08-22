@@ -192,3 +192,4 @@ class ChatInput(DirectObject):
         self.disableKeyboardShortcuts()
         self.state = None
         return
+

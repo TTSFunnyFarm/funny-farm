@@ -12,6 +12,9 @@ import sys
 
 class FFClientRepository(ClientRepository):
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/master
 	dcFiles = ['dc/direct.dc']
 
 	def __init__(self):
@@ -104,8 +107,11 @@ class FFClientRepository(ClientRepository):
 			self.playGame.enterFCHood()
 		elif zoneId == FunnyFarmGlobals.SillySprings:
 			self.playGame.enterSSHood()
+<<<<<<< HEAD
 		elif zoneId == FunnyFarmGlobals.SecretArea:
 			self.playGame.enterSecretArea()
+=======
+>>>>>>> origin/master
 		else:
 			self.playGame.notify.warning('zoneId ' + str(zoneId) + ' does not exist. Going to Funny Farm..')
 			self.playGame.enterFFHood()
@@ -156,6 +162,7 @@ class FFClientRepository(ClientRepository):
 	def isPaid(self):
 		return True
 		
+<<<<<<< HEAD
 =======
     dcFiles = ['dc/direct.dc']
 
@@ -298,4 +305,6 @@ class FFClientRepository(ClientRepository):
 
     def isPaid(self):
         return True
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master

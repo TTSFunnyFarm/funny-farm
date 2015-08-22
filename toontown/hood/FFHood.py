@@ -14,6 +14,9 @@ from direct.interval.IntervalGlobal import *
 class FFHood(ToonHood):
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/master
 	def __init__(self):
 		ToonHood.__init__(self)
 		self.zoneId = FunnyFarmGlobals.FunnyFarm
@@ -63,7 +66,11 @@ class FFHood(ToonHood):
 		self.sky.setScale(1.5)
 		self.fish = Actor('phase_4/models/props/exteriorfish-zero', {'chan': 'phase_4/models/props/exteriorfish-swim'})
 		self.fish.reparentTo(self.geom.find('**/PetShopExterior_TT.egg'))
+<<<<<<< HEAD
 		self.fish.loop('chan')
+=======
+		self.fish.pose('chan', 0)
+>>>>>>> origin/master
 		self.trolley = Trolley.Trolley()
 		self.trolley.setup()
 		self.restockSfx = loader.loadSfx('phase_9/audio/sfx/CHQ_SOS_pies_restock.ogg')
@@ -105,6 +112,10 @@ class FFHood(ToonHood):
 		self.acceptOnce('enterToonHallDoorTrigger', self.__handleToonHall)
 		self.acceptOnce('enterMickeyDoorTrigger', self.__handleMickeyHouse)
 		self.acceptOnce('enterMinnieDoorTrigger', self.__handleMinnieHouse)
+<<<<<<< HEAD
+=======
+		self.fish.loop('chan')
+>>>>>>> origin/master
 		self.trolley.addActive()
 
 	def __givePies(self, entry):
@@ -181,6 +192,7 @@ class FFHood(ToonHood):
 	def __handleEnterFC(self):
 		base.cr.playGame.exitHood()
 		base.cr.playGame.enterFCHood(tunnel='ff')
+<<<<<<< HEAD
 =======
     def __init__(self):
         ToonHood.__init__(self)
@@ -350,4 +362,6 @@ class FFHood(ToonHood):
     def __handleEnterFC(self):
         base.cr.playGame.exitHood()
         base.cr.playGame.enterFCHood(tunnel='ff')
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master

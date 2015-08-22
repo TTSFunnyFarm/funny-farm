@@ -61,3 +61,4 @@ class ChatBalloon:
         middle.setSz(height)
         top.setZ(top, height - 1)
         return root
+

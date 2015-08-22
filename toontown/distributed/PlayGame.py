@@ -24,6 +24,9 @@ from toontown.minigame import TugOfWarGame
 
 class PlayGame(DirectObject):
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/master
 	notify = directNotify.newCategory('PlayGame')
 	MINIGAMES = [CatchGame.CatchGame]
 
@@ -83,6 +86,7 @@ class PlayGame(DirectObject):
 		self.place = place
 		self.place.loadNextFloor()
 
+<<<<<<< HEAD
 	def enterSecretArea(self):
 		self.hood = SecretArea.SecretArea()
 		loader.beginBulkLoad('???', '???', 400, TTLocalizer.TIP_GENERAL)
@@ -90,6 +94,8 @@ class PlayGame(DirectObject):
 		loader.endBulkLoad('???')
 		self.hood.enter()
 
+=======
+>>>>>>> origin/master
 	def enterRandomMinigame(self):
 		if hasattr(self.hood, 'geom'):
 			ModelPool.garbageCollect()
@@ -103,8 +109,11 @@ class PlayGame(DirectObject):
 		self.minigame.announceGenerate()
 
 	def exitMinigame(self):
+<<<<<<< HEAD
 		ModelPool.garbageCollect()
 		TexturePool.garbageCollect()
+=======
+>>>>>>> origin/master
 		self.minigame.delete()
 		self.minigame = None
 
@@ -114,8 +123,11 @@ class PlayGame(DirectObject):
 		self.purchase.enter()
 
 	def exitMinigamePurchase(self):
+<<<<<<< HEAD
 		ModelPool.garbageCollect()
 		TexturePool.garbageCollect()
+=======
+>>>>>>> origin/master
 		self.purchase.exitPurchase()
 		self.purchase.exit()
 		self.purchase.unload()
@@ -184,6 +196,7 @@ class PlayGame(DirectObject):
 	def enterEliteInterior(self, zoneId):
 		place = EliteInterior.EliteInterior(zoneId)
 		self.enterSuitPlace(place)
+<<<<<<< HEAD
 =======
     notify = directNotify.newCategory('PlayGame')
     MINIGAMES = [CatchGame.CatchGame]
@@ -334,4 +347,6 @@ class PlayGame(DirectObject):
     def enterEliteInterior(self, zoneId):
         place = EliteInterior.EliteInterior(zoneId)
         self.enterSuitPlace(place)
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
