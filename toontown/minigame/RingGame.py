@@ -793,7 +793,7 @@ class RingGame(Minigame):
         successTrack = self.__getSuccessTrack(groupIndex)
         endGameTrack = None
         if groupIndex >= self.__numRingGroups - 1:
-            
+
             def endTheGame(self = self):
                 taskMgr.doMethodLater(self.GAME_END_DELAY, self.__endGameDolater, self.END_GAME_WAIT_TASK)
 

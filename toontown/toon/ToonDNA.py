@@ -676,7 +676,7 @@ ClothesColors = [VBase4(0.933594, 0.265625, 0.28125, 1.0),
  VBase4(1.0, 1.0, 1.0, 1.0),
  VBase4(0.0, 0.2, 0.956862, 1.0),
  VBase4(0.972549, 0.094117, 0.094117, 1.0),
- VBase4(0.447058, 0.0, 0.90196, 1.0), 
+ VBase4(0.447058, 0.0, 0.90196, 1.0),
  VBase4(0.3, 0.3, 0.35, 1.0)]
 ShirtStyles = {'bss1': [0, 0, [(0, 0),
            (1, 1),
@@ -1731,13 +1731,13 @@ if mergeMATTailor:
                 TailorCollections[MAKE_A_TOON][GIRL_BOTTOMS].append(girlBottoms)
         for boyShorts in TailorCollections[tailors][BOY_SHORTS]:
             if boyShorts not in TailorCollections[MAKE_A_TOON][BOY_SHORTS]:
-                 TailorCollections[MAKE_A_TOON][BOY_SHORTS].append(boyShorts)
+                TailorCollections[MAKE_A_TOON][BOY_SHORTS].append(boyShorts)
         for girlShirts in TailorCollections[tailors][GIRL_SHIRTS]:
             if girlShirts not in TailorCollections[MAKE_A_TOON][GIRL_SHIRTS]:
-                 TailorCollections[MAKE_A_TOON][GIRL_SHIRTS].append(girlShirts)
+                TailorCollections[MAKE_A_TOON][GIRL_SHIRTS].append(girlShirts)
         for boyShirts in TailorCollections[tailors][BOY_SHIRTS]:
             if boyShirts not in TailorCollections[MAKE_A_TOON][BOY_SHIRTS]:
-                 TailorCollections[MAKE_A_TOON][BOY_SHIRTS].append(boyShirts)
+                TailorCollections[MAKE_A_TOON][BOY_SHIRTS].append(boyShirts)
 
 for style in TailorCollections[MAKE_A_TOON][BOY_SHORTS]:
     index = BottomStyles[style][0]

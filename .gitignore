@@ -2,5 +2,8 @@
 __pycache__/
 *.py[cod]
 
-# PyCharm IDE:
+# PyCharm IDE
 .idea
+
+# Misc. files
+reindent.py

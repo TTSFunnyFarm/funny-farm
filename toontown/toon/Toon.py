@@ -2509,7 +2509,7 @@ class Toon(Avatar.Avatar, ToonHead):
             greenTrack.append(self.__colorToonGloves(None, lerpTime))
         track.append(greenTrack)
         return track
-        
+
     def __doRogerDog(self, lerpTime, toRoger):
         track = Sequence()
         rogerTrack = Parallel()
@@ -2526,7 +2526,7 @@ class Toon(Avatar.Avatar, ToonHead):
             dust = getDustCloudIval()
             track.append(Func(dust.start))
             track.append(Wait(0.5))
-            
+
         if toRoger:
             self.oldStyle = self.style.clone()
             self.oldHat = self.hat
@@ -2550,7 +2550,7 @@ class Toon(Avatar.Avatar, ToonHead):
             rogerTrack.append(Func(self.generateToonAccessories))
         track.append(rogerTrack)
         return track
-        
+
     def __doFlippy(self, lerpTime, toFlippy):
         track = Sequence()
         flippyTrack = Parallel()
@@ -2567,7 +2567,7 @@ class Toon(Avatar.Avatar, ToonHead):
             dust = getDustCloudIval()
             track.append(Func(dust.start))
             track.append(Wait(0.5))
-            
+
         if toFlippy:
             self.oldStyle = self.style.clone()
             self.oldHat = self.hat
@@ -2607,7 +2607,7 @@ class Toon(Avatar.Avatar, ToonHead):
             dust = getDustCloudIval()
             track.append(Func(dust.start))
             track.append(Wait(0.5))
-            
+
         if toSurlee:
             self.oldStyle = self.style.clone()
             self.oldHat = self.hat
@@ -3103,7 +3103,7 @@ class Toon(Avatar.Avatar, ToonHead):
             relVel = proj.startVel
         elif throwType == ToontownGlobals.PieThrowLinear:
             magnitude = power / 2. + 25
- 
+
             relVel = Vec3(0, 1, 0.25)
             relVel.normalize()
             relVel *= magnitude
