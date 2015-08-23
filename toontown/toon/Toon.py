@@ -2923,8 +2923,6 @@ class Toon(Avatar.Avatar, ToonHead):
     def putOnSuit(self, suitType, setDisplayName = True, rental = False):
         if self.isDisguised:
             self.takeOffSuit()
-        if launcher and not launcher.getPhaseComplete(5):
-            return
         from toontown.suit import Suit
         deptIndex = suitType
         suit = Suit.Suit()
