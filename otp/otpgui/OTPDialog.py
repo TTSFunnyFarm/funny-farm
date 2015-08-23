@@ -69,7 +69,9 @@ class OTPDialog(DirectDialog):
          ('button_relief', None, None),
          ('button_text_pos', (0, -0.1), None),
          ('fadeScreen', 0.5, None),
-         ('image_color', OTPGlobals.GlobalDialogColor, None))
+         ('image_color', OTPGlobals.GlobalDialogColor, None),
+         ('image', DGG.getDefaultDialogGeom(), None),
+         ('relief', None, None))
         self.defineoptions(kw, optiondefs)
         DirectDialog.__init__(self, parent)
         self.initialiseoptions(OTPDialog)
