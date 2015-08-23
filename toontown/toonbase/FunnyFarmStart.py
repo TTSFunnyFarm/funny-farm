@@ -2,7 +2,10 @@ from pandac.PandaModules import *
 
 loadPrcFile('config/general.prc')
 
-from direct.directbase import DirectStart
+from direct.showbase import ShowBase
+
+base = ShowBase.ShowBase()
+
 import __builtin__
 
 class game:

@@ -1,5 +1,3 @@
-# Embedded file name: ChatInput.py
-from direct.directbase import DirectStart
 from panda3d.core import *
 from direct.gui.DirectGui import *
 from direct.showbase.DirectObject import *
