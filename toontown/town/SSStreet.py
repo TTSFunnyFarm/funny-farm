@@ -50,7 +50,7 @@ class SSStreet(ToonStreet):
         self.trainColl = self.train.attachNewNode(CollisionNode('train_collision'))
         self.trainColl.node().addSolid(cb)
         self.train.setH(90)
-        self.trainLoop = Sequence(self.train.posInterval(25, pos=Point3(270, -11.6, 0), startPos=(-255, -11.6, 0)), Wait(5))
+        self.trainLoop = Sequence(self.train.posInterval(35, pos=Point3(360, -11.6, 0), startPos=(-345, -11.6, 0)), Wait(5))
         self.trainLoop.loop()
         self.audio3d = Audio3DManager.Audio3DManager(base.sfxManagerList[0], camera)
         self.trainSfx = self.audio3d.loadSfx('phase_14/audio/sfx/train_loop.ogg')

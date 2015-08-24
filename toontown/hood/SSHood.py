@@ -1,4 +1,5 @@
 from pandac.PandaModules import *
+from direct.actor.Actor import Actor
 from ToonHood import ToonHood
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
@@ -47,6 +48,9 @@ class SSHood(ToonHood):
     def load(self):
         ToonHood.load(self)
         self.sky.setScale(1.2)
+        self.fish = Actor('phase_4/models/props/exteriorfish-zero', {'chan': 'phase_4/models/props/exteriorfish-swim'})
+        self.fish.reparentTo(self.geom.find('**/PetShopExterior_DG.egg'))
+        self.fish.loop('chan')
         self.trolley = Trolley.Trolley()
         self.trolley.setup()
         if not FFTime.isWinter() and not FFTime.isHalloween():
@@ -56,8 +60,12 @@ class SSHood(ToonHood):
         if not FFTime.isWinter() and not FFTime.isHalloween():
             self.stopSkyTrack()
         ToonHood.unload(self)
+        self.fish.stop()
+        self.fish.cleanup()
+        self.fish.removeNode()
         self.trolley.removeActive()
         self.trolley.delete()
+        del self.fish
         del self.trolley
 
     def startActive(self):
