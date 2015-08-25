@@ -75,6 +75,7 @@ class PickAToon:
             gui = loader.loadModel('phase_3/models/gui/tt_m_gui_pat_mainGui_halloween')
         else:
             gui = loader.loadModel('phase_3/models/gui/tt_m_gui_pat_mainGui')
+        gui.flattenMedium()
 
         bgImage = gui.find('**/tt_t_gui_pat_background')
         avBtn1 = gui.find('**/tt_t_gui_pat_squareGreen')
