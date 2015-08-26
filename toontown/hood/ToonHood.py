@@ -53,6 +53,8 @@ class ToonHood(DirectObject):
             self.sky = loader.loadModel(self.skyFile)
         self.geom.reparentTo(render)
         self.sky.reparentTo(render)
+        self.geom.flattenMedium()
+        self.sky.flattenMedium()
 
     def unload(self):
         self.geom.removeNode()

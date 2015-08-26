@@ -13,6 +13,7 @@ import os
 
 class DataManager:
     notify = directNotify.newCategory('DataManager')
+    notify.setInfo(True)
 
     def __init__(self):
         self.account = None
@@ -132,6 +133,10 @@ class DataManager:
             return account
 
     def createLocalAvatar(self, data):
+        self.notify.info('================')
+        self.notify.info('Chose avatar id: %s' % self.getToonFilename(data.index, playToken).getBasenameWoExtension())
+        self.notify.info('Chose avatar name: %s' % data.setName)
+        self.notify.info('================')
         base.localAvatar = LocalToon()
         base.avatarData = data
         __builtin__.localAvatar = base.localAvatar

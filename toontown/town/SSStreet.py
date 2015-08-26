@@ -39,7 +39,7 @@ class SSStreet(ToonStreet):
 
     def load(self):
         ToonStreet.load(self)
-        self.sky.setScale(2.0)
+        self.sky.setScale(3.0)
         if not FFTime.isWinter() and not FFTime.isHalloween():
             self.startSkyTrack()
         self.geom.find('**/tBlocker1').node().setCollideMask(OTPGlobals.WallBitmask)
@@ -50,7 +50,7 @@ class SSStreet(ToonStreet):
         self.trainColl = self.train.attachNewNode(CollisionNode('train_collision'))
         self.trainColl.node().addSolid(cb)
         self.train.setH(90)
-        self.trainLoop = Sequence(self.train.posInterval(35, pos=Point3(360, -11.6, 0), startPos=(-345, -11.6, 0)), Wait(5))
+        self.trainLoop = Sequence(self.train.posInterval(32, pos=Point3(360, -11.6, 0), startPos=(-345, -11.6, 0)), Wait(5))
         self.trainLoop.loop()
         self.audio3d = Audio3DManager.Audio3DManager(base.sfxManagerList[0], camera)
         self.trainSfx = self.audio3d.loadSfx('phase_14/audio/sfx/train_loop.ogg')

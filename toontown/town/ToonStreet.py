@@ -42,9 +42,10 @@ class ToonStreet(DirectObject):
         else:
             self.geom = loader.loadModel(self.streetFile)
             self.sky = loader.loadModel(self.skyFile)
-
         self.geom.reparentTo(render)
         self.sky.reparentTo(render)
+        self.geom.flattenStrong()
+        self.sky.flattenMedium()
 
     def unload(self):
         self.geom.removeNode()

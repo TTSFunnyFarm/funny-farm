@@ -45,7 +45,7 @@ class FFHood(ToonHood):
             self.acceptOnce('avatarExitDone', self.startActive)
             return
         if tunnel:
-            tunnelOrigin = self.geom.find('**/outdoor_zone_entrance.egg').find('**/tunnel_origin')
+            tunnelOrigin = self.geom.find('**/FCTunnel').find('**/tunnel_origin')
             base.localAvatar.tunnelIn(tunnelOrigin)
         if FFTime.isWinter():
             self.snow.start(camera, self.snowRender)
@@ -61,7 +61,8 @@ class FFHood(ToonHood):
         ToonHood.load(self)
         self.sky.setScale(1.5)
         self.fish = Actor('phase_4/models/props/exteriorfish-zero', {'chan': 'phase_4/models/props/exteriorfish-swim'})
-        self.fish.reparentTo(self.geom.find('**/PetShopExterior_TT.egg'))
+        self.fish.reparentTo(self.geom.find('**/PetShop'))
+        self.fish.setPosHpr(-60.09, 78.89, 0, 45, 0, 0)
         self.fish.loop('chan')
         self.trolley = Trolley.Trolley()
         self.trolley.setup()
@@ -173,7 +174,7 @@ class FFHood(ToonHood):
         base.cr.playGame.enterMinnieHouse(self.zoneId)
 
     def __handleFCTunnel(self, entry):
-        tunnelOrigin = self.geom.find('**/outdoor_zone_entrance.egg').find('**/tunnel_origin')
+        tunnelOrigin = self.geom.find('**/FCTunnel').find('**/tunnel_origin')
         base.localAvatar.tunnelOut(tunnelOrigin)
         self.acceptOnce('tunnelOutMovieDone', self.__handleEnterFC)
 

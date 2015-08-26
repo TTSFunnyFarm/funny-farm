@@ -21,7 +21,6 @@ class FFClientRepository(ClientRepository):
         self.login = None
         self.avChooser = None
         self.playGame = PlayGame.PlayGame()
-        self.notify.info('Running game on localhost.')
         #self.url = URLSpec('http://127.0.0.1:12070')
         #self.connect([self.url], successCallback=self.connectSuccessMsg, failureCallback=self.connectFailureMsg)
 
