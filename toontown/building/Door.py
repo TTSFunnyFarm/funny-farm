@@ -46,16 +46,10 @@ class Door(DirectObject):
 
     def getDoorNodePath(self):
         if self.code == 'hq0':
-            if self.zoneId == FunnyFarmGlobals.FunnyFarm:
-                building = base.cr.playGame.hood.geom.find('**/hqTT_english.egg')
-            elif self.zoneId == FunnyFarmGlobals.SillySprings or self.zoneId == FunnyFarmGlobals.RicketyRoad:
-                building = base.cr.playGame.hood.geom.find('**/hqDG_english.egg')
+            building = base.cr.playGame.hood.geom.find('**/ToonHQ')
             otherNP = building.find('**/door_origin_0')
         elif self.code == 'hq1':
-            if self.zoneId == FunnyFarmGlobals.FunnyFarm:
-                building = base.cr.playGame.hood.geom.find('**/hqTT_english.egg')
-            elif self.zoneId == FunnyFarmGlobals.SillySprings or self.zoneId == FunnyFarmGlobals.RicketyRoad:
-                building = base.cr.playGame.hood.geom.find('**/hqDG_english.egg')
+            building = base.cr.playGame.hood.geom.find('**/ToonHQ')
             otherNP = building.find('**/door_origin_1')
         else:
             otherNP = self.door.getParent()
