@@ -1,5 +1,6 @@
 from pandac.PandaModules import *
 from toontown.toonbase import FFTime
+from toontown.toonbase import FunnyFarmGlobals
 
 class SoundManager:
 
@@ -20,28 +21,39 @@ class SoundManager:
                         'phase_12/audio/bgm/Bossbot_Entry_v2.ogg'
                 ]
         )
+        self.safezoneMusicMap = {
+            FunnyFarmGlobals.FunnyFarm : self.startFFNbrhood,
+            FunnyFarmGlobals.FunnyFarmCentral : self.startFFSZ,
+            FunnyFarmGlobals.SillySprings : self.startSSNbrhood,
+            FunnyFarmGlobals.RicketyRoad : self.startSSSZ,
+            FunnyFarmGlobals.SecretArea : self.startSecretArea
+        }
+        self.shopMusicMap = {
+            FunnyFarmGlobals.FunnyFarm : self.startFFActivity,
+            FunnyFarmGlobals.SillySprings : self.startFFActivity
+        }
 
-    def playMusic(self, music, volume=1.0):
+    def playMusic(self, index, volume=1.0):
         self.stopAllMusic()
-        base.playMusic(music, looping=1, volume=volume)
+        base.playMusic(self.musicList[index], looping=1, volume=volume)
 
     def stopAllMusic(self):
         for x in self.musicList:
             x.stop()
 
     def startLogin(self):
-        self.playMusic(self.musicList[0])
+        self.playMusic(0)
 
     def stopLogin(self):
         self.musicList[0].stop()
 
     def startPAT(self):
         if FFTime.isWinter():
-            self.playMusic(self.musicList[2])
+            self.playMusic(2)
         elif FFTime.isHalloween():
-            self.playMusic(self.musicList[3])
+            self.playMusic(3)
         else:
-            self.playMusic(self.musicList[1])
+            self.playMusic(1)
 
     def stopPAT(self):
         self.musicList[1].stop()
@@ -49,49 +61,49 @@ class SoundManager:
         self.musicList[3].stop()
 
     def startMAT(self):
-        self.playMusic(self.musicList[4])
+        self.playMusic(4)
 
     def stopMAT(self):
         self.musicList[4].stop()
 
     def startTutorial(self):
-        self.playMusic(self.musicList[5], volume=0.5)
+        self.playMusic(5, volume=0.5)
 
     def stopTutorial(self):
         self.musicList[5].stop()
 
     def startFFNbrhood(self):
-        self.playMusic(self.musicList[6])
+        self.playMusic(6)
 
     def stopFFNbrhood(self):
         self.musicList[6].stop()
 
     def startFFSZ(self):
-        self.playMusic(self.musicList[7], volume=0.5)
+        self.playMusic(7, volume=0.5)
 
     def stopFFSZ(self):
         self.musicList[7].stop()
 
     def startFFActivity(self):
-        self.playMusic(self.musicList[8])
+        self.playMusic(8)
 
     def stopFFActivity(self):
         self.musicList[8].stop()
 
     def startSSNbrhood(self):
-        self.playMusic(self.musicList[9])
+        self.playMusic(9)
 
     def stopSSNbrhood(self):
         self.musicList[9].stop()
 
     def startSSSZ(self):
-        self.playMusic(self.musicList[10], volume=0.5)
+        self.playMusic(10, volume=0.5)
 
     def stopSSSZ(self):
         self.musicList[10].stop()
 
     def startSecretArea(self):
-        self.playMusic(self.musicList[11])
+        self.playMusic(11)
 
     def stopSecretArea(self):
         self.musicList[11].stop()

@@ -197,8 +197,18 @@ class OptionsTabPage(DirectFrame):
         else:
             base.enableMusic(1)
             settings['music'] = True
+            soundMgr.stopAllMusic()
+            self.playCurrentZoneMusic()
         self.settingsChanged = 1
         self.__setMusicButton()
+
+    def playCurrentZoneMusic(self):
+        zoneId = base.localAvatar.getZoneId()
+        if base.cr.playGame.hood or base.cr.playGame.street:
+            playMusic = soundMgr.safezoneMusicMap[zoneId]
+        else:
+            playMusic = soundMgr.shopMusicMap[zoneId]
+        playMusic()
 
     def __setMusicButton(self):
         if base.musicActive:
@@ -216,6 +226,7 @@ class OptionsTabPage(DirectFrame):
         else:
             base.enableSoundEffects(1)
             settings['sfx'] = True
+            base.localAvatar.stopSound()
         self.settingsChanged = 1
         self.__setSoundFXButton()
 
