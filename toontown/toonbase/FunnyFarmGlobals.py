@@ -50,6 +50,13 @@ def getHoodNameFromId(zoneId):
     elif zoneId == SecretArea:
         return ('???', '')
 
+phaseMap = {
+    FunnyFarm : 'phase_14/models/neighborhoods/funny_farm',
+    FunnyFarmCentral : 'phase_14/models/neighborhoods/funny_farm_central',
+    SillySprings : 'phase_14/models/neighborhoods/silly_springs',
+    RicketyRoad : 'phase_14/models/streets/rickety_road'
+}
+
 SpawnPoints = {
         FunnyFarm : [
                 (Point3(-70, 0, 0), Vec3(270, 0, 0)),

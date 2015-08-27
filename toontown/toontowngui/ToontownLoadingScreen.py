@@ -70,14 +70,14 @@ class ToontownLoadingScreen:
         self.gui.reparentTo(aspect2dp, NO_FADE_SORT_INDEX)
         self.waitBar.update(self.__count)
 
-    def beginInit(self):
-        self.waitBar['range'] = 100
+    def beginInit(self, range, label):
+        self.waitBar['range'] = range
         self.title.setPos(0, 0, -0.77)
-        self.title['text'] = 'Loading. . .'
+        self.title['text'] = label
         self.title['text_align'] = TextNode.ACenter
         self.title['text_scale'] = 0.13
         self.__count = 0
-        self.__expectedCount = 100
+        self.__expectedCount = range
         self.initGui.show()
         self.initBg.show()
         self.title.reparentTo(aspect2dp, NO_FADE_SORT_INDEX)

@@ -192,7 +192,7 @@ def loadModels():
     if preloadAvatars:
 
         def loadTex(path):
-            tex = loader.loadTexture('/' + path)
+            tex = loader.loadTexture(path)
             tex.setMinfilter(Texture.FTLinearMipmapLinear)
             tex.setMagfilter(Texture.FTLinear)
             Preloaded.append(tex)
@@ -211,30 +211,30 @@ def loadModels():
 
         for key in LegDict.keys():
             fileRoot = LegDict[key]
-            model = loader.loadModelNode('/phase_3' + fileRoot + '1000')
+            model = loader.loadModel('phase_3' + fileRoot + '1000')
             Preloaded.append(model)
-            model = loader.loadModelNode('/phase_3' + fileRoot + '500')
+            model = loader.loadModel('phase_3' + fileRoot + '500')
             Preloaded.append(model)
-            model = loader.loadModelNode('/phase_3' + fileRoot + '250')
+            model = loader.loadModel('phase_3' + fileRoot + '250')
             Preloaded.append(model)
 
         for key in TorsoDict.keys():
             fileRoot = TorsoDict[key]
-            model = loader.loadModelNode('/phase_3' + fileRoot + '1000')
+            model = loader.loadModel('phase_3' + fileRoot + '1000')
             Preloaded.append(model)
             if len(key) > 1:
-                model = loader.loadModelNode('/phase_3' + fileRoot + '500')
+                model = loader.loadModel('phase_3' + fileRoot + '500')
                 Preloaded.append(model)
-                model = loader.loadModelNode('/phase_3' + fileRoot + '250')
+                model = loader.loadModel('phase_3' + fileRoot + '250')
                 Preloaded.append(model)
 
         for key in HeadDict.keys():
             fileRoot = HeadDict[key]
-            model = loader.loadModelNode('/phase_3' + fileRoot + '1000')
+            model = loader.loadModel('phase_3' + fileRoot + '1000')
             Preloaded.append(model)
-            model = loader.loadModelNode('/phase_3' + fileRoot + '500')
+            model = loader.loadModel('phase_3' + fileRoot + '500')
             Preloaded.append(model)
-            model = loader.loadModelNode('/phase_3' + fileRoot + '250')
+            model = loader.loadModel('phase_3' + fileRoot + '250')
             Preloaded.append(model)
 
 
@@ -1606,8 +1606,7 @@ class Toon(Avatar.Avatar, ToonHead):
         self.playingAnim = 'neutral'
 
     def enterRun(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
-        self.actorInterval('run').loop()
-        self.setPlayRate(animMultiplier, 'run')
+        self.actorInterval('run', playRate=animMultiplier).loop()
         Emote.globalEmote.disableBody(self, 'toon, enterRun')
         self.setActiveShadow(1)
 
@@ -1618,11 +1617,12 @@ class Toon(Avatar.Avatar, ToonHead):
     def enterSwim(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
         Emote.globalEmote.disableAll(self, 'enterSwim')
         self.playingAnim = 'swim'
-        self.actorInterval('swim').loop()
+        self.actorInterval('swim', playRate=animMultiplier).loop()
         self.setPlayRate(animMultiplier, 'swim')
         self.getGeomNode().setP(-89.0)
         self.dropShadow.hide()
         if self.isLocal():
+            taskMgr.remove('AnimationHandler')
             self.useSwimControls()
         self.nametag3d.setPos(0, -2, 1)
         self.startBobSwimTask()
@@ -1675,6 +1675,7 @@ class Toon(Avatar.Avatar, ToonHead):
         self.dropShadow.show()
         if self.isLocal():
             self.useWalkControls()
+            taskMgr.add(self.handleAnimation, 'AnimationHandler')
         self.nametag3d.setPos(0, 0, self.height + 0.5)
         Emote.globalEmote.releaseAll(self, 'exitSwim')
 
@@ -3256,7 +3257,3 @@ class Toon(Avatar.Avatar, ToonHead):
 
     def exitScientistPlay(self):
         self.stop()
-
-
-loadModels()
-compileGlobalAnimList()

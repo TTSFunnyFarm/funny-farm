@@ -31,7 +31,6 @@ class LocalToon(Toon.Toon, WalkControls):
     def __init__(self):
         Toon.Toon.__init__(self)
         WalkControls.__init__(self)
-        Toon.loadDialog()
         self.chatMgr = ChatInput.ChatInput()
         self.soundWhisper = base.loadSfx('phase_3.5/audio/sfx/GUI_whisper_3.ogg')
         self.soundPhoneRing = base.loadSfx('phase_3.5/audio/sfx/telephone_ring.ogg')

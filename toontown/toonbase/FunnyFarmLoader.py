@@ -29,7 +29,7 @@ class FunnyFarmLoader(Loader.Loader):
         self._lastTickT = globalClock.getRealTime()
         self.blockName = name
         if name == 'init':
-            self.loadingScreen.beginInit()
+            self.loadingScreen.beginInit(range, label)
         else:
             self.loadingScreen.begin(range, label, tipCategory)
         return None

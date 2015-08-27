@@ -14,7 +14,3 @@ icon-filename phase_3/etc/funnyfarm.ico
 
 # Audio
 audio-library-name p3fmod_audio
-
-# Dev options
-quick-start #f
-quick-start-playToken funnybear465

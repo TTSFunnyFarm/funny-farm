@@ -24,6 +24,7 @@ from toontown.toonbase import FunnyFarmLoader
 from toontown.sound import SoundManager
 from toontown.login import DataManager
 from toontown.distributed import FFClientRepository
+from toontown.ai import FFAIRepository
 from toontown.misc import Injector
 import os
 
@@ -92,23 +93,19 @@ class FunnyFarmStart:
         FunnyFarmGlobals.setNametagGlobals()
         base.enableParticles()
 
-        self.notify.info('Setting up Client Repository...')
+        self.notify.info('Initializing Client Repository...')
         base.cr = FFClientRepository.FFClientRepository()
-        if base.config.GetBool('quick-start', 0):
-            __builtin__.playToken = base.config.GetString('quick-start-playToken', '')
-            if playToken:
-                self.notify.info('Quick-starting game with playToken: %s' % playToken)
-                dataMgr.loadAccount(playToken)
-                self.startFunnyFarm()
-            else:
-                self.notify.error('Quick-start failed. No playToken given.')
-        else:
-            base.cr.enterLogin()
+        base.cr.enterLogin()
 
     def startFunnyFarm(self):
         base.transitions.noTransitions()
         soundMgr.startPAT()
-        loader.beginBulkLoad('init', 0, 0, 0)
+        loader.beginBulkLoad('init', 'Loading. . .', 400, None)
+        # Startup the AI here so there's less to do right at startup.
+        self.notify.info('Initializing AI Repository...')
+        base.air = FFAIRepository.FFAIRepository()
+        base.air.preloadAvatars()
+        base.air.createSafeZones()
         base.cr.loadPAT()
         loader.endBulkLoad('init')
         base.cr.fakeConnect()
