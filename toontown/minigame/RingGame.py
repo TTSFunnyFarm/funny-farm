@@ -130,9 +130,9 @@ class RingGame(Minigame):
         self.arrowKeys = ArrowKeys.ArrowKeys()
         toon = base.localAvatar
         toon.reparentTo(render)
-        self.oldNametagPos = toon.nametag3d.getPos()
         toon.setAnimState('swim')
         toon.stopBobSwimTask()
+        toon.stopLookAround()
         toon.useLOD(self.TOON_LOD)
         self.__placeToon()
         toon.getGeomNode().setP(-89.0)
@@ -213,7 +213,6 @@ class RingGame(Minigame):
         av.dropShadow.show()
         av.resetLOD()
         av.setAnimState('neutral')
-        av.nametag3d.setPos(self.oldNametagPos)
         return
 
     def __genText(self, text):

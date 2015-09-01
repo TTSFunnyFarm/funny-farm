@@ -83,7 +83,7 @@ class CatchGameToonSD(StateData.StateData):
         self.toon.lerpLookAt(Vec3.forward() + Vec3.up(), time=0.2, blink=0)
 
     def exitNormal(self):
-        self.toon.enterOff()
+        self.setAnimState('off', 1.0)
         self.toon.exitCatching()
         if self.isLocal:
             self.game.orthoWalk.stop()
@@ -119,7 +119,7 @@ class CatchGameToonSD(StateData.StateData):
         self.fruitModel.reparentTo(hidden)
         self.fruitModel.removeNode()
         del self.fruitModel
-        self.toon.enterOff()
+        self.setAnimState('off', 1.0)
         if self.isLocal:
             self.game.orthoWalk.stop()
 

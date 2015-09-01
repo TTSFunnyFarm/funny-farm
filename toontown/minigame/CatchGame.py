@@ -338,7 +338,7 @@ class CatchGame(Minigame):
         lt.setSpeed(0, 0)
         toonSD = self.toonSDs[self.localAvId]
         toonSD.enter()
-        lt.exitNeutral()
+        toonSD.setAnimState('off', 1.0)
         toonSD.fsm.request('normal')
         self.orthoWalk.stop()
         radius = 0.7

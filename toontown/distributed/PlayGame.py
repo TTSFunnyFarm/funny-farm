@@ -24,7 +24,12 @@ from toontown.minigame import TugOfWarGame
 
 class PlayGame(DirectObject):
     notify = directNotify.newCategory('PlayGame')
-    MINIGAMES = [CatchGame.CatchGame]
+    MINIGAMES = [
+        RingGame.RingGame, 
+        CannonGame.CannonGame, 
+        CatchGame.CatchGame, 
+        TugOfWarGame.TugOfWarGame
+    ]
 
     def __init__(self):
         self.hood = None

@@ -449,6 +449,7 @@ class TugOfWarGame(Minigame):
             self.powerMeter.unbind(DGG.B1PRESS)
             self.powerMeter.unbind(DGG.B1RELEASE)
             self.powerMeter.hide()
+            aspect2d.find('**/MinigamePowerMeter*').hide()
         return
 
     def setUpRopes(self, notTaut):

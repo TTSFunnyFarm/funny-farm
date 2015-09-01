@@ -194,7 +194,7 @@ class CannonGame(Minigame):
             head.stopLookAroundNow()
             av = self.getAvatar()
             if av:
-                av.setAnimState('neutral')
+                av.setAnimState('neutral', 1.0)
                 av.nametag.removeNametag(head.tag)
             head.delete()
 
@@ -710,7 +710,7 @@ class CannonGame(Minigame):
         av.setPos(startPos)
         av.setHpr(startHpr)
         avatar = self.getAvatar()
-        avatar.setAnimState('swim')
+        avatar.actorInterval('swim').loop()
         avatar.setPosHpr(0, 0, -(avatar.getHeight() / 2.0), 0, 0, 0)
         shootTask = Task(self.__shootTask)
         flyTask = Task(self.__flyTask)
@@ -811,7 +811,7 @@ class CannonGame(Minigame):
             self.dropShadowDict[task.info['avId']].reparentTo(hidden)
             avatar = self.getAvatar()
             if task.info['hitWhat'] == self.HIT_WATER:
-                avatar.setAnimState('neutral')
+                avatar.setAnimState('neutral', 1.0)
                 self.splash.setPos(task.info['toon'].getPos())
                 self.splash.setScale(2)
                 self.splash.play()
@@ -819,7 +819,8 @@ class CannonGame(Minigame):
                 task.info['toon'].setHpr(task.info['hRot'], 0, 0)
                 self.__somebodyWon(task.info['avId'])
             elif task.info['hitWhat'] == self.HIT_TOWER:
-                toon = task.info['toon']
+                toon = self.getAvatar()
+                toon.setAnimState('off')
                 pos = toon.getPos()
                 ttVec = Vec3(pos - self.towerPos)
                 ttVec.setZ(0)
@@ -843,7 +844,7 @@ class CannonGame(Minigame):
                 self.dustCloud.setScale(0.35)
                 self.dustCloud.play()
                 base.playSfx(self.sndHitGround)
-                avatar.setAnimState('run', playRate=2.0)
+                avatar.setAnimState('run', 2.0)
             return Task.done
         return Task.cont
 

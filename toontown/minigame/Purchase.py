@@ -211,15 +211,6 @@ class Purchase(PurchaseBase):
         del self.convertingVotesToBeansLabel
         del self.rewardDoubledJellybeanLabel
 
-    def showStatusText(self, text):
-        self.statusLabel['text'] = text
-        taskMgr.remove('resetStatusText')
-        #taskMgr.doMethodLater(2.0, self.resetStatusText, 'resetStatusText')
-
-    def resetStatusText(self, task):
-        self.statusLabel['text'] = ''
-        return Task.done
-
     def __handlePlayAgain(self):
         for headFrame in self.headFrames:
             headFrame[1].wrtReparentTo(aspect2d)
