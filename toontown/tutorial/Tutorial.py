@@ -3,35 +3,10 @@ from direct.showbase.DirectObject import DirectObject
 from direct.interval.IntervalGlobal import *
 from toontown.toon import NPCToons
 from toontown.toonbase import FunnyFarmGlobals
+from toontown.toonbase import TTLocalizer
 from toontown.hood.ToonHood import ToonHood
 from otp.nametag.NametagConstants import *
 from toontown.tutorial.CogPinata import CogPinata
-
-# Add these to the TTLocalizer
-TutorialIntro = [
-        'Welcome to Funny Farm.',
-        'What is Funny Farm all about, you may ask?',
-        'When the cogs took over Toontown on that dreadful September day, we had to find a place to escape.',
-        'That place was Funny Farm, and it had been abandoned for years.',
-        'Luckily, the cogs haven\'t found us yet, but it\'s still important that you are prepared to fight for our town.',
-        'Without further ado, let\'s begin your training!'
-]
-
-TutorialGags = [
-        'Nicely done! You\'re a natural!',
-        'Fighting real cogs won\'t be that easy, of course.',
-        'There are lots of different gags, but take these to start.'
-]
-
-TutorialLaffMeter = [
-        'Oh! You also need a Laff meter!',
-        'If your Laff meter gets too low, you\'ll be sad!'
-]
-
-TutorialOutro = [
-        'If you have any questions, I\'ll always be at the Toon Hall.',
-        'Have fun in Funny Farm!'
-]
 
 class Tutorial(ToonHood):
     notify = directNotify.newCategory('Tutorial')
@@ -40,7 +15,7 @@ class Tutorial(ToonHood):
     def __init__(self):
         ToonHood.__init__(self)
         self.zoneId = FunnyFarmGlobals.Tutorial
-        self.hoodFile = 'phase_0/street_outdoor_zone_6100'
+        self.hoodFile = 'phase_14/models/modules/tutorial'
         self.spookyHoodFile = self.hoodFile
         self.winterHoodFile = self.hoodFile
         self.skyFile = 'phase_3.5/models/props/TT_sky'
@@ -115,11 +90,11 @@ class Tutorial(ToonHood):
         self.introChat(0)
 
     def introChat(self, pageNumber):
-        if pageNumber >= len(TutorialIntro) - 1:
-            self.flippy.setLocalPageChat(TutorialIntro[-1], True)
+        if pageNumber >= len(TTLocalizer.TutorialIntro) - 1:
+            self.flippy.setLocalPageChat(TTLocalizer.TutorialIntro[-1], True)
             self.acceptOnce('Nametag-nextChat', self.introSequence)
         else:
-            self.flippy.setLocalPageChat(TutorialIntro[pageNumber], None)
+            self.flippy.setLocalPageChat(TTLocalizer.TutorialIntro[pageNumber], None)
             self.acceptOnce('Nametag-nextChat', self.introChat, [pageNumber + 1])
 
     def introSequence(self):
@@ -164,12 +139,12 @@ class Tutorial(ToonHood):
         self.gagChat(0)
 
     def gagChat(self, pageNumber):
-        if pageNumber >= len(TutorialGags) - 1:
+        if pageNumber >= len(TTLocalizer.TutorialGags) - 1:
             camera.posInterval(2, (-1, 2, 4), blendType='easeOut').start()
-            self.flippy.setLocalPageChat(TutorialGags[-1], True)
+            self.flippy.setLocalPageChat(TTLocalizer.TutorialGags[-1], True)
             self.acceptOnce('Nametag-nextChat', self.gagSequence)
         else:
-            self.flippy.setLocalPageChat(TutorialGags[pageNumber], None)
+            self.flippy.setLocalPageChat(TTLocalizer.TutorialGags[pageNumber], None)
             self.acceptOnce('Nametag-nextChat', self.gagChat, [pageNumber + 1])
 
     def gagSequence(self):
@@ -241,11 +216,11 @@ class Tutorial(ToonHood):
         laffSeq.start()
 
     def laffMeterChat(self, pageNumber):
-        if pageNumber >= len(TutorialLaffMeter) - 1:
-            self.flippy.setLocalPageChat(TutorialLaffMeter[-1], True)
+        if pageNumber >= len(TTLocalizer.TutorialLaffMeter) - 1:
+            self.flippy.setLocalPageChat(TTLocalizer.TutorialLaffMeter[-1], True)
             self.acceptOnce('Nametag-nextChat', self.laffMeterSequence)
         else:
-            self.flippy.setLocalPageChat(TutorialLaffMeter[pageNumber], None)
+            self.flippy.setLocalPageChat(TTLocalizer.TutorialLaffMeter[pageNumber], None)
             self.acceptOnce('Nametag-nextChat', self.laffMeterChat, [pageNumber + 1])
 
     def laffMeterSequence(self):
@@ -367,11 +342,11 @@ class Tutorial(ToonHood):
         self.outroChat(0)
 
     def outroChat(self, pageNumber):
-        if pageNumber >= len(TutorialOutro) - 1:
-            self.flippy.setLocalPageChat(TutorialOutro[-1], True)
+        if pageNumber >= len(TTLocalizer.TutorialOutro) - 1:
+            self.flippy.setLocalPageChat(TTLocalizer.TutorialOutro[-1], True)
             self.acceptOnce('Nametag-nextChat', self.outroSequence)
         else:
-            self.flippy.setLocalPageChat(TutorialOutro[pageNumber], None)
+            self.flippy.setLocalPageChat(TTLocalizer.TutorialOutro[pageNumber], None)
             self.acceptOnce('Nametag-nextChat', self.outroChat, [pageNumber + 1])
 
     def outroSequence(self):

@@ -100,13 +100,12 @@ class FunnyFarmStart:
     def startFunnyFarm(self):
         base.transitions.noTransitions()
         soundMgr.startPAT()
-        loader.beginBulkLoad('init', 'Loading. . .', 400, None)
-        # Startup the AI here so there's less to do right at startup.
+        loader.beginBulkLoad('init', 'Loading. . .', 200, None)
+        base.cr.loadPAT()
         self.notify.info('Initializing AI Repository...')
         base.air = FFAIRepository.FFAIRepository()
         base.air.preloadAvatars()
         base.air.createSafeZones()
-        base.cr.loadPAT()
         loader.endBulkLoad('init')
         base.cr.fakeConnect()
 
