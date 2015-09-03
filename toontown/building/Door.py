@@ -77,6 +77,8 @@ class Door(DirectObject):
 
     def exitDone(self):
         base.localAvatar.enable()
+        if self.code == 'th_int':
+            base.camLens.setMinFov(ToontownGlobals.CogHQCameraFov/(4./3.))
 
     def getAvatarEnqueueTrack(self, avatar, duration):
         back = -5.0

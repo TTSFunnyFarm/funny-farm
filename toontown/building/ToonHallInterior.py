@@ -37,15 +37,18 @@ class ToonHallInterior(Interior):
     def load(self):
         Interior.load(self)
         soundMgr.startFFActivity()
+        self.interior.find('**/mainhall').setBin('ground', 0)
+        self.interior.find('**/hallway').setBin('ground', 0)
+        self.interior.find('**/office').setBin('ground', 0)
         self.randomGenerator = random.Random()
         self.randomGenerator.seed(self.zoneId)
         self.colors = ToonInteriorColors.colors[self.zoneId]
-        self.generateNPCs()
         self.interior.find('**/door_origin').setScale(0.8, 0.8, 0.8)
         self.door = self.setupDoor('door_double_round_ur', 'door_origin')
         doorColor = self.colors['TI_door'][1]
         self.door.setColor(doorColor)
         self.fixDoor(self.door)
+        self.generateNPCs()
         self.acceptOnce('avatarExitDone', self.startActive)
         del self.colors
         del self.randomGenerator
@@ -69,6 +72,7 @@ class ToonHallInterior(Interior):
         flippy.reparentTo(render)
         flippy.setPosHpr(pos, hpr)
         flippy.initializeBodyCollisions('toon')
+        flippy.useLOD(1000)
         flippy.addActive()
         self.npcs = [flippy]
 
