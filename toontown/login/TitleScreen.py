@@ -54,6 +54,8 @@ class TitleScreen(DirectObject):
 
     def startShow(self):
         self.track = Sequence()
+        self.track.append(Func(base.transitions.fadeScreen, 1.0))
+        self.track.append(Func(base.transitions.fadeIn, 1.0))
         self.track.append(camera.posHprInterval(6.0, pos=(0, -350, 60), hpr=(0, 12, 0), blendType='easeInOut'))
         self.track.append(Func(self.logo.show))
         self.track.append(self.logo.colorScaleInterval(2.0, colorScale=(1, 1, 1, 1), startColorScale=(1, 1, 1, 0)))
@@ -67,7 +69,7 @@ class TitleScreen(DirectObject):
         self.titleSeq = Sequence(self.titleText.colorScaleInterval(1.0, (1, 1, 1, 0.2)), self.titleText.colorScaleInterval(1.0, (1, 1, 1, 1)))
         self.track.append(Func(self.titleSeq.loop))
         self.track.append(Func(self.acceptOnce, 'mouse1', self.exitShow))
-        
+
         self.showSeq = Sequence(Wait(70), Func(self.fireworkShow.startShow, random.choice(showTypes), 0, 0, 0))
         self.showSeq.loop()
         self.track.start()
@@ -81,5 +83,3 @@ class TitleScreen(DirectObject):
         self.track = Sequence()
         self.track.append(Parallel(self.titleText.colorScaleInterval(1.0, (1, 1, 1, 0)), Sequence(Func(base.transitions.fadeOut, 1.0), Wait(1.5), Func(self.unload), Func(base.cr.enterPAT))))
         self.track.start()
-        
-

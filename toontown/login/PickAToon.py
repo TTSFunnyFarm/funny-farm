@@ -52,6 +52,7 @@ class PickAToon:
         self.bg.show()
         self.quitButton.show()
         self.logoutButton.show()
+        base.transitions.fadeScreen(1.0)
         base.transitions.fadeIn(1.0)
         if FFTime.isWinter():
             base.setBackgroundColor(Vec4(0.682, 0.847, 0.99, 1))
