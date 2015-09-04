@@ -25,6 +25,7 @@ from toontown.sound import SoundManager
 from toontown.login import DataManager
 from toontown.distributed import FFClientRepository
 from toontown.ai import FFAIRepository
+from toontown.login import TitleScreen
 from toontown.misc import Injector
 import os
 
@@ -67,6 +68,7 @@ class FunnyFarmStart:
         loadPrcFileData('Settings: toonChatSounds', 'toon-chat-sounds %s' % settings['toonChatSounds'])
         base.toonChatSounds = base.config.GetBool('toon-chat-sounds', 1)
         base.drawFps = False
+        base.secretAreaFlag = True
 
         if settings['music'] == False:
             base.enableMusic(0)
@@ -93,6 +95,11 @@ class FunnyFarmStart:
         FunnyFarmGlobals.setNametagGlobals()
         base.enableParticles()
 
+        self.notify.info('Initializing AI Repository...')
+        base.air = FFAIRepository.FFAIRepository()
+        base.air.preloadAvatars()
+        base.air.createSafeZones()
+
         self.notify.info('Initializing Client Repository...')
         base.cr = FFClientRepository.FFClientRepository()
         base.cr.enterLogin()
@@ -100,14 +107,9 @@ class FunnyFarmStart:
     def startFunnyFarm(self):
         base.transitions.noTransitions()
         soundMgr.startPAT()
-        loader.beginBulkLoad('init', 'Loading. . .', 200, None)
+        titleScreen = TitleScreen.TitleScreen()
+        titleScreen.startShow()
         base.cr.loadPAT()
-        self.notify.info('Initializing AI Repository...')
-        base.air = FFAIRepository.FFAIRepository()
-        base.air.preloadAvatars()
-        base.air.createSafeZones()
-        loader.endBulkLoad('init')
-        base.cr.fakeConnect()
 
 __builtin__.start = FunnyFarmStart()
 Injector.openInjector()

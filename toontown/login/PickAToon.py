@@ -49,10 +49,10 @@ class PickAToon:
     def enter(self):
         if not self.isLoaded:
             self.load()
-        base.disableMouse()
         self.bg.show()
         self.quitButton.show()
         self.logoutButton.show()
+        base.transitions.fadeIn(1.0)
         if FFTime.isWinter():
             base.setBackgroundColor(Vec4(0.682, 0.847, 0.99, 1))
         elif FFTime.isHalloween():
