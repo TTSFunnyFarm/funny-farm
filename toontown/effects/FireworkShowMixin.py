@@ -57,7 +57,7 @@ class FireworkShowMixin:
         Fireworks.shootFirework(style, x, y, z, color1, color2, amp)
 
     def startShow(self, eventId, style, songId, timestamp, root = render):
-        t = globalClockDelta.localElapsedTime(timestamp) - self.startDelay
+        t = 0
         self.timestamp = timestamp
         self.showMusic = None
         self.eventId = eventId
@@ -70,7 +70,7 @@ class FireworkShowMixin:
             if t > self.fireworkShow.getShowDuration():
                 return
 
-            beginFireworkShow = Func(self.beginFireworkShow, max(0, t), root)
+            beginFireworkShow = Func(self.beginFireworkShow, t, root)
 
             # TODO: Fix this properly. Hack-fixed for July 4th
             delay = Wait(max(0, self.fireworkShow.getShowDuration() - max(0, t)))

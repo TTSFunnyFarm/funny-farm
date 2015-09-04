@@ -1,6 +1,7 @@
 from pandac.PandaModules import *
 from direct.showbase.DirectObject import DirectObject
 from direct.interval.IntervalGlobal import *
+from direct.task.Task import Task
 from direct.gui.DirectGui import *
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import FFTime
@@ -41,6 +42,8 @@ class TitleScreen(DirectObject):
         self.fireworkShow = FireworkShowMixin()
 
     def unload(self):
+        self.ignoreAll()
+        taskMgr.remove('showTimeout')
         self.logo.removeNode()
         self.titleText.destroy()
         self.ground.removeNode()
@@ -59,27 +62,23 @@ class TitleScreen(DirectObject):
         self.track.append(camera.posHprInterval(6.0, pos=(0, -350, 60), hpr=(0, 12, 0), blendType='easeInOut'))
         self.track.append(Func(self.logo.show))
         self.track.append(self.logo.colorScaleInterval(2.0, colorScale=(1, 1, 1, 1), startColorScale=(1, 1, 1, 0)))
-        if FFTime.isWinter():
-            showTypes = [FunnyFarmGlobals.NEWYEARS_FIREWORKS]
-        else:
-            showTypes = [FunnyFarmGlobals.JULY4_FIREWORKS, PartyGlobals.FireworkShows.Summer]
-        self.track.append(Func(self.fireworkShow.startShow, random.choice(showTypes), 0, 0, 0))
         self.track.append(Func(self.titleText.show))
         self.track.append(self.titleText.colorScaleInterval(1.0, colorScale=(1, 1, 1, 1), startColorScale=(1, 1, 1, 0)))
         self.titleSeq = Sequence(self.titleText.colorScaleInterval(1.0, (1, 1, 1, 0.2)), self.titleText.colorScaleInterval(1.0, (1, 1, 1, 1)))
         self.track.append(Func(self.titleSeq.loop))
         self.track.append(Func(self.acceptOnce, 'mouse1', self.exitShow))
-
-        self.showSeq = Sequence(Wait(70), Func(self.fireworkShow.startShow, random.choice(showTypes), 0, 0, 0))
-        self.showSeq.loop()
+        if FFTime.isWinter():
+            showTypes = [FunnyFarmGlobals.NEWYEARS_FIREWORKS]
+        else:
+            showTypes = [FunnyFarmGlobals.JULY4_FIREWORKS, PartyGlobals.FireworkShows.Summer]
+        self.fireworkShow.startShow(random.choice(showTypes), 0, 0, 0)
+        taskMgr.doMethodLater(self.fireworkShow.fireworkShow.getShowDuration(), self.exitShow, 'showTimeout')
         self.track.start()
 
-    def exitShow(self):
+    def exitShow(self, *args):
         self.track.finish()
-        self.showSeq.finish()
         self.titleSeq.finish()
-        del self.showSeq
-        del self.titleSeq
         self.track = Sequence()
         self.track.append(Parallel(self.titleText.colorScaleInterval(1.0, (1, 1, 1, 0)), Sequence(Func(base.transitions.fadeOut, 1.0), Wait(1.5), Func(self.unload), Func(base.cr.enterPAT))))
         self.track.start()
+        return Task.done
