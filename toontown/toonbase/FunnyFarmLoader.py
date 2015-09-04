@@ -28,10 +28,7 @@ class FunnyFarmLoader(Loader.Loader):
         self.inBulkBlock = 1
         self._lastTickT = globalClock.getRealTime()
         self.blockName = name
-        if name == 'init':
-            self.loadingScreen.beginInit(range, label)
-        else:
-            self.loadingScreen.begin(range, label, tipCategory)
+        self.loadingScreen.begin(range, label, tipCategory)
         return None
 
     def endBulkLoad(self, name):

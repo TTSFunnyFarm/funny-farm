@@ -10,15 +10,6 @@ class ToontownLoadingScreen:
     def __init__(self):
         self.__expectedCount = 0
         self.__count = 0
-        self.initGui = loader.loadModel('phase_3/models/gui/loading-background')
-        self.initGui.reparentTo(aspect2d, 0)
-        self.initGui.hide()
-        self.initBg = self.initGui.find('**/bg')
-        self.initBg.reparentTo(render2d)
-        self.initBg.hide()
-        self.initGui.find('**/fg').setScale(render2d, VBase3(1))
-        self.initGui.find('**/bar_shadow').setScale(render2d, VBase3(1))
-        self.initGui.find('**/fg').setBin('fixed', 20)
 
         if FFTime.isWinter():
             self.gui = loader.loadModel('phase_3/models/gui/progress-background_christmas')
@@ -54,11 +45,6 @@ class ToontownLoadingScreen:
     def getTip(self, tipCategory):
         return TTLocalizer.TipTitle + '\n' + random.choice(TTLocalizer.TipDict.get(tipCategory))
 
-    def resetSettings(self):
-        self.title.setPos(-1.1, 0, -0.77)
-        self.title['text_align'] = TextNode.ALeft
-        self.title['text_scale'] = 0.08
-
     def begin(self, range, label, tipCategory):
         self.waitBar['range'] = range
         self.title['text'] = label
@@ -70,29 +56,12 @@ class ToontownLoadingScreen:
         self.gui.reparentTo(aspect2dp, NO_FADE_SORT_INDEX)
         self.waitBar.update(self.__count)
 
-    def beginInit(self, range, label):
-        self.waitBar['range'] = range
-        self.title.setPos(0, 0, -0.77)
-        self.title['text'] = label
-        self.title['text_align'] = TextNode.ACenter
-        self.title['text_scale'] = 0.13
-        self.__count = 0
-        self.__expectedCount = range
-        self.initGui.show()
-        self.initBg.show()
-        self.title.reparentTo(aspect2dp, NO_FADE_SORT_INDEX)
-        self.waitBar.reparentTo(aspect2dp, NO_FADE_SORT_INDEX)
-        self.waitBar.update(self.__count)
-
     def end(self):
-        self.waitBar.finish(N=30)
+        self.waitBar.finish(N=50)
         self.waitBar.reparentTo(self.gui)
         self.title.reparentTo(self.gui)
         self.logo.reparentTo(self.gui)
         self.gui.reparentTo(hidden)
-        self.initGui.hide()
-        self.initBg.hide()
-        self.resetSettings()
         return (self.__expectedCount, self.__count)
 
     def abort(self):

@@ -1,5 +1,5 @@
 from pandac.PandaModules import *
-from direct.distributed.ClientRepository import ClientRepository
+from direct.showbase.DirectObject import DirectObject
 from direct.interval.IntervalGlobal import *
 from toontown.login.PickAToon import PickAToon
 from toontown.toontowngui import TTDialog
@@ -11,59 +11,14 @@ import PlayGame
 import os
 import sys
 
-class FFClientRepository(ClientRepository):
-    dcFiles = ['dc/direct.dc']
+class FFClientRepository(DirectObject):
+    notify = directNotify.newCategory('ClientRepository')
+    notify.setInfo(True)
 
     def __init__(self):
-        ClientRepository.__init__(self, dcFileNames=self.dcFiles, connectMethod=self.CM_NET)
-        self.setTcpHeaderSize(4)
-        self.notify.setInfo(True)
-        self.connectDialog = None
         self.login = None
         self.avChooser = None
         self.playGame = PlayGame.PlayGame()
-        #self.url = URLSpec('http://127.0.0.1:12070')
-        #self.connect([self.url], successCallback=self.connectSuccessMsg, failureCallback=self.connectFailureMsg)
-
-    def fakeConnect(self):
-        Sequence(
-            Func(self.showConnectDialog),
-            Wait(2),
-            Func(self.destroyConnectDialog),
-            Func(self.enterPAT)
-        ).start()
-
-    def showConnectDialog(self):
-        self.connectDialog = TTDialog.TTDialog(parent=aspect2dp, style=TTDialog.NoButtons, text=OTPLocalizer.CRConnecting)
-        self.connectDialog.show()
-
-    def destroyConnectDialog(self):
-        if self.connectDialog:
-            self.connectDialog.destroy()
-            self.connectDialog = None
-
-    def connectSuccessMsg(self):
-        self.notify.info('Successfully connected to gameserver.')
-        self.setInterestZones([1])
-
-    def connectFailureMsg(self, statusCode, statusString):
-        self.notify.info('Failed to connect to gameserver.')
-        print statusCode
-        print statusString
-        self.lostConnection()
-
-    def lostConnection(self):
-        if self.avChooser:
-            self.exitPAT()
-        if loader.inBulkBlock:
-            loader.abortBulkLoad()
-
-        self.notify.warning('Lost connection to gameserver. Notifying user.')
-        soundMgr.stopAllMusic()
-        render.hide()
-        aspect2d.hide()
-        dialog = TTDialog.TTDialog(parent=aspect2dp, style=TTDialog.Acknowledge, text=OTPLocalizer.CRLostConnection, text_wordwrap=18, fadeScreen=0.5, command=sys.exit)
-        dialog.show()
 
     def enterLogin(self):
         self.login = Login.Login()
