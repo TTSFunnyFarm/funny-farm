@@ -6,6 +6,7 @@ from toontown.toontowngui import TTDialog
 from toontown.toonbase import FunnyFarmGlobals
 from otp.otpbase import OTPLocalizer
 from toontown.login import Login
+import random
 import PlayGame
 import os
 import sys
@@ -26,10 +27,10 @@ class FFClientRepository(ClientRepository):
 
     def fakeConnect(self):
         Sequence(
-                Func(self.showConnectDialog),
-                Wait(2),
-                Func(self.destroyConnectDialog),
-                Func(self.enterPAT)
+            Func(self.showConnectDialog),
+            Wait(2),
+            Func(self.destroyConnectDialog),
+            Func(self.enterPAT)
         ).start()
 
     def showConnectDialog(self):
@@ -109,6 +110,11 @@ class FFClientRepository(ClientRepository):
             self.playGame.enterFFHood()
 
     def teleportTo(self, zoneId):
+        if base.secretAreaFlag:
+            secretAreaFlag = random.randint(0, 100)
+            if not secretAreaFlag:
+                zoneId = FunnyFarmGlobals.SecretArea
+                base.secretAreaFlag = False
         base.localAvatar.enterTeleportOut(callback=self.__handleTeleport, extraArgs=[zoneId])
         Sequence(Wait(3.2), Func(base.localAvatar.hide)).start()
 
