@@ -119,4 +119,4 @@ class SSHood(ToonHood):
 
     def __handleEnterRR(self):
         base.cr.playGame.exitHood()
-        base.cr.playGame.enterSSStreet(tunnel='ss')
+        base.cr.playGame.enterRRStreet(tunnel='ss')
