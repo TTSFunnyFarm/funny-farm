@@ -6,26 +6,28 @@ class SoundManager:
 
     def __init__(self):
         self.musicList = map(
-                base.loadMusic, [
-                        'phase_4/audio/bgm/minigame_race.ogg',
-                        'phase_3/audio/bgm/ff_theme.ogg',
-                        'phase_3/audio/bgm/ff_theme_winter.ogg',
-                        'phase_3/audio/bgm/ff_theme_halloween.ogg',
-                        'phase_3/audio/bgm/create_a_toon.ogg',
-                        'phase_6/audio/bgm/OZ_SZ.ogg',
-                        'phase_14/audio/bgm/FF_nbrhood.ogg',
-                        'phase_14/audio/bgm/FF_SZ.ogg',
-                        'phase_14/audio/bgm/FF_SZ_activity.ogg',
-                        'phase_14/audio/bgm/SS_nbrhood.ogg',
-                        'phase_14/audio/bgm/SS_SZ.ogg',
-                        'phase_12/audio/bgm/Bossbot_Entry_v2.ogg'
-                ]
+            base.loadMusic, [
+                    'phase_4/audio/bgm/minigame_race.ogg',
+                    'phase_3/audio/bgm/ff_theme.ogg',
+                    'phase_3/audio/bgm/ff_theme_winter.ogg',
+                    'phase_3/audio/bgm/ff_theme_halloween.ogg',
+                    'phase_3/audio/bgm/create_a_toon.ogg',
+                    'phase_6/audio/bgm/OZ_SZ.ogg',
+                    'phase_14/audio/bgm/FF_nbrhood.ogg',
+                    'phase_14/audio/bgm/FF_SZ.ogg',
+                    'phase_14/audio/bgm/FF_SZ_activity.ogg',
+                    'phase_14/audio/bgm/SS_nbrhood.ogg',
+                    'phase_14/audio/bgm/SS_SZ.ogg',
+                    'phase_14/audio/bgm/CV_SZ.ogg',
+                    'phase_12/audio/bgm/Bossbot_Entry_v2.ogg'
+            ]
         )
         self.safezoneMusicMap = {
             FunnyFarmGlobals.FunnyFarm : self.startFFNbrhood,
             FunnyFarmGlobals.FunnyFarmCentral : self.startFFSZ,
             FunnyFarmGlobals.SillySprings : self.startSSNbrhood,
             FunnyFarmGlobals.RicketyRoad : self.startSSSZ,
+            FunnyFarmGlobals.WintryWay : self.startCVSZ,
             FunnyFarmGlobals.SecretArea : self.startSecretArea
         }
         self.shopMusicMap = {
@@ -53,7 +55,7 @@ class SoundManager:
         elif FFTime.isHalloween():
             self.playMusic(3)
         else:
-            self.playMusic(1)
+            self.playMusic(1, volume=0.5)
 
     def stopPAT(self):
         self.musicList[1].stop()
@@ -73,7 +75,7 @@ class SoundManager:
         self.musicList[5].stop()
 
     def startFFNbrhood(self):
-        self.playMusic(6)
+        self.playMusic(6, volume=0.5)
 
     def stopFFNbrhood(self):
         self.musicList[6].stop()
@@ -91,7 +93,7 @@ class SoundManager:
         self.musicList[8].stop()
 
     def startSSNbrhood(self):
-        self.playMusic(9)
+        self.playMusic(9, volume=0.5)
 
     def stopSSNbrhood(self):
         self.musicList[9].stop()
@@ -102,8 +104,14 @@ class SoundManager:
     def stopSSSZ(self):
         self.musicList[10].stop()
 
+    def startCVSZ(self):
+        self.playMusic(11, volume=0.5)
+
+    def stopCVSZ(self):
+        self.musicList[11].stop()
+
     def startSecretArea(self):
-        self.playMusic(11)
+        self.playMusic(12)
 
     def stopSecretArea(self):
-        self.musicList[11].stop()
+        self.musicList[12].stop()

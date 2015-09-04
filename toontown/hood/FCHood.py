@@ -22,10 +22,11 @@ class FCHood(ToonHood):
         if tunnel:
             if tunnel == 'ff':
                 tunnelOrigin = self.geom.find('**/FFTunnel').find('**/tunnel_origin')
-                base.localAvatar.tunnelIn(tunnelOrigin)
             elif tunnel == 'rr':
                 tunnelOrigin = self.geom.find('**/RRTunnel').find('**/tunnel_origin')
-                base.localAvatar.tunnelIn(tunnelOrigin)
+            elif tunnel == 'ww':
+                tunnelOrigin = self.geom.find('**/WWTunnel').find('**/tunnel_origin')
+            base.localAvatar.tunnelIn(tunnelOrigin)
         if FFTime.isWinter():
             self.snow.start(camera, self.snowRender)
         self.startActive()
@@ -56,6 +57,7 @@ class FCHood(ToonHood):
     def startActive(self):
         self.acceptOnce('enterFFTunnel_trigger', self.__handleFFTunnel)
         self.acceptOnce('enterRRTunnel_trigger', self.__handleRRTunnel)
+        self.acceptOnce('enterWWTunnel_trigger', self.__handleWWTunnel)
 
     def __handleFFTunnel(self, entry):
         tunnelOrigin = self.geom.find('**/FFTunnel').find('**/tunnel_origin')
@@ -73,4 +75,13 @@ class FCHood(ToonHood):
 
     def __handleEnterRR(self):
         base.cr.playGame.exitHood()
-        base.cr.playGame.enterSSStreet(tunnel='fc')
+        base.cr.playGame.enterRRStreet(tunnel='fc')
+
+    def __handleWWTunnel(self, entry):
+        tunnelOrigin = self.geom.find('**/WWTunnel').find('**/tunnel_origin')
+        base.localAvatar.tunnelOut(tunnelOrigin)
+        self.acceptOnce('tunnelOutMovieDone', self.__handleEnterWW)
+
+    def __handleEnterWW(self):
+        base.cr.playGame.exitHood()
+        base.cr.playGame.enterWWStreet(tunnel='fc')

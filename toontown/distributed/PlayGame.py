@@ -8,7 +8,8 @@ from toontown.hood import FFHood
 from toontown.hood import FCHood
 from toontown.hood import SSHood
 from toontown.hood import SecretArea
-from toontown.town import SSStreet
+from toontown.town import RRStreet
+from toontown.town import WWStreet
 from toontown.building import Door
 from toontown.building import PetShopInterior
 from toontown.building import GagShopInterior
@@ -127,7 +128,7 @@ class PlayGame(DirectObject):
 
     def enterTutorial(self):
         hood = Tutorial.Tutorial()
-        self.enterHood(hood, 'The Toontorial', 300)
+        self.enterHood(hood, 'The Toon-torial', 300)
 
     def enterFFHood(self, shop=None, tunnel=None):
         hood = FFHood.FFHood()
@@ -147,9 +148,13 @@ class PlayGame(DirectObject):
         else:
             self.enterHood(hood, 'Silly Springs', 100, tunnel=tunnel)
 
-    def enterSSStreet(self, tunnel=None):
-        street = SSStreet.SSStreet()
+    def enterRRStreet(self, tunnel=None):
+        street = RRStreet.RRStreet()
         self.enterStreet(street, 'Rickety Road', 100, tunnel=tunnel)
+
+    def enterWWStreet(self, tunnel=None):
+        street = WWStreet.WWStreet()
+        self.enterStreet(street, 'Wintry Way', 100, tunnel=tunnel)
 
     def enterPetShop(self, zoneId):
         place = PetShopInterior.PetShopInterior(zoneId)

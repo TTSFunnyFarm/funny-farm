@@ -7,7 +7,7 @@ from toontown.toonbase import FFTime
 from ToonStreet import ToonStreet
 from toontown.building import EliteExterior
 
-class SSStreet(ToonStreet):
+class RRStreet(ToonStreet):
 
     def __init__(self):
         ToonStreet.__init__(self)
@@ -16,7 +16,7 @@ class SSStreet(ToonStreet):
         self.spookyStreetFile = 'phase_14/models/streets/rickety_road_halloween'
         self.winterStreetFile = 'phase_14/models/streets/rickety_road_winter'
         self.skyFile = 'phase_3.5/models/props/TT_sky'
-        self.titleText = FunnyFarmGlobals.SSStreetText
+        self.titleText = FunnyFarmGlobals.RRStreetText
         self.titleColor = (0.8, 0.6, 1.0, 1.0)
 
     def enter(self, tunnel=None):
@@ -27,10 +27,9 @@ class SSStreet(ToonStreet):
         if tunnel:
             if tunnel == 'fc':
                 tunnelOrigin = self.geom.find('**/FCTunnel').find('**/tunnel_origin')
-                base.localAvatar.tunnelIn(tunnelOrigin)
             elif tunnel == 'ss':
                 tunnelOrigin = self.geom.find('**/SSTunnel').find('**/tunnel_origin')
-                base.localAvatar.tunnelIn(tunnelOrigin)
+            base.localAvatar.tunnelIn(tunnelOrigin)
         self.startActive()
 
     def exit(self):

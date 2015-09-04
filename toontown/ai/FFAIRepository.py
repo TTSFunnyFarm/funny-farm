@@ -3,7 +3,8 @@ from toontown.toon import Toon
 from toontown.hood import FFHoodAI
 from toontown.hood import FCHoodAI
 from toontown.hood import SSHoodAI
-from toontown.town import SSStreetAI
+from toontown.town import RRStreetAI
+from toontown.town import WWStreetAI
 
 class FFAIRepository(DirectObject):
     notify = directNotify.newCategory('AIRepository')
@@ -23,7 +24,8 @@ class FFAIRepository(DirectObject):
         self.hoods.append(FFHoodAI.FFHoodAI(self))
         self.hoods.append(FCHoodAI.FCHoodAI(self))
         self.hoods.append(SSHoodAI.SSHoodAI(self))
-        self.hoods.append(SSStreetAI.SSStreetAI(self))
+        self.hoods.append(RRStreetAI.RRStreetAI(self))
+        self.hoods.append(WWStreetAI.WWStreetAI(self))
         self.notify.info('Done.')
 
     def preloadAvatars(self):

@@ -5,7 +5,7 @@ from otp.margins.MarginManager import MarginManager
 from otp.nametag import NametagGlobals
 from otp.nametag.ChatBalloon import ChatBalloon
 import TTLocalizer
-import ToontownGlobals
+from ToontownGlobals import *
 
 Tutorial = 500
 FunnyFarm = 1000
@@ -20,11 +20,11 @@ SecretArea = 3200
 FFHoodText = 'Funny Farm\nPlayground'
 FCHoodText = 'Funny Farm Central'
 SSHoodText = 'Silly Springs\nPlayground'
-SSStreetText = 'Silly Springs\nRickety Road'
+RRStreetText = 'Silly Springs\nRickety Road'
 CVHoodText = 'Chilly Village\nPlayground'
-CVStreetText = 'Cilly Village\nWintry Way'
+WWStreetText = 'Chilly Village\nWintry Way'
 MMHoodText = 'Moonlit Meadow\nPlayground'
-MMStreetText = 'Moonlit Meadow\nBreezy Bend'
+BBStreetText = 'Moonlit Meadow\nBreezy Bend'
 SecretAreaText = '???'
 
 def getVar(var):
@@ -54,7 +54,8 @@ phaseMap = {
     FunnyFarm : 'phase_14/models/neighborhoods/funny_farm',
     FunnyFarmCentral : 'phase_14/models/neighborhoods/funny_farm_central',
     SillySprings : 'phase_14/models/neighborhoods/silly_springs',
-    RicketyRoad : 'phase_14/models/streets/rickety_road'
+    RicketyRoad : 'phase_14/models/streets/rickety_road',
+    WintryWay : 'phase_14/models/streets/wintry_way'
 }
 
 SpawnPoints = {
@@ -87,6 +88,8 @@ SpawnPoints = {
 nametagFonts = []
 for font in TTLocalizer.NametagFonts:
     nametagFonts.append(loader.loadFont(font))
+Default = getInterfaceFont()
+Mickey = getSignFont()
 Simple = nametagFonts[0]
 Shivering = nametagFonts[1]
 Wonky = nametagFonts[2]
@@ -102,7 +105,8 @@ Poetic = nametagFonts[11]
 Boardwalk = nametagFonts[12]
 Western = nametagFonts[13]
 nametagDict = {
-        ToontownGlobals.getSignFont() : 'Mickey',
+        getInterfaceFont() : 'Default',
+        getSignFont() : 'Mickey',
         Simple : 'Simple',
         Shivering : 'Shivering',
         Wonky : 'Wonky',
