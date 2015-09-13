@@ -499,7 +499,6 @@ class CatchGame(Minigame):
         self.timer.setTransparency(1)
         self.timer.setColorScale(1, 1, 1, 0.75)
         base.playMusic(self.music, looping=0, volume=0.9)
-        taskMgr.doMethodLater(CatchGameGlobals.GameDuration, self.setEveryoneDone, 'everyoneDone')
 
     def exitPlay(self):
         self.stopDropTask()
@@ -523,10 +522,9 @@ class CatchGame(Minigame):
         del self.droppedObjCaught
         del self.dropSchedule
         taskMgr.remove(self.EndGameTaskName)
-        taskMgr.remove('everyoneDone')
 
     def timerExpired(self):
-        pass
+        self.setEveryoneDone()
 
     def __handleCatch(self, objNum):
         self.notify.debug('catch: %s' % objNum)
@@ -610,7 +608,7 @@ class CatchGame(Minigame):
 
         return Task.cont
 
-    def setEveryoneDone(self, task):
+    def setEveryoneDone(self):
         if not self.hasLocalToon:
             return
         if self.gameFSM.getCurrentState().getName() != 'play':
@@ -654,7 +652,6 @@ class CatchGame(Minigame):
             self.perfectIval.start()
         else:
             taskMgr.doMethodLater(1, endGame, self.EndGameTaskName)
-        return Task.done
 
     def getDropIval(self, x, y, dropObjName, num):
         objType = Name2DropObjectType[dropObjName]

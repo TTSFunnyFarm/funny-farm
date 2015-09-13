@@ -249,10 +249,9 @@ class Minigame(DirectObject):
         self.cleanupActions = []
         self.ignoreAll()
         toon = base.localAvatar
-        if self.numJellybeans <= 0:
+        pointsArray = [int(round(self.numJellybeans))]
+        if pointsArray[0] <= 0:
             pointsArray = [1]
-        else:
-            pointsArray = [int(round(self.numJellybeans))]
         playerMoney = [toon.getMoney()]
         ids = [toon.doId]
         states = [PURCHASE_WAITING_STATE]

@@ -22,14 +22,12 @@ from toontown.minigame import RingGame
 from toontown.minigame import CannonGame
 from toontown.minigame import CatchGame
 from toontown.minigame import TugOfWarGame
+from toontown.minigame import MazeGame
 
 class PlayGame(DirectObject):
     notify = directNotify.newCategory('PlayGame')
     MINIGAMES = [
-        RingGame.RingGame, 
-        CannonGame.CannonGame, 
-        CatchGame.CatchGame, 
-        TugOfWarGame.TugOfWarGame
+        MazeGame.MazeGame
     ]
 
     def __init__(self):
@@ -41,9 +39,9 @@ class PlayGame(DirectObject):
 
     def enterHood(self, hood, name, loadCount, tunnel=None):
         self.hood = hood
-        loader.beginBulkLoad(name, 'Heading to ' + name + '. . .', loadCount, TTLocalizer.TIP_GENERAL)
+        loader.beginBulkLoad('hood', 'Heading to ' + name + '. . .', loadCount, TTLocalizer.TIP_GENERAL)
         self.hood.load()
-        loader.endBulkLoad(name)
+        loader.endBulkLoad('hood')
         self.hood.enter(tunnel=tunnel)
 
     def enterHoodFromShop(self, hood, shop=None):
@@ -60,9 +58,9 @@ class PlayGame(DirectObject):
 
     def enterStreet(self, street, name, loadCount, tunnel=None):
         self.street = street
-        loader.beginBulkLoad(name, 'Heading to ' + name + '. . .', loadCount, TTLocalizer.TIP_GENERAL)
+        loader.beginBulkLoad('street', 'Heading to ' + name + '. . .', loadCount, TTLocalizer.TIP_GENERAL)
         self.street.load()
-        loader.endBulkLoad(name)
+        loader.endBulkLoad('street')
         self.street.enter(tunnel=tunnel)
 
     def exitStreet(self):
@@ -90,9 +88,9 @@ class PlayGame(DirectObject):
 
     def enterSecretArea(self):
         self.hood = SecretArea.SecretArea()
-        loader.beginBulkLoad('???', '???', 400, TTLocalizer.TIP_GENERAL)
+        loader.beginBulkLoad('hood', '???', 400, TTLocalizer.TIP_GENERAL)
         self.hood.load()
-        loader.endBulkLoad('???')
+        loader.endBulkLoad('hood')
         self.hood.enter()
 
     def enterRandomMinigame(self):

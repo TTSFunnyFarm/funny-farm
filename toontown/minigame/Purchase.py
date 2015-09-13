@@ -242,7 +242,7 @@ class Purchase(PurchaseBase):
         base.cr.enterHood(base.cr.playGame.hood.zoneId)
 
     def __timerExpired(self):
-        messenger.send('purchaseTimeout')
+        self.__handleBackToPlayground()
 
     def findHeadFrame(self, id):
         for headFrame in self.headFrames:
@@ -682,8 +682,7 @@ class Purchase(PurchaseBase):
             return self.metagamePlayAgainResult
         numToons = 0
         for avId in self.ids:
-            if base.cr.doId2do.has_key(avId) and avId not in self.unexpectedExits:
-                numToons += 1
+            numToons += 1
 
         self.metagamePlayAgainResult = False
         if numToons > 1:
@@ -693,11 +692,10 @@ class Purchase(PurchaseBase):
 
     def setupUnexpectedExitHooks(self):
         for avId in self.ids:
-            if base.cr.doId2do.has_key(avId):
-                toon = base.cr.doId2do[avId]
-                eventName = toon.uniqueName('disable')
-                self.accept(eventName, self.__handleUnexpectedExit, extraArgs=[avId])
-                self.unexpectedEventNames.append(eventName)
+            toon = base.localAvatar
+            eventName = toon.uniqueName('disable')
+            self.accept(eventName, self.__handleUnexpectedExit, extraArgs=[avId])
+            self.unexpectedEventNames.append(eventName)
 
     def cleanupUnexpectedExitHooks(self):
         for eventName in self.unexpectedEventNames:

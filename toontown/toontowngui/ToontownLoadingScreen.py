@@ -46,6 +46,7 @@ class ToontownLoadingScreen:
         return TTLocalizer.TipTitle + '\n' + random.choice(TTLocalizer.TipDict.get(tipCategory))
 
     def begin(self, range, label, tipCategory):
+        base.adjustWindowAspectRatio(base.getAspectRatio())
         self.waitBar['range'] = range
         self.title['text'] = label
         self.tip['text'] = self.getTip(tipCategory)
@@ -53,10 +54,11 @@ class ToontownLoadingScreen:
         self.__expectedCount = range
         self.logo.setPos(0, 0, 0.6)
         self.logo.setSz(0.8)
-        self.gui.reparentTo(aspect2dp, NO_FADE_SORT_INDEX)
+        self.gui.reparentTo(aspect2d, NO_FADE_SORT_INDEX)
         self.waitBar.update(self.__count)
 
     def end(self):
+        base.adjustWindowAspectRatio(base.getAspectRatio())
         self.waitBar.finish(N=50)
         self.waitBar.reparentTo(self.gui)
         self.title.reparentTo(self.gui)
@@ -68,5 +70,6 @@ class ToontownLoadingScreen:
         self.gui.reparentTo(hidden)
 
     def tick(self):
+        base.adjustWindowAspectRatio(base.getAspectRatio())
         self.__count = self.__count + 1
         self.waitBar.update(self.__count)

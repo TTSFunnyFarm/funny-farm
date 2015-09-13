@@ -8,10 +8,7 @@ class MinigameAvatarScorePanel(DirectFrame):
 
     def __init__(self, avId, avName):
         self.avId = avId
-        if base.cr.doId2do.has_key(self.avId):
-            self.avatar = base.cr.doId2do[self.avId]
-        else:
-            self.avatar = None
+        self.avatar = base.localAvatar
         DirectFrame.__init__(self, relief=None, image_color=GlobalDialogColor, image_scale=(0.4, 1.0, 0.24), image_pos=(0.0, 0.1, 0.0))
         self['image'] = DGG.getDefaultDialogGeom()
         self.scoreText = DirectLabel(self, relief=None, text='0', text_scale=TTLocalizer.MASPscoreText, pos=(0.1, 0.0, -0.09))
