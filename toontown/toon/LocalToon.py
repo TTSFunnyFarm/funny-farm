@@ -87,6 +87,9 @@ class LocalToon(Toon.Toon, WalkControls):
         del self.book
         del self.laffMeter
 
+    def isLocal(self):
+        return True
+
     def uniqueName(self, idString):
         return ('%s-%s' % (idString, str(self.doId)))
 
@@ -346,16 +349,6 @@ class LocalToon(Toon.Toon, WalkControls):
         pos = tunnelOrigin.getPos(render)
         h = tunnelOrigin.getH(render)
         self.setTunnelIn(timestamp, endX, pos[0], pos[1], pos[2], h)
-        self.d_setTunnelIn(timestamp, endX, pos[0], pos[1], pos[2], h)
-
-    def d_setTunnelIn(self, timestamp, endX, x, y, z, h):
-        pass
-        '''self.sendUpdate('setTunnelIn', [timestamp,
-         endX,
-         x,
-         y,
-         z,
-         h])'''
 
     def setTunnelIn(self, timestamp, endX, x, y, z, h):
         t = globalClockDelta.networkToLocalTime(timestamp)
@@ -366,17 +359,6 @@ class LocalToon(Toon.Toon, WalkControls):
         pos = tunnelOrigin.getPos(render)
         h = tunnelOrigin.getH(render)
         self.setTunnelOut(timestamp, startX, startY, pos[0], pos[1], pos[2], h)
-        self.d_setTunnelOut(timestamp, startX, startY, pos[0], pos[1], pos[2], h)
-
-    def d_setTunnelOut(self, timestamp, startX, startY, x, y, z, h):
-        pass
-        '''self.sendUpdate('setTunnelOut', [timestamp,
-         startX,
-         startY,
-         x,
-         y,
-         z,
-         h])'''
 
     def setTunnelOut(self, timestamp, startX, startY, x, y, z, h):
         t = globalClockDelta.networkToLocalTime(timestamp)
@@ -528,14 +510,12 @@ class LocalToon(Toon.Toon, WalkControls):
         if self.numPies != ToontownGlobals.FullPies:
             self.setNumPies(self.numPies - 1)
         self.lastTossedPie = globalClock.getFrameTime()
-        if not launcher.getPhaseComplete(5):
-            return
         lastTossTrack = Sequence()
         if self.tossTrack:
             lastTossTrack = self.tossTrack
             tossTrack = None
         lastPieTrack = Sequence()
-        if sequence in self.pieTracks:
+        if self.pieTracks.has_key(sequence):
             lastPieTrack = self.pieTracks[sequence]
             del self.pieTracks[sequence]
         ts = globalClockDelta.localElapsedTime(timestamp32, bits=32)
@@ -557,14 +537,8 @@ class LocalToon(Toon.Toon, WalkControls):
         pie.start(startTime)
         return
 
-    def pieFinishedFlying(self, sequence):
-        if sequence in self.pieTracks:
-            del self.pieTracks[sequence]
-        if self.__piePowerMeterSequence == sequence:
-            self.__piePowerMeter.hide()
-
     def pieFinishedSplatting(self, sequence):
-        if sequence in self.splatTracks:
+        if self.splatTracks.has_key(sequence):
             del self.splatTracks[sequence]
 
     def pieSplat(self, x, y, z, sequence, pieCode, timestamp32):
@@ -573,13 +547,11 @@ class LocalToon(Toon.Toon, WalkControls):
         elapsed = globalClock.getFrameTime() - self.lastTossedPie
         if elapsed > 30:
             return
-        if not launcher.getPhaseComplete(5):
-            return
         lastPieTrack = Sequence()
-        if sequence in self.pieTracks:
+        if self.pieTracks.has_key(sequence):
             lastPieTrack = self.pieTracks[sequence]
             del self.pieTracks[sequence]
-        if sequence in self.splatTracks:
+        if self.splatTracks.has_key(sequence):
             lastSplatTrack = self.splatTracks[sequence]
             del self.splatTracks[sequence]
             lastSplatTrack.finish()
@@ -616,13 +588,15 @@ class LocalToon(Toon.Toon, WalkControls):
 
     def setNumPies(self, numPies):
         self.numPies = numPies
-        self.updatePieButton()
-        if numPies == 0:
-            self.interruptPie()
+        if self.isLocal():
+            self.updatePieButton()
+            if numPies == 0:
+                self.interruptPie()
 
     def setPieType(self, pieType):
         self.pieType = pieType
-        self.updatePieButton()
+        if self.isLocal():
+            self.updatePieButton()
 
     def getPieBubble(self):
         if self.__pieBubble == None:
@@ -647,6 +621,8 @@ class LocalToon(Toon.Toon, WalkControls):
         if self.tossPieStart != None:
             return
         if not self.allowPies:
+            return
+        if self.hp < 1:
             return
         if self.numPies == 0:
             messenger.send('outOfPies')
@@ -688,15 +664,7 @@ class LocalToon(Toon.Toon, WalkControls):
         pos = self.getPos()
         hpr = self.getHpr()
         timestamp32 = globalClockDelta.getFrameNetworkTime(bits=32)
-        '''
-        self.sendUpdate('presentPie', [pos[0],
-         pos[1],
-         pos[2],
-         hpr[0] % 360.0,
-         timestamp32])
-        '''
         Emote.globalEmote.disableBody(self)
-        self.stop()
         messenger.send('begin-pie')
         ival = self.getPresentPieInterval(pos[0], pos[1], pos[2], hpr[0])
         ival = Sequence(ival, name=self.uniqueName('localPresentPie'))
@@ -777,16 +745,6 @@ class LocalToon(Toon.Toon, WalkControls):
         pieBubble = self.getPieBubble().instanceTo(NodePath())
 
         def pieFlies(self = self, pos = pos, hpr = hpr, sequence = sequence, power = power, timestamp32 = timestamp32, pieBubble = pieBubble):
-            '''
-            self.sendUpdate('tossPie', [pos[0],
-             pos[1],
-             pos[2],
-             hpr[0] % 360.0,
-             sequence,
-             power,
-             self.pieThrowType,
-             timestamp32])
-            '''
             if self.numPies != ToontownGlobals.FullPies:
                 self.setNumPies(self.numPies - 1)
             base.cTrav.addCollider(pieBubble, self.pieHandler)
@@ -801,6 +759,12 @@ class LocalToon(Toon.Toon, WalkControls):
         self.pieTracks[sequence] = pie
         pie.start()
         return
+
+    def pieFinishedFlying(self, sequence):
+        if self.pieTracks.has_key(sequence):
+            del self.pieTracks[sequence]
+        if self.__piePowerMeterSequence == sequence:
+            self.__piePowerMeter.hide()
 
     def __finishPieTrack(self, sequence):
         if self.pieTracks.has_key(sequence):
@@ -825,14 +789,6 @@ class LocalToon(Toon.Toon, WalkControls):
             pieCode = int(pieCodeStr)
         pos = entry.getSurfacePoint(render)
         timestamp32 = globalClockDelta.getFrameNetworkTime(bits=32)
-        '''
-        self.sendUpdate('pieSplat', [pos[0],
-         pos[1],
-         pos[2],
-         sequence,
-         pieCode,
-         timestamp32])
-        '''
         splat = self.getPieSplatInterval(pos[0], pos[1], pos[2], pieCode)
         splat = Sequence(splat, Func(self.pieFinishedSplatting, sequence))
         self.splatTracks[sequence] = splat

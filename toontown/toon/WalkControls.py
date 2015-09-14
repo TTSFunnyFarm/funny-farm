@@ -297,10 +297,10 @@ class WalkControls(DirectObject):
         control = KeyboardButton.control()
         keyPressed = base.mouseWatcherNode.is_button_down
         if not self.standWalkRunReverse:
-            self.standWalkRunReverse = [('neutral', 1.0),
+            self.standWalkRunReverse = (('neutral', 1.0),
              ('walk', 1.0),
              ('run', 1.0),
-             ('walk', -1.0)]
+             ('walk', -1.0))
 
         if keyPressed(control):
             if self.isPageUp or self.isPageDown:

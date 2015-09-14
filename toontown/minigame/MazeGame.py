@@ -737,7 +737,7 @@ class MazeGame(Minigame):
         for avId in self.avIdList:
             toon = self.getAvatar()
             if toon:
-                toon.actorInterval('neutral').loop()
+                toon.loop('neutral')
 
     def __resetClock(self, tOffset):
         self.notify.debug('resetClock')

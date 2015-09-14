@@ -365,7 +365,7 @@ class Purchase(PurchaseBase):
             for counter in task.counters:
                 counter.hide()
             toon = base.localAvatar
-            toon.actorInterval('jump').start()
+            toon.setAnimState('jump', 1.0)
 
             base.playSfx(task.celebrateSound)
             return Task.done

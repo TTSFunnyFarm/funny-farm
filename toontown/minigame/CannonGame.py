@@ -710,7 +710,7 @@ class CannonGame(Minigame):
         av.setPos(startPos)
         av.setHpr(startHpr)
         avatar = self.getAvatar()
-        avatar.actorInterval('swim').loop()
+        avatar.loop('swim')
         avatar.setPosHpr(0, 0, -(avatar.getHeight() / 2.0), 0, 0, 0)
         shootTask = Task(self.__shootTask)
         flyTask = Task(self.__flyTask)

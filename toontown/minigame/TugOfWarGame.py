@@ -341,7 +341,7 @@ class TugOfWarGame(Minigame):
         for avId in self.avIdList:
             av = self.getAvatar()
             if av:
-                av.actorInterval('neutral').loop()
+                av.loop('neutral')
                 av.resetLOD()
                 av.dropShadow.show()
 
@@ -657,7 +657,7 @@ class TugOfWarGame(Minigame):
 
                 toon.pose('tug-o-war', 3)
                 self.rightHandDict[avId] = toon.getRightHands()[0]
-                toon.actorInterval('neutral').loop()
+                toon.loop('neutral')
                 toon.dropShadow.hide()
                 self.dropShadowDict[avId] = self.dropShadow.copyTo(hidden)
                 self.dropShadowDict[avId].reparentTo(toon)
@@ -1004,11 +1004,11 @@ class TugOfWarGame(Minigame):
         for avId in self.avIdList:
             toon = self.getAvatar()
             if avId in winners:
-                reactSeq.append(Func(toon.actorInterval('victory').loop))
+                reactSeq.append(Func(toon.loop, 'victory'))
             elif avId in losers:
-                reactSeq.append(Func(toon.actorInterval('neutral').loop))
+                reactSeq.append(Func(toon.loop, 'neutral'))
             else:
-                reactSeq.append(Func(toon.actorInterval('neutral').loop))
+                reactSeq.append(Func(toon.loop, 'neutral'))
 
         if self.localAvId in winners:
             exitSeq.append(Func(self.setText, self.roundText, TTLocalizer.TugOfWarGameEnd))
@@ -1112,7 +1112,7 @@ class TugOfWarGame(Minigame):
             return
         toon = self.getAvatar()
         if keyRate > 0 and self.pullingDict[avId] == 0:
-            toon.actorInterval('tug-o-war').loop()
+            toon.loop('tug-o-war')
             self.pullingDict[avId] = 1
         if keyRate <= 0 and self.pullingDict[avId] == 1:
             toon.pose('tug-o-war', 3)
@@ -1188,7 +1188,7 @@ class TugOfWarGame(Minigame):
             toon = self.getAvatar()
             waterPos = self.drinkPositions.pop()
             newPos = VBase3(waterPos[0], waterPos[1], waterPos[2] - toon.getHeight())
-            toon.actorInterval('neutral').loop()
+            toon.loop('neutral')
             self.dropShadowDict[avId].reparentTo(hidden)
             loser = toon
             animId = avId
@@ -1199,7 +1199,7 @@ class TugOfWarGame(Minigame):
         self.splash.setScale(2.5, 2.5, 1)
         self.ripples.setPos(newPos[0], newPos[1], -1.7)
         self.ripples.setScale(1, 1, 1)
-        self.animTracks[animId] = Sequence(Parallel(ActorInterval(actor=loser, animName='slip-forward', duration=2.0), LerpPosInterval(loser, duration=2.0, pos=newPos), Sequence(Wait(1.0), Parallel(Func(base.playSfx, self.sndHitWater), Func(self.splash.play), Func(self.ripples.play)))), Func(loser.actorInterval('neutral').loop))
+        self.animTracks[animId] = Sequence(Parallel(ActorInterval(actor=loser, animName='slip-forward', duration=2.0), LerpPosInterval(loser, duration=2.0, pos=newPos), Sequence(Wait(1.0), Parallel(Func(base.playSfx, self.sndHitWater), Func(self.splash.play), Func(self.ripples.play)))), Func(loser.loop, 'neutral'))
         self.animTracks[animId].start()
         return
 

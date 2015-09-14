@@ -192,7 +192,7 @@ def loadModels():
     if preloadAvatars:
 
         def loadTex(path):
-            tex = loader.loadTexture(path)
+            tex = loader.loadTexture('/' + path)
             tex.setMinfilter(Texture.FTLinearMipmapLinear)
             tex.setMagfilter(Texture.FTLinear)
             Preloaded.append(tex)
@@ -211,30 +211,30 @@ def loadModels():
 
         for key in LegDict.keys():
             fileRoot = LegDict[key]
-            model = loader.loadModel('phase_3' + fileRoot + '1000')
+            model = loader.loadModelNode('/phase_3' + fileRoot + '1000')
             Preloaded.append(model)
-            model = loader.loadModel('phase_3' + fileRoot + '500')
+            model = loader.loadModelNode('/phase_3' + fileRoot + '500')
             Preloaded.append(model)
-            model = loader.loadModel('phase_3' + fileRoot + '250')
+            model = loader.loadModelNode('/phase_3' + fileRoot + '250')
             Preloaded.append(model)
 
         for key in TorsoDict.keys():
             fileRoot = TorsoDict[key]
-            model = loader.loadModel('phase_3' + fileRoot + '1000')
+            model = loader.loadModelNode('/phase_3' + fileRoot + '1000')
             Preloaded.append(model)
             if len(key) > 1:
-                model = loader.loadModel('phase_3' + fileRoot + '500')
+                model = loader.loadModelNode('/phase_3' + fileRoot + '500')
                 Preloaded.append(model)
-                model = loader.loadModel('phase_3' + fileRoot + '250')
+                model = loader.loadModelNode('/phase_3' + fileRoot + '250')
                 Preloaded.append(model)
 
         for key in HeadDict.keys():
             fileRoot = HeadDict[key]
-            model = loader.loadModel('phase_3' + fileRoot + '1000')
+            model = loader.loadModelNode('/phase_3' + fileRoot + '1000')
             Preloaded.append(model)
-            model = loader.loadModel('phase_3' + fileRoot + '500')
+            model = loader.loadModelNode('/phase_3' + fileRoot + '500')
             Preloaded.append(model)
-            model = loader.loadModel('phase_3' + fileRoot + '250')
+            model = loader.loadModelNode('/phase_3' + fileRoot + '250')
             Preloaded.append(model)
 
 
@@ -505,7 +505,6 @@ class Toon(Avatar.Avatar, ToonHead):
         self.setTag('pieCode', str(ToontownGlobals.PieCodeToon))
         self.setFont(ToontownGlobals.getToonFont())
         self.setSpeechFont(ToontownGlobals.getToonFont())
-        self.nametag.setFont(ToontownGlobals.getSignFont())
         self.soundChatBubble = base.loadSfx('phase_3/audio/sfx/GUI_balloon_popup.ogg')
         self.animFSM = ClassicFSM('Toon', [State('off', self.enterOff, self.exitOff),
          State('neutral', self.enterNeutral, self.exitNeutral),
@@ -617,7 +616,7 @@ class Toon(Avatar.Avatar, ToonHead):
             self.swapToonHead(newDNA.head)
         if fForce or newDNA.torso != oldDNA.torso:
             self.swapToonTorso(newDNA.torso, genClothes=0)
-            self.actorInterval('neutral').loop()
+            self.loop('neutral')
         if fForce or newDNA.legs != oldDNA.legs:
             self.swapToonLegs(newDNA.legs)
         self.swapToonColor(newDNA)
@@ -642,12 +641,6 @@ class Toon(Avatar.Avatar, ToonHead):
             self.generateToon()
             self.initializeDropShadow()
             self.initializeNametag3d()
-
-    def getDNA(self):
-        return self.style
-
-    def getRawDNA(self):
-        return self.style.getRawDNA()
 
     def parentToonParts(self):
         if self.hasLOD():
@@ -1390,7 +1383,7 @@ class Toon(Avatar.Avatar, ToonHead):
                 self.playingAnim = anim
                 self.playingRate = rate
                 self.stop()
-                self.actorInterval(anim).loop()
+                self.loop(anim)
                 self.setPlayRate(rate, anim)
                 if self.isDisguised:
                     rightHand = self.suit.rightHand
@@ -1429,7 +1422,7 @@ class Toon(Avatar.Avatar, ToonHead):
     def enterNeutral(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
         anim = 'neutral'
         self.pose(anim, int(self.getNumFrames(anim) * self.randGen.random()))
-        self.actorInterval(anim).loop()
+        self.loop(anim, restart=0)
         self.setPlayRate(animMultiplier, anim)
         self.playingAnim = anim
         self.setActiveShadow(1)
@@ -1441,7 +1434,7 @@ class Toon(Avatar.Avatar, ToonHead):
         anim = 'victory'
         frame = int(ts * self.getFrameRate(anim) * animMultiplier)
         self.pose(anim, frame)
-        self.actorInterval('victory').loop()
+        self.loop('victory', restart=0)
         self.setPlayRate(animMultiplier, 'victory')
         self.playingAnim = anim
         self.setActiveShadow(0)
@@ -1476,8 +1469,8 @@ class Toon(Avatar.Avatar, ToonHead):
         self.setSpeed(0, 0)
         Emote.globalEmote.disableBody(self, 'toon, enterSad')
         self.setActiveShadow(1)
-        if self.isLocal():
-            self.controlManager.disableAvatarJump()
+        self.controlManager.disableAvatarJump()
+        self.setWalkSpeedSlow()
         return
 
     def exitSad(self):
@@ -1485,8 +1478,8 @@ class Toon(Avatar.Avatar, ToonHead):
         self.stop()
         self.motion.exit()
         Emote.globalEmote.releaseBody(self, 'toon, exitSad')
-        if self.isLocal():
-            self.controlManager.enableAvatarJump()
+        self.controlManager.enableAvatarJump()
+        self.setWalkSpeedNormal()
         return
 
     def enterCatching(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
@@ -1498,13 +1491,9 @@ class Toon(Avatar.Avatar, ToonHead):
          ('catch-run', -1.0))
         self.setSpeed(self.forwardSpeed, self.rotateSpeed)
         self.setActiveShadow(1)
-        if self.isLocal():
-            base.taskMgr.add(self.handleAnimation, 'AnimationHandler')
         return
 
     def exitCatching(self):
-        if self.isLocal():
-            base.taskMgr.remove('AnimationHandler')
         self.standWalkRunReverse = None
         self.stop()
         self.motion.exit()
@@ -1519,20 +1508,17 @@ class Toon(Avatar.Avatar, ToonHead):
          ('catch-eatnrun', -1.0))
         self.setSpeed(self.forwardSpeed, self.rotateSpeed)
         self.setActiveShadow(0)
-        if self.isLocal():
-            base.taskMgr.add(self.handleAnimation, 'AnimationHandler')
         return
 
     def exitCatchEating(self):
-        if self.isLocal():
-            base.taskMgr.remove('AnimationHandler')
         self.standWalkRunReverse = None
         self.stop()
         self.motion.exit()
         return
 
     def enterWalk(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
-        self.actorInterval('walk', playRate=animMultiplier).loop()
+        self.loop('walk')
+        self.setPlayRate(animMultiplier, 'walk')
         self.setActiveShadow(1)
 
     def exitWalk(self):
@@ -1551,12 +1537,14 @@ class Toon(Avatar.Avatar, ToonHead):
             else:
                 anim = 'running-jump'
             self.playingAnim = anim
-            self.actorInterval(anim, playRate=animMultiplier).start()
+            self.setPlayRate(animMultiplier, anim)
+            self.play(anim)
         self.setActiveShadow(1)
 
     def exitJump(self):
         self.stop()
         self.playingAnim = 'neutral'
+        self.loop('neutral')
 
     def enterJumpSquat(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
         if not self.isDisguised:
@@ -1581,7 +1569,7 @@ class Toon(Avatar.Avatar, ToonHead):
                 anim = 'running-jump-idle'
             self.playingAnim = anim
             self.setPlayRate(animMultiplier, anim)
-            self.actorInterval(anim).loop()
+            self.loop(anim)
         self.setActiveShadow(1)
 
     def exitJumpAirborne(self):
@@ -1606,7 +1594,8 @@ class Toon(Avatar.Avatar, ToonHead):
         self.playingAnim = 'neutral'
 
     def enterRun(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
-        self.actorInterval('run', playRate=animMultiplier).loop()
+        self.loop('run')
+        self.setPlayRate(animMultiplier, 'run')
         Emote.globalEmote.disableBody(self, 'toon, enterRun')
         self.setActiveShadow(1)
 
@@ -1617,19 +1606,18 @@ class Toon(Avatar.Avatar, ToonHead):
     def enterSwim(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
         Emote.globalEmote.disableAll(self, 'enterSwim')
         self.playingAnim = 'swim'
-        self.actorInterval('swim', playRate=animMultiplier).loop()
+        self.loop('swim')
         self.setPlayRate(animMultiplier, 'swim')
         self.getGeomNode().setP(-89.0)
         self.dropShadow.hide()
-        if self.isLocal():
-            taskMgr.remove('AnimationHandler')
-            self.useSwimControls()
+        taskMgr.remove('AnimationHandler')
+        self.useSwimControls()
         self.nametag3d.setPos(0, -2, 1)
         self.startBobSwimTask()
         self.setActiveShadow(0)
 
     def enterCringe(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
-        self.actorInterval('cringe').loop()
+        self.loop('cringe')
         self.getGeomNode().setPos(0, 0, -2)
         self.setPlayRate(animMultiplier, 'swim')
 
@@ -1640,7 +1628,7 @@ class Toon(Avatar.Avatar, ToonHead):
         self.setPlayRate(animMultiplier, 'swim')
 
     def enterDive(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
-        self.actorInterval('swim').loop()
+        self.loop('swim')
         if hasattr(self.getGeomNode(), 'setPos'):
             self.getGeomNode().setPos(0, 0, -2)
             self.setPlayRate(animMultiplier, 'swim')
@@ -1673,9 +1661,8 @@ class Toon(Avatar.Avatar, ToonHead):
         self.stopBobSwimTask()
         self.getGeomNode().setPosHpr(0, 0, 0, 0, 0, 0)
         self.dropShadow.show()
-        if self.isLocal():
-            self.useWalkControls()
-            taskMgr.add(self.handleAnimation, 'AnimationHandler')
+        self.useWalkControls()
+        taskMgr.add(self.handleAnimation, 'AnimationHandler')
         self.nametag3d.setPos(0, 0, self.height + 0.5)
         Emote.globalEmote.releaseAll(self, 'exitSwim')
 
@@ -1775,7 +1762,6 @@ class Toon(Avatar.Avatar, ToonHead):
             self.track.finish()
             DelayDelete.cleanupDelayDeletes(self.track)
             self.track = None
-        self.setActiveShadow(1)
         Emote.globalEmote.releaseAll(self, 'exitCloseBook')
         return
 
@@ -2056,15 +2042,15 @@ class Toon(Avatar.Avatar, ToonHead):
             self.getGeomNode().show()
             self.nametag3d.show()
         self.dropShadow.show()
-        self.setActiveShadow(1)
         Emote.globalEmote.releaseAll(self, 'exitTeleportIn')
+        self.loop('neutral')
         return
 
     def enterSitStart(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
         Emote.globalEmote.disableBody(self)
         self.playingAnim = 'sit-start'
         if self.isLocal():
-            self.track = Sequence(ActorInterval(self, 'sit-start'), Func(self.setAnimState, 'Sit', animMultiplier))
+            self.track = Sequence(ActorInterval(self, 'sit-start'), Func(self.b_setAnimState, 'Sit', animMultiplier))
         else:
             self.track = Sequence(ActorInterval(self, 'sit-start'))
         self.track.start(ts)
@@ -2082,7 +2068,7 @@ class Toon(Avatar.Avatar, ToonHead):
     def enterSit(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
         Emote.globalEmote.disableBody(self)
         self.playingAnim = 'sit'
-        self.actorInterval('sit').loop()
+        self.loop('sit')
         self.setActiveShadow(0)
 
     def exitSit(self):
@@ -2094,7 +2080,7 @@ class Toon(Avatar.Avatar, ToonHead):
         self.stopBlink()
         self.closeEyes()
         self.lerpLookAt(Point3(0, 1, -4))
-        self.actorInterval('neutral').loop()
+        self.loop('neutral')
         self.setPlayRate(animMultiplier * 0.4, 'neutral')
         self.setChatAbsolute(SLEEP_STRING, CFThought)
         if self == base.localAvatar:
@@ -2107,7 +2093,7 @@ class Toon(Avatar.Avatar, ToonHead):
         self.ignore('wakeup')
         self.takeOffSuit()
         base.cr.playGame.getPlace().fsm.request('final')
-        self.setAnimState('TeleportOut', 1, self.__handleAfkExitTeleport, [0])
+        self.b_setAnimState('TeleportOut', 1, self.__handleAfkExitTeleport, [0])
         return Task.done
 
     def __handleAfkExitTeleport(self, requestStatus):
@@ -2158,7 +2144,7 @@ class Toon(Avatar.Avatar, ToonHead):
         self.setSpeed(self.forwardSpeed, self.rotateSpeed)
         if self.isLocal() and emoteIndex != Emote.globalEmote.EmoteSleepIndex:
             if self.sleepFlag:
-                self.setAnimState('Happy', self.animMultiplier)
+                self.b_setAnimState('Happy', self.animMultiplier)
             self.wakeUp()
         duration = 0
         self.emoteTrack, duration = Emote.globalEmote.doEmote(self, emoteIndex, ts)
@@ -2179,19 +2165,19 @@ class Toon(Avatar.Avatar, ToonHead):
 
     def __returnToLastAnim(self, task):
         if self.playingAnim:
-            self.actorInterval(self.playingAnim).loop()
+            self.loop(self.playingAnim)
         elif self.hp > 0:
-            self.actorInterval('neutral').loop()
+            self.loop('neutral')
         else:
-            self.actorInterval('sad-neutral').loop()
+            self.loop('sad-neutral')
         return Task.done
 
     def __finishEmote(self, task):
         if self.isLocal():
             if self.hp > 0:
-                self.setAnimState('Happy')
+                self.b_setAnimState('Happy')
             else:
-                self.setAnimState('Sad')
+                self.b_setAnimState('Sad')
         return Task.done
 
     def exitEmote(self):
@@ -2208,10 +2194,7 @@ class Toon(Avatar.Avatar, ToonHead):
         lerpTime = 0.1
         node = self.getGeomNode().getChild(0)
         origScale = node.getScale()
-        self.track = Sequence(LerpScaleInterval(node, lerpTime, VBase3(2, 2, 0.025), blendType='easeInOut'), Wait(1.0), Parallel(Sequence(Wait(0.4), LerpScaleInterval(node, lerpTime, VBase3(1.4, 1.4, 1.4), blendType='easeInOut'), LerpScaleInterval(node, lerpTime / 2.0, VBase3(0.8, 0.8, 0.8), blendType='easeInOut'), LerpScaleInterval(node, lerpTime / 3.0, origScale, blendType='easeInOut')), ActorInterval(self, 'jump', startTime=0.2), SoundInterval(sound)), name='toonSquish')
-        if callback:
-            self.track.setDoneEvent(self.track.getName())
-            self.acceptOnce(self.track.getName(), callback, extraArgs)
+        self.track = Sequence(LerpScaleInterval(node, lerpTime, VBase3(2, 2, 0.025), blendType='easeInOut'), Wait(1.0), Parallel(Sequence(Wait(0.4), LerpScaleInterval(node, lerpTime, VBase3(1.4, 1.4, 1.4), blendType='easeInOut'), LerpScaleInterval(node, lerpTime / 2.0, VBase3(0.8, 0.8, 0.8), blendType='easeInOut'), LerpScaleInterval(node, lerpTime / 3.0, origScale, blendType='easeInOut')), ActorInterval(self, 'jump', startTime=0.2), SoundInterval(sound)))
         self.track.start(ts)
         self.setActiveShadow(1)
 
@@ -2510,7 +2493,7 @@ class Toon(Avatar.Avatar, ToonHead):
             greenTrack.append(self.__colorToonGloves(None, lerpTime))
         track.append(greenTrack)
         return track
-
+        
     def __doRogerDog(self, lerpTime, toRoger):
         track = Sequence()
         rogerTrack = Parallel()
@@ -2527,7 +2510,7 @@ class Toon(Avatar.Avatar, ToonHead):
             dust = getDustCloudIval()
             track.append(Func(dust.start))
             track.append(Wait(0.5))
-
+            
         if toRoger:
             self.oldStyle = self.style.clone()
             self.oldHat = self.hat
@@ -2551,7 +2534,7 @@ class Toon(Avatar.Avatar, ToonHead):
             rogerTrack.append(Func(self.generateToonAccessories))
         track.append(rogerTrack)
         return track
-
+        
     def __doFlippy(self, lerpTime, toFlippy):
         track = Sequence()
         flippyTrack = Parallel()
@@ -2568,7 +2551,7 @@ class Toon(Avatar.Avatar, ToonHead):
             dust = getDustCloudIval()
             track.append(Func(dust.start))
             track.append(Wait(0.5))
-
+            
         if toFlippy:
             self.oldStyle = self.style.clone()
             self.oldHat = self.hat
@@ -2608,7 +2591,7 @@ class Toon(Avatar.Avatar, ToonHead):
             dust = getDustCloudIval()
             track.append(Func(dust.start))
             track.append(Wait(0.5))
-
+            
         if toSurlee:
             self.oldStyle = self.style.clone()
             self.oldHat = self.hat
@@ -2924,6 +2907,8 @@ class Toon(Avatar.Avatar, ToonHead):
     def putOnSuit(self, suitType, setDisplayName = True, rental = False):
         if self.isDisguised:
             self.takeOffSuit()
+        if launcher and not launcher.getPhaseComplete(5):
+            return
         from toontown.suit import Suit
         deptIndex = suitType
         suit = Suit.Suit()
@@ -3079,7 +3064,7 @@ class Toon(Avatar.Avatar, ToonHead):
         if pieType == 'actor':
             animPie = ActorInterval(pie, pieName, startFrame=0, endFrame=31)
             pingpongPie = Func(pie.pingpong, pieName, fromFrame=32, toFrame=47)
-        track = Sequence(Func(self.setPosHpr, x, y, z, h, 0, 0), Func(pie.reparentTo, self.rightHand), Func(pie.setPosHpr, 0, 0, 0, 0, 0, 0), Parallel(pie.scaleInterval(1, self.pieScale, startScale=MovieUtil.PNT3_NEARZERO), ActorInterval(self, 'throw', startFrame=0, endFrame=31), animPie), Func(self.actorInterval('throw', startFrame=32, endFrame=47, constrainedLoop=1).loop), pingpongPie)
+        track = Sequence(Func(self.setPosHpr, x, y, z, h, 0, 0), Func(pie.reparentTo, self.rightHand), Func(pie.setPosHpr, 0, 0, 0, 0, 0, 0), Parallel(pie.scaleInterval(1, self.pieScale, startScale=MovieUtil.PNT3_NEARZERO), ActorInterval(self, 'throw', startFrame=0, endFrame=31), animPie), Func(self.pingpong, 'throw', fromFrame=32, toFrame=47), pingpongPie)
         return track
 
     def getTossPieInterval(self, x, y, z, h, power, throwType, beginFlyIval = Sequence()):
@@ -3102,7 +3087,7 @@ class Toon(Avatar.Avatar, ToonHead):
             relVel = proj.startVel
         elif throwType == ToontownGlobals.PieThrowLinear:
             magnitude = power / 2. + 25
-
+ 
             relVel = Vec3(0, 1, 0.25)
             relVel.normalize()
             relVel *= magnitude
@@ -3110,7 +3095,7 @@ class Toon(Avatar.Avatar, ToonHead):
         def getVelocity(toon = self, relVel = relVel):
             return render.getRelativeVector(toon, relVel)
 
-        toss = Track((0, Sequence(Func(self.setPosHpr, x, y, z, h, 0, 0), Func(pie.reparentTo, self.rightHand), Func(pie.setPosHpr, 0, 0, 0, 0, 0, 0), Parallel(ActorInterval(self, 'throw', startFrame=48), animPie), Func(self.actorInterval('neutral').loop))), (16.0 / 24.0, Func(pie.detachNode)))
+        toss = Track((0, Sequence(Func(self.setPosHpr, x, y, z, h, 0, 0), Func(pie.reparentTo, self.rightHand), Func(pie.setPosHpr, 0, 0, 0, 0, 0, 0), Parallel(ActorInterval(self, 'throw', startFrame=48), animPie), Func(self.loop, 'neutral'))), (16.0 / 24.0, Func(pie.detachNode)))
         fly = Track((14.0 / 24.0, SoundInterval(sound, node=self)), (16.0 / 24.0, Sequence(Func(flyPie.reparentTo, render), Func(flyPie.setScale, self.pieScale), Func(flyPie.setPosHpr, self, 0.52, 0.97, 2.24, 89.42, -10.56, 87.94), beginFlyIval, ProjectileInterval(flyPie, startVel=getVelocity, duration=3), Func(flyPie.detachNode))))
         return (toss, fly, flyPie)
 
@@ -3151,37 +3136,37 @@ class Toon(Avatar.Avatar, ToonHead):
         return ActorInterval(self, 'callPet')
 
     def enterGolfPuttLoop(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
-        self.actorInterval('loop-putt').loop()
+        self.loop('loop-putt')
 
     def exitGolfPuttLoop(self):
         self.stop()
 
     def enterGolfRotateLeft(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
-        self.actorInterval('rotateL-putt').loop()
+        self.loop('rotateL-putt')
 
     def exitGolfRotateLeft(self):
         self.stop()
 
     def enterGolfRotateRight(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
-        self.actorInterval('rotateR-putt').loop()
+        self.loop('rotateR-putt')
 
     def exitGolfRotateRight(self):
         self.stop()
 
     def enterGolfPuttSwing(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
-        self.actorInterval('swing-putt').loop()
+        self.loop('swing-putt')
 
     def exitGolfPuttSwing(self):
         self.stop()
 
     def enterGolfGoodPutt(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
-        self.actorInterval('good-putt').loop()
+        self.loop('good-putt', restart=0)
 
     def exitGolfGoodPutt(self):
         self.stop()
 
     def enterGolfBadPutt(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
-        self.actorInterval('badloop-putt').loop()
+        self.loop('badloop-putt', restart=0)
 
     def exitGolfBadPutt(self):
         self.stop()
@@ -3225,7 +3210,7 @@ class Toon(Avatar.Avatar, ToonHead):
         return
 
     def enterScientistJealous(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
-        self.actorInterval('scientistJealous').loop()
+        self.loop('scientistJealous')
         if hasattr(self, 'showScientistProp'):
             self.showScientistProp()
 
@@ -3233,25 +3218,25 @@ class Toon(Avatar.Avatar, ToonHead):
         self.stop()
 
     def enterScientistEmcee(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
-        self.actorInterval('scientistEmcee').loop()
+        self.loop('scientistEmcee')
 
     def exitScientistEmcee(self):
         self.stop()
 
     def enterScientistWork(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
-        self.actorInterval('scientistWork').loop()
+        self.loop('scientistWork')
 
     def exitScientistWork(self):
         self.stop()
 
     def enterScientistLessWork(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
-        self.actorInterval('scientistWork', startFrame=319, endFrame=619).loop()
+        self.loop('scientistWork', fromFrame=319, toFrame=619)
 
     def exitScientistLessWork(self):
         self.stop()
 
     def enterScientistPlay(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
-        self.actorInterval('scientistGame').loop()
+        self.loop('scientistGame')
         if hasattr(self, 'scientistPlay'):
             self.scientistPlay()
 
