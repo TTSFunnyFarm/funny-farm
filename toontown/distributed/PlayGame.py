@@ -23,11 +23,17 @@ from toontown.minigame import CannonGame
 from toontown.minigame import CatchGame
 from toontown.minigame import TugOfWarGame
 from toontown.minigame import MazeGame
+from toontown.minigame import DivingGame
 
 class PlayGame(DirectObject):
     notify = directNotify.newCategory('PlayGame')
     MINIGAMES = [
-        MazeGame.MazeGame
+        RingGame.RingGame, 
+        CannonGame.CannonGame, 
+        CatchGame.CatchGame, 
+        TugOfWarGame.TugOfWarGame, 
+        MazeGame.MazeGame, 
+        DivingGame.DivingGame
     ]
 
     def __init__(self):
