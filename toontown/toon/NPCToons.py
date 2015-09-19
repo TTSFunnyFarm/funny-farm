@@ -193,6 +193,7 @@ def createLocalNPC(npcId):
         dnaList = dnaType
     dna.newToonFromProperties(*dnaList)
     npc.setDNAString(dna.makeNetString())
+    npc.nametag.setFont(ToontownGlobals.getSignFont())
     npc.animFSM.request('neutral')
     return npc
 

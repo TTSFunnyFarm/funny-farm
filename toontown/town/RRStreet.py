@@ -100,10 +100,7 @@ class RRStreet(ToonStreet):
         base.cr.playGame.enterSSHood(tunnel='rr')
 
     def __handleTrainCollision(self, entry):
-        base.localAvatar.disableAvatarControls()
-        base.localAvatar.collisionsOff()
-        base.localAvatar.book.hideButton()
-        base.localAvatar.endAllowPies()
+        base.localAvatar.disable()
         base.localAvatar.setAnimState('neutral')
         animalType = base.localAvatar.getStyle().getType()
         dialogue = base.loadSfx('phase_3.5/audio/dial/AV_' + animalType + '_exclaim.ogg')
@@ -112,7 +109,4 @@ class RRStreet(ToonStreet):
 
     def __handleSquish(self):
         base.localAvatar.exitSquish()
-        base.localAvatar.collisionsOn()
-        base.localAvatar.enableAvatarControls()
-        base.localAvatar.book.showButton()
-        base.localAvatar.beginAllowPies()
+        base.localAvatar.enable()

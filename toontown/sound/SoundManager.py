@@ -18,6 +18,7 @@ class SoundManager:
                     'phase_14/audio/bgm/FF_SZ_activity.ogg',
                     'phase_14/audio/bgm/SS_nbrhood.ogg',
                     'phase_14/audio/bgm/SS_SZ.ogg',
+                    'phase_14/audio/bgm/SS_SZ_activity.ogg',
                     'phase_14/audio/bgm/CV_SZ.ogg',
                     'phase_12/audio/bgm/Bossbot_Entry_v2.ogg'
             ]
@@ -32,7 +33,7 @@ class SoundManager:
         }
         self.shopMusicMap = {
             FunnyFarmGlobals.FunnyFarm : self.startFFActivity,
-            FunnyFarmGlobals.SillySprings : self.startFFActivity
+            FunnyFarmGlobals.SillySprings : self.startSSActivity
         }
 
     def playMusic(self, index, volume=1.0):
@@ -87,7 +88,7 @@ class SoundManager:
         self.musicList[7].stop()
 
     def startFFActivity(self):
-        self.playMusic(8)
+        self.playMusic(8, volume=0.5)
 
     def stopFFActivity(self):
         self.musicList[8].stop()
@@ -104,14 +105,20 @@ class SoundManager:
     def stopSSSZ(self):
         self.musicList[10].stop()
 
-    def startCVSZ(self):
-        self.playMusic(11, volume=0.5)
+    def startSSActivity(self):
+        self.playMusic(11)
 
-    def stopCVSZ(self):
+    def stopSSActivity(self):
         self.musicList[11].stop()
 
+    def startCVSZ(self):
+        self.playMusic(12, volume=0.5)
+
+    def stopCVSZ(self):
+        self.musicList[12].stop()
+
     def startSecretArea(self):
-        self.playMusic(12)
+        self.playMusic(13)
 
     def stopSecretArea(self):
-        self.musicList[12].stop()
+        self.musicList[13].stop()
