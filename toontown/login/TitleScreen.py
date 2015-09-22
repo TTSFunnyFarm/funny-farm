@@ -15,6 +15,7 @@ class TitleScreen(DirectObject):
     def __init__(self):
         self.track = None
         base.disableMouse()
+        base.setBackgroundColor(FunnyFarmGlobals.DefaultBackgroundColor)
         base.camLens.setMinFov(FunnyFarmGlobals.DefaultCameraFov/(4./3.))
         camera.setPosHpr(0, 0, 0, 0, -45, 0)
         self.load()
@@ -59,7 +60,7 @@ class TitleScreen(DirectObject):
         self.track = Sequence()
         self.track.append(Func(base.transitions.fadeScreen, 1.0))
         self.track.append(Func(base.transitions.fadeIn, 1.0))
-        self.track.append(camera.posHprInterval(6.0, pos=(0, -350, 60), hpr=(0, 12, 0), blendType='easeInOut'))
+        self.track.append(camera.posHprInterval(6.0, pos=(0, -350, 55), hpr=(0, 12, 0), blendType='easeInOut'))
         self.track.append(Func(self.logo.show))
         self.track.append(self.logo.colorScaleInterval(2.0, colorScale=(1, 1, 1, 1), startColorScale=(1, 1, 1, 0)))
         self.track.append(Func(self.titleText.show))

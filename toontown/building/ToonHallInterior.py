@@ -66,15 +66,31 @@ class ToonHallInterior(Interior):
 
     def generateNPCs(self):
         flippy = NPCToons.createLocalNPC(2001)
-        origin = self.interior.find('**/npc_origin_0')
-        pos = origin.getPos()
-        hpr = origin.getHpr()
-        flippy.reparentTo(render)
-        flippy.setPosHpr(pos, hpr)
-        flippy.initializeBodyCollisions('toon')
+        dimm = NPCToons.createLocalNPC(2018)
+        surlee = NPCToons.createLocalNPC(2019)
+        prepostera = NPCToons.createLocalNPC(2020)
+        origins = [
+                self.interior.find('**/npc_origin_0'),
+                self.interior.find('**/npc_origin_1'),
+                self.interior.find('**/npc_origin_2'),
+                self.interior.find('**/npc_origin_3')
+        ]
+        key = 0
+        self.npcs = [flippy, dimm, surlee, prepostera]
+        for npc in self.npcs:
+            key += 1
+            pos = origins[key - 1].getPos()
+            hpr = origins[key - 1].getHpr()
+            npc.reparentTo(render)
+            npc.setPosHpr(pos, hpr)
+            npc.addActive()
         flippy.useLOD(1000)
-        flippy.addActive()
-        self.npcs = [flippy]
+        dimm.initPos()
+        surlee.initPos()
+        prepostera.initPos()
+        dimm.setAnimState('ScientistJealous')
+        surlee.setAnimState('ScientistJealous')
+        prepostera.setAnimState('ScientistEmcee')
 
     def startActive(self):
         self.acceptOnce('enterdoor_double_round_ur_trigger', self.__handleDoor)

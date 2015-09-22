@@ -64,15 +64,14 @@ class PetShopInterior(Interior):
                 self.interior.find('**/npc_origin_1'),
                 self.interior.find('**/npc_origin_2')
         ]
-        key = -1
+        key = 0
         self.npcs = [clerk1, clerk2, clerk3]
         for npc in self.npcs:
             key += 1
-            pos = origins[key].getPos()
-            hpr = origins[key].getHpr()
+            pos = origins[key - 1].getPos()
+            hpr = origins[key - 1].getHpr()
             npc.reparentTo(render)
             npc.setPosHpr(pos, hpr)
-            npc.initializeBodyCollisions('toon')
             npc.addActive()
         return
 

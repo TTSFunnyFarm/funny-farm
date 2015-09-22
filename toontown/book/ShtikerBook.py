@@ -231,17 +231,11 @@ class ShtikerBook(DirectFrame):
 
     def __rightArrow(self):
         base.playSfx(self.pageSound)
-        if self.currPage == 0:
-            self.setPage(self.pages[1])
-        elif self.currPage == 1:
-            self.setPage(self.pages[2])
+        self.setPage(self.pages[self.currPage + 1])
 
     def __leftArrow(self):
         base.playSfx(self.pageSound)
-        if self.currPage == 2:
-            self.setPage(self.pages[1])
-        elif self.currPage == 1:
-            self.setPage(self.pages[0])
+        self.setPage(self.pages[self.currPage - 1])
 
     def showPageArrows(self):
         if self.currPage == 0:

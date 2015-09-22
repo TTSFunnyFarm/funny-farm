@@ -63,15 +63,14 @@ class HQInterior(Interior):
                 self.interior.find('**/npc_origin_2'),
                 self.interior.find('**/npc_origin_3')
         ]
-        key = -1
+        key = 0
         self.npcs = [clerk1, clerk2, clerk3, clerk4]
         for npc in self.npcs:
             key += 1
-            pos = origins[key].getPos()
-            hpr = origins[key].getHpr()
+            pos = origins[key - 1].getPos()
+            hpr = origins[key - 1].getHpr()
             npc.reparentTo(render)
             npc.setPosHpr(pos, hpr)
-            npc.initializeBodyCollisions('toon')
             npc.addActive()
 
     def startActive(self):

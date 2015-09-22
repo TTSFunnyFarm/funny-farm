@@ -178,11 +178,15 @@ def createNpcsInZone(air, zoneId):
 
 def createLocalNPC(npcId):
     import Toon
+    import NPCScientist
     if not NPCToonDict.has_key(npcId):
         return None
     desc = NPCToonDict[npcId]
     canonicalZoneId, name, dnaType, gender, protected, type = desc
-    npc = Toon.Toon()
+    if type == NPC_SCIENTIST:
+        npc = NPCScientist.NPCScientist()
+    else:
+        npc = Toon.Toon()
     npc.setName(name)
     npc.setPickable(0)
     npc.setPlayerType(NametagGroup.CCNonPlayer)

@@ -27,6 +27,8 @@ class FFHood(ToonHood):
     def enter(self, shop=None, tunnel=None):
         soundMgr.startFFNbrhood()
         ToonHood.enter(self, shop=shop, tunnel=tunnel)
+        if FFTime.isWinter():
+            self.snow.start(camera, self.snowRender)
         if shop:
             if shop == 'ps':
                 doorNP = self.geom.find('**/PetShopDoor')
@@ -47,8 +49,6 @@ class FFHood(ToonHood):
         if tunnel:
             tunnelOrigin = self.geom.find('**/FCTunnel').find('**/tunnel_origin')
             base.localAvatar.tunnelIn(tunnelOrigin)
-        if FFTime.isWinter():
-            self.snow.start(camera, self.snowRender)
         self.startActive()
 
     def exit(self):

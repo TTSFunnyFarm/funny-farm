@@ -642,6 +642,12 @@ class Toon(Avatar.Avatar, ToonHead):
             self.initializeDropShadow()
             self.initializeNametag3d()
 
+    def getDNA(self):
+        return self.style
+
+    def getRawDNA(self):
+        return self.style.getRawDNA()
+
     def parentToonParts(self):
         if self.hasLOD():
             for lodName in self.getLODNames():
@@ -1539,6 +1545,7 @@ class Toon(Avatar.Avatar, ToonHead):
             self.playingAnim = anim
             self.setPlayRate(animMultiplier, anim)
             self.play(anim)
+            Sequence(Wait(self.getDuration(anim)), Func(self.exitJump)).start()
         self.setActiveShadow(1)
 
     def exitJump(self):
@@ -1763,6 +1770,7 @@ class Toon(Avatar.Avatar, ToonHead):
             DelayDelete.cleanupDelayDeletes(self.track)
             self.track = None
         Emote.globalEmote.releaseAll(self, 'exitCloseBook')
+        self.animFSM.request('neutral')
         return
 
     def getSoundTeleport(self):
@@ -3213,6 +3221,8 @@ class Toon(Avatar.Avatar, ToonHead):
         self.loop('scientistJealous')
         if hasattr(self, 'showScientistProp'):
             self.showScientistProp()
+        if self.style.getTorsoSize() == 'short' and self.style.getAnimal() == 'duck':
+            self.setH(135)
 
     def exitScientistJealous(self):
         self.stop()
@@ -3239,6 +3249,8 @@ class Toon(Avatar.Avatar, ToonHead):
         self.loop('scientistGame')
         if hasattr(self, 'scientistPlay'):
             self.scientistPlay()
+        if self.style.getTorsoSize() == 'short' and self.style.getAnimal() == 'duck':
+            self.setH(90)
 
     def exitScientistPlay(self):
         self.stop()

@@ -14,11 +14,9 @@ class ToontownLoadingScreen:
         if FFTime.isWinter():
             self.gui = loader.loadModel('phase_3/models/gui/progress-background_christmas')
             self.logo = loader.loadModel('phase_3/models/gui/toontown-logo_christmas')
-            self.initGui.find('**/fg').setTexture(loader.loadTexture('phase_3/maps/toontown-logo_christmas.jpg', 'phase_3/maps/toontown-logo_a.rgb'), 1)
         elif FFTime.isHalloween():
             self.gui = loader.loadModel('phase_3/models/gui/progress-background_halloween')
             self.logo = loader.loadModel('phase_3/models/gui/toontown-logo_halloween')
-            self.initGui.find('**/fg').setTexture(loader.loadTexture('phase_3/maps/toontown-logo_halloween.jpg', 'phase_3/maps/toontown-logo_a.rgb'), 1)
         else:
             self.gui = loader.loadModel('phase_3/models/gui/progress-background')
             self.logo = loader.loadModel('phase_3/models/gui/toontown-logo')

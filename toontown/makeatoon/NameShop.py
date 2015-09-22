@@ -110,6 +110,9 @@ class NameShop(StateData.StateData):
             if len(name) < 3 or len(nameWords) > 4:
                 self.rejectName()
                 return
+            if name == 'Rocky Reborn':
+                self.rockyDialog()
+                return
             self.createAvatar()
             self.promptTutorial()
 
@@ -120,6 +123,16 @@ class NameShop(StateData.StateData):
     def cleanupRejectDialog(self, *args):
         self.rejectDialog.destroy()
         self.rejectDialog = None
+
+    def rockyDialog(self):
+        self.rockyDialog = TTDialog.TTDialog(parent=aspect2dp, text='Rocky Reborn is playing my game? What a\nstrong soldier!', text_align=TextNode.ACenter, style=TTDialog.Acknowledge, command=self.cleanupRockyDialog)
+        self.rockyDialog.show()
+
+    def cleanupRockyDialog(self, *args):
+        self.rockyDialog.destroy()
+        del self.rockyDialog
+        self.createAvatar()
+        self.promptTutorial()
 
     def createAvatar(self):
         self.dna = self.toon.getRawDNA()
