@@ -20,16 +20,16 @@ class Tutorial(ToonHood):
         self.winterHoodFile = self.hoodFile
         self.skyFile = 'phase_3.5/models/props/TT_sky'
 
-    def enter(self, shop=None, tunnel=None):
+    def enter(self, shop=None, tunnel=None, init=False):
         musicMgr.startTutorial()
         base.localAvatar.disableAvatarControls()
-        base.localAvatar.enterTeleportIn(callback=self.__handleEntered)
+        Sequence(Wait(0.3), Func(base.localAvatar.enterTeleportIn, 1, 0, self.__handleEntered)).start()
 
     def exit(self):
         musicMgr.stopTutorial()
         self.ignoreAll()
         self.unload()
-        base.cr.playGame.enterFFHood()
+        base.cr.playGame.enterFFHood(init=True)
         base.localAvatar.setupSmartCamera()
         base.localAvatar.laffMeter.start()
         base.localAvatar.book.showButton()
@@ -355,7 +355,7 @@ class Tutorial(ToonHood):
                 Func(self.flippy.enterTeleportOut, callback=self.flippy.delete),
                 Func(base.localAvatar.enableAvatarControls),
                 Wait(3.2),
-                Func(self.flippy.hide),
+                Func(self.flippy.hide)
                 Wait(0.2),
                 Func(self.exitOutro)
         )
@@ -364,7 +364,6 @@ class Tutorial(ToonHood):
     def exitOutro(self):
         base.localAvatar.disableAvatarControls()
         base.localAvatar.enterTeleportOut(callback=self.exit)
-        Sequence(Wait(3.2), Func(base.localAvatar.hide)).start()
 
     def checkActiveCogs(self, task):
         cog1Active = self.cog1.getActive()

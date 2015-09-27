@@ -71,7 +71,6 @@ class FFClientRepository(DirectObject):
                 zoneId = FunnyFarmGlobals.SecretArea
                 base.secretAreaFlag = False
         base.localAvatar.enterTeleportOut(callback=self.__handleTeleport, extraArgs=[zoneId])
-        Sequence(Wait(3.2), Func(base.localAvatar.hide)).start()
 
     def __handleTeleport(self, zoneId):
         base.localAvatar.exitTeleportOut()
@@ -97,7 +96,6 @@ class FFClientRepository(DirectObject):
 
     def exitTheTooniverse(self):
         base.localAvatar.enterTeleportOut(callback=self.__handleExit)
-        Sequence(Wait(3.2), Func(base.localAvatar.hide)).start()
 
     def __handleExit(self):
         if self.playGame.hood:

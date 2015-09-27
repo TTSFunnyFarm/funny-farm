@@ -27,7 +27,7 @@ class ToonHood(DirectObject):
             base.localAvatar.enableAvatarControls()
             base.localAvatar.setRandomSpawn(self.zoneId)
             if init:
-                Sequence(Wait(0.4), Func(base.localAvatar.enterTeleportIn, 1, 0, self.__handleTeleport, [True])).start()
+                Sequence(Wait(0.3), Func(base.localAvatar.enterTeleportIn, 1, 0, self.__handleTeleport, [True])).start()
                 if base.air.holidayMgr.isHalloween():
                     base.localAvatar.setSystemMessage(0, TTLocalizer.HalloweenHolidayMessage)
                 elif base.air.holidayMgr.isWinter():
