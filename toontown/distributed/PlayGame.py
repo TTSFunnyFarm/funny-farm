@@ -29,7 +29,7 @@ class PlayGame(DirectObject):
     notify = directNotify.newCategory('PlayGame')
     MINIGAMES = [
         RingGame.RingGame, 
-        CannonGame.CannonGame
+        CannonGame.CannonGame,
         CatchGame.CatchGame, 
         TugOfWarGame.TugOfWarGame, 
         MazeGame.MazeGame, 
