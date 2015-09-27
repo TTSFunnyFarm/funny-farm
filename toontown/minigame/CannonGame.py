@@ -819,8 +819,9 @@ class CannonGame(Minigame):
                 task.info['toon'].setHpr(task.info['hRot'], 0, 0)
                 self.__somebodyWon(task.info['avId'])
             elif task.info['hitWhat'] == self.HIT_TOWER:
+                avatar.setAnimState('off')
                 toon = self.getAvatar()
-                toon.setAnimState('off')
+                toon.getGeomNode().setP(94)
                 pos = toon.getPos()
                 ttVec = Vec3(pos - self.towerPos)
                 ttVec.setZ(0)
@@ -831,7 +832,7 @@ class CannonGame(Minigame):
                 sf = min(max(pos[2] - BUCKET_HEIGHT, 0), deltaZ) / deltaZ
                 hitPos = pos + Point3(ttVec * (0.75 * sf))
                 toon.setPos(hitPos)
-                hitPos.setZ(hitPos[2] - 1.0)
+                hitPos.setY(hitPos[2] - 1.0)
                 s = Sequence(Wait(0.5), toon.posInterval(duration=LAND_TIME - 0.5, pos=hitPos, blendType='easeIn'))
                 self.toonIntervalDict[task.info['avId']] = s
                 s.start()
@@ -850,6 +851,8 @@ class CannonGame(Minigame):
 
     def __flySequenceDoneTask(self, task):
         self.airborneToons -= 1
+        av = self.getAvatar()
+        av.getGeomNode().setP(0)
         if self.gameFSM.getCurrentState().getName() == 'waitForToonsToLand':
             if 0 == self.airborneToons:
                 self.gameOver()

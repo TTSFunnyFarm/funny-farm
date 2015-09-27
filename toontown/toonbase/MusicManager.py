@@ -1,8 +1,7 @@
 from pandac.PandaModules import *
-from toontown.toonbase import FFTime
 from toontown.toonbase import FunnyFarmGlobals
 
-class SoundManager:
+class MusicManager:
 
     def __init__(self):
         self.musicList = map(
@@ -51,9 +50,9 @@ class SoundManager:
         self.musicList[0].stop()
 
     def startPAT(self):
-        if FFTime.isWinter():
+        if base.air.holidayMgr.isWinter():
             self.playMusic(2)
-        elif FFTime.isHalloween():
+        elif base.air.holidayMgr.isHalloween():
             self.playMusic(3)
         else:
             self.playMusic(1, volume=0.5)

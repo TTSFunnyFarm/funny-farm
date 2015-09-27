@@ -5,7 +5,7 @@ from toontown.login.PickAToon import PickAToon
 from toontown.toontowngui import TTDialog
 from toontown.toonbase import FunnyFarmGlobals
 from otp.otpbase import OTPLocalizer
-from toontown.login import Login
+from toontown.login import Launcher
 import random
 import PlayGame
 import os
@@ -16,14 +16,14 @@ class FFClientRepository(DirectObject):
     notify.setInfo(True)
 
     def __init__(self):
-        self.login = None
+        self.launcher = None
         self.avChooser = None
         self.playGame = PlayGame.PlayGame()
 
     def enterLogin(self):
-        self.login = Login.Login()
-        self.login.load()
-        self.login.enter()
+        self.launcher = Launcher.Launcher()
+        self.launcher.load()
+        self.launcher.enter()
 
     def loadPAT(self):
         self.avChooser = PickAToon()
@@ -51,13 +51,13 @@ class FFClientRepository(DirectObject):
         else:
             self.enterTheTooniverse(FunnyFarmGlobals.FunnyFarm)
 
-    def enterHood(self, zoneId):
+    def enterHood(self, zoneId, init=False):
         if zoneId == FunnyFarmGlobals.FunnyFarm:
-            self.playGame.enterFFHood()
+            self.playGame.enterFFHood(init=init)
         elif zoneId == FunnyFarmGlobals.FunnyFarmCentral:
-            self.playGame.enterFCHood()
+            self.playGame.enterFCHood(init=init)
         elif zoneId == FunnyFarmGlobals.SillySprings:
-            self.playGame.enterSSHood()
+            self.playGame.enterSSHood(init=init)
         elif zoneId == FunnyFarmGlobals.SecretArea:
             self.playGame.enterSecretArea()
         else:
@@ -85,7 +85,7 @@ class FFClientRepository(DirectObject):
 
     def enterTheTooniverse(self, zoneId):
         self.exitPAT()
-        self.enterHood(zoneId)
+        self.enterHood(zoneId, init=True)
         base.localAvatar.reparentTo(render)
         base.localAvatar.setupControls()
         base.localAvatar.setupSmartCamera()
@@ -109,7 +109,7 @@ class FFClientRepository(DirectObject):
         base.localAvatar.destroy()
         base.localAvatar = None
         camera.reparentTo(render)
-        soundMgr.startPAT()
+        musicMgr.startPAT()
         self.enterPAT()
 
     def isPaid(self):

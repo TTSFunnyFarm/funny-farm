@@ -4178,6 +4178,15 @@ LauncherPhaseNames = {0: 'Initialization',
  11: Lawbot + ' HQ',
  12: Bossbot + ' HQ',
  13: 'Parties'}
+LauncherLogin = 'LOGIN'
+LauncherUsername = 'Username:'
+LauncherUsernameInfo = 'Don\'t have a username?\nMake one up and click PLAY!\nAn account will be created for you.'
+LauncherNote = 'Note: You cannot create more than 5 accounts on a single user.'
+LauncherLengthError = 'Usernames must be at least 6 characters long.'
+LauncherSpaceError = 'Please do not include spaces in your username.'
+LauncherCreateAccount = 'Create new account %s?'
+LauncherHelp = 'About TTFF Data Management\n\nWhy don\'t I need a password?\n-------------------------------------------------------\nAll of your data is safely stored on your computer. Nothing is being sent to any servers whatsoever.\n(Not even the TTFF Staff will know your username!) For this reason, we feel that a password is unnecessary since you are the only one who can access your account.\n\nWait, won\'t someone else be able to access my account if they know my username?\n-------------------------------------------------------\nAbsolutely not. Your account can only be accessed on YOUR computer, so if someone living across the country put in your username, it would create an entirely new account on their computer.'
+LauncherAccountError = 'You cannot create more than 5 accounts on a single user. Please log in or delete one of your existing accounts:\n\n%s\n%s\n%s\n%s\n%s'
 LauncherProgress = '%(name)s (%(current)s of %(total)s)'
 LauncherStartingMessage = "Starting Funny Farm... "
 LauncherDownloadFile = 'Downloading update for ' + LauncherProgress + '...'
@@ -9424,6 +9433,8 @@ WinterDecorationsStart = "It's Winter Holiday time in Toontown!"
 WinterDecorationsEnd = 'Winter Holiday is over - Happy New Year!'
 WackyWinterDecorationsStart = 'Brrr! Silly Meter goes from silly to chilly!'
 WinterCarolingStart = 'Caroling has come to Toontown. Sing for your Snowman Head - see the Blog for details!'
+HalloweenHolidayMessage = 'Everything has turned spooky in Funny Farm! Happy Halloween!'
+WinterHolidayMessage = 'It\'s winter time in Funny Farm! Happy Holidays!'
 ExpandedClosetsStart = 'Attention Toons: For a limited time, Members can purchase the new 50 item Closet from the Cattlelog for the low price of 50 jellybeans!'
 KartingTicketsHolidayStart = 'Get double tickets from Practice races at Goofy Speedway today!'
 IdesOfMarchStart = 'Toons go GREEN!'

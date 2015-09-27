@@ -21,12 +21,12 @@ class Tutorial(ToonHood):
         self.skyFile = 'phase_3.5/models/props/TT_sky'
 
     def enter(self, shop=None, tunnel=None):
-        soundMgr.startTutorial()
+        musicMgr.startTutorial()
         base.localAvatar.disableAvatarControls()
         base.localAvatar.enterTeleportIn(callback=self.__handleEntered)
 
     def exit(self):
-        soundMgr.stopTutorial()
+        musicMgr.stopTutorial()
         self.ignoreAll()
         self.unload()
         base.cr.playGame.enterFFHood()

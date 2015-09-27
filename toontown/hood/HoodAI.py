@@ -1,5 +1,4 @@
 from toontown.toonbase import FunnyFarmGlobals
-from toontown.toonbase import FFTime
 
 class HoodAI:
     notify = directNotify.newCategory('HoodAI')
@@ -18,9 +17,9 @@ class HoodAI:
 
     def createObjects(self):
         fileRoot = FunnyFarmGlobals.phaseMap[self.zoneId]
-        if FFTime.isWinter():
+        if self.air.holidayMgr.isWinter():
             model = loader.loadModel(fileRoot + '_winter')
-        elif FFTime.isHalloween():
+        elif self.air.holidayMgr.isHalloween():
             model = loader.loadModel(fileRoot + '_halloween')
         else:
             model = loader.loadModel(fileRoot)

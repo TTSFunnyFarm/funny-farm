@@ -5,7 +5,6 @@ from direct.interval.IntervalGlobal import *
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
-from toontown.toonbase import FFTime
 
 class ToonStreet(DirectObject):
     notify = directNotify.newCategory('ToonStreet')
@@ -32,11 +31,11 @@ class ToonStreet(DirectObject):
             self.titleText = None
 
     def load(self):
-        if FFTime.isHalloween():
+        if base.air.holidayMgr.isHalloween():
             self.geom = loader.loadModel(self.spookyStreetFile)
             self.sky = loader.loadModel(self.spookySkyFile)
             self.sky.setColorScale(0.5, 0.5, 0.5, 1)
-        elif FFTime.isWinter():
+        elif base.air.holidayMgr.isWinter():
             self.geom = loader.loadModel(self.winterStreetFile)
             self.sky = loader.loadModel(self.spookySkyFile)
         else:

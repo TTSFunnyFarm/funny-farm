@@ -4,7 +4,6 @@ from direct.directnotify import DirectNotifyGlobal
 from direct.interval.IntervalGlobal import *
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
-from toontown.toonbase import FFTime
 from toontown.toontowngui import TTDialog
 from toontown.toon import ToonHead
 from toontown.toon import ToonDNA
@@ -54,9 +53,9 @@ class PickAToon:
         self.logoutButton.show()
         base.transitions.fadeScreen(1.0)
         base.transitions.fadeIn(1.0)
-        if FFTime.isWinter():
+        if base.air.holidayMgr.isWinter():
             base.setBackgroundColor(Vec4(0.682, 0.847, 0.99, 1))
-        elif FFTime.isHalloween():
+        elif base.air.holidayMgr.isHalloween():
             base.setBackgroundColor(Vec4(0.118, 0.118, 0.118, 1))
         else:
             base.setBackgroundColor(Vec4(0.145, 0.368, 0.78, 1))
@@ -66,13 +65,13 @@ class PickAToon:
             return
         self.unload()
         base.setBackgroundColor(ToontownGlobals.DefaultBackgroundColor)
-        soundMgr.stopPAT()
+        musicMgr.stopPAT()
 
     def load(self):
         self.isLoaded = 1
-        if FFTime.isWinter():
+        if base.air.holidayMgr.isWinter():
             gui = loader.loadModel('phase_3/models/gui/tt_m_gui_pat_mainGui_christmas')
-        elif FFTime.isHalloween():
+        elif base.air.holidayMgr.isHalloween():
             gui = loader.loadModel('phase_3/models/gui/tt_m_gui_pat_mainGui_halloween')
         else:
             gui = loader.loadModel('phase_3/models/gui/tt_m_gui_pat_mainGui')

@@ -5,7 +5,6 @@ from direct.interval.IntervalGlobal import *
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
-from toontown.toonbase import FFTime
 
 class ToonHood(DirectObject):
     notify = directNotify.newCategory('ToonHood')
@@ -21,13 +20,20 @@ class ToonHood(DirectObject):
         self.titleColor = (1, 1, 1, 1)
         self.title = None
 
-    def enter(self, shop=None, tunnel=None):
+    def enter(self, shop=None, tunnel=None, init=False):
         if shop:
             return
         if not tunnel:
             base.localAvatar.enableAvatarControls()
             base.localAvatar.setRandomSpawn(self.zoneId)
-            base.localAvatar.enterTeleportIn(callback=self.__handleTeleport)
+            if init:
+                Sequence(Wait(0.4), Func(base.localAvatar.enterTeleportIn, 1, 0, self.__handleTeleport, [True])).start()
+                if base.air.holidayMgr.isHalloween():
+                    base.localAvatar.setSystemMessage(0, TTLocalizer.HalloweenHolidayMessage)
+                elif base.air.holidayMgr.isWinter():
+                    base.localAvatar.setSystemMessage(0, TTLocalizer.WinterHolidayMessage)
+            else:
+                base.localAvatar.enterTeleportIn(callback=self.__handleTeleport)
         base.localAvatar.setZoneId(self.zoneId)
         base.avatarData.setLastHood = self.zoneId
         dataMgr.saveToonData(base.avatarData, playToken)
@@ -41,11 +47,11 @@ class ToonHood(DirectObject):
             self.title = None
 
     def load(self):
-        if FFTime.isHalloween():
+        if base.air.holidayMgr.isHalloween():
             self.geom = loader.loadModel(self.spookyHoodFile)
             self.sky = loader.loadModel(self.spookySkyFile)
             self.sky.setColorScale(0.5, 0.5, 0.5, 1)
-        elif FFTime.isWinter():
+        elif base.air.holidayMgr.isWinter():
             self.geom = loader.loadModel(self.winterHoodFile)
             self.sky = loader.loadModel(self.spookySkyFile)
         else:
@@ -86,7 +92,7 @@ class ToonHood(DirectObject):
         self.clouds1Spin.finish()
         self.clouds2Spin.finish()
 
-    def __handleTeleport(self):
+    def __handleTeleport(self, init=False):
         base.localAvatar.exitTeleportIn()
         base.localAvatar.book.showButton()
         base.localAvatar.beginAllowPies()

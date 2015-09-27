@@ -17,13 +17,13 @@ class SecretArea(ToonHood):
         self.titleColor = (0.5, 0.5, 0.5, 1.0)
 
     def enter(self):
-        soundMgr.startSecretArea()
+        musicMgr.startSecretArea()
         ToonHood.enter(self)
         base.avatarData.setLastHood = FunnyFarmGlobals.SillySprings
         dataMgr.saveToonData(base.avatarData, playToken)
 
     def exit(self):
-        soundMgr.stopSecretArea()
+        musicMgr.stopSecretArea()
         ToonHood.exit(self)
 
     def load(self):

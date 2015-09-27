@@ -4,7 +4,6 @@ from direct.interval.IntervalGlobal import *
 from direct.task.Task import Task
 from direct.gui.DirectGui import *
 from toontown.toonbase import FunnyFarmGlobals
-from toontown.toonbase import FFTime
 from toontown.effects.FireworkShowMixin import FireworkShowMixin
 from toontown.parties import PartyGlobals
 import random
@@ -21,9 +20,9 @@ class TitleScreen(DirectObject):
         self.load()
 
     def load(self):
-        if FFTime.isWinter():
+        if base.air.holidayMgr.isWinter():
             self.logo = loader.loadModel('phase_3/models/gui/toontown-logo_christmas')
-        elif FFTime.isHalloween():
+        elif base.air.holidayMgr.isHalloween():
             self.logo = loader.loadModel('phase_3/models/gui/toontown-logo_halloween')
         else:
             self.logo = loader.loadModel('phase_3/models/gui/toontown-logo')
@@ -68,7 +67,7 @@ class TitleScreen(DirectObject):
         self.titleSeq = Sequence(self.titleText.colorScaleInterval(1.0, (1, 1, 1, 0.2)), self.titleText.colorScaleInterval(1.0, (1, 1, 1, 1)))
         self.track.append(Func(self.titleSeq.loop))
         self.track.append(Func(self.acceptOnce, 'mouse1', self.exitShow))
-        if FFTime.isWinter():
+        if base.air.holidayMgr.isWinter():
             showTypes = [FunnyFarmGlobals.NEWYEARS_FIREWORKS]
         else:
             showTypes = [FunnyFarmGlobals.JULY4_FIREWORKS, PartyGlobals.FireworkShows.Summer]

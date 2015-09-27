@@ -12,7 +12,7 @@ class game:
     name = 'toontown'
     process = 'client'
 
-base.game = game()
+__builtin__.game = game()
 
 from otp.settings.Settings import Settings
 from direct.gui import DirectGuiGlobals as DGG
@@ -21,7 +21,7 @@ from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import FunnyFarmLoader
-from toontown.sound import SoundManager
+from toontown.toonbase import MusicManager
 from toontown.login import DataManager
 from toontown.distributed import FFClientRepository
 from toontown.ai import FFAIRepository
@@ -79,7 +79,7 @@ class FunnyFarmStart:
             base.drawFps = True
 
         __builtin__.loader = FunnyFarmLoader.FunnyFarmLoader(base)
-        __builtin__.soundMgr = SoundManager.SoundManager()
+        __builtin__.musicMgr = MusicManager.MusicManager()
         __builtin__.dataMgr = DataManager.DataManager()
 
         self.notify.info('Setting default GUI sounds')
@@ -98,7 +98,9 @@ class FunnyFarmStart:
         self.notify.info('Initializing AI Repository...')
         base.air = FFAIRepository.FFAIRepository()
         base.air.preloadAvatars()
+        base.air.createManagers()
         base.air.createSafeZones()
+        loader.loadingScreen.load()
 
         self.notify.info('Initializing Client Repository...')
         base.cr = FFClientRepository.FFClientRepository()
@@ -106,7 +108,7 @@ class FunnyFarmStart:
 
     def startFunnyFarm(self):
         base.transitions.noTransitions()
-        soundMgr.startPAT()
+        musicMgr.startPAT()
         titleScreen = TitleScreen.TitleScreen()
         titleScreen.startShow()
         base.cr.loadPAT()

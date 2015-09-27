@@ -3,7 +3,6 @@ from direct.interval.IntervalGlobal import *
 from direct.showbase import Audio3DManager
 from otp.otpbase import OTPGlobals
 from toontown.toonbase import FunnyFarmGlobals
-from toontown.toonbase import FFTime
 from ToonStreet import ToonStreet
 
 class WWStreet(ToonStreet):
@@ -19,7 +18,7 @@ class WWStreet(ToonStreet):
         self.titleColor = (0.3, 0.6, 1.0, 1.0)
 
     def enter(self, tunnel=None):
-        soundMgr.startCVSZ()
+        musicMgr.startCVSZ()
         ToonStreet.enter(self, tunnel=tunnel)
         if tunnel:
             if tunnel == 'fc':
@@ -28,7 +27,7 @@ class WWStreet(ToonStreet):
         self.startActive()
 
     def exit(self):
-        soundMgr.stopCVSZ()
+        musicMgr.stopCVSZ()
         ToonStreet.exit(self)
 
     def load(self):

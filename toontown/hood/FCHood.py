@@ -1,7 +1,6 @@
 from pandac.PandaModules import *
 from toontown.toonbase import FunnyFarmGlobals
 from ToonHood import ToonHood
-from toontown.toonbase import FFTime
 from toontown.battle import BattleParticles
 
 class FCHood(ToonHood):
@@ -16,9 +15,9 @@ class FCHood(ToonHood):
         self.titleText = FunnyFarmGlobals.FCHoodText
         self.titleColor = (1.0, 0.5, 0.4, 1.0)
 
-    def enter(self, shop=None, tunnel=None):
-        soundMgr.startFFSZ()
-        ToonHood.enter(self, shop=shop, tunnel=tunnel)
+    def enter(self, shop=None, tunnel=None, init=False):
+        musicMgr.startFFSZ()
+        ToonHood.enter(self, shop=shop, tunnel=tunnel, init=init)
         if tunnel:
             if tunnel == 'ff':
                 tunnelOrigin = self.geom.find('**/FFTunnel').find('**/tunnel_origin')
@@ -27,22 +26,22 @@ class FCHood(ToonHood):
             elif tunnel == 'ww':
                 tunnelOrigin = self.geom.find('**/WWTunnel').find('**/tunnel_origin')
             base.localAvatar.tunnelIn(tunnelOrigin)
-        if FFTime.isWinter():
+        if base.air.holidayMgr.isWinter():
             self.snow.start(camera, self.snowRender)
         self.startActive()
 
     def exit(self):
-        soundMgr.stopFFSZ()
+        musicMgr.stopFFSZ()
         ToonHood.exit(self)
-        if FFTime.isWinter():
+        if base.air.holidayMgr.isWinter():
             self.snow.cleanup()
 
     def load(self):
         ToonHood.load(self)
         self.sky.setScale(1.5)
-        if not FFTime.isWinter() and not FFTime.isHalloween():
+        if not base.air.holidayMgr.isWinter() and not base.air.holidayMgr.isHalloween():
             self.startSkyTrack()
-        if FFTime.isWinter():
+        if base.air.holidayMgr.isWinter():
             self.snow = BattleParticles.loadParticleFile('snowdisk.ptf')
             self.snow.setPos(0, 0, 5)
             self.snowRender = render.attachNewNode('snowRender')
@@ -50,7 +49,7 @@ class FCHood(ToonHood):
             self.snowRender.setBin('fixed', 1)
 
     def unload(self):
-        if not FFTime.isWinter() and not FFTime.isHalloween():
+        if not base.air.holidayMgr.isWinter() and not base.air.holidayMgr.isHalloween():
             self.stopSkyTrack()
         ToonHood.unload(self)
 

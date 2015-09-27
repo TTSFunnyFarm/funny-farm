@@ -17,7 +17,7 @@ class PetShopInterior(Interior):
 
     def load(self):
         Interior.load(self)
-        soundMgr.shopMusicMap[self.zoneId]()
+        musicMgr.shopMusicMap[self.zoneId]()
         self.randomGenerator = random.Random()
         self.randomGenerator.seed(self.zoneId)
         self.colors = ToonInteriorColors.colors[self.zoneId]
@@ -34,7 +34,7 @@ class PetShopInterior(Interior):
         self.interior.flattenMedium()
 
     def unload(self):
-        soundMgr.stopAllMusic()
+        musicMgr.stopAllMusic()
         self.bearSwim.finish()
         del self.bearSwim
         for fish in self.fish:

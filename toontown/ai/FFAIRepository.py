@@ -1,5 +1,6 @@
 from direct.showbase.DirectObject import DirectObject
 from toontown.toon import Toon
+from HolidayManagerAI import HolidayManagerAI
 from toontown.hood import FFHoodAI
 from toontown.hood import FCHoodAI
 from toontown.hood import SSHoodAI
@@ -19,6 +20,16 @@ class FFAIRepository(DirectObject):
         self.suitPlanners = {}
         self.buildingPlanners = {}
 
+    def preloadAvatars(self):
+        self.notify.info('Preloading avatars...')
+        Toon.loadModels()
+        Toon.compileGlobalAnimList()
+        Toon.loadDialog()
+
+    def createManagers(self):
+        self.notify.info('Creating managers...')
+        self.holidayMgr = HolidayManagerAI()
+
     def createSafeZones(self):
         self.notify.info('Creating safe zones...')
         self.hoods.append(FFHoodAI.FFHoodAI(self))
@@ -26,11 +37,4 @@ class FFAIRepository(DirectObject):
         self.hoods.append(SSHoodAI.SSHoodAI(self))
         self.hoods.append(RRStreetAI.RRStreetAI(self))
         self.hoods.append(WWStreetAI.WWStreetAI(self))
-        self.notify.info('Done.')
-
-    def preloadAvatars(self):
-        self.notify.info('Preloading avatars...')
-        Toon.loadModels()
-        Toon.compileGlobalAnimList()
-        Toon.loadDialog()
         self.notify.info('Done.')

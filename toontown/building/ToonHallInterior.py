@@ -36,7 +36,7 @@ class ToonHallInterior(Interior):
 
     def load(self):
         Interior.load(self)
-        soundMgr.shopMusicMap[self.zoneId]()
+        musicMgr.shopMusicMap[self.zoneId]()
         self.interior.find('**/mainhall').setBin('ground', 0)
         self.interior.find('**/hallway').setBin('ground', 0)
         self.interior.find('**/office').setBin('ground', 0)
@@ -56,7 +56,7 @@ class ToonHallInterior(Interior):
         self.sillyFSM.enterInitialState()
 
     def unload(self):
-        soundMgr.stopAllMusic()
+        musicMgr.stopAllMusic()
         self.sillyFSM.requestFinalState()
         for npc in self.npcs:
             npc.removeActive()

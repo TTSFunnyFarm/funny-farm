@@ -2,7 +2,6 @@ from pandac.PandaModules import *
 from direct.gui.DirectGui import *
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
-from toontown.toonbase import FFTime
 import random
 
 class ToontownLoadingScreen:
@@ -11,10 +10,13 @@ class ToontownLoadingScreen:
         self.__expectedCount = 0
         self.__count = 0
 
-        if FFTime.isWinter():
+    # We can't access the holiday manager before initializing the loader, so we have to load the assets after the AI has started.
+
+    def load(self):
+        if base.air.holidayMgr.isWinter():
             self.gui = loader.loadModel('phase_3/models/gui/progress-background_christmas')
             self.logo = loader.loadModel('phase_3/models/gui/toontown-logo_christmas')
-        elif FFTime.isHalloween():
+        elif base.air.holidayMgr.isHalloween():
             self.gui = loader.loadModel('phase_3/models/gui/progress-background_halloween')
             self.logo = loader.loadModel('phase_3/models/gui/toontown-logo_halloween')
         else:
@@ -32,7 +34,7 @@ class ToontownLoadingScreen:
          -0.03,
          0.03), pos=(0, 0, -0.85), text='')
 
-    def destroy(self):
+    def unload(self):
         self.tip.destroy()
         self.title.destroy()
         self.waitBar.destroy()

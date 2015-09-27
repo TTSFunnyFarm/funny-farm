@@ -3,7 +3,6 @@ from direct.actor.Actor import Actor
 from ToonHood import ToonHood
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
-from toontown.toonbase import FFTime
 from toontown.building import Door
 from toontown.trolley import Trolley
 
@@ -20,9 +19,9 @@ class SSHood(ToonHood):
         self.titleText = FunnyFarmGlobals.SSHoodText
         self.titleColor = (0.8, 0.6, 1.0, 1.0)
 
-    def enter(self, shop=None, tunnel=None):
-        soundMgr.startSSNbrhood()
-        ToonHood.enter(self, shop=shop, tunnel=tunnel)
+    def enter(self, shop=None, tunnel=None, init=False):
+        musicMgr.startSSNbrhood()
+        ToonHood.enter(self, shop=shop, tunnel=tunnel, init=init)
         if shop:
             if shop == 'ps':
                 doorNP = self.geom.find('**/PetShopDoor')
@@ -42,7 +41,7 @@ class SSHood(ToonHood):
         self.startActive()
 
     def exit(self):
-        soundMgr.stopSSNbrhood()
+        musicMgr.stopSSNbrhood()
         ToonHood.exit(self)
 
     def load(self):
@@ -53,11 +52,11 @@ class SSHood(ToonHood):
         self.fish.loop('chan')
         self.trolley = Trolley.Trolley()
         self.trolley.setup()
-        if not FFTime.isWinter() and not FFTime.isHalloween():
+        if not base.air.holidayMgr.isWinter() and not base.air.holidayMgr.isHalloween():
             self.startSkyTrack()
 
     def unload(self):
-        if not FFTime.isWinter() and not FFTime.isHalloween():
+        if not base.air.holidayMgr.isWinter() and not base.air.holidayMgr.isHalloween():
             self.stopSkyTrack()
         ToonHood.unload(self)
         self.fish.stop()

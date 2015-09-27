@@ -15,7 +15,7 @@ class HQInterior(Interior):
 
     def load(self):
         Interior.load(self)
-        soundMgr.shopMusicMap[self.zoneId]()
+        musicMgr.shopMusicMap[self.zoneId]()
         self.interior.find('**/cream').removeNode() # gotta clean up all the jizz
         self.randomGenerator = random.Random()
         self.randomGenerator.seed(self.zoneId)
@@ -39,7 +39,7 @@ class HQInterior(Interior):
         self.interior.flattenMedium()
 
     def unload(self):
-        soundMgr.stopAllMusic()
+        musicMgr.stopAllMusic()
         for npc in self.npcs:
             npc.removeActive()
             npc.delete()

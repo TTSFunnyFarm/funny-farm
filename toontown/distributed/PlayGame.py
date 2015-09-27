@@ -29,7 +29,7 @@ class PlayGame(DirectObject):
     notify = directNotify.newCategory('PlayGame')
     MINIGAMES = [
         RingGame.RingGame, 
-        CannonGame.CannonGame, 
+        CannonGame.CannonGame
         CatchGame.CatchGame, 
         TugOfWarGame.TugOfWarGame, 
         MazeGame.MazeGame, 
@@ -43,12 +43,12 @@ class PlayGame(DirectObject):
         self.minigame = None
         self.purchase = None
 
-    def enterHood(self, hood, name, loadCount, tunnel=None):
+    def enterHood(self, hood, name, loadCount, tunnel=None, init=False):
         self.hood = hood
         loader.beginBulkLoad('hood', 'Heading to ' + name + '. . .', loadCount, TTLocalizer.TIP_GENERAL)
         self.hood.load()
         loader.endBulkLoad('hood')
-        self.hood.enter(tunnel=tunnel)
+        self.hood.enter(tunnel=tunnel, init=init)
 
     def enterHoodFromShop(self, hood, shop=None):
         self.hood = hood
@@ -134,23 +134,23 @@ class PlayGame(DirectObject):
         hood = Tutorial.Tutorial()
         self.enterHood(hood, 'The Toon-torial', 300)
 
-    def enterFFHood(self, shop=None, tunnel=None):
+    def enterFFHood(self, shop=None, tunnel=None, init=False):
         hood = FFHood.FFHood()
         if shop:
             self.enterHoodFromShop(hood, shop=shop)
         else:
-            self.enterHood(hood, 'Funny Farm', 200, tunnel=tunnel)
+            self.enterHood(hood, 'Funny Farm', 200, tunnel=tunnel, init=init)
 
-    def enterFCHood(self, shop=None, tunnel=None):
+    def enterFCHood(self, shop=None, tunnel=None, init=False):
         hood = FCHood.FCHood()
-        self.enterHood(hood, 'Funny Farm Central', 100, tunnel=tunnel)
+        self.enterHood(hood, 'Funny Farm Central', 100, tunnel=tunnel, init=init)
 
-    def enterSSHood(self, shop=None, tunnel=None):
+    def enterSSHood(self, shop=None, tunnel=None, init=False):
         hood = SSHood.SSHood()
         if shop:
             self.enterHoodFromShop(hood, shop=shop)
         else:
-            self.enterHood(hood, 'Silly Springs', 100, tunnel=tunnel)
+            self.enterHood(hood, 'Silly Springs', 100, tunnel=tunnel, init=init)
 
     def enterRRStreet(self, tunnel=None):
         street = RRStreet.RRStreet()

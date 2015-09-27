@@ -3,7 +3,6 @@ from direct.interval.IntervalGlobal import *
 from direct.showbase import Audio3DManager
 from otp.otpbase import OTPGlobals
 from toontown.toonbase import FunnyFarmGlobals
-from toontown.toonbase import FFTime
 from ToonStreet import ToonStreet
 from toontown.building import EliteExterior
 
@@ -20,7 +19,7 @@ class RRStreet(ToonStreet):
         self.titleColor = (0.8, 0.6, 1.0, 1.0)
 
     def enter(self, tunnel=None):
-        soundMgr.startSSSZ()
+        musicMgr.startSSSZ()
         ToonStreet.enter(self, tunnel=tunnel)
         self.trainSfx.play()
         self.audio3d.attachSoundToObject(self.trainSfx, self.train)
@@ -33,13 +32,13 @@ class RRStreet(ToonStreet):
         self.startActive()
 
     def exit(self):
-        soundMgr.stopSSSZ()
+        musicMgr.stopSSSZ()
         ToonStreet.exit(self)
 
     def load(self):
         ToonStreet.load(self)
         self.sky.setScale(3.0)
-        if not FFTime.isWinter() and not FFTime.isHalloween():
+        if not base.air.holidayMgr.isWinter() and not base.air.holidayMgr.isHalloween():
             self.startSkyTrack()
         self.geom.find('**/tBlocker1').node().setCollideMask(OTPGlobals.WallBitmask)
         self.geom.find('**/tBlocker2').node().setCollideMask(OTPGlobals.WallBitmask)
@@ -61,7 +60,7 @@ class RRStreet(ToonStreet):
         #self.bldg.setPosHpr(-60, -36.5, 0.1, 270, 0, 0)
 
     def unload(self):
-        if not FFTime.isWinter() and not FFTime.isHalloween():
+        if not base.air.holidayMgr.isWinter() and not base.air.holidayMgr.isHalloween():
             self.stopSkyTrack()
         ToonStreet.unload(self)
         self.audio3d.detachSound(self.trainSfx)
