@@ -355,7 +355,7 @@ class Tutorial(ToonHood):
                 Func(self.flippy.enterTeleportOut, callback=self.flippy.delete),
                 Func(base.localAvatar.enableAvatarControls),
                 Wait(3.2),
-                Func(self.flippy.hide)
+                Func(self.flippy.hide),
                 Wait(0.2),
                 Func(self.exitOutro)
         )
