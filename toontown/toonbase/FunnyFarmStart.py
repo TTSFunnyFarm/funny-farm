@@ -1,12 +1,17 @@
-from pandac.PandaModules import *
+import __builtin__
 
-loadPrcFile('config/general.prc')
+from toontown.toonbase.FunnyFarmLogger import FunnyFarmLogger
+
+__builtin__.logger = FunnyFarmLogger()
+
+from panda3d.core import *
+
+if __debug__:
+    loadPrcFile('config/general.prc')
 
 from direct.showbase import ShowBase
 
 base = ShowBase.ShowBase()
-
-import __builtin__
 
 class game:
     name = 'toontown'
@@ -114,6 +119,7 @@ class FunnyFarmStart:
         base.cr.loadPAT()
 
 __builtin__.start = FunnyFarmStart()
+
 Injector.openInjector()
 
 base.run()
