@@ -99,6 +99,7 @@ class LocalToon(Toon.Toon, WalkControls):
         self.setupSmartCamera()
         self.book.showButton()
         self.beginAllowPies()
+        self.setAnimState('neutral')
 
     def disable(self):
         self.stopUpdateSmartCamera()
