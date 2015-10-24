@@ -120,6 +120,4 @@ class FunnyFarmStart:
 
 __builtin__.start = FunnyFarmStart()
 
-Injector.openInjector()
-
 base.run()

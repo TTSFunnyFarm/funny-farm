@@ -42,10 +42,11 @@ class PlayGame(DirectObject):
         self.place = None
         self.minigame = None
         self.purchase = None
+        self.lastGame = None
 
     def enterHood(self, hood, name, loadCount, tunnel=None, init=False):
         self.hood = hood
-        loader.beginBulkLoad('hood', 'Heading to ' + name + '. . .', loadCount, TTLocalizer.TIP_GENERAL)
+        loader.beginBulkLoad('hood', 'Heading to %s. . .' % name, loadCount, TTLocalizer.TIP_GENERAL)
         self.hood.load()
         loader.endBulkLoad('hood')
         self.hood.enter(tunnel=tunnel, init=init)
@@ -64,7 +65,7 @@ class PlayGame(DirectObject):
 
     def enterStreet(self, street, name, loadCount, tunnel=None):
         self.street = street
-        loader.beginBulkLoad('street', 'Heading to ' + name + '. . .', loadCount, TTLocalizer.TIP_GENERAL)
+        loader.beginBulkLoad('street', 'Heading to %s. . .' % name, loadCount, TTLocalizer.TIP_GENERAL)
         self.street.load()
         loader.endBulkLoad('street')
         self.street.enter(tunnel=tunnel)
@@ -106,10 +107,14 @@ class PlayGame(DirectObject):
             self.hood.exit()
             self.hood.unload()
         game = random.choice(self.MINIGAMES)
-        self.minigame = game()
-        self.minigame.load()
-        self.minigame.generate()
-        self.minigame.announceGenerate()
+        if isinstance(game, self.lastGame):
+            self.enterRandomMinigame()
+        else:
+            self.minigame = game()
+            self.minigame.load()
+            self.minigame.generate()
+            self.minigame.announceGenerate()
+            self.lastGame = game
 
     def exitMinigame(self):
         ModelPool.garbageCollect()
