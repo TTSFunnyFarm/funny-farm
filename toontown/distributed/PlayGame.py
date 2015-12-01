@@ -107,8 +107,15 @@ class PlayGame(DirectObject):
             self.hood.exit()
             self.hood.unload()
         game = random.choice(self.MINIGAMES)
-        if isinstance(game, self.lastGame):
-            self.enterRandomMinigame()
+        if self.lastGame:
+            if isinstance(game, self.lastGame):
+                self.enterRandomMinigame()
+            else:
+                self.minigame = game()
+                self.minigame.load()
+                self.minigame.generate()
+                self.minigame.announceGenerate()
+                self.lastGame = game
         else:
             self.minigame = game()
             self.minigame.load()

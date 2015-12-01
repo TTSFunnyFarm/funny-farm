@@ -17,6 +17,10 @@ default-model-extension .bam
 texture-anisotropic-degree 16
 
 # Performance:
-sync-video #f
+sync-video #t
 textures-power-2 none
 garbage-collect-states #f
+
+# Holidays
+want-halloween #f
+want-winter #t
