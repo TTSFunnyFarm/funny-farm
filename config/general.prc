@@ -23,4 +23,4 @@ garbage-collect-states #f
 
 # Holidays
 want-halloween #f
-want-winter #t
+want-winter #f
