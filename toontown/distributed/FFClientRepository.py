@@ -48,6 +48,7 @@ class FFClientRepository(DirectObject):
             base.localAvatar.setupControls()
             base.localAvatar.initInterface()
             base.localAvatar.addActive()
+            base.localAvatar.useLOD(1000)
         else:
             self.enterTheTooniverse(FunnyFarmGlobals.FunnyFarm)
 
@@ -93,6 +94,7 @@ class FFClientRepository(DirectObject):
         base.localAvatar.laffMeter.start()
         base.localAvatar.startChat()
         base.localAvatar.addActive()
+        base.localAvatar.useLOD(1000)
 
     def exitTheTooniverse(self):
         base.localAvatar.enterTeleportOut(callback=self.__handleExit)
