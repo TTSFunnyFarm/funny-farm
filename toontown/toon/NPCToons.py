@@ -179,7 +179,7 @@ def createNpcsInZone(air, zoneId):
 def createLocalNPC(npcId):
     import Toon
     import NPCScientist
-    if not NPCToonDict.has_key(npcId):
+    if npcId not in NPCToonDict:
         return None
     desc = NPCToonDict[npcId]
     canonicalZoneId, name, dnaType, gender, protected, type = desc
@@ -11708,7 +11708,7 @@ zone2NpcDict = {}
 def generateZone2NpcDict():
     for id, npcDesc in NPCToonDict.items():
         zoneId = npcDesc[0]
-        if zone2NpcDict.has_key(zoneId):
+        if zoneId in zone2NpcDict:
             zone2NpcDict[zoneId].append(id)
         else:
             zone2NpcDict[zoneId] = [id]
@@ -11792,7 +11792,7 @@ npcFriends = dict(HQnpcFriends)
 npcFriends.update(FOnpcFriends)
 
 def getNPCName(npcId):
-    if NPCToonDict.has_key(npcId):
+    if npcId in NPCToonDict:
         return NPCToonDict[npcId][1]
     return None
 
@@ -11802,26 +11802,26 @@ def npcFriendsMinMaxStars(minStars, maxStars):
 
 
 def getNPCTrack(npcId):
-    if npcFriends.has_key(npcId):
+    if npcId in npcFriends:
         return npcFriends[npcId][0]
     return None
 
 
 def getNPCTrackHp(npcId):
-    if npcFriends.has_key(npcId):
+    if npcId in npcFriends:
         track, level, hp, rarity = npcFriends[npcId]
         return (track, hp)
     return (None, None)
 
 
 def getNPCTrackLevelHp(npcId):
-    if npcFriends.has_key(npcId):
+    if npcId in npcFriends:
         track, level, hp, rarity = npcFriends[npcId]
         return (track, level, hp)
     return (None, None, None)
 
 
 def getNPCTrackLevelHpRarity(npcId):
-    if npcFriends.has_key(npcId):
+    if npcId in npcFriends:
         return npcFriends[npcId]
     return (None, None, None, None)

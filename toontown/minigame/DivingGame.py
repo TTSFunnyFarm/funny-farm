@@ -399,7 +399,7 @@ class DivingGame(Minigame):
         else:
             spawnerId = int(name[2])
             spawnId = int(name[3:len(name)])
-            if self.spawners[spawnerId].fishArray.has_key(spawnId):
+            if spawnId in self.spawners[spawnerId].fishArray:
                 self.handleFishCollision(spawnId, spawnerId, toonSD.status)
 
     def fishSpawn(self, timestamp, fishcode, spawnerId, offset):
@@ -921,7 +921,7 @@ class DivingGame(Minigame):
             self.localLerp.finish()
             self.localLerp = Sequence(Func(toonSD.fsm.request, 'freeze'), Wait(1.6), Func(toonSD.fsm.request, 'normal'))
             self.localLerp.start(ts)
-        if self.spawners[spawnerId].fishArray.has_key(spawnId):
+        if spawnId in self.spawners[spawnerId].fishArray:
             fish = self.spawners[spawnerId].fishArray[spawnId]
             endX = self.spawners[spawnerId].position.getX()
             if fish.name == 'clown':
@@ -974,7 +974,7 @@ class DivingGame(Minigame):
     def fishRemove(self, code):
         spawnId = int(code[1:len(code)])
         spawnerId = int(code[0])
-        if self.spawners[spawnerId].fishArray.has_key(spawnId):
+        if spawnId in self.spawners[spawnerId].fishArray:
             fish = self.spawners[spawnerId].fishArray[spawnId]
             fish.specialLerp.finish()
             fish.moveLerp.finish()

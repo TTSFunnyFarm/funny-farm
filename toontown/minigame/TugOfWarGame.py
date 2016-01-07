@@ -352,10 +352,10 @@ class TugOfWarGame(Minigame):
         if self.suit:
             self.suit.reparentTo(hidden)
         for avId in self.avIdList:
-            if self.dropShadowDict.has_key(avId):
+            if avId in self.dropShadowDict:
                 self.dropShadowDict[avId].reparentTo(hidden)
 
-        if self.dropShadowDict.has_key(self.suitId):
+        if self.suitId in self.dropShadowDict:
             self.dropShadowDict[self.suitId].reparentTo(hidden)
         return
 

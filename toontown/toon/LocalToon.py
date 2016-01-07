@@ -516,7 +516,7 @@ class LocalToon(Toon.Toon, WalkControls):
             lastTossTrack = self.tossTrack
             tossTrack = None
         lastPieTrack = Sequence()
-        if self.pieTracks.has_key(sequence):
+        if sequence in self.pieTracks:
             lastPieTrack = self.pieTracks[sequence]
             del self.pieTracks[sequence]
         ts = globalClockDelta.localElapsedTime(timestamp32, bits=32)
@@ -539,7 +539,7 @@ class LocalToon(Toon.Toon, WalkControls):
         return
 
     def pieFinishedSplatting(self, sequence):
-        if self.splatTracks.has_key(sequence):
+        if sequence in self.splatTracks:
             del self.splatTracks[sequence]
 
     def pieSplat(self, x, y, z, sequence, pieCode, timestamp32):
@@ -549,10 +549,10 @@ class LocalToon(Toon.Toon, WalkControls):
         if elapsed > 30:
             return
         lastPieTrack = Sequence()
-        if self.pieTracks.has_key(sequence):
+        if sequence in self.pieTracks:
             lastPieTrack = self.pieTracks[sequence]
             del self.pieTracks[sequence]
-        if self.splatTracks.has_key(sequence):
+        if sequence in self.splatTracks:
             lastSplatTrack = self.splatTracks[sequence]
             del self.splatTracks[sequence]
             lastSplatTrack.finish()
@@ -731,11 +731,11 @@ class LocalToon(Toon.Toon, WalkControls):
             tossTrack = self.tossTrack
             self.tossTrack = None
             tossTrack.finish()
-        if self.pieTracks.has_key(sequence):
+        if sequence in self.pieTracks:
             pieTrack = self.pieTracks[sequence]
             del self.pieTracks[sequence]
             pieTrack.finish()
-        if self.splatTracks.has_key(sequence):
+        if sequence in self.splatTracks:
             splatTrack = self.splatTracks[sequence]
             del self.splatTracks[sequence]
             splatTrack.finish()
@@ -762,13 +762,13 @@ class LocalToon(Toon.Toon, WalkControls):
         return
 
     def pieFinishedFlying(self, sequence):
-        if self.pieTracks.has_key(sequence):
+        if sequence in self.pieTracks:
             del self.pieTracks[sequence]
         if self.__piePowerMeterSequence == sequence:
             self.__piePowerMeter.hide()
 
     def __finishPieTrack(self, sequence):
-        if self.pieTracks.has_key(sequence):
+        if sequence in self.pieTracks:
             pieTrack = self.pieTracks[sequence]
             del self.pieTracks[sequence]
             pieTrack.finish()
@@ -780,7 +780,7 @@ class LocalToon(Toon.Toon, WalkControls):
             return
         sequence = int(entry.getFromNodePath().getNetTag('pieSequence'))
         self.__finishPieTrack(sequence)
-        if self.splatTracks.has_key(sequence):
+        if sequence in self.splatTracks:
             splatTrack = self.splatTracks[sequence]
             del self.splatTracks[sequence]
             splatTrack.finish()
