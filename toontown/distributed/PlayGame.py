@@ -28,11 +28,11 @@ from toontown.minigame import DivingGame
 class PlayGame(DirectObject):
     notify = directNotify.newCategory('PlayGame')
     MINIGAMES = [
-        RingGame.RingGame, 
+        RingGame.RingGame,
         CannonGame.CannonGame,
-        CatchGame.CatchGame, 
-        TugOfWarGame.TugOfWarGame, 
-        MazeGame.MazeGame, 
+        CatchGame.CatchGame,
+        TugOfWarGame.TugOfWarGame,
+        MazeGame.MazeGame,
         DivingGame.DivingGame
     ]
 
