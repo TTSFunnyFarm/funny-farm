@@ -1021,7 +1021,7 @@ class Toon(Avatar.Avatar, ToonHead):
                 sleeves.setTexture(sleeveTex, 1)
                 sleeves.setColor(sleeveColor)
                 bottoms = thisPart.findAllMatches('**/torso-bot')
-                for bottomNum in range(0, bottoms.getNumPaths()):
+                for bottomNum in xrange(0, bottoms.getNumPaths()):
                     bottom = bottoms.getPath(bottomNum)
                     bottom.setTexture(bottomTex, 1)
                     bottom.setColor(bottomColor)
@@ -2271,7 +2271,7 @@ class Toon(Avatar.Avatar, ToonHead):
                         pieceNames = (pieceNames,)
                     for pieceName in pieceNames:
                         npc = part.findAllMatches('**/%s;+s' % pieceName)
-                        for i in range(npc.getNumPaths()):
+                        for i in xrange(npc.getNumPaths()):
                             results.append(npc[i])
 
         return results

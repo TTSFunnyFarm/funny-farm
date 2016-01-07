@@ -9187,7 +9187,7 @@ def getRecipeBeanText(beanTuple):
     if not beanTuple:
         return retval
     allTheSame = True
-    for index in range(len(beanTuple)):
+    for index in xrange(len(beanTuple)):
         if index + 1 < len(beanTuple):
             if not beanTuple[index] == beanTuple[index + 1]:
                 allTheSame = False
@@ -9201,7 +9201,7 @@ def getRecipeBeanText(beanTuple):
     else:
         retval += 'a'
         maxBeans = len(beanTuple)
-        for index in range(maxBeans):
+        for index in xrange(maxBeans):
             if index == maxBeans - 1:
                 retval += ' and %s jellybean' % BeanColorWords[beanTuple[index]]
             elif index == 0:

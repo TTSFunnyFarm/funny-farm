@@ -155,7 +155,7 @@ class PickAToon:
 
     def checkData(self):
         if dataMgr.checkToonFiles(playToken):
-            for x in range(1, 7):
+            for x in xrange(1, 7):
                 data = dataMgr.loadToonData(x, playToken)
                 if data != None:
                     if x == 1:

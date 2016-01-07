@@ -168,7 +168,7 @@ def createNpcsInZone(air, zoneId):
     npcs = []
     canonicalZoneId = ZoneUtil.getCanonicalZoneId(zoneId)
     npcIdList = zone2NpcDict.get(canonicalZoneId, [])
-    for i in range(len(npcIdList)):
+    for i in xrange(len(npcIdList)):
         npcId = npcIdList[i]
         npcDesc = NPCToonDict.get(npcId)
         npcs.append(createNPC(air, npcId, npcDesc, zoneId, posIndex=i))

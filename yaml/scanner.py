@@ -1214,7 +1214,7 @@ class Scanner(object):
                 elif ch in self.ESCAPE_CODES:
                     length = self.ESCAPE_CODES[ch]
                     self.forward()
-                    for k in range(length):
+                    for k in xrange(length):
                         if self.peek(k) not in u'0123456789ABCDEFabcdef':
                             raise ScannerError("while scanning a double-quoted scalar", start_mark,
                                     "expected escape sequence of %d hexdecimal numbers, but found %r" %
@@ -1415,7 +1415,7 @@ class Scanner(object):
         mark = self.get_mark()
         while self.peek() == u'%':
             self.forward()
-            for k in range(2):
+            for k in xrange(2):
                 if self.peek(k) not in u'0123456789ABCDEFabcdef':
                     raise ScannerError("while scanning a %s" % name, start_mark,
                             "expected URI escape sequence of 2 hexdecimal numbers, but found %r" %

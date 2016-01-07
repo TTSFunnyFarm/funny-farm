@@ -34,7 +34,7 @@ class DivingGame(Minigame):
     LAG_COMP = 1.25
 
     fishProportions = []
-    for i in range(6):
+    for i in xrange(6):
         fishProportions.append([])
 
     n = 100
@@ -540,7 +540,7 @@ class DivingGame(Minigame):
         for spawner in self.spawners:
             spawner.destroy()
             del spawner
-        for i in range(DivingGameGlobals.NUM_SPAWNERS):
+        for i in xrange(DivingGameGlobals.NUM_SPAWNERS):
             self.spawnings[i].finish()
         del self.spawners
         del self.spawnings
@@ -551,7 +551,7 @@ class DivingGame(Minigame):
             del crab
 
         if hasattr(self, 'treasures') and self.treasures:
-            for i in range(self.NUMTREASURES):
+            for i in xrange(self.NUMTREASURES):
                 self.treasures[i].destroy()
 
             del self.treasures
@@ -623,10 +623,10 @@ class DivingGame(Minigame):
         self.SPEEDMULT = pattern[1]
         self.TIME = pattern[2]
         loadBase = 'phase_4/models/char/'
-        for i in range(self.NUMCRABS):
+        for i in xrange(self.NUMCRABS):
             self.crabs.append(Actor.Actor(loadBase + 'kingCrab-zero', {'anim': loadBase + 'kingCrab-swimLOOP'}))
 
-        for i in range(len(self.crabs)):
+        for i in xrange(len(self.crabs)):
             crab = self.crabs[i]
             crab.reparentTo(render)
             crab.name = 'king'
@@ -659,7 +659,7 @@ class DivingGame(Minigame):
         loadBase = 'phase_4/models/minigames/'
         self.treasures = []
         self.chestIcons = {}
-        for i in range(self.NUMTREASURES):
+        for i in xrange(self.NUMTREASURES):
             self.chestIcons[i] = loader.loadModel(loadBase + 'treasure_chest')
             self.chestIcons[i].reparentTo(self.mapModel)
             self.chestIcons[i].setScale(1.5)
@@ -750,7 +750,7 @@ class DivingGame(Minigame):
         self.proportion = self.difficultyPatternsAI[self.getSafezoneId()][1]
         self.REWARDMOD = self.difficultyPatternsAI[self.getSafezoneId()][2]
         self.spawnings = []
-        for i in range(DivingGameGlobals.NUM_SPAWNERS):
+        for i in xrange(DivingGameGlobals.NUM_SPAWNERS):
             self.spawnings.append(Sequence(Func(self.spawnFish, i), Wait(self.SPAWNTIME + random.random()), Func(self.spawnFish, i), Wait(self.SPAWNTIME - 0.5 + random.random())))
             self.spawnings[i].loop()
 
@@ -813,7 +813,7 @@ class DivingGame(Minigame):
         taskMgr.remove(self.TREASURE_BOUNDS_TASK)
 
     def __treasureBoundsTask(self, task):
-        for i in range(self.NUMTREASURES):
+        for i in xrange(self.NUMTREASURES):
             self.chestIcons[i].setPos(self.treasures[i].chest.getPos(render) / self.MAP_DIV)
             self.chestIcons[i].setZ(self.chestIcons[i].getZ() + self.MAP_OFF)
             if self.treasures[i].treasureNode.getZ() < -36:
@@ -834,7 +834,7 @@ class DivingGame(Minigame):
         if avId == self.localAvId:
             self.reachedFlag = 0
         if toonSD.status == 'treasure' and self.treasures and self.chestIcons:
-            for i in range(self.NUMTREASURES):
+            for i in xrange(self.NUMTREASURES):
                 if self.treasures[i].grabbedId == avId:
                     self.treasures[i].treasureNode.wrtReparentTo(render)
                     self.treasures[i].grabbedId = 0
@@ -874,7 +874,7 @@ class DivingGame(Minigame):
             return
         self.hasTreasure = 0
         ts = globalClockDelta.localElapsedTime(timestamp)
-        for i in range(self.NUMTREASURES):
+        for i in xrange(self.NUMTREASURES):
             if self.treasures[i].grabbedId == avId:
                 self.treasures[i].grabbedId = 0
                 toonSD = self.toonSDs[avId]
@@ -1046,7 +1046,7 @@ class DivingGame(Minigame):
         crab = self.crabs[crabId]
         ts = globalClockDelta.localElapsedTime(timestamp)
         x = 0
-        for i in range(self.NUMTREASURES):
+        for i in xrange(self.NUMTREASURES):
             x += self.treasures[i].treasureNode.getX(render)
 
         x /= self.NUMTREASURES
@@ -1134,7 +1134,7 @@ class DivingGame(Minigame):
         pos[1] = -2
         pos[2] += self.zVel * dt
         found = 0
-        for i in range(self.NUMTREASURES):
+        for i in xrange(self.NUMTREASURES):
             if self.treasures[i].grabbedId == self.localAvId:
                 found = 1
                 i = self.NUMTREASURES + 1
@@ -1190,7 +1190,7 @@ class DivingGame(Minigame):
         self.treasurePanel.cleanup()
         self.mapAvatars[self.localAvId].destroy()
         del self.mapAvatars
-        for i in range(self.NUMTREASURES):
+        for i in xrange(self.NUMTREASURES):
             del self.chestIcons[i]
 
         del self.timer
@@ -1222,7 +1222,7 @@ class DivingGame(Minigame):
         timestamp = globalClockDelta.getFrameNetworkTime()
         props = self.proportion[spawnerId]
         num = random.random()
-        for i in range(len(props)):
+        for i in xrange(len(props)):
             prop = props[i]
             low = prop[0]
             high = prop[1]
