@@ -95,6 +95,7 @@ class FunnyFarmStart:
 
         self.notify.info('Setting default font')
         DGG.setDefaultFont(ToontownGlobals.getInterfaceFont())
+        DGG.setDefaultDialogGeom(loader.loadModel('phase_3/models/gui/dialog_box_gui'))
 
         FunnyFarmGlobals.addCullBins()
         FunnyFarmGlobals.setNametagGlobals()
