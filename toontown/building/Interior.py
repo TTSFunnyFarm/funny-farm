@@ -30,3 +30,4 @@ class Interior(DirectObject):
         door.find('**/door_*_left').setDepthOffset(3)
         door.find('**/door_*_right').setDepthOffset(3)
         door.find('**/door_*_trigger').setY(-0.24)
+        door.setDepthOffset(1)
