@@ -2409,7 +2409,6 @@ class Toon(Avatar.Avatar, ToonHead):
                         if not self.pumpkins.hasPath(p) and p.getTag('pumpkin') == 'enabled':
                             p.show()
                             p.setTag('pumpkin', 'disabled')
-                self.setupMuzzles(self.style)
 
             track.append(Func(showHiddenParts))
             track.append(Func(self.enablePumpkins, False))

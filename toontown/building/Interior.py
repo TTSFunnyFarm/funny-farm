@@ -22,10 +22,11 @@ class Interior(DirectObject):
         return door
 
     def fixDoor(self, door):
-        name = door.getName()
-        door.find('**/' + name + '_hole_left').setColor(0, 0, 0, 1)
-        door.find('**/' + name + '_hole_right').setColor(0, 0, 0, 1)
-        door.find('**/' + name + '_right').setDepthOffset(1)
-        door.find('**/' + name + '_left').setDepthOffset(1)
-        door.setDepthOffset(1)
-        door.find('**/' + name + '_trigger').setY(-0.24)
+        door.find('**/door_*_hole_left').setColor(0, 0, 0, 1)
+        door.find('**/door_*_hole_right').setColor(0, 0, 0, 1)
+        door.find('**/door_*_flat').setDepthOffset(1)
+        door.find('**/door_*_hole_left').setDepthOffset(2)
+        door.find('**/door_*_hole_right').setDepthOffset(2)
+        door.find('**/door_*_left').setDepthOffset(3)
+        door.find('**/door_*_right').setDepthOffset(3)
+        door.find('**/door_*_trigger').setY(-0.24)

@@ -28,7 +28,7 @@ class ToontownLoadingScreen:
         self.banner.reparentTo(self.gui)
         self.banner.setScale(0.4, 0.4, 0.4)
         self.tip = DirectLabel(guiId='ToontownLoadingScreenTip', parent=self.banner, relief=None, text='', text_scale=TTLocalizer.TLStip, text_font=ToontownGlobals.getInterfaceFont(), textMayChange=1, pos=(-1.2, 0.0, 0.1), text_fg=(0.4, 0.3, 0.2, 1), text_wordwrap=13, text_align=TextNode.ALeft)
-        self.title = DirectLabel(guiId='ToontownLoadingScreenTitle', parent=self.gui, relief=None, pos=(-1.1, 0, -0.77), text='', textMayChange=1, text_scale=0.08, text_fg=(0.93, 0.26, 0.28, 1.0), text_align=TextNode.ALeft, text_font=ToontownGlobals.getSignFont())
+        self.title = DirectLabel(guiId='ToontownLoadingScreenTitle', parent=self.gui, relief=None, pos=(-1.075, 0, -0.77), text='', textMayChange=1, text_scale=0.08, text_fg=(0.93, 0.26, 0.28, 1.0), text_align=TextNode.ALeft, text_font=ToontownGlobals.getSignFont())
         self.waitBar = DirectWaitBar(guiId='ToontownLoadingScreenWaitBar', parent=self.gui, frameSize=(-1.06,
          1.06,
          -0.03,

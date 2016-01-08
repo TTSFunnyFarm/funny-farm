@@ -64,12 +64,6 @@ class FFHood(ToonHood):
         self.fish.loop('chan')
         self.trolley = Trolley.Trolley()
         self.trolley.setup()
-        self.restockSfx = loader.loadSfx('phase_9/audio/sfx/CHQ_SOS_pies_restock.ogg')
-        self.leroy = NPCToons.createLocalNPC(91917)
-        self.leroy.reparentTo(render)
-        self.leroy.setPosHpr(45, 80, 0.025, 135, 0, 0)
-        self.leroy.initializeBodyCollisions('toon')
-        self.leroy.addActive()
         if not base.air.holidayMgr.isWinter() and not base.air.holidayMgr.isHalloween():
             self.startSkyTrack()
         if base.air.holidayMgr.isWinter():
@@ -88,14 +82,10 @@ class FFHood(ToonHood):
         self.fish.removeNode()
         self.trolley.removeActive()
         self.trolley.delete()
-        self.leroy.removeActive()
-        self.leroy.delete()
         del self.fish
         del self.trolley
-        del self.leroy
 
     def startActive(self):
-        self.accept('enter' + self.leroy.collNodePath.node().getName(), self.__givePies)
         self.acceptOnce('enteroutdoor_zone_entrance_collision_floor', self.__handleFCTunnel)
         self.acceptOnce('enterPetShopDoorTrigger', self.__handlePetShop)
         self.acceptOnce('enterGagShopDoorTrigger', self.__handleGagShop)
@@ -104,12 +94,6 @@ class FFHood(ToonHood):
         self.acceptOnce('enterMickeyDoorTrigger', self.__handleMickeyHouse)
         self.acceptOnce('enterMinnieDoorTrigger', self.__handleMinnieHouse)
         self.trolley.addActive()
-
-    def __givePies(self, entry):
-        if base.localAvatar.numPies < 20:
-            base.playSfx(self.restockSfx)
-            base.localAvatar.givePies(4, 20)
-            self.leroy.setChatAbsolute('Hey, %s! Have some pies!' % base.localAvatar.getName(), CFSpeech|CFTimeout)
 
     def __handlePetShop(self, entry):
         petDoor = self.geom.find('**/PetShopDoor')

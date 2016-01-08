@@ -69,19 +69,19 @@ class MusicManager:
         self.musicList[4].stop()
 
     def startTutorial(self):
-        self.playMusic(5, volume=0.5)
+        self.playMusic(5)
 
     def stopTutorial(self):
         self.musicList[5].stop()
 
     def startFFNbrhood(self):
-        self.playMusic(6, volume=0.5)
+        self.playMusic(6)
 
     def stopFFNbrhood(self):
         self.musicList[6].stop()
 
     def startFFSZ(self):
-        self.playMusic(7, volume=0.5)
+        self.playMusic(7)
 
     def stopFFSZ(self):
         self.musicList[7].stop()
@@ -93,13 +93,13 @@ class MusicManager:
         self.musicList[8].stop()
 
     def startSSNbrhood(self):
-        self.playMusic(9, volume=0.5)
+        self.playMusic(9)
 
     def stopSSNbrhood(self):
         self.musicList[9].stop()
 
     def startSSSZ(self):
-        self.playMusic(10, volume=0.5)
+        self.playMusic(10)
 
     def stopSSSZ(self):
         self.musicList[10].stop()
@@ -111,7 +111,7 @@ class MusicManager:
         self.musicList[11].stop()
 
     def startCVSZ(self):
-        self.playMusic(12, volume=0.5)
+        self.playMusic(12)
 
     def stopCVSZ(self):
         self.musicList[12].stop()

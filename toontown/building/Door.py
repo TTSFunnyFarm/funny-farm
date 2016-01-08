@@ -58,8 +58,8 @@ class Door(DirectObject):
     def avatarEnter(self, avatar):
         base.localAvatar.disable()
         track = Sequence()
-        enqueueTrack = self.getAvatarEnqueueTrack(avatar, 0.7)
-        enterTrack = self.getAvatarEnterDoorTrack(avatar, 0.7)
+        enqueueTrack = self.getAvatarEnqueueTrack(avatar, 0.5)
+        enterTrack = self.getAvatarEnterDoorTrack(avatar, 1.0)
         track.append(Func(self.enterOpening))
         track.append(enqueueTrack)
         track.append(Wait(0.4))
