@@ -106,22 +106,23 @@ class PlayGame(DirectObject):
             TexturePool.garbageCollect()
             self.hood.exit()
             self.hood.unload()
-        game = random.choice(self.MINIGAMES)
+        game = random.choice(self.MINIGAMES)()
         if self.lastGame:
-            if isinstance(game, self.lastGame):
+            if game.getTitle() == self.lastGame:
+                del game
                 self.enterRandomMinigame()
             else:
-                self.minigame = game()
+                self.minigame = game
                 self.minigame.load()
                 self.minigame.generate()
                 self.minigame.announceGenerate()
-                self.lastGame = game
+                self.lastGame = self.minigame.getTitle()
         else:
-            self.minigame = game()
+            self.minigame = game
             self.minigame.load()
             self.minigame.generate()
             self.minigame.announceGenerate()
-            self.lastGame = game
+            self.lastGame = self.minigame.getTitle()
 
     def exitMinigame(self):
         ModelPool.garbageCollect()
