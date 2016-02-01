@@ -174,12 +174,12 @@ class LocalToon(Toon.Toon, WalkControls):
             self.laffMeter.adjustFace(hp, maxHp)
         base.avatarData.setHp = self.hp
         base.avatarData.setMaxHp = self.maxHp
-        dataMgr.saveToonData(base.avatarData, playToken)
+        dataMgr.saveToonData(base.avatarData)
 
     def setName(self, name):
         self.nametag.setName(name)
         base.avatarData.setName = name
-        dataMgr.saveToonData(base.avatarData, playToken)
+        dataMgr.saveToonData(base.avatarData)
 
     def getName(self):
         return self.nametag.name
@@ -187,32 +187,32 @@ class LocalToon(Toon.Toon, WalkControls):
     def setNametagFont(self, font):
         self.nametag.setFont(font)
         base.avatarData.setNametagStyle = FunnyFarmGlobals.nametagDict[font]
-        dataMgr.saveToonData(base.avatarData, playToken)
+        dataMgr.saveToonData(base.avatarData)
 
     def setHat(self, hatIdx, textureIdx, colorIdx, fromRTM = False):
         Toon.Toon.setHat(self, hatIdx, textureIdx, colorIdx, fromRTM = False)
         base.avatarData.setHat = [hatIdx, textureIdx, colorIdx]
-        dataMgr.saveToonData(base.avatarData, playToken)
+        dataMgr.saveToonData(base.avatarData)
 
     def setGlasses(self, glassesIdx, textureIdx, colorIdx, fromRTM = False):
         Toon.Toon.setGlasses(self, glassesIdx, textureIdx, colorIdx, fromRTM = False)
         base.avatarData.setGlasses = [glassesIdx, textureIdx, colorIdx]
-        dataMgr.saveToonData(base.avatarData, playToken)
+        dataMgr.saveToonData(base.avatarData)
 
     def setBackpack(self, backpackIdx, textureIdx, colorIdx, fromRTM = False):
         Toon.Toon.setBackpack(self, backpackIdx, textureIdx, colorIdx, fromRTM = False)
         base.avatarData.setBackpack = [backpackIdx, textureIdx, colorIdx]
-        dataMgr.saveToonData(base.avatarData, playToken)
+        dataMgr.saveToonData(base.avatarData)
 
     def setShoes(self, shoesIdx, textureIdx, colorIdx):
         Toon.Toon.setShoes(self, shoesIdx, textureIdx, colorIdx)
         base.avatarData.setShoes = [shoesIdx, textureIdx, colorIdx]
-        dataMgr.saveToonData(base.avatarData, playToken)
+        dataMgr.saveToonData(base.avatarData)
 
     def setCheesyEffect(self, effect):
         Toon.Toon.applyCheesyEffect(self, effect, lerpTime=0.5)
         base.avatarData.setCheesyEffect = effect
-        dataMgr.saveToonData(base.avatarData, playToken)
+        dataMgr.saveToonData(base.avatarData)
 
     def setAccessLevel(self, level):
         self.accessLevel = level
@@ -256,7 +256,7 @@ class LocalToon(Toon.Toon, WalkControls):
         self.money = money
         messenger.send(self.uniqueName('moneyChange'), [money])
         base.avatarData.setMoney = self.money
-        dataMgr.saveToonData(base.avatarData, playToken)
+        dataMgr.saveToonData(base.avatarData)
 
     def getMoney(self):
         return self.money
@@ -264,7 +264,7 @@ class LocalToon(Toon.Toon, WalkControls):
     def setMaxMoney(self, maxMoney):
         self.maxMoney = maxMoney
         base.avatarData.setMaxMoney = self.maxMoney
-        dataMgr.saveToonData(base.avatarData, playToken)
+        dataMgr.saveToonData(base.avatarData)
 
     def getMaxMoney(self):
         return self.maxMoney
@@ -272,7 +272,7 @@ class LocalToon(Toon.Toon, WalkControls):
     def setBankMoney(self, bankMoney):
         self.bankMoney = bankMoney
         base.avatarData.setBankMoney = self.bankMoney
-        dataMgr.saveToonData(base.avatarData, playToken)
+        dataMgr.saveToonData(base.avatarData)
 
     def getBankMoney(self):
         return self.bankMoney
@@ -280,7 +280,7 @@ class LocalToon(Toon.Toon, WalkControls):
     def setMaxBankMoney(self, maxBankMoney):
         self.maxBankMoney = maxBankMoney
         base.avatarData.setMaxBankMoney = self.maxBankMoney
-        dataMgr.saveToonData(base.avatarData, playToken)
+        dataMgr.saveToonData(base.avatarData)
 
     def getMaxBankMoney(self):
         return self.maxBankMoney

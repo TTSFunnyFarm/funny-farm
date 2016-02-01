@@ -1,6 +1,3 @@
-- Make Silly Springs bigger so we can fit a pond in it.
-- Wintry Way
-- Chilly Village
 - Trolley games
 - Fishing
-- Classic characters
+- Fix up the tutorial & maybe add our first form of combat.

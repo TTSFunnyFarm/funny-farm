@@ -5,7 +5,6 @@ from toontown.login.PickAToon import PickAToon
 from toontown.toontowngui import TTDialog
 from toontown.toonbase import FunnyFarmGlobals
 from otp.otpbase import OTPLocalizer
-from toontown.login import Launcher
 import random
 import PlayGame
 import os
@@ -16,14 +15,8 @@ class FFClientRepository(DirectObject):
     notify.setInfo(True)
 
     def __init__(self):
-        self.launcher = None
         self.avChooser = None
         self.playGame = PlayGame.PlayGame()
-
-    def enterLogin(self):
-        self.launcher = Launcher.Launcher()
-        self.launcher.load()
-        self.launcher.enter()
 
     def loadPAT(self):
         self.avChooser = PickAToon()

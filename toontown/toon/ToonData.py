@@ -21,8 +21,6 @@ class ToonData(yaml.YAMLObject):
         self.setShoes = shoes
         self.setNametagStyle = nametagStyle
         self.setCheesyEffect = cheesyEffect
-        # We'll do our best to scare them off if they happen to find the database
-        self.WARNING = 'DO NOT EDIT. This is ENCRYPTED data. Changing ANY of it will crash your game.'
 
     def encrypt(self):
         # To encrypt the data we're turning everything into a combination of hexadecimals and binary numbers.
@@ -30,15 +28,12 @@ class ToonData(yaml.YAMLObject):
         self.setName = binascii.hexlify(self.setName)
         self.setHp = bin(self.setHp)
         self.setMaxHp = bin(self.setMaxHp)
-        try:
-            self.setMoney = bin(self.setMoney)
-            self.setMaxMoney = bin(self.setMaxMoney)
-            self.setBankMoney = bin(self.setBankMoney)
-            self.setMaxBankMoney = bin(self.setMaxBankMoney)
-            self.setNametagStyle = binascii.hexlify(self.setNametagStyle)
-            self.setCheesyEffect = bin(self.setCheesyEffect)
-        except:
-            pass
+        self.setMoney = bin(self.setMoney)
+        self.setMaxMoney = bin(self.setMaxMoney)
+        self.setBankMoney = bin(self.setBankMoney)
+        self.setMaxBankMoney = bin(self.setMaxBankMoney)
+        self.setNametagStyle = binascii.hexlify(self.setNametagStyle)
+        self.setCheesyEffect = bin(self.setCheesyEffect)
         self.setLastHood = bin(self.setLastHood)
         self.setHat = binascii.hexlify(str(self.setHat))
         self.setGlasses = binascii.hexlify(str(self.setGlasses))
@@ -52,15 +47,12 @@ class ToonData(yaml.YAMLObject):
         self.setName = binascii.unhexlify(self.setName)
         self.setHp = int(self.setHp, 0)
         self.setMaxHp = int(self.setMaxHp, 0)
-        try:
-            self.setMoney = int(self.setMoney, 0)
-            self.setMaxMoney = int(self.setMaxMoney, 0)
-            self.setBankMoney = int(self.setBankMoney, 0)
-            self.setMaxBankMoney = int(self.setMaxBankMoney, 0)
-            self.setNametagStyle = binascii.unhexlify(self.setNametagStyle)
-            self.setCheesyEffect = int(self.setCheesyEffect, 0)
-        except:
-            pass
+        self.setMoney = int(self.setMoney, 0)
+        self.setMaxMoney = int(self.setMaxMoney, 0)
+        self.setBankMoney = int(self.setBankMoney, 0)
+        self.setMaxBankMoney = int(self.setMaxBankMoney, 0)
+        self.setNametagStyle = binascii.unhexlify(self.setNametagStyle)
+        self.setCheesyEffect = int(self.setCheesyEffect, 0)
         self.setLastHood = int(self.setLastHood, 0)
         self.setHat = ast.literal_eval(binascii.unhexlify(self.setHat))
         self.setGlasses = ast.literal_eval(binascii.unhexlify(self.setGlasses))

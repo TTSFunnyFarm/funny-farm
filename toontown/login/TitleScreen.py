@@ -57,8 +57,6 @@ class TitleScreen(DirectObject):
 
     def startShow(self):
         self.track = Sequence()
-        self.track.append(Func(base.transitions.fadeScreen, 1.0))
-        self.track.append(Func(base.transitions.fadeIn, 1.0))
         self.track.append(camera.posHprInterval(6.0, pos=(0, -350, 55), hpr=(0, 12, 0), blendType='easeInOut'))
         self.track.append(Func(self.logo.show))
         self.track.append(self.logo.colorScaleInterval(2.0, colorScale=(1, 1, 1, 1), startColorScale=(1, 1, 1, 0)))

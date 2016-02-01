@@ -36,7 +36,7 @@ class ToonHood(DirectObject):
                 base.localAvatar.enterTeleportIn(callback=self.__handleTeleport)
         base.localAvatar.setZoneId(self.zoneId)
         base.avatarData.setLastHood = self.zoneId
-        dataMgr.saveToonData(base.avatarData, playToken)
+        dataMgr.saveToonData(base.avatarData)
         self.title = OnscreenText(self.titleText, fg=self.titleColor, font=ToontownGlobals.getSignFont(), pos=(0, -0.5), scale=TTLocalizer.HtitleText, drawOrder=0, mayChange=1)
         self.spawnTitleText()
 

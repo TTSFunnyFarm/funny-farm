@@ -50,7 +50,6 @@ class PickAToon:
             self.load()
         self.bg.show()
         self.quitButton.show()
-        self.logoutButton.show()
         base.transitions.fadeScreen(1.0)
         base.transitions.fadeIn(1.0)
         if base.air.holidayMgr.isWinter():
@@ -124,7 +123,6 @@ class PickAToon:
         self.b6Delete.hide()
 
         self.quitButton = DirectButton(parent=self.bg, image=(quitHover, quitHover, quitHover), relief=None, text=TTLocalizer.AvatarChooserQuit, text_font=ToontownGlobals.getSignFont(), text_fg=(0.977, 0.816, 0.133, 1), text_pos=TTLocalizer.ACquitButtonPos, text_scale=TTLocalizer.ACquitButton, image_scale=1, image1_scale=1.05, image2_scale=1.05, scale=1.05, pos=(1.08, 0, -0.907), command=sys.exit)
-        self.logoutButton = DirectButton(parent=self.bg, relief=None, image=(quitHover, quitHover, quitHover), text=TTLocalizer.OptionsPageLogout, text_font=ToontownGlobals.getSignFont(), text_fg=(0.977, 0.816, 0.133, 1), text_scale=TTLocalizer.AClogoutButton, text_pos=(0, -0.035), pos=(-1.17, 0, -0.914), image_scale=1.15, image1_scale=1.15, image2_scale=1.18, scale=0.5, command=self.__handleLogout)
 
         self.checkData()
         gui.removeNode()
@@ -149,14 +147,10 @@ class PickAToon:
         self.mat.load()
         self.mat.enter()
 
-    def __handleLogout(self):
-        base.transitions.fadeOut()
-        Sequence(Wait(1), Func(self.exit), Func(base.cr.enterLogin)).start()
-
     def checkData(self):
-        if dataMgr.checkToonFiles(playToken):
+        if dataMgr.checkToonFiles():
             for x in xrange(1, 7):
-                data = dataMgr.loadToonData(x, playToken)
+                data = dataMgr.loadToonData(x)
                 if data != None:
                     if x == 1:
                         self.displayHead(data, self.b1)
@@ -268,7 +262,7 @@ class PickAToon:
         self.lastChance.destroy()
         del self.lastChance
         if choice == 1:
-            dataMgr.deleteToonData(index, playToken)
+            dataMgr.deleteToonData(index)
             # Hacky way of updating the gui
             self.unload()
             self.load()
