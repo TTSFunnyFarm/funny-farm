@@ -20,11 +20,11 @@ class DataManager:
         self.oldDir = Filename.getUserAppdataDirectory() + '/FunnyFarm/db/'
         self.newDir = Filename.getUserAppdataDirectory() + '/FunnyFarm' + '/database/'
         self.toons = [
-            '1000001', 
-            '1000002', 
-            '1000003', 
-            '1000004', 
-            '1000005', 
+            '1000001',
+            '1000002',
+            '1000003',
+            '1000004',
+            '1000005',
             '1000006'
         ]
         self.removeOldData()

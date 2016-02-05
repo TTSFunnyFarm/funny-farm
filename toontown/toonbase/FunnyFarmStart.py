@@ -27,6 +27,7 @@ from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import FunnyFarmLoader
 from toontown.toonbase import MusicManager
+from toontown.toonbase import ScreenshotManager
 from toontown.login import DataManager
 from toontown.distributed import FFClientRepository
 from toontown.ai import FFAIRepository
@@ -85,6 +86,7 @@ class FunnyFarmStart:
 
         __builtin__.loader = FunnyFarmLoader.FunnyFarmLoader(base)
         __builtin__.musicMgr = MusicManager.MusicManager()
+        __builtin__.screenshotMgr = ScreenshotManager.ScreenshotManager()
         __builtin__.dataMgr = DataManager.DataManager()
 
         self.notify.info('Setting default GUI sounds')
