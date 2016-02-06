@@ -1,6 +1,5 @@
 from pandac.PandaModules import *
 from direct.directnotify import DirectNotifyGlobal
-import os
 
 class BattleSounds:
     notify = DirectNotifyGlobal.directNotify.newCategory('BattleSounds')
