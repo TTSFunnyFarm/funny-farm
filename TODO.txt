@@ -1,3 +1,2 @@
 - Trolley games
-- Fishing
-- Fix up the tutorial & maybe add our first form of combat.
+- "Remaster" the toontorial & maybe add our first form of combat.
