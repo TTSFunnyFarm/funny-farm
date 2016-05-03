@@ -16,23 +16,23 @@ class RRStreet(ToonStreet):
         self.winterStreetFile = 'phase_14/models/streets/rickety_road_winter'
         self.skyFile = 'phase_3.5/models/props/TT_sky'
         self.titleText = FunnyFarmGlobals.RRStreetText
-        self.titleColor = (0.8, 0.6, 1.0, 1.0)
+        self.titleColor = (1.0, 0.5, 0.4, 1.0)
 
     def enter(self, tunnel=None):
-        musicMgr.startSSSZ()
+        musicMgr.startFFSZ()
         ToonStreet.enter(self, tunnel=tunnel)
         self.trainSfx.play()
         self.audio3d.attachSoundToObject(self.trainSfx, self.train)
         if tunnel:
-            if tunnel == 'fc':
+            if tunnel == 'ff':
+                tunnelOrigin = self.geom.find('**/FFTunnel').find('**/tunnel_origin')
+            elif tunnel == 'fc':
                 tunnelOrigin = self.geom.find('**/FCTunnel').find('**/tunnel_origin')
-            elif tunnel == 'ss':
-                tunnelOrigin = self.geom.find('**/SSTunnel').find('**/tunnel_origin')
             base.localAvatar.tunnelIn(tunnelOrigin)
         self.startActive()
 
     def exit(self):
-        musicMgr.stopSSSZ()
+        musicMgr.stopFFSZ()
         ToonStreet.exit(self)
 
     def load(self):
@@ -76,9 +76,18 @@ class RRStreet(ToonStreet):
         #del self.bldg
 
     def startActive(self):
+        self.acceptOnce('enterFFTunnel_trigger', self.__handleFFTunnel)
         self.acceptOnce('enterFCTunnel_trigger', self.__handleFCTunnel)
-        self.acceptOnce('enterSSTunnel_trigger', self.__handleSSTunnel)
         self.accept('entertrain_collision', self.__handleTrainCollision)
+
+    def __handleFFTunnel(self, entry):
+        tunnelOrigin = self.geom.find('**/FFTunnel').find('**/tunnel_origin')
+        base.localAvatar.tunnelOut(tunnelOrigin)
+        self.acceptOnce('tunnelOutMovieDone', self.__handleEnterFF)
+
+    def __handleEnterFF(self):
+        base.cr.playGame.exitStreet()
+        base.cr.playGame.enterFFHood(tunnel='rr')
 
     def __handleFCTunnel(self, entry):
         tunnelOrigin = self.geom.find('**/FCTunnel').find('**/tunnel_origin')
@@ -89,20 +98,11 @@ class RRStreet(ToonStreet):
         base.cr.playGame.exitStreet()
         base.cr.playGame.enterFCHood(tunnel='rr')
 
-    def __handleSSTunnel(self, entry):
-        tunnelOrigin = self.geom.find('**/SSTunnel').find('**/tunnel_origin')
-        base.localAvatar.tunnelOut(tunnelOrigin)
-        self.acceptOnce('tunnelOutMovieDone', self.__handleEnterSS)
-
-    def __handleEnterSS(self):
-        base.cr.playGame.exitStreet()
-        base.cr.playGame.enterSSHood(tunnel='rr')
-
     def __handleTrainCollision(self, entry):
         base.localAvatar.disable()
         base.localAvatar.setAnimState('neutral')
         animalType = base.localAvatar.getStyle().getType()
-        dialogue = base.loadSfx('phase_3.5/audio/dial/AV_' + animalType + '_exclaim.ogg')
+        dialogue = base.loadSfx('phase_3.5/audio/dial/AV_%s_exclaim.ogg' % animalType)
         base.localAvatar.playCurrentDialogue(dialogue, None)
         base.localAvatar.enterSquish(callback=self.__handleSquish)
 

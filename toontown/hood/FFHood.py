@@ -46,7 +46,7 @@ class FFHood(ToonHood):
             self.acceptOnce('avatarExitDone', self.startActive)
             return
         if tunnel:
-            tunnelOrigin = self.geom.find('**/FCTunnel').find('**/tunnel_origin')
+            tunnelOrigin = self.geom.find('**/RRTunnel').find('**/tunnel_origin')
             base.localAvatar.tunnelIn(tunnelOrigin)
         self.startActive()
 
@@ -86,7 +86,7 @@ class FFHood(ToonHood):
         del self.trolley
 
     def startActive(self):
-        self.acceptOnce('enteroutdoor_zone_entrance_collision_floor', self.__handleFCTunnel)
+        self.acceptOnce('enteroutdoor_zone_entrance_collision_floor', self.__handleRRTunnel)
         self.acceptOnce('enterPetShopDoorTrigger', self.__handlePetShop)
         self.acceptOnce('enterGagShopDoorTrigger', self.__handleGagShop)
         self.acceptOnce('enterdoor_trigger_0', self.__handleHQ)
@@ -155,11 +155,11 @@ class FFHood(ToonHood):
         base.cr.playGame.exitHood()
         base.cr.playGame.enterMinnieHouse(self.zoneId)
 
-    def __handleFCTunnel(self, entry):
-        tunnelOrigin = self.geom.find('**/FCTunnel').find('**/tunnel_origin')
+    def __handleRRTunnel(self, entry):
+        tunnelOrigin = self.geom.find('**/RRTunnel').find('**/tunnel_origin')
         base.localAvatar.tunnelOut(tunnelOrigin)
-        self.acceptOnce('tunnelOutMovieDone', self.__handleEnterFC)
+        self.acceptOnce('tunnelOutMovieDone', self.__handleEnterRR)
 
-    def __handleEnterFC(self):
+    def __handleEnterRR(self):
         base.cr.playGame.exitHood()
-        base.cr.playGame.enterFCHood(tunnel='ff')
+        base.cr.playGame.enterRRStreet(tunnel='ff')

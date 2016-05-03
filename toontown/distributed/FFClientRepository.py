@@ -60,7 +60,7 @@ class FFClientRepository(DirectObject):
 
     def teleportTo(self, zoneId):
         if base.secretAreaFlag:
-            secretAreaFlag = random.randint(0, 100)
+            secretAreaFlag = random.randint(0, 9)
             if not secretAreaFlag:
                 zoneId = FunnyFarmGlobals.SecretArea
                 base.secretAreaFlag = False

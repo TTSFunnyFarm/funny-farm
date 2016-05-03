@@ -19,8 +19,8 @@ class SecretArea(ToonHood):
     def enter(self):
         musicMgr.startSecretArea()
         ToonHood.enter(self)
-        base.avatarData.setLastHood = FunnyFarmGlobals.SillySprings
-        dataMgr.saveToonData(base.avatarData, playToken)
+        base.avatarData.setLastHood = FunnyFarmGlobals.FunnyFarmCentral
+        dataMgr.saveToonData(base.avatarData)
 
     def exit(self):
         musicMgr.stopSecretArea()

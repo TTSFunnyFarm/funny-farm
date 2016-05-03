@@ -13,14 +13,14 @@ FunnyFarmCentral = 2000
 SillySprings = 3000
 ChillyVillage = 4000
 MoonlitMeadow = 5000
-RicketyRoad = 3100
+RicketyRoad = 1100
 WintryWay = 4100
 BreezyBend = 5100
 SecretArea = 3200
 FFHoodText = 'Funny Farm\nPlayground'
+RRStreetText = 'Funny Farm\nRickety Road'
 FCHoodText = 'Funny Farm Central'
 SSHoodText = 'Silly Springs\nPlayground'
-RRStreetText = 'Silly Springs\nRickety Road'
 CVHoodText = 'Chilly Village\nPlayground'
 WWStreetText = 'Chilly Village\nWintry Way'
 MMHoodText = 'Moonlit Meadow\nPlayground'
@@ -42,7 +42,7 @@ def getHoodNameFromId(zoneId):
     elif zoneId == MoonlitMeadow:
         return ('Moonlit Meadow', 'Playground')
     elif zoneId == RicketyRoad:
-        return ('Silly Springs', 'Rickety Road')
+        return ('Funny Farm', 'Rickety Road')
     elif zoneId == WintryWay:
         return ('Chilly Village', 'Wintry Way')
     elif zoneId == BreezyBend:

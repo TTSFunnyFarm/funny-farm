@@ -16,13 +16,13 @@ class FCHood(ToonHood):
         self.titleColor = (1.0, 0.5, 0.4, 1.0)
 
     def enter(self, shop=None, tunnel=None, init=False):
-        musicMgr.startFFSZ()
+        musicMgr.startFCSZ()
         ToonHood.enter(self, shop=shop, tunnel=tunnel, init=init)
         if tunnel:
-            if tunnel == 'ff':
-                tunnelOrigin = self.geom.find('**/FFTunnel').find('**/tunnel_origin')
-            elif tunnel == 'rr':
+            if tunnel == 'rr':
                 tunnelOrigin = self.geom.find('**/RRTunnel').find('**/tunnel_origin')
+            #elif tunnel == 'rr':
+                #tunnelOrigin = self.geom.find('**/RRTunnel').find('**/tunnel_origin')
             elif tunnel == 'ww':
                 tunnelOrigin = self.geom.find('**/WWTunnel').find('**/tunnel_origin')
             base.localAvatar.tunnelIn(tunnelOrigin)
@@ -31,7 +31,7 @@ class FCHood(ToonHood):
         self.startActive()
 
     def exit(self):
-        musicMgr.stopFFSZ()
+        musicMgr.stopFCSZ()
         ToonHood.exit(self)
         if base.air.holidayMgr.isWinter():
             self.snow.cleanup()
@@ -54,18 +54,8 @@ class FCHood(ToonHood):
         ToonHood.unload(self)
 
     def startActive(self):
-        self.acceptOnce('enterFFTunnel_trigger', self.__handleFFTunnel)
         self.acceptOnce('enterRRTunnel_trigger', self.__handleRRTunnel)
         self.acceptOnce('enterWWTunnel_trigger', self.__handleWWTunnel)
-
-    def __handleFFTunnel(self, entry):
-        tunnelOrigin = self.geom.find('**/FFTunnel').find('**/tunnel_origin')
-        base.localAvatar.tunnelOut(tunnelOrigin)
-        self.acceptOnce('tunnelOutMovieDone', self.__handleEnterFF)
-
-    def __handleEnterFF(self):
-        base.cr.playGame.exitHood()
-        base.cr.playGame.enterFFHood(tunnel='fc')
 
     def __handleRRTunnel(self, entry):
         tunnelOrigin = self.geom.find('**/RRTunnel').find('**/tunnel_origin')
