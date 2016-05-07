@@ -17,6 +17,7 @@ from otp.margins.WhisperPopup import *
 from toontown.book import ShtikerBook
 from toontown.book import OptionsPage
 from toontown.book import MapPage
+from toontown.book import ToonPage
 from toontown.book import InventoryPage
 from otp.otpbase import OTPGlobals
 import InventoryNew
@@ -47,6 +48,11 @@ class LocalToon(Toon.Toon, WalkControls):
         self.bankMoney = 0
         self.maxBankMoney = 0
         self.earnedExperience = None
+        self.level = 1
+        self.levelExperience = 0
+        self.damageBoost = [0, 0, 0, 0, 0, 0]
+        self.defense = [0, 0, 0, 0]
+        self.accuracyBoost = [0, 0, 0, 0, 0, 0]
         self.tossTrack = None
         self.pieTracks = {}
         self.splatTracks = {}
@@ -133,6 +139,9 @@ class LocalToon(Toon.Toon, WalkControls):
         self.mapPage = MapPage.MapPage()
         self.mapPage.load()
         self.book.addPage(self.mapPage, pageName=TTLocalizer.MapPageTitle)
+        self.toonPage = ToonPage.ToonPage()
+        self.toonPage.load()
+        self.book.addPage(self.toonPage, pageName=TTLocalizer.ToonPageTitle)
         self.inventoryPage = InventoryPage.InventoryPage()
         self.inventoryPage.load()
         self.book.addPage(self.inventoryPage, pageName=TTLocalizer.InventoryPageTitle)
@@ -314,6 +323,12 @@ class LocalToon(Toon.Toon, WalkControls):
         self.experience = Experience.Experience(experience, self)
         if self.inventory:
             self.inventory.updateGUI()
+
+    def setLevel(self, level):
+        self.level = level
+
+    def getLevel(self):
+        return self.level
 
     def maxToon(self):
         self.setHealth(137, 137)

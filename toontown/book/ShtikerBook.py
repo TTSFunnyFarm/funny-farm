@@ -132,17 +132,17 @@ class ShtikerBook(DirectFrame):
             iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
             iconGeom = iconModels.find('**/switch')
             iconModels.detachNode()
-        elif pageName == TTLocalizer.ShardPageTitle:
+        elif pageName == TTLocalizer.ToonPageTitle:
             iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
             iconGeom = iconModels.find('**/district')
             iconModels.detachNode()
         elif pageName == TTLocalizer.MapPageTitle:
             iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
-            iconGeom = iconModels.find('**/teleportIcon')
+            iconGeom = iconModels.find('**/compass')
             iconModels.detachNode()
         elif pageName == TTLocalizer.InventoryPageTitle:
             iconModels = loader.loadModel('phase_3.5/models/gui/inventory_icons')
-            iconGeom = iconModels.find('**/inventory_tart')
+            iconGeom = iconModels.find('**/inventory_cup_cake')
             iconScale = 7
             iconModels.detachNode()
         elif pageName == TTLocalizer.QuestPageToonTasks:
