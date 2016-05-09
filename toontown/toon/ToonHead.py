@@ -53,7 +53,6 @@ PreloadHeads = {}
 def preloadToonHeads():
     global PreloadHeads
     if not PreloadHeads:
-        print 'Preloading Toon heads...'
         for key in HeadDict.keys():
             fileRoot = HeadDict[key]
 
@@ -65,8 +64,6 @@ def preloadToonHeads():
 
             PreloadHeads['phase_3' + fileRoot + '250'] = loader.loadModel('phase_3' + fileRoot + '250')
             PreloadHeads['phase_3' + fileRoot + '250'].flattenMedium()
-
-preloadToonHeads()
 
 class ToonHead(Actor.Actor):
     notify = DirectNotifyGlobal.directNotify.newCategory('ToonHead')
