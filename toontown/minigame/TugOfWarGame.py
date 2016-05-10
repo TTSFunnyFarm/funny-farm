@@ -652,7 +652,6 @@ class TugOfWarGame(Minigame):
                 toon.reparentTo(render)
                 toon.useLOD(1000)
                 toon.startBlink()
-                toon.startLookAround()
                 for anim in self.toonAnimNames:
                     toon.pose(anim, 0)
 

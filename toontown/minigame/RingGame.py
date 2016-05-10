@@ -213,6 +213,9 @@ class RingGame(Minigame):
         av.dropShadow.show()
         av.resetLOD()
         av.setAnimState('neutral')
+        # I have no idea where these are being enabled but I'm too lazy to find them
+        av.stopLookAround()
+        taskMgr.remove('AnimationHandler')
         return
 
     def __genText(self, text):

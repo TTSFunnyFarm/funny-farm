@@ -819,9 +819,7 @@ class CannonGame(Minigame):
                 task.info['toon'].setHpr(task.info['hRot'], 0, 0)
                 self.__somebodyWon(task.info['avId'])
             elif task.info['hitWhat'] == self.HIT_TOWER:
-                avatar.setAnimState('off')
-                toon = self.getAvatar()
-                toon.getGeomNode().setP(94)
+                toon = task.info['toon']
                 pos = toon.getPos()
                 ttVec = Vec3(pos - self.towerPos)
                 ttVec.setZ(0)
@@ -832,7 +830,7 @@ class CannonGame(Minigame):
                 sf = min(max(pos[2] - BUCKET_HEIGHT, 0), deltaZ) / deltaZ
                 hitPos = pos + Point3(ttVec * (0.75 * sf))
                 toon.setPos(hitPos)
-                hitPos.setY(hitPos[2] - 1.0)
+                hitPos.setZ(hitPos[2] - 1.0)
                 s = Sequence(Wait(0.5), toon.posInterval(duration=LAND_TIME - 0.5, pos=hitPos, blendType='easeIn'))
                 self.toonIntervalDict[task.info['avId']] = s
                 s.start()
