@@ -5226,6 +5226,7 @@ TownBattleSOSPetInfoOK = lOK
 TrolleyHFAMessage = 'You may not board the trolley until your Laff meter is smiling.'
 TrolleyTFAMessage = 'You may not board the trolley until ' + Mickey + ' says so.'
 TrolleyHopOff = 'Hop off'
+TrolleyDialog = 'Would you like to board the trolley?'
 FishingExit = 'Exit'
 FishingCast = 'Cast'
 FishingAutoReel = 'Auto Reel'

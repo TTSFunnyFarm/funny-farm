@@ -6,6 +6,7 @@ from direct.showbase.DirectObject import DirectObject
 from TrolleyConstants import *
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
+from toontown.toontowngui import TTDialog
 import math
 
 class Trolley(DirectObject):
@@ -15,6 +16,7 @@ class Trolley(DirectObject):
         self.trolleyCountdownTime = TROLLEY_COUNTDOWN_TIME
         self.trolleyAwaySfx = base.loadSfx('phase_4/audio/sfx/SZ_trolley_away.ogg')
         self.trolleyBellSfx = base.loadSfx('phase_4/audio/sfx/SZ_trolley_bell.ogg')
+        self.trolleySong = base.loadMusic('phase_4/audio/bgm/trolley_song.ogg')
 
     def setup(self):
         self.trolleyStation = base.cr.playGame.hood.geom.find('**/*trolley_station*')
@@ -131,6 +133,7 @@ class Trolley(DirectObject):
         del self.backWheelRef
         del self.trolleyAwaySfx
         del self.trolleyBellSfx
+        del self.trolleySong
         self.buttonModels.removeNode()
         del self.buttonModels
         del self.upButton
@@ -152,13 +155,24 @@ class Trolley(DirectObject):
         self.notify.debug('Entering Trolley Sphere...')
         if base.localAvatar.getPos(render).getZ() < self.trolleyCar.getPos(render).getZ():
             return
-        self.fillSlot(0)
+        base.localAvatar.disable()
+        base.localAvatar.setAnimState('neutral')
+        self.dialog = TTDialog.TTDialog(text=TTLocalizer.TrolleyDialog, style=TTDialog.YesNo, command=self.handleEnterTrolley)
+        self.dialog.show()
+
+    def handleEnterTrolley(self, choice):
+        self.dialog.destroy()
+        if choice == 1:
+            self.fillSlot(0)
+            musicMgr.stopAllMusic()
+            base.playMusic(self.trolleySong)
+        else:
+            base.localAvatar.enable()
 
     def fillSlot(self, index):
         camera.wrtReparentTo(self.trolleyCar)
         self.cameraBoardTrack = LerpPosHprInterval(camera, 1.5, Point3(-35, 0, 8), Point3(-90, 0, 0))
         toon = base.localAvatar
-        toon.disable()
         toon.wrtReparentTo(self.trolleyCar)
         toon.setAnimState('run')
         toon.headsUp(-5, -4.5 + index * 3, 1.4)
@@ -176,10 +190,15 @@ class Trolley(DirectObject):
         sitStartDuration = toon.getDuration('sit-start')
         track = Sequence(Parallel(ActorInterval(toon, 'sit-start', startTime=sitStartDuration, endTime=0.0), Sequence(Wait(sitStartDuration * 0.5), LerpPosInterval(toon, sitStartDuration * 0.25, Point3(-5, -4.5 + index * 3, 1.4), other=self.trolleyCar))), Func(toon.setAnimState, 'run'), LerpPosInterval(toon, TOON_EXIT_TIME, Point3(21 - index * 3, -5, 0.02), other=self.trolleyStation), name=toon.uniqueName('emptyTrolley'), autoPause=1)
         track.setDoneEvent(track.getName())
-        self.acceptOnce(track.getName(), toon.enable)
+        self.acceptOnce(track.getName(), self.handleTrolleyDone)
         track.start()
         self.disableExitButton()
         self.exitWaitCountdown()
+
+    def handleTrolleyDone(self):
+        self.trolleySong.stop()
+        musicMgr.safezoneMusicMap[base.localAvatar.getZoneId()]()
+        base.localAvatar.enable()
 
     def enterWaitCountdown(self, ts):
         self.clockNode = TextNode('trolleyClock')
