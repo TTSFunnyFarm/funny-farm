@@ -6,7 +6,6 @@ from MakeAToonGlobals import *
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase.ToontownGlobals import *
 from toontown.toon.LocalToon import LocalToon
-from toontown.toon.ToonData import ToonData
 from toontown.toontowngui import TTDialog
 from direct.fsm import StateData
 import os
@@ -136,7 +135,7 @@ class NameShop(StateData.StateData):
 
     def createAvatar(self):
         self.dna = self.toon.getRawDNA()
-        self.toonData = ToonData(self.index, self.dna, self.name, 15, 15, 0, 40, 0, 12000, [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000)
+        self.toonData = dataMgr.createToonData(self.index, self.dna, self.name)
         dataMgr.saveToonData(self.toonData)
         dataMgr.createLocalAvatar(self.toonData)
 

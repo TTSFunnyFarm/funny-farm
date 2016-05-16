@@ -104,9 +104,9 @@ class ToonPage(ShtikerPage.ShtikerPage):
     def updateToonStats(self):
         for x in self.gagIcons:
             DirectLabel(parent=self.damageIcons.find('**/%s' % x.getName()), relief=None, 
-             text=str(base.localAvatar.damageBoost[self.gagIcons.index(x)]), scale=0.08, pos=(0, 0, -0.15))
+             text=str(base.localAvatar.damage[self.gagIcons.index(x)]), scale=0.08, pos=(0, 0, -0.15))
             DirectLabel(parent=self.accuracyIcons.find('**/%s' % x.getName()), relief=None, 
-             text=str(base.localAvatar.accuracyBoost[self.gagIcons.index(x)]), scale=0.08, pos=(0, 0, -0.15))
+             text=str(base.localAvatar.accuracy[self.gagIcons.index(x)]), scale=0.08, pos=(0, 0, -0.15))
         for x in self.suitIcons:
             DirectLabel(parent=self.defenseIcons.find('**/%s' % x.getName()), relief=None, 
              text=str(base.localAvatar.defense[self.suitIcons.index(x)]), scale=0.73, pos=(0, 0, -1.25))

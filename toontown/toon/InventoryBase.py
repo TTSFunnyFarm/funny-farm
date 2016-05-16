@@ -89,6 +89,10 @@ class InventoryBase(DirectObject.DirectObject):
 
         return dataList
 
+    def saveInventory(self):
+        base.avatarData.setInventory = self.makeNetString()
+        dataMgr.saveToonData(base.avatarData)
+
     def addItem(self, track, level):
         return self.addItems(track, level, 1)
 
@@ -104,6 +108,7 @@ class InventoryBase(DirectObject.DirectObject):
                         if not (unpaid and Levels[track][level] > UnpaidMaxSkills[track]):
                             self.inventory[track][level] += amount
                             self.totalProps += amount
+                            self.saveInventory()
                             return self.inventory[track][level]
                         else:
                             return -3
@@ -134,6 +139,7 @@ class InventoryBase(DirectObject.DirectObject):
         if self.numItem(track, level) > 0:
             self.inventory[track][level] -= 1
             self.calcTotalProps()
+            self.saveInventory()
         elif self.numItem(track, level) == -1:
             return -1
 

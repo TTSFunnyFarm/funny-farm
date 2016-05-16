@@ -131,7 +131,7 @@ class InventoryPage(ShtikerPage.ShtikerPage):
         if timedif < 0.7:
             return
         self.lastInventoryTime = globalClock.getRealTime()
-        if self.onscreen or base.localAvatar.questPage.onscreen:
+        if self.onscreen: #or base.localAvatar.questPage.onscreen:
             return
         self.onscreen = 1
         base.localAvatar.inventory.setActivateMode('book')
