@@ -40,6 +40,10 @@ class Experience:
 
         return dataList
 
+    def saveExp(self):
+        base.avatarData.setExperience = self.makeNetString()
+        dataMgr.saveToonData(base.avatarData)
+
     def addExp(self, track, amount = 1):
         if type(track) == type(''):
             track = Tracks.index(track)
@@ -55,32 +59,45 @@ class Experience:
             self.experience[track] += 0
         else:
             self.experience[track] = UnpaidMaxSkills[track]
+        self.saveExp()
 
     def maxOutExp(self):
         for track in xrange(0, len(Tracks)):
             self.experience[track] = MaxSkill
+        self.owner.inventory.updateGUI()
+        self.saveExp()
 
     def maxOutExpMinusOne(self):
         for track in xrange(0, len(Tracks)):
             self.experience[track] = MaxSkill - 1
+        self.owner.inventory.updateGUI()
+        self.saveExp()
 
     def makeExpHigh(self):
         for track in xrange(0, len(Tracks)):
             self.experience[track] = Levels[track][len(Levels[track]) - 1] - 1
+        self.owner.inventory.updateGUI()
+        self.saveExp()
 
     def makeExpRegular(self):
         import random
         for track in xrange(0, len(Tracks)):
             rank = random.choice((0, int(random.random() * 1500.0), int(random.random() * 2000.0)))
             self.experience[track] = Levels[track][len(Levels[track]) - 1] - rank
+        self.owner.inventory.updateGUI()
+        self.saveExp()
 
     def zeroOutExp(self):
         for track in xrange(0, len(Tracks)):
             self.experience[track] = StartingLevel
+        self.owner.inventory.updateGUI()
+        self.saveExp()
 
     def setAllExp(self, num):
         for track in xrange(0, len(Tracks)):
             self.experience[track] = num
+        self.owner.inventory.updateGUI()
+        self.saveExp()
 
     def getExp(self, track):
         if type(track) == type(''):
@@ -91,6 +108,8 @@ class Experience:
         if type(track) == type(''):
             track = Tracks.index(track)
         self.experience[track] = exp
+        self.owner.inventory.updateGUI()
+        self.saveExp()
 
     def getExpLevel(self, track):
         if type(track) == type(''):

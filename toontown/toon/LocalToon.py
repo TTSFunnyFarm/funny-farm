@@ -37,7 +37,7 @@ class LocalToon(Toon.Toon, WalkControls):
         self.soundPhoneRing = base.loadSfx('phase_3.5/audio/sfx/telephone_ring.ogg')
         self.soundSystemMessage = base.loadSfx('phase_3/audio/sfx/clock03.ogg')
         self.zoneId = None
-        self.doId = id(self) # I know this isn't even a DistributedObject, but there's so many classes that need a doId from the toon.
+        self.doId = id(self)
         self.hasGM = False
         self.accessLevel = 0
         self.hp = 15
@@ -49,10 +49,10 @@ class LocalToon(Toon.Toon, WalkControls):
         self.maxBankMoney = 0
         self.earnedExperience = None
         self.level = 1
-        self.levelExperience = 0
-        self.damageBoost = [0, 0, 0, 0, 0, 0]
+        self.levelExp = 0
+        self.damage = [0, 0, 0, 0, 0, 0]
         self.defense = [0, 0, 0, 0]
-        self.accuracyBoost = [0, 0, 0, 0, 0, 0]
+        self.accuracy = [0, 0, 0, 0, 0, 0]
         self.tossTrack = None
         self.pieTracks = {}
         self.splatTracks = {}
@@ -74,9 +74,6 @@ class LocalToon(Toon.Toon, WalkControls):
         self.pivotAngle = 90 + 45
         self.tunnelX = 0.0
         self.inventory = None
-        self.setTrackAccess({0:False, 1:False, 2:False, 3:False, 4:True, 5:True, 6:False})
-        self.setExperience(None)
-        self.setMaxCarry(20)
 
     def destroy(self):
         Toon.Toon.delete(self)
@@ -105,6 +102,7 @@ class LocalToon(Toon.Toon, WalkControls):
         self.setupSmartCamera()
         self.book.showButton()
         self.beginAllowPies()
+        self.inventoryPage.acceptOnscreenHooks()
         self.setAnimState('neutral')
 
     def disable(self):
@@ -114,6 +112,8 @@ class LocalToon(Toon.Toon, WalkControls):
         self.collisionsOff()
         self.book.hideButton()
         self.endAllowPies()
+        self.inventoryPage.ignoreOnscreenHooks()
+        self.inventoryPage.hideInventoryOnscreen()
 
     def setZoneId(self, zoneId):
         self.zoneId = zoneId
@@ -145,7 +145,7 @@ class LocalToon(Toon.Toon, WalkControls):
         self.inventoryPage = InventoryPage.InventoryPage()
         self.inventoryPage.load()
         self.book.addPage(self.inventoryPage, pageName=TTLocalizer.InventoryPageTitle)
-
+        self.inventoryPage.acceptOnscreenHooks()
         self.laffMeter = LaffMeter(self.style, self.hp, self.maxHp)
         self.laffMeter.setAvatar(self)
         self.laffMeter.setScale(0.075)
@@ -155,10 +155,6 @@ class LocalToon(Toon.Toon, WalkControls):
         else:
             self.laffMeter.setPos(0.133, 0.0, 0.13)
         self.laffMeter.stop()
-        self.inventory = InventoryNew.InventoryNew(self)
-        self.inventory.addItems(4, 0, 1)
-        self.inventory.addItems(5, 0, 1)
-        self.inventory.updateGUI()
         self.accept('time-insert', self.__beginTossPie)
         self.accept('time-insert-up', self.__endTossPie)
         self.accept('time-delete', self.__beginTossPie)
@@ -298,6 +294,8 @@ class LocalToon(Toon.Toon, WalkControls):
         self.trackArray = trackArray
         if self.inventory:
             self.inventory.updateGUI()
+        base.avatarData.setTrackAccess = self.trackArray
+        dataMgr.saveToonData(base.avatarData)
 
     def getTrackAccess(self):
         return self.trackArray
@@ -312,6 +310,8 @@ class LocalToon(Toon.Toon, WalkControls):
         self.maxCarry = maxCarry
         if self.inventory:
             self.inventory.updateGUI()
+        base.avatarData.setMaxCarry = self.maxCarry
+        dataMgr.saveToonData(base.avatarData)
 
     def getMaxCarry(self):
         return self.maxCarry
@@ -319,37 +319,77 @@ class LocalToon(Toon.Toon, WalkControls):
     def getPinkSlips(self):
         return 0
 
+    def setInventory(self, inventory):
+        self.inventory = InventoryNew.InventoryNew(self, invStr=inventory)
+        self.inventory.updateGUI()
+        self.inventory.saveInventory()
+
     def setExperience(self, experience):
         self.experience = Experience.Experience(experience, self)
         if self.inventory:
             self.inventory.updateGUI()
+        self.experience.saveExp()
 
-    def setLevel(self, level):
+    def setLevel(self, level, levelExp):
         self.level = level
+        self.levelExp = levelExp
+        base.avatarData.setLevel = self.level
+        base.avatarData.setLevelExp = self.levelExp
+        dataMgr.saveToonData(base.avatarData)
 
     def getLevel(self):
         return self.level
 
+    def setDamage(self, damageArray):
+        self.damage = damageArray
+        base.avatarData.setDamage = self.damage
+        dataMgr.saveToonData(base.avatarData)
+
+    def getDamage(self):
+        return self.damage
+
+    def setDefense(self, defenseArray):
+        self.defense = defenseArray
+        base.avatarData.setDefense = self.defense
+        dataMgr.saveToonData(base.avatarData)
+
+    def getDefense(self):
+        return self.defense
+
+    def setAccuracy(self, accuracyArray):
+        self.accuracy = accuracyArray
+        base.avatarData.setAccuracy = self.accuracy
+        dataMgr.saveToonData(base.avatarData)
+
+    def getAccuracy(self):
+        return self.accuracy
+
     def maxToon(self):
         self.setHealth(137, 137)
-        self.setTrackAccess({0:True, 1:True, 2:True, 3:True, 4:True, 5:True, 6:True})
+        self.setTrackAccess([1, 1, 1, 1, 1, 1, 1])
         self.setMaxCarry(80)
         self.experience.maxOutExp()
         self.inventory.maxOutInv()
         self.inventory.updateGUI()
+        self.setDamage([100, 0, 100, 100, 100, 100])
+        self.setDefense([100, 100, 100, 100])
+        self.setAccuracy([0, 100, 100, 100, 100, 100])
         self.setMaxMoney(250)
         self.setMoney(250)
         self.setBankMoney(12000)
 
     def resetToon(self):
         self.setHealth(15, 15)
-        self.setTrackAccess({0:False, 1:False, 2:False, 3:False, 4:True, 5:True, 6:False})
+        self.setTrackAccess([0, 0, 0, 0, 1, 1, 0])
         self.setMaxCarry(20)
         self.experience.zeroOutExp()
         self.inventory.zeroInv()
         self.inventory.addItem(4, 0)
         self.inventory.addItem(5, 0)
         self.inventory.updateGUI()
+        self.setDamage([0, 0, 0, 0, 0, 0])
+        self.setDefense([0, 0, 0, 0])
+        self.setAccuracy([0, 0, 0, 0, 0, 0])
         self.setMaxMoney(40)
         self.setMoney(0)
         self.setBankMoney(0)
@@ -357,8 +397,8 @@ class LocalToon(Toon.Toon, WalkControls):
     def setRandomSpawn(self, zoneId):
         spawnPoints = FunnyFarmGlobals.SpawnPoints[zoneId]
         spawn = random.choice(spawnPoints)
-        # This is the only way that I could make it actually work. setPos, setHpr, setPosHpr... none of them work.
-        PosHprInterval(self, pos=spawn[0], hpr=spawn[1]).start()
+        self.setPos(spawn[0])
+        self.setHpr(spawn[1])
 
     def b_setTunnelIn(self, endX, tunnelOrigin):
         timestamp = globalClockDelta.getFrameNetworkTime()

@@ -2,6 +2,7 @@ from pandac.PandaModules import *
 from direct.directnotify import DirectNotifyGlobal
 from toontown.toon import ToonDNA
 from toontown.toon.LocalToon import LocalToon
+from toontown.toon.ToonData import ToonData
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
 import __builtin__
@@ -49,6 +50,9 @@ class DataManager:
                 return True
         return False
 
+    def createToonData(self, index, dna, name):
+        return ToonData(index, dna, name, 15, 15, 0, 40, 0, 12000, 20, None, None, [0, 0, 0, 0, 1, 1, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000, 1, 0, [0, 0, 0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0, 0])
+
     def saveToonData(self, data):
         index = data.index
         filename = Filename(self.newDir + self.toons[index - 1] + self.fileExt)
@@ -92,9 +96,17 @@ class DataManager:
         base.localAvatar.setMaxMoney(data.setMaxMoney)
         base.localAvatar.setBankMoney(data.setBankMoney)
         base.localAvatar.setMaxBankMoney(data.setMaxBankMoney)
+        base.localAvatar.setMaxCarry(data.setMaxCarry)
+        base.localAvatar.setTrackAccess(data.setTrackAccess)
+        base.localAvatar.setExperience(data.setExperience)
+        base.localAvatar.setInventory(data.setInventory)
         base.localAvatar.setNametagFont(FunnyFarmGlobals.getVar(data.setNametagStyle))
         base.localAvatar.setCheesyEffect(data.setCheesyEffect)
         base.localAvatar.setHat(*data.setHat)
         base.localAvatar.setGlasses(*data.setGlasses)
         base.localAvatar.setBackpack(*data.setBackpack)
         base.localAvatar.setShoes(*data.setShoes)
+        base.localAvatar.setLevel(data.setLevel, data.setLevelExp)
+        base.localAvatar.setDamage(data.setDamage)
+        base.localAvatar.setDefense(data.setDefense)
+        base.localAvatar.setAccuracy(data.setAccuracy)
