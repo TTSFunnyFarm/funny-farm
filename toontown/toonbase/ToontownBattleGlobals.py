@@ -13,20 +13,27 @@ SkipMovie = 0
 BaseHp = 15
 Tracks = TTLocalizer.BattleGlobalTracks
 NPCTracks = TTLocalizer.BattleGlobalNPCTracks
-TrackColors = ((211 / 255.0, 148 / 255.0, 255 / 255.0),
- (249 / 255.0, 255 / 255.0, 93 / 255.0),
+TrackColors = ((249 / 255.0, 255 / 255.0, 93 / 255.0),
  (79 / 255.0, 190 / 255.0, 76 / 255.0),
  (93 / 255.0, 108 / 255.0, 239 / 255.0),
  (255 / 255.0, 145 / 255.0, 66 / 255.0),
  (255 / 255.0, 65 / 255.0, 199 / 255.0),
- (67 / 255.0, 243 / 255.0, 255 / 255.0))
-HEAL_TRACK = 0
-TRAP_TRACK = 1
-LURE_TRACK = 2
-SOUND_TRACK = 3
-THROW_TRACK = 4
-SQUIRT_TRACK = 5
-DROP_TRACK = 6
+ (67 / 255.0, 243 / 255.0, 255 / 255.0),
+ (0.2, 0.2, 0.2))
+TrackTextColors = ((0.2, 0.2, 0.2, 1),
+ (0.2, 0.2, 0.2, 1),
+ (0.2, 0.2, 0.2, 1),
+ (0.2, 0.2, 0.2, 1),
+ (0.2, 0.2, 0.2, 1),
+ (0.2, 0.2, 0.2, 1),
+ (0.9, 0.9, 0.9, 1))
+TRAP_TRACK = 0
+LURE_TRACK = 1
+SOUND_TRACK = 2
+THROW_TRACK = 3
+SQUIRT_TRACK = 4
+DROP_TRACK = 5
+HEAL_TRACK = 6
 NPC_RESTOCK_GAGS = 7
 NPC_TOONS_HIT = 8
 NPC_COGS_MISS = 9
@@ -42,13 +49,13 @@ PropTypeToTrackBonus = {AnimPropTypes.Hydrant: SQUIRT_TRACK,
  AnimPropTypes.Mailbox: THROW_TRACK,
  AnimPropTypes.Trashcan: HEAL_TRACK}
 # Experience points needed to unlock the gag at the indexed position
-Levels = [[0, 20, 200, 800, 2000, 6000, 10000], # Toon-Up
- [0, 20, 100, 800, 2000, 6000, 10000],  # Trap
- [0, 20, 100, 800, 2000, 6000, 10000],  # Lure
- [0, 40, 200, 1000, 2500, 7500, 10000], # Sound
- [0, 10, 50, 400, 2000, 6000, 10000],   # Throw
- [0, 10, 50, 400, 2000, 6000, 10000],   # Squirt
- [0, 20, 100, 500, 2000, 6000, 10000]]  # Drop
+Levels = [[0, 20, 100, 500, 2000, 4000, 8000],  # Trap
+ [0, 20, 100, 500, 2000, 4000, 8000],  # Lure
+ [0, 20, 100, 500, 2000, 4000, 8000], # Sound
+ [0, 10, 50, 400, 2000, 4000, 8000],   # Throw
+ [0, 10, 50, 400, 2000, 4000, 8000],   # Squirt
+ [0, 20, 100, 500, 2000, 4000, 8000],  # Drop
+ [0, 0, 0, 0, 0, 0, 0]]                # Power-up (won't recieve experience; unlocked at certain levels)
 regMaxSkill = 10000
 UberSkill = 500
 MaxSkill = UberSkill + regMaxSkill
@@ -78,15 +85,6 @@ def gagIsVelvetRoped(track, level):
 MaxToonAcc = 95
 StartingLevel = 0
 CarryLimits = (
-  ( # Toon-Up
-    (10, 0, 0, 0, 0, 0, 0),
-    (10, 5, 0, 0, 0, 0, 0),
-    (15, 10, 5, 0, 0, 0, 0),
-    (20, 15, 10, 5, 0, 0, 0),
-    (25, 20, 15, 10, 3, 0, 0),
-    (30, 25, 20, 15, 7, 3, 0),
-    (30, 25, 20, 15, 7, 3, 1)
-  ),
   ( # Trap
     (5, 0, 0, 0, 0, 0, 0),
     (7, 3, 0, 0, 0, 0, 0),
@@ -140,6 +138,15 @@ CarryLimits = (
     (25, 20, 15, 10, 3, 0, 0),
     (30, 25, 20, 15, 7, 3, 0),
     (30, 25, 20, 15, 7, 3, 1)
+  ),
+  ( # Power-up
+    (3, 0, 0, 0, 0, 0, 0),
+    (3, 3, 0, 0, 0, 0, 0),
+    (3, 3, 3, 0, 0, 0, 0),
+    (3, 3, 3, 3, 0, 0, 0),
+    (3, 3, 3, 3, 3, 0, 0),
+    (3, 3, 3, 3, 3, 3, 0),
+    (3, 3, 3, 3, 3, 3, 1)
   )
 )
 MaxProps = ((15, 40), (30, 60), (75, 80))
@@ -207,14 +214,7 @@ AvProps = (('feather',
   'safe',
   'piano',
   'piano'))
-AvPropsNew = (('inventory_feather',
-  'inventory_megaphone',
-  'inventory_lipstick',
-  'inventory_bamboo_cane',
-  'inventory_pixiedust',
-  'inventory_juggling_cubes',
-  'inventory_ladder'),
- ('inventory_bannana_peel',
+AvPropsNew = (('inventory_bannana_peel',
   'inventory_rake',
   'inventory_marbles',
   'inventory_quicksand_icon',
@@ -255,18 +255,24 @@ AvPropsNew = (('inventory_feather',
   'inventory_weight',
   'inventory_safe_box',
   'inventory_piano',
-  'inventory_ship'))
+  'inventory_ship'),
+ ('inventory_feather',
+  'inventory_megaphone',
+  'inventory_lipstick',
+  'inventory_bamboo_cane',
+  'inventory_pixiedust',
+  'inventory_juggling_cubes',
+  'inventory_ladder'))
 AvPropStrings = TTLocalizer.BattleGlobalAvPropStrings
 AvPropStringsSingular = TTLocalizer.BattleGlobalAvPropStringsSingular
 AvPropStringsPlural = TTLocalizer.BattleGlobalAvPropStringsPlural
-AvPropAccuracy = (
-  (70, 70, 70, 70, 70, 70, 100),
-  (0, 0, 0, 0, 0, 0, 0),
+AvPropAccuracy = ((0, 0, 0, 0, 0, 0, 0),
   (50, 50, 60, 60, 70, 70, 90),
   (95, 95, 95, 95, 95, 95, 95),
   (75, 75, 75, 75, 75, 75, 75),
   (95, 95, 95, 95, 95, 95, 95),
-  (50, 50, 50, 50, 50, 50, 50)
+  (50, 50, 50, 50, 50, 50, 50),
+  (0, 0, 0, 0, 0, 0, 0)
 )
 AvLureBonusAccuracy = (60,
  60,
@@ -276,14 +282,7 @@ AvLureBonusAccuracy = (60,
  80,
  100)
 AvTrackAccStrings = TTLocalizer.BattleGlobalAvTrackAccStrings
-AvPropDamage = ((((8, 10), (Levels[0][0], Levels[0][1])),
-  ((15, 18), (Levels[0][1], Levels[0][2])),
-  ((25, 30), (Levels[0][2], Levels[0][3])),
-  ((40, 45), (Levels[0][3], Levels[0][4])),
-  ((60, 70), (Levels[0][4], Levels[0][5])),
-  ((90, 120), (Levels[0][5], Levels[0][6])),
-  ((210, 210), (Levels[0][6], MaxSkill))),
- (((10, 12), (Levels[1][0], Levels[1][1])),
+AvPropDamage = ((((10, 12), (Levels[1][0], Levels[1][1])),
   ((18, 20), (Levels[1][1], Levels[1][2])),
   ((30, 35), (Levels[1][2], Levels[1][3])),
   ((45, 50), (Levels[1][3], Levels[1][4])),
@@ -324,17 +323,17 @@ AvPropDamage = ((((8, 10), (Levels[0][0], Levels[0][1])),
   ((45, 45), (Levels[6][3], Levels[6][4])),
   ((60, 60), (Levels[6][4], Levels[6][5])),
   ((85, 170), (Levels[6][5], Levels[6][6])),
-  ((180, 180), (Levels[6][6], MaxSkill))))
+  ((180, 180), (Levels[6][6], MaxSkill))),
+ (((8, 10), (Levels[0][0], Levels[0][1])),
+  ((15, 18), (Levels[0][1], Levels[0][2])),
+  ((25, 30), (Levels[0][2], Levels[0][3])),
+  ((40, 45), (Levels[0][3], Levels[0][4])),
+  ((60, 70), (Levels[0][4], Levels[0][5])),
+  ((90, 120), (Levels[0][5], Levels[0][6])),
+  ((210, 210), (Levels[0][6], MaxSkill))))
 ATK_SINGLE_TARGET = 0
 ATK_GROUP_TARGET = 1
 AvPropTargetCat = ((ATK_SINGLE_TARGET,
-  ATK_GROUP_TARGET,
-  ATK_SINGLE_TARGET,
-  ATK_GROUP_TARGET,
-  ATK_SINGLE_TARGET,
-  ATK_GROUP_TARGET,
-  ATK_GROUP_TARGET),
- (ATK_SINGLE_TARGET,
   ATK_SINGLE_TARGET,
   ATK_SINGLE_TARGET,
   ATK_SINGLE_TARGET,
@@ -354,7 +353,14 @@ AvPropTargetCat = ((ATK_SINGLE_TARGET,
   ATK_SINGLE_TARGET,
   ATK_SINGLE_TARGET,
   ATK_SINGLE_TARGET,
-  ATK_GROUP_TARGET))
+  ATK_GROUP_TARGET),
+ (ATK_SINGLE_TARGET,
+  ATK_SINGLE_TARGET,
+  ATK_SINGLE_TARGET,
+  ATK_SINGLE_TARGET,
+  ATK_SINGLE_TARGET,
+  ATK_SINGLE_TARGET,
+  ATK_SINGLE_TARGET))
 AvPropTarget = (0,
  3,
  0,

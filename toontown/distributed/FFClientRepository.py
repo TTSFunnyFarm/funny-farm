@@ -3,8 +3,12 @@ from direct.showbase.DirectObject import DirectObject
 from direct.interval.IntervalGlobal import *
 from toontown.login.PickAToon import PickAToon
 from toontown.toontowngui import TTDialog
+from toontown.toonbase import TTLocalizer
 from toontown.toonbase import FunnyFarmGlobals
 from otp.otpbase import OTPLocalizer
+# feature/battles
+import BattleScene
+
 import random
 import PlayGame
 import os
@@ -78,7 +82,11 @@ class FFClientRepository(DirectObject):
 
     def enterTheTooniverse(self, zoneId):
         self.exitPAT()
-        self.enterHood(zoneId, init=True)
+        # feature/battles
+        #self.enterHood(zoneId, init=True)
+        loader.beginBulkLoad('hood', 'Heading to Battle Testing Grounds. . .', 500, TTLocalizer.TIP_GENERAL)
+        b = BattleScene.BattleScene()
+        b.load()
         base.localAvatar.reparentTo(render)
         base.localAvatar.setupControls()
         base.localAvatar.setupSmartCamera()
@@ -88,6 +96,8 @@ class FFClientRepository(DirectObject):
         base.localAvatar.startChat()
         base.localAvatar.addActive()
         base.localAvatar.useLOD(1000)
+        loader.endBulkLoad('hood')
+        b.enter()
 
     def exitTheTooniverse(self):
         base.localAvatar.enterTeleportOut(callback=self.__handleExit)
