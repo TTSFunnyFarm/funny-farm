@@ -11,8 +11,8 @@ import MovieCamera
 import MovieUtil
 from SuitBattleGlobals import *
 from toontown.chat.ChatGlobals import *
-from toontown.nametag import NametagGlobals
-from toontown.nametag.NametagGlobals import *
+from otp.nametag import NametagGlobals
+from otp.nametag.NametagGlobals import *
 from toontown.suit.SuitDNA import *
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals

@@ -6,6 +6,7 @@ from direct.interval.IntervalGlobal import *
 from toontown.suit import BattleSuit
 from toontown.suit import SuitDNA
 from toontown.battle import Battle
+from toontown.town import TownBattle
 
 class BattleScene(DirectObject):
 
@@ -35,13 +36,13 @@ class BattleScene(DirectObject):
         self.suit.enableBattleDetect(self.__handleEnterBattle)
 
     def __handleEnterBattle(self, collEntry):
-        b = Battle.Battle(toons=[base.localAvatar], suits=[self.suit])
+        self.bgm.stop()
+        base.playMusic(self.battleBgm, looping=1)
+        tb = TownBattle.TownBattle('townbattle-done')
+        b = Battle.Battle(tb, toons=[base.localAvatar], suits=[self.suit])
         b.reparentTo(render)
         b.setPosHpr(0, 0, 0, 0, 0, 0) # battle cell goes here
         b.enter()
-        # musicMgr functions, etc
-        self.bgm.stop()
-        base.playMusic(self.battleBgm, looping=1)
 
     def __handleTeleport(self):
         base.localAvatar.exitTeleportIn()

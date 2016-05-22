@@ -9,13 +9,16 @@ import random
 import Fanfare
 from otp.otpbase import OTPGlobals
 from toontown.coghq import CogDisguiseGlobals
-from toontown.quest import Quests
-from toontown.shtiker import DisguisePage
+#from toontown.quest import Quests
 from toontown.suit import SuitDNA
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.toonbase import ToontownGlobals
 
+DeptColors = (Vec4(0.647, 0.608, 0.596, 1.0),
+ Vec4(0.588, 0.635, 0.671, 1.0),
+ Vec4(0.596, 0.714, 0.659, 1.0),
+ Vec4(0.761, 0.678, 0.69, 1.0))
 
 class RewardPanel(DirectFrame):
     notify = DirectNotifyGlobal.directNotify.newCategory('RewardPanel')
@@ -61,12 +64,12 @@ class RewardPanel(DirectFrame):
             self.meritBars.append(DirectWaitBar(parent=self.gagExpFrame, relief=DGG.SUNKEN, frameSize=(-1,
              1,
              -0.15,
-             0.15), borderWidth=(0.02, 0.02), scale=0.25, frameColor=(DisguisePage.DeptColors[i][0] * 0.7,
-             DisguisePage.DeptColors[i][1] * 0.7,
-             DisguisePage.DeptColors[i][2] * 0.7,
-             1), barColor=(DisguisePage.DeptColors[i][0],
-             DisguisePage.DeptColors[i][1],
-             DisguisePage.DeptColors[i][2],
+             0.15), borderWidth=(0.02, 0.02), scale=0.25, frameColor=(DeptColors[i][0] * 0.7,
+             DeptColors[i][1] * 0.7,
+             DeptColors[i][2] * 0.7,
+             1), barColor=(DeptColors[i][0],
+             DeptColors[i][1],
+             DeptColors[i][2],
              1), text='0/0 ' + TTLocalizer.RewardPanelMeritBarLabels[i], text_scale=TTLocalizer.RPmeritBarLabels, text_fg=(0, 0, 0, 1), text_align=TextNode.ALeft, text_pos=(-0.96, -0.05), pos=(TTLocalizer.RPmeritBarsPosX, 0, -0.09 * i - 0.125)))
 
         for i in xrange(len(ToontownBattleGlobals.Tracks)):
@@ -293,9 +296,9 @@ class RewardPanel(DirectFrame):
                 meritBar['text'] = '%s/%s %s' % (newValue, totalMerits, TTLocalizer.RewardPanelMeritBarLabels[dept])
 
     def resetMeritBarColor(self, dept):
-        self.meritBars[dept]['barColor'] = (DisguisePage.DeptColors[dept][0] * 0.8,
-         DisguisePage.DeptColors[dept][1] * 0.8,
-         DisguisePage.DeptColors[dept][2] * 0.8,
+        self.meritBars[dept]['barColor'] = (DeptColors[dept][0] * 0.8,
+         DeptColors[dept][1] * 0.8,
+         DeptColors[dept][2] * 0.8,
          1)
 
     def getRandomCongratsPair(self, toon):

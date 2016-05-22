@@ -53,6 +53,7 @@ class LocalToon(Toon.Toon, WalkControls):
         self.damage = [0, 0, 0, 0, 0, 0]
         self.defense = [0, 0, 0, 0]
         self.accuracy = [0, 0, 0, 0, 0, 0]
+        self.maxNPCFriends = 16
         self.tossTrack = None
         self.pieTracks = {}
         self.splatTracks = {}
@@ -188,6 +189,9 @@ class LocalToon(Toon.Toon, WalkControls):
 
     def getName(self):
         return self.nametag.name
+
+    def getMaxNPCFriends(self):
+        return self.maxNPCFriends
 
     def setNametagFont(self, font):
         self.nametag.setFont(font)
