@@ -49,20 +49,23 @@ class ToonHood(DirectObject):
     def load(self):
         if base.air.holidayMgr.isHalloween():
             self.geom = loader.loadModel(self.spookyHoodFile)
-            self.sky = loader.loadModel(self.spookySkyFile)
-            self.sky.setColorScale(0.5, 0.5, 0.5, 1)
+            self.startSpookySky()
         elif base.air.holidayMgr.isWinter():
             self.geom = loader.loadModel(self.winterHoodFile)
-            self.sky = loader.loadModel(self.spookySkyFile)
+            self.startSnowySky()
         else:
             self.geom = loader.loadModel(self.hoodFile)
             self.sky = loader.loadModel(self.skyFile)
+            self.sky.setTag('sky', 'Regular')
+            self.sky.setScale(1.0)
+            self.sky.setFogOff()
+            self.startSky()
         self.geom.reparentTo(render)
-        self.sky.reparentTo(render)
         self.geom.flattenMedium()
         self.sky.flattenMedium()
 
     def unload(self):
+        self.stopSky()
         self.geom.removeNode()
         self.sky.removeNode()
         del self.geom
@@ -76,23 +79,73 @@ class ToonHood(DirectObject):
         seq = Sequence(Wait(0.1), Wait(6.0), self.title.colorScaleInterval(0.5, Vec4(1.0, 1.0, 1.0, 0.0)), Func(self.title.hide))
         seq.start()
 
-    def startSkyTrack(self):
-        clouds1 = self.sky.find('**/cloud1')
-        clouds2 = self.sky.find('**/cloud2')
-        if clouds1.isEmpty() or clouds2.isEmpty():
-            return
-        clouds1.setScale(0.7, 0.7, 0.7)
-        clouds2.setScale(0.9, 0.9, 0.9)
-        self.clouds1Spin = clouds1.hprInterval(360,  Vec3(60,  0,  0))
-        self.clouds2Spin = clouds2.hprInterval(360,  Vec3(-60,  0,  0))
-        self.clouds1Spin.loop()
-        self.clouds2Spin.loop()
-
-    def stopSkyTrack(self):
-        self.clouds1Spin.finish()
-        self.clouds2Spin.finish()
-
     def __handleTeleport(self):
         base.localAvatar.exitTeleportIn()
         base.localAvatar.book.showButton()
         base.localAvatar.beginAllowPies()
+
+    def startSky(self):
+        self.sky.reparentTo(camera)
+        self.sky.setZ(0.0)
+        self.sky.setHpr(0.0, 0.0, 0.0)
+        ce = CompassEffect.make(NodePath(), CompassEffect.PRot | CompassEffect.PZ)
+        self.sky.node().setEffect(ce)
+
+    def stopSky(self):
+        taskMgr.remove('skyTrack')
+        self.sky.reparentTo(hidden)
+
+    def startSpookySky(self):
+        if not self.spookySkyFile:
+            return
+        if hasattr(self, 'sky') and self.sky:
+            self.stopSky()
+        self.sky = loader.loadModel(self.spookySkyFile)
+        self.sky.setTag('sky', 'Halloween')
+        self.sky.setColor(0.5, 0.5, 0.5, 1)
+        self.sky.reparentTo(camera)
+        self.sky.setTransparency(TransparencyAttrib.MDual, 1)
+        fadeIn = self.sky.colorScaleInterval(1.5, Vec4(1, 1, 1, 1), startColorScale=Vec4(1, 1, 1, 0.25), blendType='easeInOut')
+        fadeIn.start()
+        self.sky.setZ(0.0)
+        self.sky.setHpr(0.0, 0.0, 0.0)
+        ce = CompassEffect.make(NodePath(), CompassEffect.PRot | CompassEffect.PZ)
+        self.sky.node().setEffect(ce)
+
+    def endSpookySky(self):
+        if hasattr(self, 'sky') and self.sky:
+            self.sky.reparentTo(hidden)
+        if hasattr(self, 'sky'):
+            self.sky = loader.loadModel(self.skyFile)
+            self.sky.setTag('sky', 'Regular')
+            self.sky.setScale(1.0)
+            self.startSky()
+
+    def startSnowySky(self):
+        if hasattr(self, 'sky') and self.sky:
+            self.stopSky()
+        self.sky = loader.loadModel(self.spookySkyFile)
+        self.sky.setTag('sky', 'Winter')
+        self.sky.setScale(1.0)
+        self.sky.setDepthTest(0)
+        self.sky.setDepthWrite(0)
+        self.sky.setColor(1, 1, 1, 1)
+        self.sky.setBin('background', 100)
+        self.sky.setFogOff()
+        self.sky.reparentTo(camera)
+        self.sky.setTransparency(TransparencyAttrib.MDual, 1)
+        fadeIn = self.sky.colorScaleInterval(1.5, Vec4(1, 1, 1, 1), startColorScale=Vec4(1, 1, 1, 0.25), blendType='easeInOut')
+        fadeIn.start()
+        self.sky.setZ(0.0)
+        self.sky.setHpr(0.0, 0.0, 0.0)
+        ce = CompassEffect.make(NodePath(), CompassEffect.PRot | CompassEffect.PZ)
+        self.sky.node().setEffect(ce)
+
+    def endSnowySky(self):
+        if hasattr(self, 'sky') and self.sky:
+            self.sky.reparentTo(hidden)
+        if hasattr(self, 'sky'):
+            self.sky = loader.loadModel(self.skyFile)
+            self.sky.setTag('sky', 'Regular')
+            self.sky.setScale(1.0)
+            self.startSky()
