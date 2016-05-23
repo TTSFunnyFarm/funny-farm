@@ -38,9 +38,6 @@ class FCHood(ToonHood):
 
     def load(self):
         ToonHood.load(self)
-        self.sky.setScale(1.5)
-        if not base.air.holidayMgr.isWinter() and not base.air.holidayMgr.isHalloween():
-            self.startSkyTrack()
         if base.air.holidayMgr.isWinter():
             self.snow = BattleParticles.loadParticleFile('snowdisk.ptf')
             self.snow.setPos(0, 0, 5)
@@ -49,8 +46,6 @@ class FCHood(ToonHood):
             self.snowRender.setBin('fixed', 1)
 
     def unload(self):
-        if not base.air.holidayMgr.isWinter() and not base.air.holidayMgr.isHalloween():
-            self.stopSkyTrack()
         ToonHood.unload(self)
 
     def startActive(self):

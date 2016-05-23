@@ -9,6 +9,7 @@ from toontown.toon import NPCToons
 from otp.nametag.NametagConstants import *
 from toontown.trolley import Trolley
 from direct.interval.IntervalGlobal import *
+import SkyUtil
 
 class FFHood(ToonHood):
 
@@ -58,14 +59,11 @@ class FFHood(ToonHood):
 
     def load(self):
         ToonHood.load(self)
-        self.sky.setScale(1.5)
         self.fish = Actor('phase_4/models/props/exteriorfish-zero', {'chan': 'phase_4/models/props/exteriorfish-swim'})
         self.fish.reparentTo(self.geom.find('**/fish_origin'))
         self.fish.loop('chan')
         self.trolley = Trolley.Trolley()
         self.trolley.setup()
-        if not base.air.holidayMgr.isWinter() and not base.air.holidayMgr.isHalloween():
-            self.startSkyTrack()
         if base.air.holidayMgr.isWinter():
             self.snow = BattleParticles.loadParticleFile('snowdisk.ptf')
             self.snow.setPos(0, 0, 5)
@@ -74,8 +72,6 @@ class FFHood(ToonHood):
             self.snowRender.setBin('fixed', 1)
 
     def unload(self):
-        if not base.air.holidayMgr.isWinter() and not base.air.holidayMgr.isHalloween():
-            self.stopSkyTrack()
         ToonHood.unload(self)
         self.fish.stop()
         self.fish.cleanup()
@@ -163,3 +159,13 @@ class FFHood(ToonHood):
     def __handleEnterRR(self):
         base.cr.playGame.exitHood()
         base.cr.playGame.enterRRStreet(tunnel='ff')
+
+    def skyTrack(self, task):
+        return SkyUtil.cloudSkyTrack(task)
+
+    def startSky(self):
+        self.sky.setTransparency(TransparencyAttrib.MDual, 1)
+        self.notify.debug('The sky is: %s' % self.sky)
+        if not self.sky.getTag('sky') == 'Regular':
+            self.endSpookySky()
+        SkyUtil.startCloudSky(self)

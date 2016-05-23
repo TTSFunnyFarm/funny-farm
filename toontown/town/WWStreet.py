@@ -10,9 +10,9 @@ class WWStreet(ToonStreet):
     def __init__(self):
         ToonStreet.__init__(self)
         self.zoneId = FunnyFarmGlobals.WintryWay
-        self.streetFile = 'phase_14/models/streets/wintry_way'
-        self.spookyStreetFile = 'phase_14/models/streets/wintry_way'
-        self.winterStreetFile = 'phase_14/models/streets/wintry_way'
+        self.hoodFile = 'phase_14/models/streets/wintry_way'
+        self.spookyHoodFile = 'phase_14/models/streets/wintry_way'
+        self.winterHoodFile = 'phase_14/models/streets/wintry_way'
         self.skyFile = 'phase_3.5/models/props/BR_sky'
         self.titleText = FunnyFarmGlobals.WWStreetText
         self.titleColor = (0.3, 0.6, 1.0, 1.0)
@@ -32,8 +32,6 @@ class WWStreet(ToonStreet):
 
     def load(self):
         ToonStreet.load(self)
-        self.sky.setScale(1.5)
-        self.sky.setY(250)
 
     def unload(self):
         ToonStreet.unload(self)

@@ -11,9 +11,9 @@ class RRStreet(ToonStreet):
     def __init__(self):
         ToonStreet.__init__(self)
         self.zoneId = FunnyFarmGlobals.RicketyRoad
-        self.streetFile = 'phase_14/models/streets/rickety_road'
-        self.spookyStreetFile = 'phase_14/models/streets/rickety_road_halloween'
-        self.winterStreetFile = 'phase_14/models/streets/rickety_road_winter'
+        self.hoodFile = 'phase_14/models/streets/rickety_road'
+        self.spookyHoodFile = 'phase_14/models/streets/rickety_road_halloween'
+        self.winterHoodFile = 'phase_14/models/streets/rickety_road_winter'
         self.skyFile = 'phase_3.5/models/props/TT_sky'
         self.titleText = FunnyFarmGlobals.RRStreetText
         self.titleColor = (1.0, 0.5, 0.4, 1.0)
@@ -37,9 +37,7 @@ class RRStreet(ToonStreet):
 
     def load(self):
         ToonStreet.load(self)
-        self.sky.setScale(3.0)
-        if not base.air.holidayMgr.isWinter() and not base.air.holidayMgr.isHalloween():
-            self.startSkyTrack()
+        self.sky.setScale(2.0)
         self.geom.find('**/tBlocker1').node().setCollideMask(OTPGlobals.WallBitmask)
         self.geom.find('**/tBlocker2').node().setCollideMask(OTPGlobals.WallBitmask)
         self.train = loader.loadModel('phase_5/models/props/train')
@@ -60,8 +58,6 @@ class RRStreet(ToonStreet):
         #self.bldg.setPosHpr(-60, -36.5, 0.1, 270, 0, 0)
 
     def unload(self):
-        if not base.air.holidayMgr.isWinter() and not base.air.holidayMgr.isHalloween():
-            self.stopSkyTrack()
         ToonStreet.unload(self)
         self.audio3d.detachSound(self.trainSfx)
         self.trainSfx.stop()
