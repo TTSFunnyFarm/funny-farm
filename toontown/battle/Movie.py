@@ -189,7 +189,6 @@ class Movie(DirectObject.DirectObject):
 
     def _deleteTrack(self):
         if self.track:
-            DelayDelete.cleanupDelayDeletes(self.track)
             self.track = None
         return
 
@@ -255,12 +254,6 @@ class Movie(DirectObject.DirectObject):
             randNum = random.randint(0, 99)
             dur = self.track.getDuration()
             ts = float(randNum) / 100.0 * dur
-        self.track.delayDeletes = []
-        for suit in self.battle.suits:
-            self.track.delayDeletes.append(DelayDelete.DelayDelete(suit, 'Movie.play'))
-
-        for toon in self.battle.toons:
-            self.track.delayDeletes.append(DelayDelete.DelayDelete(toon, 'Movie.play'))
 
         self.track.start(ts)
         return None
@@ -285,9 +278,6 @@ class Movie(DirectObject.DirectObject):
         self.track = Sequence(ptrack, name='movie-reward-track-%d' % self.battle.doId)
         if self.battle.localToonActive():
             self.track = Parallel(self.track, camtrack, name='movie-reward-track-with-cam-%d' % self.battle.doId)
-        self.track.delayDeletes = []
-        for t in self.battle.activeToons:
-            self.track.delayDeletes.append(DelayDelete.DelayDelete(t, 'Movie.playReward'))
 
         skipper.setIvals((self.track,), 0.0)
         skipper.setBattle(self.battle)
@@ -428,7 +418,7 @@ class Movie(DirectObject.DirectObject):
             if ival:
                 track.append(ival)
                 camTrack.append(camIval)
-            hasHealBonus = self.battle.getInteractivePropTrackBonus() == HEAL
+            hasHealBonus = 0
             ival, camIval = MovieHeal.doHeals(self.__findToonAttack(HEAL), hasHealBonus)
             if ival:
                 track.append(ival)
@@ -712,7 +702,9 @@ class Movie(DirectObject.DirectObject):
                             sdict['hp'] = hps[targetIndex]
                             if ta[TOON_TRACK_COL] == NPCSOS and track == DROP and hps[targetIndex] == 0:
                                 continue
-                            sdict['kbbonus'] = kbbonuses[targetIndex]
+                            # temporary
+                            #sdict['kbbonus'] = kbbonuses[targetIndex]
+                            sdict['kbbonus'] = -1
                             sdict['died'] = ta[SUIT_DIED_COL] & 1 << targetIndex
                             sdict['revived'] = ta[SUIT_REVIVE_COL] & 1 << targetIndex
                             if sdict['died'] != 0:
@@ -753,7 +745,9 @@ class Movie(DirectObject.DirectObject):
                         sdict['leftSuits'] = leftSuits
                         sdict['rightSuits'] = rightSuits
                         sdict['hp'] = hps[targetIndex]
-                        sdict['kbbonus'] = kbbonuses[targetIndex]
+                        # temporary
+                        #sdict['kbbonus'] = kbbonuses[targetIndex]
+                        sdict['kbbonus'] = -1
                         sdict['died'] = ta[SUIT_DIED_COL] & 1 << targetIndex
                         sdict['revived'] = ta[SUIT_REVIVE_COL] & 1 << targetIndex
                         if sdict['revived'] != 0:
@@ -791,7 +785,7 @@ class Movie(DirectObject.DirectObject):
         setCapture = 0
         tp = []
         for ta in self.toonAttackDicts:
-            if ta['track'] == track or track == NPCSOS and 'sepcial' in ta:
+            if ta['track'] == track or track == NPCSOS and 'special' in ta:
                 tp.append(ta)
                 if track == SQUIRT:
                     setCapture = 1

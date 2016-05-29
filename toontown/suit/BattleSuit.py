@@ -25,6 +25,8 @@ from toontown.toonbase import ToontownGlobals
 
 class BattleSuit(Suit.Suit, SuitBase.SuitBase):
     notify = DirectNotifyGlobal.directNotify.newCategory('BattleSuit')
+    HpTextGenerator = TextNode('HpTextGenerator')
+    HpTextEnabled = 1
 
     def __init__(self):
         Suit.Suit.__init__(self)
@@ -50,10 +52,16 @@ class BattleSuit(Suit.Suit, SuitBase.SuitBase):
         self.maxSkeleRevives = 0
         self.sillySurgeText = False
         self.interactivePropTrackBonus = -1
+        self.hpText = None
+        self.hp = None
+        self.maxHp = None
         return
 
     def getDoId(self):
         return self.doId
+
+    def uniqueName(self, idString):
+        return ('%s-%s' % (idString, self.doId))
 
     def setVirtual(self, virtual):
         pass
@@ -351,33 +359,6 @@ class BattleSuit(Suit.Suit, SuitBase.SuitBase):
                 self.HpTextGenerator.setFont(OTPGlobals.getSignFont())
                 if number < 0:
                     self.HpTextGenerator.setText(str(number))
-                    if base.cr.newsManager.isHolidayRunning(ToontownGlobals.SILLY_SURGE_HOLIDAY):
-                        self.sillySurgeText = True
-                        absNum = abs(number)
-                        if absNum > 0 and absNum <= 10:
-                            self.HpTextGenerator.setText(str(number) + '\n' + TTLocalizer.SillySurgeTerms[1])
-                        elif absNum > 10 and absNum <= 20:
-                            self.HpTextGenerator.setText(str(number) + '\n' + TTLocalizer.SillySurgeTerms[2])
-                        elif absNum > 20 and absNum <= 30:
-                            self.HpTextGenerator.setText(str(number) + '\n' + TTLocalizer.SillySurgeTerms[3])
-                        elif absNum > 30 and absNum <= 40:
-                            self.HpTextGenerator.setText(str(number) + '\n' + TTLocalizer.SillySurgeTerms[4])
-                        elif absNum > 40 and absNum <= 50:
-                            self.HpTextGenerator.setText(str(number) + '\n' + TTLocalizer.SillySurgeTerms[5])
-                        elif absNum > 50 and absNum <= 60:
-                            self.HpTextGenerator.setText(str(number) + '\n' + TTLocalizer.SillySurgeTerms[6])
-                        elif absNum > 60 and absNum <= 70:
-                            self.HpTextGenerator.setText(str(number) + '\n' + TTLocalizer.SillySurgeTerms[7])
-                        elif absNum > 70 and absNum <= 80:
-                            self.HpTextGenerator.setText(str(number) + '\n' + TTLocalizer.SillySurgeTerms[8])
-                        elif absNum > 80 and absNum <= 90:
-                            self.HpTextGenerator.setText(str(number) + '\n' + TTLocalizer.SillySurgeTerms[9])
-                        elif absNum > 90 and absNum <= 100:
-                            self.HpTextGenerator.setText(str(number) + '\n' + TTLocalizer.SillySurgeTerms[10])
-                        elif absNum > 100 and absNum <= 110:
-                            self.HpTextGenerator.setText(str(number) + '\n' + TTLocalizer.SillySurgeTerms[11])
-                        else:
-                            self.HpTextGenerator.setText(str(number) + '\n' + TTLocalizer.SillySurgeTerms[12])
                     if self.interactivePropTrackBonus > -1 and self.interactivePropTrackBonus == attackTrack:
                         self.sillySurgeText = True
                         if attackTrack in TTLocalizer.InteractivePropTrackBonusTerms:
@@ -425,6 +406,10 @@ class BattleSuit(Suit.Suit, SuitBase.SuitBase):
                 seq.start()
 
     def hideHpText(self):
+        if self.hpText:
+            taskMgr.remove(self.uniqueName('hpText'))
+            self.hpText.removeNode()
+            self.hpText = None
         if self.sillySurgeText:
             self.nametag3d.clearDepthTest()
             self.nametag3d.clearBin()

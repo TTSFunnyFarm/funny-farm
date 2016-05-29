@@ -214,7 +214,7 @@ def chooseThrowCloseShot(throws, suitThrowsDict, openDuration, openName, attackD
     av = None
     duration = attackDuration - openDuration
     if numSuits == 1:
-        av = base.cr.doId2do[suitThrowsDict.keys()[0]]
+        av = throws[0]['target']['suit']
         shotChoices = [avatarCloseUpThrowShot,
          avatarCloseUpThreeQuarterLeftShot,
          allGroupLowShot,
@@ -260,7 +260,10 @@ def chooseSquirtCloseShot(squirts, suitSquirtsDict, openDuration, openName, atta
     av = None
     duration = attackDuration - openDuration
     if numSuits == 1:
-        av = base.cr.doId2do[suitSquirtsDict.keys()[0]]
+        if squirts[0]['level'] == 6:
+            av = squirts[0]['target'][0]['suit']
+        else:
+            av = squirts[0]['target']['suit']
         shotChoices = [avatarCloseUpThrowShot,
          avatarCloseUpThreeQuarterLeftShot,
          allGroupLowShot,
@@ -308,7 +311,7 @@ def chooseDropCloseShot(drops, suitDropsDict, openDuration, openName, attackDura
     av = None
     duration = attackDuration - openDuration
     if numSuits == 1:
-        av = base.cr.doId2do[suitDropsDict.keys()[0]]
+        av = drops[0]['target'][0]['suit']
         shotChoices = [avatarCloseUpThrowShot,
          avatarCloseUpThreeQuarterLeftShot,
          allGroupLowShot,
@@ -955,7 +958,7 @@ def chooseFireCloseShot(throws, suitThrowsDict, openDuration, openName, attackDu
     av = None
     duration = attackDuration - openDuration
     if numSuits == 1:
-        av = base.cr.doId2do[suitThrowsDict.keys()[0]]
+        av = throws[0]['target']['suit']
         shotChoices = [avatarCloseUpFireShot,
          avatarCloseUpThreeQuarterLeftFireShot,
          allGroupLowShot,
