@@ -37,15 +37,11 @@ class FFClientRepository(DirectObject):
         self.avChooser.exit()
         self.avChooser = None
 
-    def finishMAT(self, tutorial):
-        if tutorial:
+    def finishMAT(self, tutorialFlag=0):
+        if tutorialFlag:
             self.exitPAT()
             self.playGame.enterTutorial()
-            base.localAvatar.reparentTo(render)
-            base.localAvatar.setupControls()
-            base.localAvatar.initInterface()
-            base.localAvatar.addActive()
-            base.localAvatar.useLOD(1000)
+            self.setupLocalAvatar(tutorialFlag=tutorialFlag)
         else:
             self.enterTheTooniverse(FunnyFarmGlobals.FunnyFarm)
 
@@ -87,15 +83,7 @@ class FFClientRepository(DirectObject):
         loader.beginBulkLoad('hood', 'Heading to Battle Testing Grounds. . .', 500, TTLocalizer.TIP_GENERAL)
         b = BattleScene.BattleScene()
         b.load()
-        base.localAvatar.reparentTo(render)
-        base.localAvatar.setupControls()
-        base.localAvatar.setupSmartCamera()
-        base.localAvatar.initInterface()
-        base.localAvatar.book.showButton()
-        base.localAvatar.laffMeter.start()
-        base.localAvatar.startChat()
-        base.localAvatar.addActive()
-        base.localAvatar.useLOD(1000)
+        self.setupLocalAvatar()
         loader.endBulkLoad('hood')
         b.enter()
 
@@ -117,3 +105,16 @@ class FFClientRepository(DirectObject):
 
     def isPaid(self):
         return True
+
+    def setupLocalAvatar(self, tutorialFlag=0):
+        base.localAvatar.reparentTo(render)
+        base.localAvatar.setupControls()
+        base.localAvatar.initInterface()
+        base.localAvatar.addActive()
+        base.localAvatar.useLOD(1000)
+        if not tutorialFlag:
+            base.localAvatar.setupSmartCamera()
+            base.localAvatar.book.showButton()
+            base.localAvatar.laffMeter.start()
+            base.localAvatar.startChat()
+        return
