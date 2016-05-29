@@ -48,8 +48,7 @@ class Tutorial(ToonHood):
     def load(self):
         ToonHood.load(self)
         self.geom.find('**/donaldSZ').removeNode()
-        self.sky.setScale(2.8)
-        self.startSkyTrack()
+        self.sky.setScale(2.0)
 
         self.flippy = NPCToons.createLocalNPC(2001)
         self.flippy.reparentTo(render)
