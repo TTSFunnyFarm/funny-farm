@@ -400,7 +400,6 @@ class TownBattle(StateData.StateData):
             response['mode'] = 'Pass'
             response['id'] = -1
             messenger.send(self.battleEvent, [response])
-            self.fsm.request('AttackWait')
         else:
             self.notify.warning('unknown mode: %s' % mode)
 

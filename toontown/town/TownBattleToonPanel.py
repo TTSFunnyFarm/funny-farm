@@ -78,7 +78,7 @@ class TownBattleToonPanel(DirectFrame):
     def updateLaffMeter(self, hp):
         if self.laffMeter:
             self.laffMeter.adjustFace(hp, self.avatar.maxHp)
-        self.setHealthText(hp, maxHp)
+        self.setHealthText(hp, self.avatar.maxHp)
 
     def setValues(self, index, track, level = None, numTargets = None, targetIndex = None, localNum = None):
         self.notify.debug('Toon Panel setValues: index=%s track=%s level=%s numTargets=%s targetIndex=%s localNum=%s' % (index,

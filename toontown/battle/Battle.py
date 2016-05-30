@@ -228,6 +228,8 @@ class Battle(NodePath, BattleBase):
         NametagGlobals.setMasterArrowsOn(0)
         self.townBattle.exitOff()
         self.townBattle.setState('Attack')
+        for t in self.activeToons:
+            self.townBattle.updateLaffMeter(self.activeToons.index(t), t.hp)
         base.accept(self.localToonBattleEvent, self.__handleLocalToonBattleEvent) # base.accept since this class can't be a direct object for some reason
         self.startTimer()
 
@@ -597,6 +599,7 @@ class Battle(NodePath, BattleBase):
          targets]
 
     def movieDone(self):
+        self.exitPlayMovie()
         self.movieHasBeenMade = 0
         self.movieHasPlayed = 0
         self.rewardHasPlayed = 0
@@ -615,10 +618,10 @@ class Battle(NodePath, BattleBase):
                 self.activeToons.remove(t)
         if len(self.activeToons) == 0:
             toonDied = 1
-        self.exitPlayMovie()
         if toonDied:
             messenger.send(self.townBattle.doneEvent)
             return
+        
         if not allSuitsDied:
             self.startCamTrack()
         else:
