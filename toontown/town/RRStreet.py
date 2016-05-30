@@ -53,9 +53,9 @@ class RRStreet(ToonStreet):
         self.trainSfx.setLoop(True)
         self.trainSfx.setVolume(5)
         self.audio3d.setDropOffFactor(0.05)
-        #self.bldg = EliteExterior.EliteExterior()
-        #self.bldg.load()
-        #self.bldg.setPosHpr(-60, -36.5, 0.1, 270, 0, 0)
+        self.bldg = EliteExterior.EliteExterior()
+        self.bldg.load()
+        self.bldg.setPosHpr(-60, -36.5, 0.1, 270, 0, 0)
 
     def unload(self):
         ToonStreet.unload(self)
@@ -64,12 +64,12 @@ class RRStreet(ToonStreet):
         self.trainLoop.finish()
         self.train.removeNode()
         self.audio3d.disable()
-        #self.bldg.unload()
+        self.bldg.unload()
         del self.trainSfx
         del self.trainLoop
         del self.train
         del self.audio3d
-        #del self.bldg
+        del self.bldg
 
     def startActive(self):
         self.acceptOnce('enterFFTunnel_trigger', self.__handleFFTunnel)

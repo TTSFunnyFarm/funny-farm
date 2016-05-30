@@ -24,6 +24,7 @@ class BattleScene(DirectObject):
         suitDna.newSuit('ym')
         self.suit = BattleSuit.BattleSuit()
         self.suit.setDNA(suitDna)
+        self.suit.setLevel(0)
         self.suit.reparentTo(render)
         self.suit.setPosHpr(0, 20, 0, 180, 0, 0)
         self.suit.initializeBodyCollisions('suit')

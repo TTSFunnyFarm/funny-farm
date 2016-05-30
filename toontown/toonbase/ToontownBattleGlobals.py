@@ -389,7 +389,7 @@ def getAvPropDamage(attackTrack, attackLevel, exp, organicBonus = False, propBon
             damage += getDamageBonus(originalDamage)
     elif organicBonus or propBonus:
         damage += getDamageBonus(damage)
-    return damage
+    return int(damage)
 
 
 def getDamageBonus(normal):

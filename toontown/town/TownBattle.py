@@ -30,6 +30,7 @@ class TownBattle(StateData.StateData):
 
     def __init__(self, doneEvent):
         StateData.StateData.__init__(self, doneEvent)
+        self.doneEvent = doneEvent
         self.numCogs = 1
         self.creditLevel = None
         self.luredIndices = []

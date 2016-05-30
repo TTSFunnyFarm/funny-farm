@@ -29,6 +29,7 @@ class TownBattleAttackPanel(StateData.StateData):
         self._teaserPanel = None
         if not AttackPanelHidden:
             base.localAvatar.inventory.show()
+            base.localAvatar.inventory.updateGUI()
         self.accept('inventory-selection', self.__handleInventory)
         self.accept('inventory-run', self.__handleRun)
         self.accept('inventory-sos', self.__handleSOS)

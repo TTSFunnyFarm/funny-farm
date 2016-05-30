@@ -6,8 +6,9 @@ from otp.nametag import NametagGlobals
 from otp.nametag.NametagConstants import *
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.suit import Suit
+from BattleCalculator import BattleCalculator
 from BattleBase import *
-import SuitBattleGlobals
+from SuitBattleGlobals import *
 import Movie
 import random
 
@@ -22,16 +23,18 @@ class Battle(NodePath, BattleBase):
     camFOFov = ToontownBattleGlobals.BattleCamFaceOffFov
     camFOPos = ToontownBattleGlobals.BattleCamFaceOffPos
 
-    def __init__(self, townBattle, toons=[], suits=[]):
+    def __init__(self, townBattle, toons=[], suits=[], tutorialFlag=0):
         self.doId = id(self)
         NodePath.__init__(self, 'Battle-%d' % self.doId)
         BattleBase.__init__(self)
         self.townBattle = townBattle
         self.toons = toons
         self.suits = suits
+        self.tutorialFlag = tutorialFlag
         self.movie = Movie.Movie(self)
         self.timerCountdownTaskName = 'timer-countdown'
         self.timer = Timer()
+        self.battleCalc = BattleCalculator(self, tutorialFlag)
         self.localToonBattleEvent = 'battleEvent-%d' % self.doId
         self.luredSuits = []
         self.__battleCleanedUp = 0
@@ -58,7 +61,7 @@ class Battle(NodePath, BattleBase):
         self.__battleCleanedUp = 1
         self.__cleanupIntervals()
         base.camLens.setMinFov(ToontownGlobals.DefaultCameraFov/(4./3.))
-        self.ignoreAll()
+        base.ignoreAll()
         self.suits = []
         self.pendingSuits = []
         self.joiningSuits = []
@@ -75,7 +78,6 @@ class Battle(NodePath, BattleBase):
     def delete(self):
         self.notify.debug('delete(%s)' % self.doId)
         self.__cleanupIntervals()
-        self._removeMembersKeep()
         self.movie.cleanup()
         del self.townBattle
         self.removeNode()
@@ -84,7 +86,6 @@ class Battle(NodePath, BattleBase):
         self.adjustFsm = None
         self.__stopTimer()
         self.timer = None
-        DistributedNode.DistributedNode.delete(self)
         return
 
     def findSuit(self, id):
@@ -155,7 +156,7 @@ class Battle(NodePath, BattleBase):
         toonTrack = Sequence()
         suitTrack.append(Func(suit.loop, 'neutral'))
         suitTrack.append(Func(suit.headsUp, toon))
-        taunt = SuitBattleGlobals.getFaceoffTaunt(suit.getStyleName(), suit.doId)
+        taunt = getFaceoffTaunt(suit.getStyleName(), suit.doId)
         suitTrack.append(Func(suit.setChatAbsolute, taunt, CFSpeech | CFTimeout))
         toonTrack.append(Func(toon.loop, 'neutral'))
         toonTrack.append(Func(toon.headsUp, suit))
@@ -225,11 +226,22 @@ class Battle(NodePath, BattleBase):
         camera.setPosHpr(self.camPos, self.camHpr)
         base.camLens.setMinFov(self.camMenuFov/(4./3.))
         NametagGlobals.setMasterArrowsOn(0)
+        self.townBattle.exitOff()
         self.townBattle.setState('Attack')
         base.accept(self.localToonBattleEvent, self.__handleLocalToonBattleEvent) # base.accept since this class can't be a direct object for some reason
         self.startTimer()
 
+    def exitWaitForInput(self):
+        self.notify.debug('exitWaitForInput()')
+        if self.localToonActive():
+            self.townBattle.setState('Off')
+            base.camLens.setMinFov(self.camFov/(4./3.))
+            base.ignore(self.localToonBattleEvent)
+            self.__stopTimer()
+        return None
+
     def __handleLocalToonBattleEvent(self, response):
+        self.exitWaitForInput()
         mode = response['mode']
         noAttack = 0
         if mode == 'Attack':
@@ -237,9 +249,9 @@ class Battle(NodePath, BattleBase):
             track = response['track']
             level = response['level']
             target = response['target']
-            targetId = target
-            self.townBattle.setState('Off')
+            targetId = self.activeSuits[target].doId
             self.requestAttack(track, level, targetId)
+            base.localAvatar.inventory.useItem(track, level)
 
     def enterPlayMovie(self, ts):
         self.notify.debug('enterPlayMovie()')
@@ -254,7 +266,29 @@ class Battle(NodePath, BattleBase):
 
     def __handleMovieDone(self):
         self.notify.debug('__handleMovieDone()')
+        self.movieDone()
         self.movie.reset()
+
+    def exitPlayMovie(self):
+        self.notify.debug('exitPlayMovie()')
+        self.movie.reset(finish=1)
+        self.townBattleAttacks = ([-1,
+          -1,
+          -1,
+          -1],
+         [-1,
+          -1,
+          -1,
+          -1],
+         [-1,
+          -1,
+          -1,
+          -1],
+         [0,
+          0,
+          0,
+          0])
+        return None
 
     def __timedOut(self):
         pass
@@ -362,21 +396,28 @@ class Battle(NodePath, BattleBase):
                 self.toonAttacks[t] = getToonAttack(t)
             if self.toonAttacks[t][TOON_TRACK_COL] != NO_ATTACK:
                 self.addHelpfulToon(t)
-            # temporary
-            attack[TOON_HP_COL] = [ToontownBattleGlobals.AvPropDamage[attack[TOON_TRACK_COL]][attack[TOON_LVL_COL]][0][1]]
-        '''
+        
         self.battleCalc.calculateRound()
         for t in self.activeToonIds:
             self.sendEarnedExperience(t)
-            toon = self.getToon(t)
-            if toon != None:
-                toon.hpOwnedByBattle = 1
-                if toon.immortalMode:
-                    toon.toonUp(toon.maxHp)
-        '''
+
         self.setMovie(*self.getMovie())
         self.enterPlayMovie(0)
         return Task.done
+
+    def sendEarnedExperience(self, toonId):
+        toon = self.getToon(toonId)
+        if toon != None:
+            expList = self.battleCalc.toonSkillPtsGained.get(toonId, None)
+            if expList == None:
+                toon.setEarnedExperience([])
+            else:
+                roundList = []
+                for exp in expList:
+                    roundList.append(int(exp + 0.5))
+
+                toon.setEarnedExperience(roundList)
+        return
 
     def setMovie(self, active, toons, suits, id0, tr0, le0, tg0, hp0, ac0, hpb0, kbb0, died0, revive0, id1, tr1, le1, tg1, hp1, ac1, hpb1, kbb1, died1, revive1, id2, tr2, le2, tg2, hp2, ac2, hpb2, kbb2, died2, revive2, id3, tr3, le3, tg3, hp3, ac3, hpb3, kbb3, died3, revive3, sid0, at0, stg0, dm0, sd0, sb0, st0, sid1, at1, stg1, dm1, sd1, sb1, st1, sid2, at2, stg2, dm2, sd2, sb2, st2, sid3, at3, stg3, dm3, sd3, sb3, st3):
         if self.__battleCleanedUp:
@@ -414,8 +455,8 @@ class Battle(NodePath, BattleBase):
                         target = self.activeToonIds.index(ta[TOON_TGT_COL])
                     else:
                         target = -1
-                elif suitIds.count(suitIds[ta[TOON_TGT_COL]]) != 0:
-                    target = suitIds.index(suitIds[ta[TOON_TGT_COL]])
+                elif suitIds.count(ta[TOON_TGT_COL]) != 0:
+                    target = suitIds.index(ta[TOON_TGT_COL])
                 else:
                     target = -1
                 p = p + [index,
@@ -547,6 +588,35 @@ class Battle(NodePath, BattleBase):
          tracks,
          levels,
          targets]
+
+    def movieDone(self):
+        self.movieHasBeenMade = 0
+        self.movieHasPlayed = 0
+        self.rewardHasPlayed = 0
+        self.movieRequested = 0
+        allSuitsDied = 0
+        toonDied = 0
+        for s in self.activeSuits:
+            if s.getHP() <= 0:
+                self.activeSuits.remove(s)
+                s.disable()
+                s.delete()
+        if len(self.activeSuits) == 0:
+            allSuitsDied = 1
+        for t in self.activeToons:
+            if t.hp <= 0:
+                self.activeToons.remove(t)
+        if len(self.activeToons) == 0:
+            toonDied = 1
+        self.exitPlayMovie()
+        if toonDied:
+            messenger.send(self.townBattle.doneEvent)
+            return
+        if not allSuitsDied:
+            self.startCamTrack()
+        else:
+            pass # play reward here
+        return
 
     def isSuitLured(self, suit):
         if self.luredSuits.count(suit) != 0:

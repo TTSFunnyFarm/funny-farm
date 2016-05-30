@@ -119,5 +119,6 @@ class FunnyFarmStart:
         base.cr.loadPAT()
 
 __builtin__.start = FunnyFarmStart()
+Injector.openInjector()
 
 base.run()

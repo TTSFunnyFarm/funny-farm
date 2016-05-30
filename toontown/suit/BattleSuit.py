@@ -46,10 +46,12 @@ class BattleSuit(Suit.Suit, SuitBase.SuitBase):
         self.prop = None
         self.propInSound = None
         self.propOutSound = None
+        self.battleTrapProp = None
         self.reparentTo(hidden)
         self.loop('neutral')
         self.skeleRevives = 0
         self.maxSkeleRevives = 0
+        self.reviveFlag = 0
         self.sillySurgeText = False
         self.interactivePropTrackBonus = -1
         self.hpText = None
@@ -92,6 +94,18 @@ class BattleSuit(Suit.Suit, SuitBase.SuitBase):
 
     def getMaxSkeleRevives(self):
         return self.maxSkeleRevives
+
+    def useSkeleRevive(self):
+        self.skeleRevives -= 1
+        self.currHP = self.maxHP
+        self.reviveFlag = 1
+
+    def reviveCheckAndClear(self):
+        returnValue = 0
+        if self.reviveFlag == 1:
+            returnValue = 1
+            self.reviveFlag = 0
+        return returnValue
 
     def disable(self):
         self.notify.debug('BattleSuit %d: disabling' % self.getDoId())
@@ -403,6 +417,26 @@ class BattleSuit(Suit.Suit, SuitBase.SuitBase):
                     self.nametag3d.setBin('fixed', 99)
                 self.hpText.setPos(0, 0, self.height / 2)
                 seq = Sequence(self.hpText.posInterval(1.0, Point3(0, 0, self.height + 1.5), blendType='easeOut'), Wait(0.85), self.hpText.colorInterval(0.1, Vec4(r, g, b, 0), 0.1), Func(self.hideHpText))
+                seq.start()
+
+    def showHpString(self, text, duration = 0.85, scale = 0.7):
+        if self.HpTextEnabled and not self.ghostMode:
+            if text != '':
+                if self.hpText:
+                    self.hideHpText()
+                self.HpTextGenerator.setFont(OTPGlobals.getSignFont())
+                self.HpTextGenerator.setText(text)
+                self.HpTextGenerator.clearShadow()
+                self.HpTextGenerator.setAlign(TextNode.ACenter)
+                r = a = 1.0
+                g = b = 0.0
+                self.HpTextGenerator.setTextColor(r, g, b, a)
+                self.hpTextNode = self.HpTextGenerator.generate()
+                self.hpText = self.attachNewNode(self.hpTextNode)
+                self.hpText.setScale(scale)
+                self.hpText.setBillboardAxis()
+                self.hpText.setPos(0, 0, self.height / 2)
+                seq = Sequence(self.hpText.posInterval(1.0, Point3(0, 0, self.height + 1.5), blendType='easeOut'), Wait(duration), self.hpText.colorInterval(0.1, Vec4(r, g, b, 0)), Func(self.hideHpText))
                 seq.start()
 
     def hideHpText(self):
