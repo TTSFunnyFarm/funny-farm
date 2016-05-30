@@ -21,7 +21,7 @@ class BattleScene(DirectObject):
         self.battleBgm = base.loadMusic('phase_3.5/audio/bgm/encntr_general_bg.ogg')
 
         suitDna = SuitDNA.SuitDNA()
-        suitDna.newSuit('ym')
+        suitDna.newSuit('cc')
         self.suit = BattleSuit.BattleSuit()
         self.suit.setDNA(suitDna)
         self.suit.setLevel(0)
@@ -33,8 +33,10 @@ class BattleScene(DirectObject):
     def enter(self):
         base.playMusic(self.bgm, looping=1)
         base.localAvatar.enterTeleportIn(1, 0, callback=self.__handleTeleport)
-        self.suit.beginSupaFlyMove(Point3(0, 20, 0), True, 'trackName', walkAfterLanding=False).start()
-        self.suit.enableBattleDetect(self.__handleEnterBattle)
+        Sequence(
+            self.suit.beginSupaFlyMove(Point3(0, 20, 0), True, 'trackName', walkAfterLanding=False),
+            Func(self.suit.enableBattleDetect, self.__handleEnterBattle)
+        ).start()
 
     def __handleEnterBattle(self, collEntry):
         self.bgm.stop()

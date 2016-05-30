@@ -252,6 +252,11 @@ class Battle(NodePath, BattleBase):
             targetId = self.activeSuits[target].doId
             self.requestAttack(track, level, targetId)
             base.localAvatar.inventory.useItem(track, level)
+        elif mode == 'Pass':
+            targetId = response['id']
+            self.notify.debug('got a Pass')
+            self.requestAttack(PASS, -1, -1)
+        return
 
     def enterPlayMovie(self, ts):
         self.notify.debug('enterPlayMovie()')
@@ -291,7 +296,9 @@ class Battle(NodePath, BattleBase):
         return None
 
     def __timedOut(self):
-        pass
+        self.notify.debug('WaitForInput timed out')
+        self.exitWaitForInput()
+        self.requestAttack(NO_ATTACK, -1, -1)
 
     def clearAttacks(self):
         self.toonAttacks = {}

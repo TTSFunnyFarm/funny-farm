@@ -178,11 +178,14 @@ class LocalToon(Toon.Toon, WalkControls):
 
         taskMgr.add(updateOnScreenDebug, 'UpdateOSD')
 
-    def setHealth(self, hp, maxHp):
+    def setHealth(self, hp, maxHp, showText=0):
+        oldHp = self.hp
         self.hp = hp
         self.maxHp = maxHp
         if self.laffMeter:
             self.laffMeter.adjustFace(hp, maxHp)
+        if showText:
+            self.showHpText(self.hp - oldHp)
         base.avatarData.setHp = self.hp
         base.avatarData.setMaxHp = self.maxHp
         dataMgr.saveToonData(base.avatarData)
@@ -377,7 +380,7 @@ class LocalToon(Toon.Toon, WalkControls):
         self.earnedExperience = earnedExp
 
     def maxToon(self):
-        self.setHealth(137, 137)
+        self.setHealth(137, 137, showText=1)
         self.setTrackAccess([1, 1, 1, 1, 1, 1, 1])
         self.setMaxCarry(80)
         self.experience.maxOutExp()
@@ -391,7 +394,7 @@ class LocalToon(Toon.Toon, WalkControls):
         self.setBankMoney(12000)
 
     def resetToon(self):
-        self.setHealth(15, 15)
+        self.setHealth(15, 15, showText=1)
         self.setTrackAccess([0, 0, 0, 0, 1, 1, 0])
         self.setMaxCarry(20)
         self.experience.zeroOutExp()
