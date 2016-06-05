@@ -19,7 +19,6 @@ class BattleScene(DirectObject):
         self.sky.flattenMedium()
         self.bgm = base.loadMusic('phase_3.5/audio/bgm/TC_SZ.ogg')
         self.battleBgm = base.loadMusic('phase_3.5/audio/bgm/encntr_general_bg.ogg')
-
         suitDna = SuitDNA.SuitDNA()
         suitDna.newSuit('cc')
         self.suit = BattleSuit.BattleSuit()
@@ -29,6 +28,17 @@ class BattleScene(DirectObject):
         self.suit.setPosHpr(0, 20, 0, 180, 0, 0)
         self.suit.initializeBodyCollisions('suit')
         self.suit.loop('neutral')
+        self.battle = None
+        self.townBattle = None
+
+    def unload(self):
+        self.environ.removeNode()
+        self.sky.removeNode()
+        del self.environ
+        del self.sky
+        del self.bgm
+        del self.battleBgm
+        del self.suit
 
     def enter(self):
         base.playMusic(self.bgm, looping=1)
@@ -38,14 +48,29 @@ class BattleScene(DirectObject):
             Func(self.suit.enableBattleDetect, self.__handleEnterBattle)
         ).start()
 
-    def __handleEnterBattle(self, collEntry):
+    def exit(self):
+        self.ignoreAll()
         self.bgm.stop()
-        base.playMusic(self.battleBgm, looping=1)
-        tb = TownBattle.TownBattle('townbattle-done')
-        b = Battle.Battle(tb, toons=[base.localAvatar], suits=[self.suit])
-        b.reparentTo(render)
-        b.setPosHpr(0, 0, 0, 0, 0, 0) # battle cell goes here
-        b.enter()
+        self.battleBgm.stop()
+
+    def __handleEnterBattle(self, collEntry):
+        self.townBattle = TownBattle.TownBattle('townbattle-done')
+        self.battle = Battle.Battle(self.townBattle, toons=[base.localAvatar], suits=[self.suit])
+        self.battle.reparentTo(render)
+        self.battle.setPosHpr(0, 0, 0, 0, 0, 0) # battle cell goes here
+        self.battle.enter()
+        self.bgm.stop()
+        base.playMusic(self.battleBgm, looping=1, volume=0.75)
+        self.accept(self.townBattle.doneEvent, self.__battleDone)
+
+    def __battleDone(self):
+        self.ignore(self.townBattle.doneEvent)
+        self.townBattle.unload()
+        self.townBattle.cleanup()
+        self.townBattle = None
+        self.battle.cleanupBattle()
+        self.battle.delete()
+        self.battle = None
 
     def __handleTeleport(self):
         base.localAvatar.exitTeleportIn()

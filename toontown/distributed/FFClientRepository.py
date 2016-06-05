@@ -81,11 +81,11 @@ class FFClientRepository(DirectObject):
         # feature/battles
         #self.enterHood(zoneId, init=True)
         loader.beginBulkLoad('hood', 'Heading to Battle Testing Grounds. . .', 500, TTLocalizer.TIP_GENERAL)
-        b = BattleScene.BattleScene()
-        b.load()
+        self.battleScene = BattleScene.BattleScene()
+        self.battleScene.load()
         self.setupLocalAvatar()
         loader.endBulkLoad('hood')
-        b.enter()
+        self.battleScene.enter()
 
     def exitTheTooniverse(self):
         base.localAvatar.enterTeleportOut(callback=self.__handleExit)

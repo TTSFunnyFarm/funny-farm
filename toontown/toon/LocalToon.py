@@ -963,6 +963,8 @@ class LocalToon(Toon.Toon, WalkControls):
             self.showHpText(-hpLost, bonus)
             self.setHealth(self.hp, self.maxHp)
             if self.hp <= 0 and oldHp > 0:
+                self.setupCamera()
+                camera.wrtReparentTo(render)
                 self.setAnimState('Died', callback=self.died)
         return
 
@@ -1057,5 +1059,11 @@ class LocalToon(Toon.Toon, WalkControls):
             base.cr.playGame.exitStreet()
         elif base.cr.playGame.place:
             base.cr.playGame.exitPlace()
+        # feature/battles
+        elif base.cr.battleScene:
+            base.cr.battleScene.exit()
+            base.cr.battleScene.unload()
+        self.reparentTo(render)
+        self.enable()
         zoneId = base.avatarData.setLastHood
         base.cr.enterHood(zoneId)

@@ -4,6 +4,7 @@ from direct.distributed.ClockDelta import *
 from direct.task.Task import Task
 from otp.nametag import NametagGlobals
 from otp.nametag.NametagConstants import *
+from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.suit import Suit
 from BattleCalculator import BattleCalculator
@@ -59,7 +60,6 @@ class Battle(NodePath, BattleBase):
             return
         self.notify.debug('cleanupBattle(%s)' % self.doId)
         self.__battleCleanedUp = 1
-        self.__cleanupIntervals()
         base.camLens.setMinFov(ToontownGlobals.DefaultCameraFov/(4./3.))
         base.ignoreAll()
         self.suits = []
@@ -77,7 +77,6 @@ class Battle(NodePath, BattleBase):
 
     def delete(self):
         self.notify.debug('delete(%s)' % self.doId)
-        self.__cleanupIntervals()
         self.movie.cleanup()
         del self.townBattle
         self.removeNode()
@@ -254,6 +253,9 @@ class Battle(NodePath, BattleBase):
             targetId = self.activeSuits[target].doId
             self.requestAttack(track, level, targetId)
             base.localAvatar.inventory.useItem(track, level)
+        elif mode == 'Run':
+            self.notify.debug('got a run')
+            self.requestRun()
         elif mode == 'Pass':
             targetId = response['id']
             self.notify.debug('got a Pass')
@@ -300,7 +302,7 @@ class Battle(NodePath, BattleBase):
     def __timedOut(self):
         self.notify.debug('WaitForInput timed out')
         self.exitWaitForInput()
-        self.requestAttack(NO_ATTACK, -1, -1)
+        self.requestAttack(PASS, -1, -1)
 
     def clearAttacks(self):
         self.toonAttacks = {}
@@ -374,6 +376,27 @@ class Battle(NodePath, BattleBase):
         self.notify.debug('toon: %d chose an attack' % toonId)
         self.__requestMovie()
         return
+
+    def requestRun(self):
+        base.localAvatar.enterTeleportOut(callback=self.__runDone)
+
+    def __runDone(self):
+        for s in self.activeSuits:
+            self.removeSuit(s)
+        messenger.send(self.townBattle.doneEvent)
+        if base.cr.playGame.hood:
+            base.cr.playGame.exitHood()
+        elif base.cr.playGame.street:
+            base.cr.playGame.exitStreet()
+        elif base.cr.playGame.place:
+            base.cr.playGame.exitPlace()
+        # feature/battles
+        elif base.cr.battleScene:
+            base.cr.battleScene.exit()
+            base.cr.battleScene.unload()
+        base.localAvatar.enable()
+        zoneId = base.avatarData.setLastHood
+        base.cr.enterHood(zoneId)
 
     def __requestMovie(self, timeout = 0):
         movieDelay = 0
@@ -608,9 +631,7 @@ class Battle(NodePath, BattleBase):
         toonDied = 0
         for s in self.activeSuits:
             if s.getHP() <= 0:
-                self.activeSuits.remove(s)
-                s.disable()
-                s.delete()
+                self.removeSuit(s)
         if len(self.activeSuits) == 0:
             allSuitsDied = 1
         for t in self.activeToons:
@@ -619,14 +640,21 @@ class Battle(NodePath, BattleBase):
         if len(self.activeToons) == 0:
             toonDied = 1
         if toonDied:
+            for s in self.activeSuits:
+                self.removeSuit(s)
             messenger.send(self.townBattle.doneEvent)
             return
-        
         if not allSuitsDied:
             self.startCamTrack()
         else:
             pass # play reward here
         return
+
+    def removeSuit(self, suit):
+        if suit in self.activeSuits:
+            self.activeSuits.remove(suit)
+        suit.disable()
+        suit.delete()
 
     def isSuitLured(self, suit):
         if self.luredSuits.count(suit) != 0:

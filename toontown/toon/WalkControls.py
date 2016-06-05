@@ -33,10 +33,6 @@ class WalkControls(DirectObject):
         self.controlManager = ControlManager.ControlManager(True, False)
         self.soundWalk = base.loadSfx('phase_3.5/audio/sfx/AV_footstep_walkloop.ogg')
         self.soundRun = base.loadSfx('phase_3.5/audio/sfx/AV_footstep_runloop.ogg')
-        self.soundWalk.setLoop(True)
-        self.soundRun.setLoop(True)
-        self.soundWalk.setVolume(100)
-        self.soundRun.setVolume(100)
 
     def destroy(self):
         self.ignoreAll()
