@@ -80,6 +80,23 @@ class LocalToon(Toon.Toon, WalkControls):
         self.hpText = None
         self.sillySurgeText = False
         self.interactivePropTrackBonus = -1
+        self.cogTypes = [0,
+         0,
+         0,
+         0]
+        self.cogLevels = [0,
+         0,
+         0,
+         0]
+        self.cogParts = [0,
+         0,
+         0,
+         0]
+        self.cogMerits = [0,
+         0,
+         0,
+         0]
+        self.quests = []
 
     def destroy(self):
         Toon.Toon.delete(self)
@@ -101,6 +118,9 @@ class LocalToon(Toon.Toon, WalkControls):
 
     def uniqueName(self, idString):
         return ('%s-%s' % (idString, str(self.doId)))
+
+    def getDoId(self):
+        return self.doId
 
     def enable(self):
         self.collisionsOn()

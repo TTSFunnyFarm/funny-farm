@@ -32,7 +32,7 @@ from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase.ToontownBattleGlobals import *
 from toontown.toontowngui import TTDialog
-from otp.nametag import NametagGlobals
+from otp.nametag import NametagConstants
 
 camPos = Point3(14, 0, 10)
 camHpr = Vec3(89, -30, 0)
@@ -288,10 +288,13 @@ class Movie(DirectObject.DirectObject):
         self.rewardHasBeenReset = 0
         self.rewardPanel = RewardPanel.RewardPanel(name)
         self.rewardCallback = callback
+        '''
         self.questList = self.rewardPanel.getQuestIntervalList(base.localAvatar, [0,
          1,
          1,
          0], [base.localAvatar], base.localAvatar.quests[0], [], [base.localAvatar.getDoId()])
+        '''
+        self.questList = None
         camera.setPosHpr(0, 8, base.localAvatar.getHeight() * 0.66, 179, 15, 0)
         self.playTutorialReward_1()
 
@@ -349,7 +352,7 @@ class Movie(DirectObject.DirectObject):
         self.tutorialTom.setDNA(dna)
         self.tutorialTom.setName(TTLocalizer.NPCToonNames[20000])
         self.tutorialTom.setPickable(0)
-        self.tutorialTom.setPlayerType(NametagGlobals.CCNonPlayer)
+        self.tutorialTom.setPlayerType(NametagConstants.CCNonPlayer)
         self.tutorialTom.uniqueName = uniqueName
         if base.config.GetString('language', 'english') == 'japanese':
             self.tomDialogue03 = base.loadSfx('phase_3.5/audio/dial/CC_tom_movie_tutorial_reward01.ogg')
@@ -361,7 +364,8 @@ class Movie(DirectObject.DirectObject):
             self.tomDialogue04 = None
             self.tomDialogue05 = None
             self.musicVolume = 0.9
-        music = base.cr.playGame.place.loader.battleMusic
+        # feature/battles
+        music = base.cr.battleScene.battleBgm
         if self.questList:
             self.track1 = Sequence(Wait(1.0), Func(self.rewardPanel.initQuestFrame, base.localAvatar, copy.deepcopy(base.localAvatar.quests)), Wait(1.0), Sequence(*self.questList), Wait(1.0), Func(self.rewardPanel.hide), Func(camera.setPosHpr, render, 34, 19.88, 3.48, -90, -2.36, 0), Func(base.localAvatar.animFSM.request, 'neutral'), Func(base.localAvatar.setPosHpr, 40.31, 22.0, -0.47, 150.0, 360.0, 0.0), Wait(0.5), Func(self.tutorialTom.reparentTo, render), Func(self.tutorialTom.show), Func(self.tutorialTom.setPosHpr, 40.29, 17.9, -0.47, 11.31, 0.0, 0.07), Func(self.tutorialTom.animFSM.request, 'TeleportIn'), Wait(1.517), Func(self.tutorialTom.animFSM.request, 'neutral'), Func(self.acceptOnce, self.tutorialTom.uniqueName('doneChatPage'), doneChat1), Func(self.tutorialTom.addActive), Func(music.setVolume, self.musicVolume), Func(self.tutorialTom.setLocalPageChat, TTLocalizer.MovieTutorialReward3, 0, None, [self.tomDialogue03]), name='tutorial-reward-3a')
             self.track2 = Sequence(Func(self.acceptOnce, self.tutorialTom.uniqueName('doneChatPage'), doneChat2), Func(self.tutorialTom.setLocalPageChat, TTLocalizer.MovieTutorialReward4, 1, None, [self.tomDialogue04]), Func(self.tutorialTom.setPlayRate, 1.5, 'right-hand-start'), Func(self.tutorialTom.play, 'right-hand-start'), Wait(self.tutorialTom.getDuration('right-hand-start') / 1.5), Func(self.tutorialTom.loop, 'right-hand'), name='tutorial-reward-3b')

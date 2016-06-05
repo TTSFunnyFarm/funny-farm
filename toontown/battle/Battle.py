@@ -10,6 +10,7 @@ from toontown.suit import Suit
 from BattleCalculator import BattleCalculator
 from BattleBase import *
 from SuitBattleGlobals import *
+import BattleExperienceAI
 import Movie
 import random
 
@@ -43,6 +44,13 @@ class Battle(NodePath, BattleBase):
         self.movieHasPlayed = 0
         self.rewardHasPlayed = 0
         self.movieRequested = 0
+        self.toonExp = {}
+        self.toonOrigQuests = {}
+        self.toonItems = {}
+        self.toonOrigMerits = {}
+        self.toonMerits = {}
+        self.toonParts = {}
+        self.suitsKilled = []
 
     def enter(self):
         self.enterFaceOff()
@@ -54,6 +62,29 @@ class Battle(NodePath, BattleBase):
             suit.enterBattle()
         for t in self.activeToons:
             self.activeToonIds.append(t.doId)
+        avId = base.localAvatar.doId
+        toon = self.getToon(avId)
+        if avId not in self.toonExp:
+            p = []
+            for t in Tracks:
+                p.append(toon.experience.getExp(t))
+
+            self.toonExp[avId] = p
+        if avId not in self.toonOrigMerits:
+            self.toonOrigMerits[avId] = toon.cogMerits[:]
+        if avId not in self.toonMerits:
+            self.toonMerits[avId] = [0,
+             0,
+             0,
+             0]
+        if avId not in self.toonOrigQuests:
+            flattenedQuests = []
+            for quest in toon.quests:
+                flattenedQuests.extend(quest)
+
+            self.toonOrigQuests[avId] = flattenedQuests
+        if avId not in self.toonItems:
+            self.toonItems[avId] = ([], [])
 
     def cleanupBattle(self):
         if self.__battleCleanedUp:
@@ -383,7 +414,8 @@ class Battle(NodePath, BattleBase):
     def __runDone(self):
         for s in self.activeSuits:
             self.removeSuit(s)
-        messenger.send(self.townBattle.doneEvent)
+        doneStatus = 'run'
+        messenger.send(self.townBattle.doneEvent, [doneStatus])
         if base.cr.playGame.hood:
             base.cr.playGame.exitHood()
         elif base.cr.playGame.street:
@@ -621,6 +653,22 @@ class Battle(NodePath, BattleBase):
          levels,
          targets]
 
+    def setBattleExperience(self, id0, origExp0, earnedExp0, origQuests0, items0, missedItems0, origMerits0, merits0, parts0, id1, origExp1, earnedExp1, origQuests1, items1, missedItems1, origMerits1, merits1, parts1, id2, origExp2, earnedExp2, origQuests2, items2, missedItems2, origMerits2, merits2, parts2, id3, origExp3, earnedExp3, origQuests3, items3, missedItems3, origMerits3, merits3, parts3, deathList, uberList, helpfulToonsList):
+        if self.__battleCleanedUp:
+            return
+        self.movie.genRewardDicts(id0, origExp0, earnedExp0, origQuests0, items0, missedItems0, origMerits0, merits0, parts0, id1, origExp1, earnedExp1, origQuests1, items1, missedItems1, origMerits1, merits1, parts1, id2, origExp2, earnedExp2, origQuests2, items2, missedItems2, origMerits2, merits2, parts2, id3, origExp3, earnedExp3, origQuests3, items3, missedItems3, origMerits3, merits3, parts3, deathList, uberList, helpfulToonsList)
+
+    def getBattleExperience(self):
+        returnValue = BattleExperienceAI.getBattleExperience(4, self.activeToonIds, self.toonExp, self.battleCalc.toonSkillPtsGained, self.toonOrigQuests, self.toonItems, self.toonOrigMerits, self.toonMerits, self.toonParts, self.suitsKilled, self.helpfulToons)
+        return returnValue
+
+    def assignRewards(self):
+        if self.rewardHasPlayed == 1:
+            self.notify.debug('assignRewards() - reward has already played')
+            return
+        self.rewardHasPlayed = 1
+        BattleExperienceAI.assignRewards(self.activeToonIds, self.battleCalc.toonSkillPtsGained, self.suitsKilled, base.localAvatar.getZoneId(), self.helpfulToons)
+
     def movieDone(self):
         self.exitPlayMovie()
         self.movieHasBeenMade = 0
@@ -629,9 +677,21 @@ class Battle(NodePath, BattleBase):
         self.movieRequested = 0
         allSuitsDied = 0
         toonDied = 0
-        for s in self.activeSuits:
-            if s.getHP() <= 0:
-                self.removeSuit(s)
+        for suit in self.activeSuits:
+            if suit.getHP() <= 0:
+                encounter = {'type': suit.dna.name,
+                 'level': suit.getActualLevel(),
+                 'track': suit.dna.dept,
+                 'isSkelecog': suit.getSkelecog(),
+                 'isForeman': suit.isForeman(),
+                 'isVP': 0,
+                 'isCFO': 0,
+                 'isSupervisor': suit.isSupervisor(),
+                 'isVirtual': suit.isVirtual(),
+                 'hasRevives': suit.getMaxSkeleRevives(),
+                 'activeToons': self.activeToons[:]}
+                self.suitsKilled.append(encounter)
+                self.removeSuit(suit)
         if len(self.activeSuits) == 0:
             allSuitsDied = 1
         for t in self.activeToons:
@@ -640,14 +700,22 @@ class Battle(NodePath, BattleBase):
         if len(self.activeToons) == 0:
             toonDied = 1
         if toonDied:
-            for s in self.activeSuits:
-                self.removeSuit(s)
-            messenger.send(self.townBattle.doneEvent)
+            for suit in self.activeSuits:
+                self.removeSuit(suit)
+            doneStatus = 'defeat'
+            messenger.send(self.townBattle.doneEvent, [doneStatus])
             return
         if not allSuitsDied:
             self.startCamTrack()
         else:
-            pass # play reward here
+            self.setBattleExperience(*self.getBattleExperience())
+            self.assignRewards()
+            if self.tutorialFlag:
+                self.movie.playTutorialReward(0, base.localAvatar.getName(), self.__battleDone)
+            else:
+                self.movie.playReward(0, base.localAvatar.getName(), self.__battleDone)
+            for t in self.activeToons:
+                self.activeToons.remove(t)
         return
 
     def removeSuit(self, suit):
@@ -705,3 +773,8 @@ class Battle(NodePath, BattleBase):
 
     def hasLocalToon(self):
         return 1
+
+    def __battleDone(self):
+        doneStatus = 'victory'
+        messenger.send(self.townBattle.doneEvent, [doneStatus])
+        base.localAvatar.enable()

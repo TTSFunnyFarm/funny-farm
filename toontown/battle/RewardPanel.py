@@ -198,7 +198,7 @@ class RewardPanel(DirectFrame):
             totalMerits = CogDisguiseGlobals.getTotalMerits(toon, i)
             merits = meritList[i]
             self.meritIncLabels[i].hide()
-            promoStatus = toon.promotionStatus[i]
+            promoStatus = 0
             if CogDisguiseGlobals.isSuitComplete(toon.cogParts, i):
                 if not self.trackBarsOffset:
                     trackBarOffset = 0.47

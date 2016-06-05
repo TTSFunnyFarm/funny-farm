@@ -56,7 +56,7 @@ Levels = [[0, 0, 0, 0, 0, 0, 0],       # Power-up (won't recieve experience; unl
  [0, 10, 50, 400, 2000, 4000, 8000],   # Throw
  [0, 10, 50, 400, 2000, 4000, 8000],   # Squirt
  [0, 20, 100, 500, 2000, 4000, 8000]]  # Drop            
-regMaxSkill = 10000
+regMaxSkill = 8000
 UberSkill = 500
 MaxSkill = UberSkill + regMaxSkill
 UnpaidMaxSkills = [Levels[0][1] - 1,

@@ -456,3 +456,18 @@ class BattleSuit(Suit.Suit, SuitBase.SuitBase):
             level = '???'
 
         return '%s\n%s\nLevel %s' % (self.getName(), self.doId, level)
+
+    def isForeman(self):
+        return 0
+
+    def isSupervisor(self):
+        return 0
+
+    def setVirtual(self, virtual):
+        pass
+
+    def getVirtual(self):
+        return 0
+
+    def isVirtual(self):
+        return self.getVirtual()

@@ -5,7 +5,7 @@ def genRewardDicts(entries):
     for toonId, origExp, earnedExp, origQuests, items, missedItems, origMerits, merits, parts in entries:
         if toonId != -1:
             dict = {}
-            toon = base.cr.doId2do.get(toonId)
+            toon = base.localAvatar
             if toon == None:
                 continue
             dict['toon'] = toon

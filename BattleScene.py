@@ -60,11 +60,14 @@ class BattleScene(DirectObject):
         self.battle.setPosHpr(0, 0, 0, 0, 0, 0) # battle cell goes here
         self.battle.enter()
         self.bgm.stop()
-        base.playMusic(self.battleBgm, looping=1, volume=0.75)
+        base.playMusic(self.battleBgm, looping=1)
         self.accept(self.townBattle.doneEvent, self.__battleDone)
 
-    def __battleDone(self):
+    def __battleDone(self, doneStatus):
         self.ignore(self.townBattle.doneEvent)
+        self.battleBgm.stop()
+        if doneStatus == 'victory':
+            self.bgm.play()
         self.townBattle.unload()
         self.townBattle.cleanup()
         self.townBattle = None
