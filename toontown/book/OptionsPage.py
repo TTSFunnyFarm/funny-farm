@@ -154,8 +154,6 @@ class OptionsTabPage(DirectFrame):
         self.ignore('confirmDone')
         self.hide()
         #self.speedChatStyleText.exit()
-        if self.displaySettingsChanged:
-            taskMgr.doMethodLater(self.DisplaySettingsDelay, self.writeDisplaySettings, self.DisplaySettingsTaskName)
 
     def unload(self):
         self.writeDisplaySettings()
@@ -342,6 +340,7 @@ class OptionsTabPage(DirectFrame):
             self.displaySettingsFullscreen = properties.getFullscreen()
             self.displaySettingsApi = base.pipe.getInterfaceName()
             self.displaySettingsApiChanged = apiChanged
+            self.writeDisplaySettings()
 
     def __setDisplaySettings(self):
         properties = base.win.getProperties()
