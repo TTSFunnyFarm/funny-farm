@@ -258,8 +258,13 @@ class Battle(NodePath, BattleBase):
         NametagGlobals.setMasterArrowsOn(0)
         self.townBattle.exitOff()
         self.townBattle.setState('Attack')
-        for t in self.activeToons:
-            self.townBattle.updateLaffMeter(self.activeToons.index(t), t.hp)
+        
+        for toon in self.activeToons:
+            self.townBattle.updateLaffMeter(self.activeToons.index(toon), toon.hp)
+        
+        for i in range(len(self.activeSuits)):
+            self.townBattle.cogPanels[i].setCogInformation(self.activeSuits[i])
+        
         base.accept(self.localToonBattleEvent, self.__handleLocalToonBattleEvent) # base.accept since this class can't be a direct object for some reason
         self.startTimer()
 

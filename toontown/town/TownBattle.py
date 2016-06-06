@@ -10,6 +10,7 @@ import TownBattleSOSPanel
 import TownBattleSOSPetSearchPanel
 import TownBattleSOSPetInfoPanel
 import TownBattleToonPanel
+import TownBattleCogPanel
 from toontown.toontowngui import TTDialog
 from direct.directnotify import DirectNotifyGlobal
 from toontown.battle import BattleBase
@@ -130,6 +131,10 @@ class TownBattle(StateData.StateData):
          TownBattleToonPanel.TownBattleToonPanel(1),
          TownBattleToonPanel.TownBattleToonPanel(2),
          TownBattleToonPanel.TownBattleToonPanel(3))
+        self.cogPanels = (TownBattleCogPanel.TownBattleCogPanel(0),
+         TownBattleCogPanel.TownBattleCogPanel(1),
+         TownBattleCogPanel.TownBattleCogPanel(2),
+         TownBattleCogPanel.TownBattleCogPanel(3))
         self.timer = ToontownTimer.ToontownTimer()
         self.timer.posInTopRightCorner()
         self.timer.setScale(0.4)
@@ -154,6 +159,10 @@ class TownBattle(StateData.StateData):
             toonPanel.cleanup()
 
         del self.toonPanels
+        for cogPanel in self.cogPanels:
+            cogPanel.cleanup()
+
+        del self.cogPanels
         self.timer.destroy()
         del self.timer
         del self.toons
@@ -217,6 +226,29 @@ class TownBattle(StateData.StateData):
         self.time = time
         self.timer.setTime(time)
         return None
+
+    def __cogPanels(self, num):
+        for panel in self.cogPanels:
+            panel.hide()
+            panel.setPos(0, 0, 0.615)
+
+        if num == 1:
+            self.cogPanels[0].setX(self.oddPos[1])
+            self.cogPanels[0].show()
+        elif num == 2:
+            for i in xrange(2):
+                self.cogPanels[i].setX(self.evenPos[i + 1])
+                self.cogPanels[i].show()
+
+        elif num == 3:
+            for i in xrange(3):
+                self.cogPanels[i].setX(self.oddPos[i])
+                self.cogPanels[i].show()
+
+        elif num == 4:
+            for i in xrange(4):
+                self.cogPanels[i].setX(self.evenPos[i])
+                self.cogPanels[i].show()
 
     def __enterPanels(self, num, localNum):
         self.notify.debug('enterPanels() num: %d localNum: %d' % (num, localNum))
@@ -307,6 +339,9 @@ class TownBattle(StateData.StateData):
             for toonPanel in self.toonPanels:
                 toonPanel.hide()
 
+            for cogPanel in self.cogPanels:
+                cogPanel.hide()
+
         self.toonAttacks = [(-1, 0, 0),
          (-1, 0, 0),
          (-1, 0, 0),
@@ -319,6 +354,7 @@ class TownBattle(StateData.StateData):
     def exitOff(self):
         if self.isLoaded:
             self.__enterPanels(self.numToons, self.localNum)
+            self.__cogPanels(self.numCogs)
         self.timer.show()
         self.track = -1
         self.level = -1

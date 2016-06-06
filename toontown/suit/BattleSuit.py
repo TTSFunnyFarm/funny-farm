@@ -365,6 +365,17 @@ class BattleSuit(Suit.Suit, SuitBase.SuitBase):
         if flag:
             Suit.Suit.makeWaiter(self)
 
+    def setElite(self, flag):
+        SuitBase.SuitBase.setElite(self, flag)
+        if flag:
+            Suit.Suit.makeElite(self)
+        nameInfo = TTLocalizer.SuitBaseNameWithLevel % {'name': self.name,
+         'dept': self.getStyleDept(),
+         'level': '%s %s' % (self.getActualLevel(), TTLocalizer.EliteCogName)}
+        self.setDisplayName(nameInfo)
+        self.maxHP = self.maxHP + int(round(self.maxHP * 0.25))
+        self.currHP = self.maxHP
+
     def showHpText(self, number, bonus = 0, scale = 1, attackTrack = -1):
         if self.HpTextEnabled and not self.ghostMode:
             if number != 0:

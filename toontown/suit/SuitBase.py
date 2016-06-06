@@ -22,6 +22,7 @@ class SuitBase:
         self.currHP = 10
         self.isSkelecog = 0
         self.isWaiter = 0
+        self.isElite = 0
         return
 
     def delete(self):
@@ -63,6 +64,9 @@ class SuitBase:
 
     def setWaiter(self, flag):
         self.isWaiter = flag
+
+    def setElite(self, flag):
+        self.isElite = flag
 
     def getActualLevel(self):
         if hasattr(self, 'dna'):

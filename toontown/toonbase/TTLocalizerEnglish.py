@@ -1907,6 +1907,7 @@ CashbotSkelP = 'Cashbot Skelecogs'
 SellbotSkelP = 'Sellbot Skelecogs'
 SkeleReviveCogName = 'Version 2.0 %(cog_name)s'
 SkeleRevivePostFix = ' v2.0'
+EliteCogName = 'Elite'
 AvatarDetailPanelOK = lOK
 AvatarDetailPanelCancel = lCancel
 AvatarDetailPanelClose = lClose
