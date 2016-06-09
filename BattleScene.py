@@ -78,5 +78,4 @@ class BattleScene(DirectObject):
 
     def __handleTeleport(self):
         base.localAvatar.exitTeleportIn()
-        base.localAvatar.book.showButton()
-        base.localAvatar.beginAllowPies()
+        base.localAvatar.enable()

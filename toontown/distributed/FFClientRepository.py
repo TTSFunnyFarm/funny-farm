@@ -117,4 +117,5 @@ class FFClientRepository(DirectObject):
             base.localAvatar.book.showButton()
             base.localAvatar.laffMeter.start()
             base.localAvatar.startChat()
+        base.localAvatar.disable()
         return

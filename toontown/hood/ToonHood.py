@@ -24,7 +24,6 @@ class ToonHood(DirectObject):
         if shop:
             return
         if not tunnel:
-            base.localAvatar.enableAvatarControls()
             base.localAvatar.setRandomSpawn(self.zoneId)
             if init:
                 Sequence(Wait(0.3), Func(base.localAvatar.enterTeleportIn, 1, 0, self.__handleTeleport)).start()
@@ -81,8 +80,7 @@ class ToonHood(DirectObject):
 
     def __handleTeleport(self):
         base.localAvatar.exitTeleportIn()
-        base.localAvatar.book.showButton()
-        base.localAvatar.beginAllowPies()
+        base.localAvatar.enable()
 
     def startSky(self):
         self.sky.reparentTo(camera)
