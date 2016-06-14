@@ -6,9 +6,6 @@ from toontown.toontowngui import TTDialog
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import FunnyFarmGlobals
 from otp.otpbase import OTPLocalizer
-# feature/battles
-import BattleScene
-
 import random
 import PlayGame
 import os
@@ -80,12 +77,8 @@ class FFClientRepository(DirectObject):
         self.exitPAT()
         # feature/battles
         #self.enterHood(zoneId, init=True)
-        loader.beginBulkLoad('hood', 'Heading to Battle Testing Grounds. . .', 500, TTLocalizer.TIP_GENERAL)
-        self.battleScene = BattleScene.BattleScene()
-        self.battleScene.load()
-        self.setupLocalAvatar()
-        loader.endBulkLoad('hood')
-        self.battleScene.enter()
+        self.playGame.enterTutorial()
+        self.setupLocalAvatar(tutorialFlag=1)
 
     def exitTheTooniverse(self):
         base.localAvatar.enterTeleportOut(callback=self.__handleExit)
@@ -109,11 +102,11 @@ class FFClientRepository(DirectObject):
     def setupLocalAvatar(self, tutorialFlag=0):
         base.localAvatar.reparentTo(render)
         base.localAvatar.setupControls()
+        base.localAvatar.setupSmartCamera()
         base.localAvatar.initInterface()
         base.localAvatar.addActive()
         base.localAvatar.useLOD(1000)
         if not tutorialFlag:
-            base.localAvatar.setupSmartCamera()
             base.localAvatar.book.showButton()
             base.localAvatar.laffMeter.start()
             base.localAvatar.startChat()

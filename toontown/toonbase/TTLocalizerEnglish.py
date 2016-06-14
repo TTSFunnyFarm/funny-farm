@@ -5317,27 +5317,6 @@ PetTutorialDone = 'Done'
 PetTutorialPage1 = 'Click on a Doodle to display the Doodle panel.  From here you can feed, scratch, and call the Doodle.'
 PetTutorialPage2 = "Use the new 'Pets' area in the SpeedChat menu to get a Doodle to do a trick.  If he does it, reward him and he'll get better!"
 PetTutorialPage3 = "Purchase new Doodle tricks from Clarabelle's Cattlelog.  Better tricks give better Toon-Ups!"
-TutorialIntro = [
-    'Welcome to Funny Farm.',
-    'What is Funny Farm all about, you may ask?',
-    'When the cogs took over Toontown on that dreadful September day, we had to find a place to escape.',
-    'That place was Funny Farm, and it had been abandoned for years.',
-    'Luckily, the cogs haven\'t found us yet, but it\'s still important that you are prepared to fight for our town.',
-    'Without further ado, let\'s begin your training!'
-]
-TutorialGags = [
-    'Nicely done! You\'re a natural!',
-    'Fighting real cogs won\'t be that easy, of course.',
-    'There are lots of different gags, but take these to start.'
-]
-TutorialLaffMeter = [
-    'Oh! You also need a Laff meter!',
-    'If your Laff meter gets too low, you\'ll be sad!'
-]
-TutorialOutro = [
-    'If you have any questions, I\'ll always be at the Toon Hall.',
-    'Have fun in Funny Farm!'
-]
 
 def getPetGuiAlign():
     from pandac.PandaModules import TextNode
