@@ -7,6 +7,9 @@ from otp.nametag.ChatBalloon import ChatBalloon
 import TTLocalizer
 from ToontownGlobals import *
 
+def getVar(var):
+    return globals()[var]
+
 Tutorial = 500
 FunnyFarm = 1000
 FunnyFarmCentral = 2000
@@ -14,9 +17,10 @@ SillySprings = 3000
 ChillyVillage = 4000
 MoonlitMeadow = 5000
 RicketyRoad = 1100
+SecretArea = 2100
+UnknownStreet = 3100
 WintryWay = 4100
 BreezyBend = 5100
-SecretArea = 2100
 FFHoodText = 'Funny Farm\nPlayground'
 RRStreetText = 'Funny Farm\nRickety Road'
 FCHoodText = 'Funny Farm Central'
@@ -26,9 +30,13 @@ WWStreetText = 'Chilly Village\nWintry Way'
 MMHoodText = 'Moonlit Meadow\nPlayground'
 BBStreetText = 'Moonlit Meadow\nBreezy Bend'
 SecretAreaText = '???'
-
-def getVar(var):
-    return globals()[var]
+HoodHierarchy = {
+    FunnyFarm: (RicketyRoad),
+    FunnyFarmCentral: (SecretArea),
+    SillySprings: (UnknownStreet),
+    ChillyVillage: (WintryWay),
+    MoonlitMeadow: (BreezyBend)
+}
 
 def getHoodNameFromId(zoneId):
     if zoneId == FunnyFarm:
@@ -105,8 +113,8 @@ Poetic = nametagFonts[11]
 Boardwalk = nametagFonts[12]
 Western = nametagFonts[13]
 nametagDict = {
-        getInterfaceFont() : 'Default',
-        getSignFont() : 'Mickey',
+        Default : 'Default',
+        Mickey : 'Mickey',
         Simple : 'Simple',
         Shivering : 'Shivering',
         Wonky : 'Wonky',
@@ -164,6 +172,13 @@ PetShopBearSwimPoints = [
         Point3(-5, 30, 3),
         Point3(0, 35, 3)
 ]
+ToonUpIncrements = {
+    xrange(20, 40): 1,
+    xrange(40, 60): 2,
+    xrange(60, 80): 3,
+    xrange(80, 100): 4,
+    xrange(100, 120): 5
+}
 
 def addCullBins():
     cbm = CullBinManager.getGlobalPtr()

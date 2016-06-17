@@ -39,11 +39,11 @@ class LocalToon(Toon.Toon, WalkControls):
         self.soundPhoneRing = base.loadSfx('phase_3.5/audio/sfx/telephone_ring.ogg')
         self.soundSystemMessage = base.loadSfx('phase_3/audio/sfx/clock03.ogg')
         self.zoneId = None
-        self.doId = id(self)
         self.hasGM = False
         self.accessLevel = 0
         self.hp = 15
         self.maxHp = 15
+        self.toonUpIncrement = 1
         self.laffMeter = None
         self.money = 0
         self.maxMoney = 0
@@ -116,11 +116,14 @@ class LocalToon(Toon.Toon, WalkControls):
     def isLocal(self):
         return True
 
-    def uniqueName(self, idString):
-        return ('%s-%s' % (idString, str(self.doId)))
+    def setDoId(self, doId):
+        self.doId = doId
 
     def getDoId(self):
         return self.doId
+
+    def uniqueName(self, idString):
+        return ('%s-%s' % (idString, str(self.doId)))
 
     def enable(self):
         self.collisionsOn()
@@ -143,9 +146,22 @@ class LocalToon(Toon.Toon, WalkControls):
 
     def setZoneId(self, zoneId):
         self.zoneId = zoneId
+        # Check if we need to start the toonup task
+        self.considerToonUp(zoneId)
 
     def getZoneId(self):
         return self.zoneId
+
+    def considerToonUp(self, zoneId):
+        safezones = FunnyFarmGlobals.HoodHierarchy.keys()
+        if zoneId in safezones and not self.isToonedUp():
+            if taskMgr.hasTaskNamed(self.uniqueName('safeZoneToonUp')):
+                # Do nothing, we're already in a safezone
+                return None
+            self.startToonUp(ToontownGlobals.SafezoneToonupFrequency)
+        else:
+            # We're heading to an unsafe zone, stop the toonup task
+            self.stopToonUp()
 
     def startChat(self):
         self.chatMgr.createGui()
@@ -202,13 +218,22 @@ class LocalToon(Toon.Toon, WalkControls):
         oldHp = self.hp
         self.hp = hp
         self.maxHp = maxHp
+        if self.hp >= self.maxHp:
+            self.hp = self.maxHp
         if self.laffMeter:
-            self.laffMeter.adjustFace(hp, maxHp)
+            self.laffMeter.adjustFace(self.hp, self.maxHp)
         if showText:
             self.showHpText(self.hp - oldHp)
+        self.setToonUpIncrement()
         base.avatarData.setHp = self.hp
         base.avatarData.setMaxHp = self.maxHp
         dataMgr.saveToonData(base.avatarData)
+
+    def setToonUpIncrement(self):
+        for x in FunnyFarmGlobals.ToonUpIncrements.keys():
+            if self.maxHp in x:
+                self.toonUpIncrement = FunnyFarmGlobals.ToonUpIncrements[x]
+                return
 
     def setName(self, name):
         self.nametag.setName(name)
@@ -400,7 +425,7 @@ class LocalToon(Toon.Toon, WalkControls):
         self.earnedExperience = earnedExp
 
     def maxToon(self):
-        self.setHealth(137, 137, showText=1)
+        self.setHealth(120, 120, showText=1)
         self.setTrackAccess([1, 1, 1, 1, 1, 1, 1])
         self.setMaxCarry(80)
         self.experience.maxOutExp()
@@ -414,7 +439,7 @@ class LocalToon(Toon.Toon, WalkControls):
         self.setBankMoney(12000)
 
     def resetToon(self):
-        self.setHealth(15, 15, showText=1)
+        self.setHealth(20, 20, showText=1)
         self.setTrackAccess([0, 0, 0, 0, 1, 1, 0])
         self.setMaxCarry(20)
         self.experience.zeroOutExp()
@@ -430,6 +455,8 @@ class LocalToon(Toon.Toon, WalkControls):
         self.setBankMoney(0)
 
     def setRandomSpawn(self, zoneId):
+        if zoneId not in FunnyFarmGlobals.SpawnPoints.keys():
+            return
         spawnPoints = FunnyFarmGlobals.SpawnPoints[zoneId]
         spawn = random.choice(spawnPoints)
         self.setPos(spawn[0])
@@ -988,6 +1015,27 @@ class LocalToon(Toon.Toon, WalkControls):
                 self.setAnimState('Died', callback=self.died)
         return
 
+    def startToonUp(self, healFrequency):
+        self.stopToonUp()
+        self.healFrequency = healFrequency
+        self.__waitForNextToonUp()
+
+    def stopToonUp(self):
+        taskMgr.remove(self.uniqueName('safeZoneToonUp'))
+
+    def __waitForNextToonUp(self):
+        taskMgr.doMethodLater(self.healFrequency, self.toonUpTask, self.uniqueName('safeZoneToonUp'))
+
+    def toonUpTask(self, task):
+        hp = self.hp + self.toonUpIncrement
+        self.setHealth(hp, self.maxHp, showText=1)
+        if not self.isToonedUp():
+            self.__waitForNextToonUp()
+        return Task.done
+
+    def isToonedUp(self):
+        return self.hp >= self.maxHp
+
     def showHpText(self, number, bonus = 0, scale = 1, attackTrack = -1):
         if self.HpTextEnabled and not self.ghostMode:
             if number != 0:
@@ -1079,10 +1127,6 @@ class LocalToon(Toon.Toon, WalkControls):
             base.cr.playGame.exitStreet()
         elif base.cr.playGame.place:
             base.cr.playGame.exitPlace()
-        # feature/battles
-        elif base.cr.battleScene:
-            base.cr.battleScene.exit()
-            base.cr.battleScene.unload()
         self.reparentTo(render)
         self.enable()
         zoneId = base.avatarData.setLastHood
