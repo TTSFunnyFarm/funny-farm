@@ -183,7 +183,7 @@ class TownBattle(StateData.StateData):
         self.creditMultiplier = creditMultiplier
         self.tutorialFlag = tutorialFlag
         base.localAvatar.inventory.setBattleCreditMultiplier(self.creditMultiplier)
-        base.localAvatar.inventory.setActivateMode('battle', heal=0, bldg=bldg, tutorialFlag=tutorialFlag)
+        base.localAvatar.inventory.setActivateMode('battle', bldg=bldg, tutorialFlag=tutorialFlag)
         self.SOSPanel.bldg = bldg
         return
 
@@ -355,7 +355,8 @@ class TownBattle(StateData.StateData):
         if self.isLoaded:
             self.__enterPanels(self.numToons, self.localNum)
             self.__cogPanels(self.numCogs)
-        self.timer.show()
+        if not self.tutorialFlag:
+            self.timer.show()
         self.track = -1
         self.level = -1
         self.target = 0

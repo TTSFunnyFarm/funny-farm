@@ -8,19 +8,20 @@ from toontown.hood import ToonHood
 from otp.nametag.NametagConstants import *
 from toontown.tutorial.CogPinata import CogPinata
 from toontown.hood import SkyUtil
+from toontown.suit import SuitDNA
+from toontown.suit import BattleSuit
+from toontown.battle import Battle
+from toontown.town import TownBattle
 
-TutorialGreeting = 'Hello! Use the arrow keys to come over here.'
+TutorialGreeting = 'Hello! Come over here using the arrow keys.'
 TutorialIntro = [
     'Welcome to Funny Farm.',
     'Many many years ago, Toontown was invaded by evil business robots called Cogs.',
     'The Cogs despise all silliness, and they can\'t take a joke!',
     'For 10 long years the toons fought Cogs with silly jokes and gags...',
     '...until one day, they became too strong for us.',
-    'The Cogs introduced a new level of power: Elite Cogs.',
-    'We were no match for the Elites, and they took over Toontown completely!',
-    'Since then, we\'ve rebuilt our town on the grounds of Funny Farm, a faraway land that we abandoned long ago.',
-    'And it\'s only a matter of time before the Cogs find us again.',
-    'But that\'s enough talk. Let\'s get you some gags.'
+    'We left Toontown and came to Funny Farm, a faraway land that we abandoned long ago.',
+    'But I\'ll tell you more on that later. Let\'s get you some gags.'
 ]
 TutorialGags = [
     'Throw and Squirt are the two most basic gag tracks, so I\'ll give you these to start.',
@@ -30,6 +31,17 @@ TutorialLaffMeter = [
     'Oh! You also need a Laff meter!',
     'If your Laff meter gets too low, you\'ll be sad!',
     'A happy Toon is a healthy Toon!'
+]
+TutorialTraining = [
+    'Now let\'s try out those new gags I gave you.',
+    'Practice throwing some pies at the targets ahead.',
+    'Come to me if you need more pies.',
+    'Nicely done! You\'re a natural!'
+]
+TutorialCog = [
+    'Uh oh...',
+    'It\'s happening already.',
+    'Quick! Go defeat that Cog!'
 ]
 
 class Tutorial(ToonHood.ToonHood):
@@ -44,6 +56,12 @@ class Tutorial(ToonHood.ToonHood):
         self.winterHoodFile = self.hoodFile
         self.skyFile = 'phase_3.5/models/props/TT_sky'
         self.toon = base.localAvatar
+        self.suitPoints = [
+            (Point3(-5, 95, -0.5)),
+            (Point3(-5, 85, -0.5)),
+            (Point3(45, 85, -0.5)),
+            (Point3(45, 95, -0.5)),
+        ]
 
     def enter(self, tunnel=None, init=0):
         musicMgr.startTutorial()
@@ -61,6 +79,9 @@ class Tutorial(ToonHood.ToonHood):
 
     def load(self):
         ToonHood.ToonHood.load(self)
+        self.spookyMusic = base.loadMusic('phase_12/audio/bgm/Bossbot_Factory_v3.ogg')
+        self.battleMusic = base.loadMusic('phase_3.5/audio/bgm/encntr_general_bg.ogg')
+
         self.flippy = NPCToons.createLocalNPC(2001)
         self.flippy.reparentTo(render)
         self.flippy.setPosHpr(0, 20, -0.5, 180, 0, 0)
@@ -69,14 +90,16 @@ class Tutorial(ToonHood.ToonHood):
         self.flippy.startBlink()
         self.flippy.addActive()
 
+        self.tart = loader.loadModel('phase_3.5/models/props/tart')
+        self.flower = loader.loadModel('phase_3.5/models/props/squirting-flower')
         self.restockSfx = base.loadSfx('phase_9/audio/sfx/CHQ_SOS_pies_restock.ogg')
 
         origin1 = self.geom.attachNewNode('cog_origin_1')
         origin2 = self.geom.attachNewNode('cog_origin_2')
         origin3 = self.geom.attachNewNode('cog_origin_3')
-        origin1.setPos(-6, 80, -0.5)
-        origin2.setPos(0, 70, -0.5)
-        origin3.setPos(6, 80, -0.5)
+        origin1.setPos(-6, 75, -0.5)
+        origin2.setPos(0, 65, -0.5)
+        origin3.setPos(6, 75, -0.5)
 
         self.cog1 = CogPinata(origin1, 100)
         self.cog2 = CogPinata(origin2, 200)
@@ -85,11 +108,19 @@ class Tutorial(ToonHood.ToonHood):
         for cog in self.cogs:
             cog.pose('up', 0)
 
-        self.tart = loader.loadModel('phase_3.5/models/props/tart')
-        self.flower = loader.loadModel('phase_3.5/models/props/squirting-flower')
+        suitDNA = SuitDNA.SuitDNA()
+        suitDNA.newSuit('cc')
+        self.suit = BattleSuit.BattleSuit()
+        self.suit.setDNA(suitDNA)
+        self.suit.setLevel(0)
+        self.suit.setPosHpr(45, 95, -0.5, 90, 0, 0)
+
+        self.battleCell = NodePath('battle_cell_1')
+        self.battleCell.reparentTo(self.geom)
+        self.battleCell.setPosHpr(0, 90, -0.5, 270, 0, 0)
 
     def unload(self):
-        ToonHood.unload(self)
+        ToonHood.ToonHood.unload(self)
         self.tart.removeNode()
         self.flower.removeNode()
         del self.tart
@@ -102,8 +133,9 @@ class Tutorial(ToonHood.ToonHood):
         self.toon.setZ(-0.5)
         self.flippy.lookAt(self.toon)
         camera.wrtReparentTo(self.flippy)
+        self.toon.lookAt(self.flippy)
         self.toon.setY(self.flippy, 5)
-        h = PythonUtil.fitDestAngle2Src(self.toon.getH(self.flippy), 215)
+        h = PythonUtil.fitDestAngle2Src(camera.getH(self.flippy), 215)
         camera.posHprInterval(2, (-6, 9, 4), (h, 0, 0), blendType='easeOut').start()
         self.introChat(0)
 
@@ -114,12 +146,6 @@ class Tutorial(ToonHood.ToonHood):
         else:
             self.flippy.setLocalPageChat(TutorialIntro[pageNumber], None)
             self.acceptOnce('Nametag-nextChat', self.introChat, [pageNumber + 1])
-        if pageNumber == 6:
-            self.flippy.sadEyes()
-            self.flippy.blinkEyes()
-        elif pageNumber == 7:
-            self.flippy.normalEyes()
-            self.flippy.blinkEyes()
 
     def enterGag(self):
         self.flippy.clearChat()
@@ -128,12 +154,11 @@ class Tutorial(ToonHood.ToonHood):
         self.inventory.updateGUI()
         h = PythonUtil.fitDestAngle2Src(camera.getH(self.flippy), 180)
         camera.posHprInterval(2, (1, 7, 4), (h, 0, 0), blendType='easeOut').start()
-        taskMgr.doMethodLater(2, self.gagChat, 'gagChat')
+        Sequence(Wait(2), Func(self.gagChat)).start()
 
-    def gagChat(self, task):
-        self.flippy.setLocalPageChat(TutorialGags[0], True)
+    def gagChat(self):
+        self.flippy.setLocalPageChat(TutorialGags[0], None)
         self.acceptOnce('Nametag-nextChat', self.gagSequence)
-        return task.done
 
     def gagSequence(self):
         self.flippy.clearChat()
@@ -184,7 +209,7 @@ class Tutorial(ToonHood.ToonHood):
             Func(self.flower.reparentTo, hidden),
             Func(self.flippy.loop, 'neutral'),
             Wait(1),
-            Func(self.flippy.setLocalPageChat, TutorialGags[1], True),
+            Func(self.flippy.setLocalPageChat, TutorialGags[1], None),
             Func(self.acceptOnce, 'Nametag-nextChat', self.enterLaffMeter)
         )
         gagSeq.start()
@@ -217,13 +242,13 @@ class Tutorial(ToonHood.ToonHood):
 
     def laffMeterChat(self, pageNumber):
         if pageNumber == 1:
-            self.flippy.setLocalPageChat(TutorialLaffMeter[1], True)
-            self.acceptOnce('Nametag-nextChat', self.laffMeterSequence)
+            self.flippy.setLocalPageChat(TutorialLaffMeter[1], None)
+            self.acceptOnce('Nametag-nextChat', self.killTheLocalAvatar)
         else:
             self.flippy.setLocalPageChat(TutorialLaffMeter[pageNumber], None)
             self.acceptOnce('Nametag-nextChat', self.laffMeterChat, [pageNumber + 1])
 
-    def laffMeterSequence(self):
+    def killTheLocalAvatar(self):
         self.flippy.clearChat()
         laffSeq = Sequence(
             Func(self.flippy.sadEyes),
@@ -259,12 +284,12 @@ class Tutorial(ToonHood.ToonHood):
             Func(self.laffMeter.adjustFace, 1, 15),
             Wait(0.1),
             Func(self.laffMeter.adjustFace, 0, 15),
-            Func(self.flippy.setLocalPageChat, TutorialLaffMeter[2], True),
-            Func(self.acceptOnce, 'Nametag-nextChat', self.laffMeterSequence2)
+            Func(self.flippy.setLocalPageChat, TutorialLaffMeter[2], None),
+            Func(self.acceptOnce, 'Nametag-nextChat', self.laffMeterSequence)
         )
         laffSeq.start()
 
-    def laffMeterSequence2(self):
+    def laffMeterSequence(self):
         self.flippy.clearChat()
         laffSeq = Sequence(
             Func(self.flippy.normalEyes),
@@ -277,10 +302,145 @@ class Tutorial(ToonHood.ToonHood):
             Func(self.flippy.setPlayRate, -2.0, 'right-hand-start'),
             Func(self.flippy.loop, 'right-hand-start'),
             Wait(1.0625),
-            Func(self.flippy.loop, 'neutral')
-            #Func(self.enterBook)
+            Func(self.flippy.loop, 'neutral'),
+            Func(self.flippy.setLocalPageChat, TutorialTraining[0], None),
+            Func(self.acceptOnce, 'Nametag-nextChat', self.trainingSequence),
+            camera.posInterval(1, (0, 7, 4), blendType='easeOut')
         )
         laffSeq.start()
+
+    def trainingSequence(self):
+        trainingSeq = Sequence(
+            Func(self.flippy.setChatAbsolute, TutorialTraining[1], CFSpeech|CFTimeout),
+            Func(self.flippy.hprInterval(2, (0, 0, 0)).start),
+            Func(self.flippy.loop, 'walk'),
+            Func(self.enableToon),
+            Wait(2),
+            Func(self.flippy.loop, 'neutral'),
+            Func(self.enterTraining),
+            Wait(5),
+            Func(self.flippy.setChatAbsolute, TutorialTraining[2], CFSpeech|CFTimeout)
+        )
+        trainingSeq.start()
+
+    def enterTraining(self):
+        for cog in self.cogs:
+            cog.intoIdle()
+            cog.startActive()
+        base.localAvatar.givePies(0, 10)
+        base.playSfx(self.restockSfx)
+        self.accept('enter' + self.flippy.collNodePath.node().getName(), self.__handleFlippyCollision)
+        self.acceptOnce('training-done', self.exitTraining)
+        taskMgr.add(self.checkActiveCogs, 'checkActiveCogs')
+
+    def __handleFlippyCollision(self, entry):
+        if base.localAvatar.numPies >= 0 and base.localAvatar.numPies < 10:
+            base.localAvatar.givePies(0, 10)
+            base.playSfx(self.restockSfx)
+
+    def checkActiveCogs(self, task):
+        cog1Active = self.cog1.getActive()
+        cog2Active = self.cog2.getActive()
+        cog3Active = self.cog3.getActive()
+        if not cog1Active and not cog2Active and not cog3Active:
+            Sequence(Wait(2.5), Func(messenger.send, 'training-done')).start()
+            return task.done
+        return task.cont
+
+    def exitTraining(self):
+        self.ignore('enter' + self.flippy.collNodePath.node().getName())
+        taskMgr.remove('checkActiveCogs')
+        base.localAvatar.endAllowPies()
+        base.localAvatar.setNumPies(0)
+        self.enterCog()
+
+    def enterCog(self):
+        self.disableToon()
+        self.toon.setAnimState('neutral')
+        self.toon.setZ(-0.5)
+        camera.wrtReparentTo(self.flippy)
+        camera.setPosHpr(0, 9, 4, 180, 0, 0)
+        self.flippy.setLocalPageChat(TutorialTraining[3], None)
+        self.acceptOnce('Nametag-nextChat', self.cogSequence)
+
+    def cogSequence(self):
+        self.flippy.clearChat()
+        cogSeq = Sequence(
+            Func(musicMgr.stopTutorial),
+            Func(camera.wrtReparentTo, render),
+            Func(self.flippy.loop, 'walk'),
+            self.flippy.hprInterval(1, (-30, 0, 0)),
+            Func(self.flippy.loop, 'neutral'),
+            Func(self.flippy.setLocalPageChat, TutorialCog[0], None),
+            Func(self.acceptOnce, 'Nametag-nextChat', self.cogFlyIn)
+        )
+        cogSeq.start()
+
+    def cogFlyIn(self):
+        self.flippy.clearChat()
+        # Looks like we have an unexpected visitor...
+        flyInSeq = Sequence(
+            Func(base.transitions.fadeOut, 1.0),
+            Wait(1),
+            Func(camera.setPosHpr, -5, 95, 4, 270, 12, 0),
+            Func(base.transitions.fadeIn, 1.0),
+            Func(base.playMusic, self.spookyMusic, looping=1),
+            Wait(1),
+            Func(self.suit.reparentTo, render),
+            self.suit.beginSupaFlyMove(Point3(45, 95, -0.5), True, 'TutorialSuitFlyIn', walkAfterLanding=True),
+            Func(self.startSuitWalkInterval),
+            Wait(2),
+            Func(base.transitions.fadeOut, 1.0),
+            Wait(1),
+            Func(camera.wrtReparentTo, self.flippy),
+            Func(camera.setPosHpr, 0, 9, 4, 180, 0, 0),
+            Func(base.transitions.fadeIn, 1.0),
+            Wait(1),
+            Func(self.cogChat, 1)
+        )
+        flyInSeq.start()
+
+    def cogChat(self, pageNumber):
+        if pageNumber >= len(TutorialCog) - 1:
+            self.flippy.setLocalPageChat(TutorialCog[-1], True)
+            self.acceptOnce('Nametag-nextChat', self.exitCog)
+        else:
+            self.flippy.setLocalPageChat(TutorialCog[pageNumber], None)
+            self.acceptOnce('Nametag-nextChat', self.cogChat, [pageNumber + 1])
+        if pageNumber == 1:
+            self.flippy.sadEyes()
+            self.flippy.blinkEyes()
+
+    def exitCog(self):
+        self.flippy.clearChat()
+        self.enableToon()
+        self.suit.initializeBodyCollisions('suit')
+        self.suit.enableBattleDetect(self.enterBattle)
+
+    def enterBattle(self, collEntry):
+        self.disableToon()
+        self.stopSuitWalkInterval()
+        self.townBattle = TownBattle.TownBattle('townbattle-done')
+        self.battle = Battle.Battle(self.townBattle, toons=[self.toon], suits=[self.suit], tutorialFlag=1)
+        # Never parent a battle directly to render, always use a battle cell 
+        # otherwise __faceOff will fuck you in the ass
+        self.battle.reparentTo(self.battleCell)
+        self.battle.enter()
+        self.spookyMusic.stop()
+        base.playMusic(self.battleMusic, looping=1)
+        self.accept(self.townBattle.doneEvent, self.exitBattle)
+
+    def exitBattle(self, doneStatus):
+        self.enableToon()
+        self.battleMusic.stop()
+        base.playMusic(self.spookyMusic, looping=1)
+        self.ignore(self.townBattle.doneEvent)
+        self.townBattle.unload()
+        self.townBattle.cleanup()
+        self.townBattle = None
+        self.battle.cleanupBattle()
+        self.battle.delete()
+        self.battle = None
 
     def setInventoryYPos(self, track, level, yPos):
         button = self.inventory.buttons[track][level].stateNodePath[0]
@@ -293,6 +453,24 @@ class Tutorial(ToonHood.ToonHood):
         self.inventory.buttonBoing(track, level)
         self.inventory.addItems(track, level, number)
         self.inventory.updateGUI(track, level)
+
+    def startSuitWalkInterval(self):
+        self.suitWalk = Sequence(
+            Func(self.suit.setHpr, 90, 0, 0),
+            self.suit.posInterval(12, self.suitPoints[0]),
+            Func(self.suit.setHpr, 180, 0, 0),
+            self.suit.posInterval(2, self.suitPoints[1]),
+            Func(self.suit.setHpr, 270, 0, 0),
+            self.suit.posInterval(12, self.suitPoints[2]),
+            Func(self.suit.setHpr, 0, 0, 0),
+            self.suit.posInterval(2, self.suitPoints[3])
+        )
+        self.suitWalk.loop()
+
+    def stopSuitWalkInterval(self):
+        self.suit.disableBattleDetect()
+        self.suitWalk.pause()
+        self.suitWalk = None
 
     # Temporary enabling and disabling of the toon before the player recieves their laff meter, shtickerbook, etc.
     def enableToon(self):

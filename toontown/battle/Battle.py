@@ -25,7 +25,7 @@ class Battle(NodePath, BattleBase):
     camFOFov = ToontownBattleGlobals.BattleCamFaceOffFov
     camFOPos = ToontownBattleGlobals.BattleCamFaceOffPos
 
-    def __init__(self, townBattle, toons=[], suits=[], tutorialFlag=0):
+    def __init__(self, townBattle, toons=[], suits=[], bldg=0, tutorialFlag=0):
         self.doId = id(self)
         NodePath.__init__(self, 'Battle-%d' % self.doId)
         BattleBase.__init__(self)
@@ -33,6 +33,7 @@ class Battle(NodePath, BattleBase):
         self.toons = toons
         self.suits = suits
         self.tutorialFlag = tutorialFlag
+        self.bldg = bldg
         self.movie = Movie.Movie(self)
         self.timerCountdownTaskName = 'timer-countdown'
         self.timer = Timer()
@@ -54,7 +55,7 @@ class Battle(NodePath, BattleBase):
 
     def enter(self):
         self.enterFaceOff()
-        self.townBattle.enter(self.localToonBattleEvent)
+        self.townBattle.enter(self.localToonBattleEvent, bldg=self.bldg, tutorialFlag=self.tutorialFlag)
         self.activeToons = self.toons
         self.activeSuits = self.suits
         self.activeToonIds = [] # for AI functions
@@ -231,7 +232,6 @@ class Battle(NodePath, BattleBase):
         else:
             soundTrack = Wait(delay + faceoffTime)
         mtrack = Parallel(suitTrack, toonTrack, soundTrack)
-        #NametagGlobals.setWant2dNametags(False)
         mtrack = Parallel(mtrack, camTrack)
         done = Func(callback)
         track = Sequence(mtrack, done, name=name)
@@ -239,7 +239,6 @@ class Battle(NodePath, BattleBase):
 
     def enterFaceOff(self):
         self.notify.debug('enterFaceOff()')
-        base.localAvatar.disable()
         self.__faceOff('faceoff-%d' % self.doId, self.startCamTrack)
 
     def startCamTrack(self):
@@ -261,12 +260,12 @@ class Battle(NodePath, BattleBase):
         
         for toon in self.activeToons:
             self.townBattle.updateLaffMeter(self.activeToons.index(toon), toon.hp)
-        
         for i in range(len(self.activeSuits)):
             self.townBattle.cogPanels[i].setCogInformation(self.activeSuits[i])
         
         base.accept(self.localToonBattleEvent, self.__handleLocalToonBattleEvent) # base.accept since this class can't be a direct object for some reason
-        self.startTimer()
+        if not self.tutorialFlag:
+            self.startTimer()
 
     def exitWaitForInput(self):
         self.notify.debug('exitWaitForInput()')
@@ -782,4 +781,3 @@ class Battle(NodePath, BattleBase):
     def __battleDone(self):
         doneStatus = 'victory'
         messenger.send(self.townBattle.doneEvent, [doneStatus])
-        base.localAvatar.enable()
