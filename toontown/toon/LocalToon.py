@@ -98,9 +98,9 @@ class LocalToon(Toon.Toon, WalkControls):
          0]
         self.quests = []
 
-    def destroy(self):
+    def delete(self):
         Toon.Toon.delete(self)
-        WalkControls.destroy(self)
+        WalkControls.delete(self)
         self.ignoreAll()
         self.endAllowPies()
         self.chatMgr.delete()

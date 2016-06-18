@@ -36,9 +36,11 @@ class TitleScreen(DirectObject):
         self.ground.reparentTo(render)
         self.ground.setScale(1.1)
         self.ground.setColorScale(0.55, 0.55, 0.55, 1.0)
+        self.ground.flattenStrong()
         self.sky = loader.loadModel('phase_8/models/props/DL_sky')
         self.sky.reparentTo(render)
         self.sky.setScale(2.0)
+        self.sky.flattenStrong()
         self.fireworkShow = FireworkShowMixin()
 
     def unload(self):
@@ -77,6 +79,6 @@ class TitleScreen(DirectObject):
         self.track.finish()
         self.titleSeq.finish()
         self.track = Sequence()
-        self.track.append(Parallel(self.titleText.colorScaleInterval(1.0, (1, 1, 1, 0)), Sequence(Func(base.transitions.fadeOut, 1.0), Wait(1.5), Func(self.unload), Func(base.cr.enterPAT))))
+        self.track.append(Parallel(self.titleText.colorScaleInterval(1.0, (1, 1, 1, 0)), Sequence(Func(base.transitions.fadeOut, 1.0), Wait(1.5), Func(self.unload), Func(base.cr.enterChooseAvatar))))
         self.track.start()
         return Task.done

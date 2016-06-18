@@ -121,7 +121,6 @@ class FunnyFarmStart:
         musicMgr.startPAT()
         titleScreen = TitleScreen.TitleScreen()
         titleScreen.startShow()
-        base.cr.loadPAT()
 
 __builtin__.start = FunnyFarmStart()
 

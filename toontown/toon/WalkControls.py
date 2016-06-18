@@ -34,7 +34,7 @@ class WalkControls(DirectObject):
         self.soundWalk = base.loadSfx('phase_3.5/audio/sfx/AV_footstep_walkloop.ogg')
         self.soundRun = base.loadSfx('phase_3.5/audio/sfx/AV_footstep_runloop.ogg')
 
-    def destroy(self):
+    def delete(self):
         self.ignoreAll()
         base.popCTrav()
         self.stopUpdateSmartCamera()

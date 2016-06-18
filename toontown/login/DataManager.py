@@ -14,7 +14,7 @@ import os
 
 class DataManager:
     notify = directNotify.newCategory('DataManager')
-    notify.setInfo(True)
+    notify.setInfo(1)
 
     def __init__(self):
         self.fileExt = '.yaml'
@@ -77,10 +77,12 @@ class DataManager:
         filename = Filename(self.newDir + self.toons[index - 1] + self.fileExt)
         if os.path.exists(filename.toOsSpecific()):
             os.remove(filename.toOsSpecific())
+        else:
+            self.notify.warning('Tried to delete nonexistent toon data!')
 
     def createLocalAvatar(self, data):
         self.notify.info('================')
-        self.notify.info('Chose avatar id: %s' % self.getToonFilename(data.index).getBasenameWoExtension())
+        self.notify.info('Chose avatar id: %s' % self.toons[data.index - 1])
         self.notify.info('Chose avatar name: %s' % data.setName)
         self.notify.info('================')
         base.localAvatar = LocalToon()
