@@ -172,13 +172,6 @@ PetShopBearSwimPoints = [
     Point3(-5, 30, 3),
     Point3(0, 35, 3)
 ]
-ToonUpIncrements = {
-    xrange(20, 40): 1,
-    xrange(40, 60): 2,
-    xrange(60, 80): 3,
-    xrange(80, 100): 4,
-    xrange(100, 120): 5
-}
 
 def addCullBins():
     cbm = CullBinManager.getGlobalPtr()

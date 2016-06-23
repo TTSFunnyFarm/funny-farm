@@ -1,6 +1,7 @@
 from pandac.PandaModules import *
 from direct.interval.IntervalGlobal import *
 from direct.distributed.ClockDelta import *
+from direct.showbase.DirectObject import DirectObject
 from direct.task.Task import Task
 from otp.nametag import NametagGlobals
 from otp.nametag.NametagConstants import *
@@ -14,7 +15,7 @@ import BattleExperienceAI
 import Movie
 import random
 
-class Battle(NodePath, BattleBase):
+class Battle(DirectObject, NodePath, BattleBase):
     notify = directNotify.newCategory('Battle')
     camPos = ToontownBattleGlobals.BattleCamDefaultPos
     camHpr = ToontownBattleGlobals.BattleCamDefaultHpr
@@ -25,15 +26,16 @@ class Battle(NodePath, BattleBase):
     camFOFov = ToontownBattleGlobals.BattleCamFaceOffFov
     camFOPos = ToontownBattleGlobals.BattleCamFaceOffPos
 
-    def __init__(self, townBattle, toons=[], suits=[], bldg=0, tutorialFlag=0):
+    def __init__(self, townBattle, toons=[], suits=[], bldg=0, tutorialFlag=0, secretArea=0):
         self.doId = id(self)
         NodePath.__init__(self, 'Battle-%d' % self.doId)
         BattleBase.__init__(self)
         self.townBattle = townBattle
         self.toons = toons
         self.suits = suits
-        self.tutorialFlag = tutorialFlag
         self.bldg = bldg
+        self.tutorialFlag = tutorialFlag
+        self.secretArea = secretArea
         self.movie = Movie.Movie(self)
         self.timerCountdownTaskName = 'timer-countdown'
         self.timer = Timer()
@@ -93,7 +95,9 @@ class Battle(NodePath, BattleBase):
         self.notify.debug('cleanupBattle(%s)' % self.doId)
         self.__battleCleanedUp = 1
         base.camLens.setMinFov(ToontownGlobals.DefaultCameraFov/(4./3.))
-        base.ignoreAll()
+        self.ignoreAll()
+        for suit in self.activeSuits:
+            self.removeSuit(suit)
         self.suits = []
         self.pendingSuits = []
         self.joiningSuits = []
@@ -188,7 +192,11 @@ class Battle(NodePath, BattleBase):
         suitTrack.append(Func(suit.loop, 'neutral'))
         suitTrack.append(Func(suit.headsUp, toon))
         taunt = getFaceoffTaunt(suit.getStyleName(), suit.doId)
-        suitTrack.append(Func(suit.setChatAbsolute, taunt, CFSpeech | CFTimeout))
+        # temporary for the easter egg; will be removed after 1.3.1
+        if self.secretArea:
+            suitTrack.append(Func(suit.setChatMuted, '...', CFSpeech | CFTimeout))
+        else:
+            suitTrack.append(Func(suit.setChatAbsolute, taunt, CFSpeech | CFTimeout))
         toonTrack.append(Func(toon.loop, 'neutral'))
         toonTrack.append(Func(toon.headsUp, suit))
         suitHeight = suit.getHeight()
@@ -263,7 +271,7 @@ class Battle(NodePath, BattleBase):
         for i in range(len(self.activeSuits)):
             self.townBattle.cogPanels[i].setCogInformation(self.activeSuits[i])
         
-        base.accept(self.localToonBattleEvent, self.__handleLocalToonBattleEvent) # base.accept since this class can't be a direct object for some reason
+        self.accept(self.localToonBattleEvent, self.__handleLocalToonBattleEvent)
         if not self.tutorialFlag:
             self.startTimer()
 
@@ -272,7 +280,7 @@ class Battle(NodePath, BattleBase):
         if self.localToonActive():
             self.townBattle.setState('Off')
             base.camLens.setMinFov(self.camFov/(4./3.))
-            base.ignore(self.localToonBattleEvent)
+            self.ignore(self.localToonBattleEvent)
             self.__stopTimer()
         return None
 
@@ -416,8 +424,8 @@ class Battle(NodePath, BattleBase):
         base.localAvatar.enterTeleportOut(callback=self.__runDone)
 
     def __runDone(self):
-        for s in self.activeSuits:
-            self.removeSuit(s)
+        for suit in self.activeSuits:
+            self.removeSuit(suit)
         doneStatus = 'run'
         messenger.send(self.townBattle.doneEvent, [doneStatus])
         if base.cr.playGame.hood:
@@ -426,10 +434,6 @@ class Battle(NodePath, BattleBase):
             base.cr.playGame.exitStreet()
         elif base.cr.playGame.place:
             base.cr.playGame.exitPlace()
-        # feature/battles
-        elif base.cr.battleScene:
-            base.cr.battleScene.exit()
-            base.cr.battleScene.unload()
         base.localAvatar.enable()
         zoneId = base.avatarData.setLastHood
         base.cr.enterHood(zoneId)

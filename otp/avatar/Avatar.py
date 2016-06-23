@@ -367,7 +367,8 @@ class Avatar(Actor, ShadowCaster):
         self.playCurrentDialogue(dialogue, chatFlags, interrupt)
 
     def setChatMuted(self, chatString, chatFlags, dialogue = None, interrupt = 1, quiet = 0):
-        pass
+        self.clearChat()
+        self.nametag.setChat(chatString, chatFlags)
 
     def displayTalk(self, chatString):
         if not base.cr.avatarFriendsManager.checkIgnored(self.doId):

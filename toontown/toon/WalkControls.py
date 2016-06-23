@@ -283,7 +283,13 @@ class WalkControls(DirectObject):
             self.movingBackward = False
             self.stopSound()
             self.stopLookAround()
-        self.setAnimState(loopName, playRate)
+        if self.animFSM.hasStateNamed(loopName):
+            self.setAnimState(loopName, playRate)
+        else:
+            if self.getCurrentAnim() == loopName and self.getPlayRate(loopName) == playRate:
+                return
+            self.setPlayRate(playRate, loopName)
+            self.loop(loopName)
 
     def handleAnimation(self, task):
         forward = KeyboardButton.up()

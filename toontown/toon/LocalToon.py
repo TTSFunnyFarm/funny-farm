@@ -224,16 +224,18 @@ class LocalToon(Toon.Toon, WalkControls):
             self.laffMeter.adjustFace(self.hp, self.maxHp)
         if showText:
             self.showHpText(self.hp - oldHp)
+        if self.hp > 0 and self.animFSM.getCurrentState().getName() == 'Sad':
+            self.setAnimState('Happy')
         self.setToonUpIncrement()
         base.avatarData.setHp = self.hp
         base.avatarData.setMaxHp = self.maxHp
         dataMgr.saveToonData(base.avatarData)
 
     def setToonUpIncrement(self):
-        for x in FunnyFarmGlobals.ToonUpIncrements.keys():
-            if self.maxHp in x:
-                self.toonUpIncrement = FunnyFarmGlobals.ToonUpIncrements[x]
-                return
+        # At 0 hp, there are roughly 20 toonup intervals in 5 minutes, so if we divide the maxHp by 20 
+        # and round to the nearest integer, we'll get an increment that will restore the player's health 
+        # from 0 to max in roughly 5 minutes.
+        self.toonUpIncrement = int(round(self.maxHp / 20))
 
     def setName(self, name):
         self.nametag.setName(name)

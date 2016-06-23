@@ -81,6 +81,8 @@ class ToonHood(DirectObject):
     def __handleTeleport(self):
         base.localAvatar.exitTeleportIn()
         base.localAvatar.enable()
+        if base.localAvatar.hp <= 0:
+            base.localAvatar.setAnimState('Sad')
 
     def startSky(self):
         self.sky.reparentTo(camera)
