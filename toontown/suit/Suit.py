@@ -880,7 +880,6 @@ class Suit(Avatar.Avatar):
     def updateHealthBar(self, hp, forceUpdate = 0):
         if hp > self.currHP:
             hp = self.currHP
-        self.currHP -= hp
         health = float(self.currHP) / float(self.maxHP)
         if health > 0.95:
             condition = 0

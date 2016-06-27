@@ -1907,6 +1907,7 @@ CashbotSkelP = 'Cashbot Skelecogs'
 SellbotSkelP = 'Sellbot Skelecogs'
 SkeleReviveCogName = 'Version 2.0 %(cog_name)s'
 SkeleRevivePostFix = ' v2.0'
+EliteCogName = 'Elite'
 AvatarDetailPanelOK = lOK
 AvatarDetailPanelCancel = lCancel
 AvatarDetailPanelClose = lClose
@@ -5029,7 +5030,7 @@ MovieTutorialReward2 = 'You received 1 Squirt point! When you get 10, you will g
 MovieTutorialReward3 = 'Good job! You completed your first ToonTask!'
 MovieTutorialReward4 = 'Go to Toon Headquarters for your reward!'
 MovieTutorialReward5 = 'Have fun!'
-BattleGlobalTracks = ['toon-up',
+BattleGlobalTracks = ['power-up',
  'trap',
  'lure',
  'sound',
@@ -5184,7 +5185,7 @@ BattleGlobalAvPropStringsPlural = (('Feathers',
   'Safes',
   'Grand Pianos',
   'Oceanliners'))
-BattleGlobalAvTrackAccStrings = ('Medium',
+BattleGlobalAvTrackAccStrings = ('Perfect',
  'Perfect',
  'Low',
  'High',
@@ -5316,27 +5317,6 @@ PetTutorialDone = 'Done'
 PetTutorialPage1 = 'Click on a Doodle to display the Doodle panel.  From here you can feed, scratch, and call the Doodle.'
 PetTutorialPage2 = "Use the new 'Pets' area in the SpeedChat menu to get a Doodle to do a trick.  If he does it, reward him and he'll get better!"
 PetTutorialPage3 = "Purchase new Doodle tricks from Clarabelle's Cattlelog.  Better tricks give better Toon-Ups!"
-TutorialIntro = [
-    'Welcome to Funny Farm.',
-    'What is Funny Farm all about, you may ask?',
-    'When the cogs took over Toontown on that dreadful September day, we had to find a place to escape.',
-    'That place was Funny Farm, and it had been abandoned for years.',
-    'Luckily, the cogs haven\'t found us yet, but it\'s still important that you are prepared to fight for our town.',
-    'Without further ado, let\'s begin your training!'
-]
-TutorialGags = [
-    'Nicely done! You\'re a natural!',
-    'Fighting real cogs won\'t be that easy, of course.',
-    'There are lots of different gags, but take these to start.'
-]
-TutorialLaffMeter = [
-    'Oh! You also need a Laff meter!',
-    'If your Laff meter gets too low, you\'ll be sad!'
-]
-TutorialOutro = [
-    'If you have any questions, I\'ll always be at the Toon Hall.',
-    'Have fun in Funny Farm!'
-]
 
 def getPetGuiAlign():
     from pandac.PandaModules import TextNode
@@ -5746,6 +5726,44 @@ QuestScript150_1 = 'Great work!\x07Toontown is more fun when you have friends!'
 QuestScript150_2 = 'To make friends, find another player, and use the New Friend button.'
 QuestScript150_3 = 'Once you have made a friend, come back here.'
 QuestScript150_4 = 'Some tasks are too difficult to do alone!'
+TutorialGreeting = 'Hello! Come over here using the arrow keys.'
+TutorialIntro = [
+    'Welcome to Funny Farm.',
+    'Many many years ago, Toontown was invaded by evil business robots called Cogs.',
+    'The Cogs despise all silliness, and they can\'t take a joke!',
+    'For 10 long years the toons fought Cogs with silly jokes and gags...',
+    '...until one day, they became too strong for us.',
+    'We left Toontown and came to Funny Farm, a faraway land that we abandoned long ago.',
+    'But I\'ll tell you more on that later. Let\'s get you some gags.'
+]
+TutorialGags = [
+    'Throw and Squirt are the two most basic gag tracks, so I\'ll give you these to start.',
+    'As you progress, you will gain lots of new gags, including special sugary drinks to boost your stats!'
+]
+TutorialLaffMeter = [
+    'Oh! You also need a Laff meter!',
+    'If your Laff meter gets too low, you\'ll be sad!',
+    'A happy Toon is a healthy Toon!'
+]
+TutorialBook = [
+    'Here is your Shticker Book...',
+    'You\'ll find all sorts of neat-o stuff in there.'
+]
+TutorialChat = [
+    'And finally, here is your chat button.',
+    'You can use that button to say things! It\'ll come in handy every once in a while.'
+]
+TutorialTraining = [
+    'Now let\'s try out those new gags I gave you.',
+    'Practice throwing some pies at the targets ahead.',
+    'Nicely done! You\'re a natural!'
+]
+TutorialCog = [
+    'Uh oh...',
+    'It\'s happening already.',
+    'Quick! Go defeat that Cog!'
+]
+TutorialOutro = 'Meet me at the Toon Hall. This is not good...'
 MissingKeySanityCheck = 'Ignore me'
 SellbotBossName = 'Senior V. P.'
 CashbotBossName = 'C. F. O.'

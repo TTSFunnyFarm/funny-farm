@@ -41,13 +41,13 @@ class DisplaySettingsDialog(DirectFrame, StateData.StateData):
         self.apiChanged = 0
         self.screenSizes = ((640, 480),
          (800, 600),
-         (1280, 720),
          (1024, 768),
+         (1280, 720),
+         (1280, 1024),
+         (1366, 768),
          (1440, 900),
          (1600, 900),
-         (1280, 1024),
          (1920, 1080),
-         (1600, 1200),
          (2560, 1440))
          # Maybe one day, Hawkheart.
          #(4096, 2304),
@@ -430,7 +430,7 @@ class DisplaySettingsDialog(DirectFrame, StateData.StateData):
                 self.notify.warning('OPEN MAIN WINDOW FAILED')
                 return 0
             self.notify.info('OPEN MAIN WINDOW PASSED')
-            base.disableShowbaseMouse()
+            base.disableMouse()
             NametagGlobals.setCamera(base.cam)
             NametagGlobals.setMouseWatcher(base.mouseWatcherNode)
             base.graphicsEngine.renderFrame()

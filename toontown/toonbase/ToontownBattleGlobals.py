@@ -13,13 +13,20 @@ SkipMovie = 0
 BaseHp = 15
 Tracks = TTLocalizer.BattleGlobalTracks
 NPCTracks = TTLocalizer.BattleGlobalNPCTracks
-TrackColors = ((211 / 255.0, 148 / 255.0, 255 / 255.0),
+TrackColors = ((0.2, 0.2, 0.2),
  (249 / 255.0, 255 / 255.0, 93 / 255.0),
  (79 / 255.0, 190 / 255.0, 76 / 255.0),
  (93 / 255.0, 108 / 255.0, 239 / 255.0),
  (255 / 255.0, 145 / 255.0, 66 / 255.0),
  (255 / 255.0, 65 / 255.0, 199 / 255.0),
  (67 / 255.0, 243 / 255.0, 255 / 255.0))
+TrackTextColors = ((0.9, 0.9, 0.9, 1),
+ (0.2, 0.2, 0.2, 1),
+ (0.2, 0.2, 0.2, 1),
+ (0.2, 0.2, 0.2, 1),
+ (0.2, 0.2, 0.2, 1),
+ (0.2, 0.2, 0.2, 1),
+ (0.2, 0.2, 0.2, 1))
 HEAL_TRACK = 0
 TRAP_TRACK = 1
 LURE_TRACK = 2
@@ -42,14 +49,14 @@ PropTypeToTrackBonus = {AnimPropTypes.Hydrant: SQUIRT_TRACK,
  AnimPropTypes.Mailbox: THROW_TRACK,
  AnimPropTypes.Trashcan: HEAL_TRACK}
 # Experience points needed to unlock the gag at the indexed position
-Levels = [[0, 20, 200, 800, 2000, 6000, 10000], # Toon-Up
- [0, 20, 100, 800, 2000, 6000, 10000],  # Trap
- [0, 20, 100, 800, 2000, 6000, 10000],  # Lure
- [0, 40, 200, 1000, 2500, 7500, 10000], # Sound
- [0, 10, 50, 400, 2000, 6000, 10000],   # Throw
- [0, 10, 50, 400, 2000, 6000, 10000],   # Squirt
- [0, 20, 100, 500, 2000, 6000, 10000]]  # Drop
-regMaxSkill = 10000
+Levels = [[0, 0, 0, 0, 0, 0, 0],       # Power-up (won't recieve experience; unlocked at certain levels)
+ [0, 20, 100, 500, 2000, 4000, 8000],  # Trap
+ [0, 20, 100, 500, 2000, 4000, 8000],  # Lure
+ [0, 20, 100, 500, 2000, 4000, 8000],  # Sound
+ [0, 10, 50, 400, 2000, 4000, 8000],   # Throw
+ [0, 10, 50, 400, 2000, 4000, 8000],   # Squirt
+ [0, 20, 100, 500, 2000, 4000, 8000]]  # Drop            
+regMaxSkill = 8000
 UberSkill = 500
 MaxSkill = UberSkill + regMaxSkill
 UnpaidMaxSkills = [Levels[0][1] - 1,
@@ -78,14 +85,14 @@ def gagIsVelvetRoped(track, level):
 MaxToonAcc = 95
 StartingLevel = 0
 CarryLimits = (
-  ( # Toon-Up
-    (10, 0, 0, 0, 0, 0, 0),
-    (10, 5, 0, 0, 0, 0, 0),
-    (15, 10, 5, 0, 0, 0, 0),
-    (20, 15, 10, 5, 0, 0, 0),
-    (25, 20, 15, 10, 3, 0, 0),
-    (30, 25, 20, 15, 7, 3, 0),
-    (30, 25, 20, 15, 7, 3, 1)
+  ( # Power-up
+    (1, 0, 0, 0, 0, 0, 0),
+    (3, 1, 0, 0, 0, 0, 0),
+    (3, 3, 1, 0, 0, 0, 0),
+    (3, 3, 3, 1, 0, 0, 0),
+    (3, 3, 3, 3, 1, 0, 0),
+    (3, 3, 3, 3, 3, 1, 0),
+    (3, 3, 3, 3, 3, 3, 1)
   ),
   ( # Trap
     (5, 0, 0, 0, 0, 0, 0),
@@ -260,7 +267,7 @@ AvPropStrings = TTLocalizer.BattleGlobalAvPropStrings
 AvPropStringsSingular = TTLocalizer.BattleGlobalAvPropStringsSingular
 AvPropStringsPlural = TTLocalizer.BattleGlobalAvPropStringsPlural
 AvPropAccuracy = (
-  (70, 70, 70, 70, 70, 70, 100),
+  (0, 0, 0, 0, 0, 0, 0),
   (0, 0, 0, 0, 0, 0, 0),
   (50, 50, 60, 60, 70, 70, 90),
   (95, 95, 95, 95, 95, 95, 95),
@@ -276,13 +283,14 @@ AvLureBonusAccuracy = (60,
  80,
  100)
 AvTrackAccStrings = TTLocalizer.BattleGlobalAvTrackAccStrings
-AvPropDamage = ((((8, 10), (Levels[0][0], Levels[0][1])),
-  ((15, 18), (Levels[0][1], Levels[0][2])),
-  ((25, 30), (Levels[0][2], Levels[0][3])),
-  ((40, 45), (Levels[0][3], Levels[0][4])),
-  ((60, 70), (Levels[0][4], Levels[0][5])),
-  ((90, 120), (Levels[0][5], Levels[0][6])),
-  ((210, 210), (Levels[0][6], MaxSkill))),
+AvPropDamage = (
+ (((0, 0), (0, 0)),
+  ((0, 0), (0, 0)),
+  ((0, 0), (0, 0)),
+  ((0, 0), (0, 0)),
+  ((0, 0), (0, 0)),
+  ((0, 0), (0, 0)),
+  ((0, 0), (0, 0))),
  (((10, 12), (Levels[1][0], Levels[1][1])),
   ((18, 20), (Levels[1][1], Levels[1][2])),
   ((30, 35), (Levels[1][2], Levels[1][3])),
@@ -381,7 +389,7 @@ def getAvPropDamage(attackTrack, attackLevel, exp, organicBonus = False, propBon
             damage += getDamageBonus(originalDamage)
     elif organicBonus or propBonus:
         damage += getDamageBonus(damage)
-    return damage
+    return int(damage)
 
 
 def getDamageBonus(normal):

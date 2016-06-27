@@ -14,7 +14,7 @@ import os
 
 class DataManager:
     notify = directNotify.newCategory('DataManager')
-    notify.setInfo(True)
+    notify.setInfo(1)
 
     def __init__(self):
         self.fileExt = '.yaml'
@@ -51,7 +51,7 @@ class DataManager:
         return False
 
     def createToonData(self, index, dna, name):
-        return ToonData(index, dna, name, 15, 15, 0, 40, 0, 12000, 20, None, None, [0, 0, 0, 0, 1, 1, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000, 1, 0, [0, 0, 0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0, 0])
+        return ToonData(index, dna, name, 20, 20, 0, 40, 0, 12000, 20, None, None, [0, 0, 0, 0, 1, 1, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000, 1, 0, [0, 0, 0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0, 0])
 
     def saveToonData(self, data):
         index = data.index
@@ -77,10 +77,12 @@ class DataManager:
         filename = Filename(self.newDir + self.toons[index - 1] + self.fileExt)
         if os.path.exists(filename.toOsSpecific()):
             os.remove(filename.toOsSpecific())
+        else:
+            self.notify.warning('Tried to delete nonexistent toon data!')
 
     def createLocalAvatar(self, data):
         self.notify.info('================')
-        self.notify.info('Chose avatar id: %s' % self.getToonFilename(data.index).getBasenameWoExtension())
+        self.notify.info('Chose avatar id: %s' % self.toons[data.index - 1])
         self.notify.info('Chose avatar name: %s' % data.setName)
         self.notify.info('================')
         base.localAvatar = LocalToon()
@@ -89,8 +91,8 @@ class DataManager:
         dna = ToonDNA.ToonDNA()
         dna.newToonFromProperties(*data.setDNA)
         base.localAvatar.setDNA(dna)
+        base.localAvatar.setDoId(int(self.toons[data.index - 1]))
         base.localAvatar.setName(data.setName)
-        base.localAvatar.startBlink()
         base.localAvatar.setHealth(data.setHp, data.setMaxHp)
         base.localAvatar.setMoney(data.setMoney)
         base.localAvatar.setMaxMoney(data.setMaxMoney)

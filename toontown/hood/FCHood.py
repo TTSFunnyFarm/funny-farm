@@ -2,6 +2,7 @@ from pandac.PandaModules import *
 from toontown.toonbase import FunnyFarmGlobals
 from ToonHood import ToonHood
 from toontown.battle import BattleParticles
+import SkyUtil
 
 class FCHood(ToonHood):
 
@@ -69,3 +70,13 @@ class FCHood(ToonHood):
     def __handleEnterWW(self):
         base.cr.playGame.exitHood()
         base.cr.playGame.enterWWStreet(tunnel='fc')
+
+    def skyTrack(self, task):
+        return SkyUtil.cloudSkyTrack(task)
+
+    def startSky(self):
+        self.sky.setTransparency(TransparencyAttrib.MDual, 1)
+        self.notify.debug('The sky is: %s' % self.sky)
+        if not self.sky.getTag('sky') == 'Regular':
+            self.endSpookySky()
+        SkyUtil.startCloudSky(self)

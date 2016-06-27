@@ -135,6 +135,7 @@ class InventoryPage(ShtikerPage.ShtikerPage):
             return
         self.onscreen = 1
         base.localAvatar.inventory.setActivateMode('book')
+        base.localAvatar.inventory.updateGUI()
         base.localAvatar.inventory.show()
         base.localAvatar.inventory.reparentTo(self)
         self.moneyDisplay['text'] = str(base.localAvatar.getMoney())

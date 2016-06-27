@@ -33,12 +33,8 @@ class WalkControls(DirectObject):
         self.controlManager = ControlManager.ControlManager(True, False)
         self.soundWalk = base.loadSfx('phase_3.5/audio/sfx/AV_footstep_walkloop.ogg')
         self.soundRun = base.loadSfx('phase_3.5/audio/sfx/AV_footstep_runloop.ogg')
-        self.soundWalk.setLoop(True)
-        self.soundRun.setLoop(True)
-        self.soundWalk.setVolume(100)
-        self.soundRun.setVolume(100)
 
-    def destroy(self):
+    def delete(self):
         self.ignoreAll()
         base.popCTrav()
         self.stopUpdateSmartCamera()
@@ -287,7 +283,13 @@ class WalkControls(DirectObject):
             self.movingBackward = False
             self.stopSound()
             self.stopLookAround()
-        self.setAnimState(loopName, playRate)
+        if self.animFSM.hasStateNamed(loopName):
+            self.setAnimState(loopName, playRate)
+        else:
+            if self.getCurrentAnim() == loopName and self.getPlayRate(loopName) == playRate:
+                return
+            self.setPlayRate(playRate, loopName)
+            self.loop(loopName)
 
     def handleAnimation(self, task):
         forward = KeyboardButton.up()

@@ -75,7 +75,12 @@ class FunnyFarmStart:
         base.toonChatSounds = base.config.GetBool('toon-chat-sounds', 1)
         base.drawFps = False
         base.secretAreaFlag = True
-
+        if settings['fullscreen'] == True:
+            properties = WindowProperties()
+            properties.setSize(settings['res'][0], settings['res'][1])
+            properties.setFullscreen(1)
+            properties.setParentWindow(0)
+            base.win.requestProperties(properties)
         if settings['music'] == False:
             base.enableMusic(0)
         if settings['sfx'] == False:
@@ -116,7 +121,6 @@ class FunnyFarmStart:
         musicMgr.startPAT()
         titleScreen = TitleScreen.TitleScreen()
         titleScreen.startShow()
-        base.cr.loadPAT()
 
 __builtin__.start = FunnyFarmStart()
 

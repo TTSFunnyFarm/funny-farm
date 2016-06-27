@@ -28,6 +28,8 @@ class LocalToon(Toon.Toon, WalkControls):
     notify = directNotify.newCategory('LocalToon')
     piePowerSpeed = base.config.GetDouble('pie-power-speed', 0.2)
     piePowerExponent = base.config.GetDouble('pie-power-exponent', 0.75)
+    HpTextGenerator = TextNode('HpTextGenerator')
+    HpTextEnabled = 1
 
     def __init__(self):
         Toon.Toon.__init__(self)
@@ -37,11 +39,11 @@ class LocalToon(Toon.Toon, WalkControls):
         self.soundPhoneRing = base.loadSfx('phase_3.5/audio/sfx/telephone_ring.ogg')
         self.soundSystemMessage = base.loadSfx('phase_3/audio/sfx/clock03.ogg')
         self.zoneId = None
-        self.doId = id(self)
         self.hasGM = False
         self.accessLevel = 0
         self.hp = 15
         self.maxHp = 15
+        self.toonUpIncrement = 1
         self.laffMeter = None
         self.money = 0
         self.maxMoney = 0
@@ -53,6 +55,7 @@ class LocalToon(Toon.Toon, WalkControls):
         self.damage = [0, 0, 0, 0, 0, 0]
         self.defense = [0, 0, 0, 0]
         self.accuracy = [0, 0, 0, 0, 0, 0]
+        self.maxNPCFriends = 16
         self.tossTrack = None
         self.pieTracks = {}
         self.splatTracks = {}
@@ -74,10 +77,30 @@ class LocalToon(Toon.Toon, WalkControls):
         self.pivotAngle = 90 + 45
         self.tunnelX = 0.0
         self.inventory = None
+        self.hpText = None
+        self.sillySurgeText = False
+        self.interactivePropTrackBonus = -1
+        self.cogTypes = [0,
+         0,
+         0,
+         0]
+        self.cogLevels = [0,
+         0,
+         0,
+         0]
+        self.cogParts = [0,
+         0,
+         0,
+         0]
+        self.cogMerits = [0,
+         0,
+         0,
+         0]
+        self.quests = []
 
-    def destroy(self):
+    def delete(self):
         Toon.Toon.delete(self)
-        WalkControls.destroy(self)
+        WalkControls.delete(self)
         self.ignoreAll()
         self.endAllowPies()
         self.chatMgr.delete()
@@ -92,6 +115,12 @@ class LocalToon(Toon.Toon, WalkControls):
 
     def isLocal(self):
         return True
+
+    def setDoId(self, doId):
+        self.doId = doId
+
+    def getDoId(self):
+        return self.doId
 
     def uniqueName(self, idString):
         return ('%s-%s' % (idString, str(self.doId)))
@@ -117,9 +146,22 @@ class LocalToon(Toon.Toon, WalkControls):
 
     def setZoneId(self, zoneId):
         self.zoneId = zoneId
+        # Check if we need to start the toonup task
+        self.considerToonUp(zoneId)
 
     def getZoneId(self):
         return self.zoneId
+
+    def considerToonUp(self, zoneId):
+        safezones = FunnyFarmGlobals.HoodHierarchy.keys()
+        if zoneId in safezones and not self.isToonedUp():
+            if taskMgr.hasTaskNamed(self.uniqueName('safeZoneToonUp')):
+                # Do nothing, we're already in a safezone
+                return None
+            self.startToonUp(ToontownGlobals.SafezoneToonupFrequency)
+        else:
+            # We're heading to an unsafe zone, stop the toonup task
+            self.stopToonUp()
 
     def startChat(self):
         self.chatMgr.createGui()
@@ -172,14 +214,28 @@ class LocalToon(Toon.Toon, WalkControls):
 
         taskMgr.add(updateOnScreenDebug, 'UpdateOSD')
 
-    def setHealth(self, hp, maxHp):
+    def setHealth(self, hp, maxHp, showText=0):
+        oldHp = self.hp
         self.hp = hp
         self.maxHp = maxHp
+        if self.hp >= self.maxHp:
+            self.hp = self.maxHp
         if self.laffMeter:
-            self.laffMeter.adjustFace(hp, maxHp)
+            self.laffMeter.adjustFace(self.hp, self.maxHp)
+        if showText:
+            self.showHpText(self.hp - oldHp)
+        if self.hp > 0 and self.animFSM.getCurrentState().getName() == 'Sad':
+            self.setAnimState('Happy')
+        self.setToonUpIncrement()
         base.avatarData.setHp = self.hp
         base.avatarData.setMaxHp = self.maxHp
         dataMgr.saveToonData(base.avatarData)
+
+    def setToonUpIncrement(self):
+        # At 0 hp, there are roughly 20 toonup intervals in 5 minutes, so if we divide the maxHp by 20 
+        # and round to the nearest integer, we'll get an increment that will restore the player's health 
+        # from 0 to max in roughly 5 minutes.
+        self.toonUpIncrement = int(round(self.maxHp / 20))
 
     def setName(self, name):
         self.nametag.setName(name)
@@ -188,6 +244,9 @@ class LocalToon(Toon.Toon, WalkControls):
 
     def getName(self):
         return self.nametag.name
+
+    def getMaxNPCFriends(self):
+        return self.maxNPCFriends
 
     def setNametagFont(self, font):
         self.nametag.setFont(font)
@@ -364,8 +423,11 @@ class LocalToon(Toon.Toon, WalkControls):
     def getAccuracy(self):
         return self.accuracy
 
+    def setEarnedExperience(self, earnedExp):
+        self.earnedExperience = earnedExp
+
     def maxToon(self):
-        self.setHealth(137, 137)
+        self.setHealth(120, 120, showText=1)
         self.setTrackAccess([1, 1, 1, 1, 1, 1, 1])
         self.setMaxCarry(80)
         self.experience.maxOutExp()
@@ -379,7 +441,7 @@ class LocalToon(Toon.Toon, WalkControls):
         self.setBankMoney(12000)
 
     def resetToon(self):
-        self.setHealth(15, 15)
+        self.setHealth(20, 20, showText=1)
         self.setTrackAccess([0, 0, 0, 0, 1, 1, 0])
         self.setMaxCarry(20)
         self.experience.zeroOutExp()
@@ -395,6 +457,8 @@ class LocalToon(Toon.Toon, WalkControls):
         self.setBankMoney(0)
 
     def setRandomSpawn(self, zoneId):
+        if zoneId not in FunnyFarmGlobals.SpawnPoints.keys():
+            return
         spawnPoints = FunnyFarmGlobals.SpawnPoints[zoneId]
         spawn = random.choice(spawnPoints)
         self.setPos(spawn[0])
@@ -937,3 +1001,135 @@ class LocalToon(Toon.Toon, WalkControls):
         whisper.manage(base.marginManager)
         base.playSfx(sfx)
         return
+
+    def takeDamage(self, hpLost, bonus = 0):
+        if self.hp == None or hpLost < 0:
+            return
+        oldHp = self.hp
+        self.hp = max(self.hp - hpLost, 0)
+        hpLost = oldHp - self.hp
+        if hpLost > 0:
+            self.showHpText(-hpLost, bonus)
+            self.setHealth(self.hp, self.maxHp)
+            if self.hp <= 0 and oldHp > 0:
+                self.setupCamera()
+                camera.wrtReparentTo(render)
+                self.setAnimState('Died', callback=self.died)
+        return
+
+    def startToonUp(self, healFrequency):
+        self.stopToonUp()
+        self.healFrequency = healFrequency
+        self.__waitForNextToonUp()
+
+    def stopToonUp(self):
+        taskMgr.remove(self.uniqueName('safeZoneToonUp'))
+
+    def __waitForNextToonUp(self):
+        taskMgr.doMethodLater(self.healFrequency, self.toonUpTask, self.uniqueName('safeZoneToonUp'))
+
+    def toonUpTask(self, task):
+        hp = self.hp + self.toonUpIncrement
+        self.setHealth(hp, self.maxHp, showText=1)
+        if not self.isToonedUp():
+            self.__waitForNextToonUp()
+        return Task.done
+
+    def isToonedUp(self):
+        return self.hp >= self.maxHp
+
+    def showHpText(self, number, bonus = 0, scale = 1, attackTrack = -1):
+        if self.HpTextEnabled and not self.ghostMode:
+            if number != 0:
+                if self.hpText:
+                    self.hideHpText()
+                self.HpTextGenerator.setFont(OTPGlobals.getSignFont())
+                if number < 0:
+                    self.HpTextGenerator.setText(str(number))
+                    if self.interactivePropTrackBonus > -1 and self.interactivePropTrackBonus == attackTrack:
+                        self.sillySurgeText = True
+                        if attackTrack in TTLocalizer.InteractivePropTrackBonusTerms:
+                            self.HpTextGenerator.setText(str(number) + '\n' + TTLocalizer.InteractivePropTrackBonusTerms[attackTrack])
+                else:
+                    self.HpTextGenerator.setText('+' + str(number))
+                self.HpTextGenerator.clearShadow()
+                self.HpTextGenerator.setAlign(TextNode.ACenter)
+                if bonus == 1:
+                    r = 1.0
+                    g = 1.0
+                    b = 0
+                    a = 1
+                elif bonus == 2:
+                    r = 1.0
+                    g = 0.5
+                    b = 0
+                    a = 1
+                elif number < 0:
+                    r = 0.9
+                    g = 0
+                    b = 0
+                    a = 1
+                    if self.interactivePropTrackBonus > -1 and self.interactivePropTrackBonus == attackTrack:
+                        r = 0
+                        g = 0
+                        b = 1
+                        a = 1
+                else:
+                    r = 0
+                    g = 0.9
+                    b = 0
+                    a = 1
+                self.HpTextGenerator.setTextColor(r, g, b, a)
+                self.hpTextNode = self.HpTextGenerator.generate()
+                self.hpText = self.attachNewNode(self.hpTextNode)
+                self.hpText.setScale(scale)
+                self.hpText.setBillboardPointEye()
+                self.hpText.setBin('fixed', 100)
+                if self.sillySurgeText:
+                    self.nametag3d.setDepthTest(0)
+                    self.nametag3d.setBin('fixed', 99)
+                self.hpText.setPos(0, 0, self.height / 2)
+                seq = Sequence(self.hpText.posInterval(1.0, Point3(0, 0, self.height + 1.5), blendType='easeOut'), Wait(0.85), self.hpText.colorInterval(0.1, Vec4(r, g, b, 0), 0.1), Func(self.hideHpText))
+                seq.start()
+
+    def showHpString(self, text, duration = 0.85, scale = 0.7):
+        if self.HpTextEnabled and not self.ghostMode:
+            if text != '':
+                if self.hpText:
+                    self.hideHpText()
+                self.HpTextGenerator.setFont(OTPGlobals.getSignFont())
+                self.HpTextGenerator.setText(text)
+                self.HpTextGenerator.clearShadow()
+                self.HpTextGenerator.setAlign(TextNode.ACenter)
+                r = a = 1.0
+                g = b = 0.0
+                self.HpTextGenerator.setTextColor(r, g, b, a)
+                self.hpTextNode = self.HpTextGenerator.generate()
+                self.hpText = self.attachNewNode(self.hpTextNode)
+                self.hpText.setScale(scale)
+                self.hpText.setBillboardAxis()
+                self.hpText.setPos(0, 0, self.height / 2)
+                seq = Sequence(self.hpText.posInterval(1.0, Point3(0, 0, self.height + 1.5), blendType='easeOut'), Wait(duration), self.hpText.colorInterval(0.1, Vec4(r, g, b, 0)), Func(self.hideHpText))
+                seq.start()
+
+    def hideHpText(self):
+        if self.hpText:
+            taskMgr.remove(self.uniqueName('hpText'))
+            self.hpText.removeNode()
+            self.hpText = None
+        if self.sillySurgeText:
+            self.nametag3d.clearDepthTest()
+            self.nametag3d.clearBin()
+            self.sillySurgeText = False
+
+    def died(self):
+        if base.cr.playGame.hood:
+            base.cr.playGame.exitHood()
+        elif base.cr.playGame.street:
+            base.cr.playGame.exitStreet()
+        elif base.cr.playGame.place:
+            base.cr.playGame.exitPlace()
+        self.reparentTo(render)
+        self.enable()
+        zoneId = base.avatarData.setLastHood
+        base.cr.enterHood(zoneId)

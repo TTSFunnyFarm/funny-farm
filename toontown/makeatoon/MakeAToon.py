@@ -394,12 +394,12 @@ class MakeAToon(StateData.StateData):
         self.doneStatus = 'cancel'
         self.shopsVisited = []
         base.transitions.fadeOut()
-        Sequence(Wait(1), Func(self.__handleEnterPAT)).start()
+        Sequence(Wait(1), Func(self.__handleEnterChooseAvatar)).start()
 
-    def __handleEnterPAT(self):
+    def __handleEnterChooseAvatar(self):
         self.unload()
         musicMgr.startPAT()
-        base.cr.enterPAT()
+        base.cr.enterChooseAvatar()
 
     def toggleSlide(self):
         self.slide = 1 - self.slide
@@ -644,11 +644,11 @@ class MakeAToon(StateData.StateData):
 
     def __handleTutorial(self):
         self.unload()
-        base.cr.finishMAT(True)
+        base.cr.exitCreateAvatar(tutorialFlag=1)
 
     def __handleDone(self):
         self.unload()
-        base.cr.finishMAT(False)
+        base.cr.exitCreateAvatar(tutorialFlag=0)
 
     def enterDone(self):
         pass

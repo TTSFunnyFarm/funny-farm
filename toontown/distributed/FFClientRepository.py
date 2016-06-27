@@ -1,8 +1,10 @@
 from pandac.PandaModules import *
 from direct.showbase.DirectObject import DirectObject
 from direct.interval.IntervalGlobal import *
-from toontown.login.PickAToon import PickAToon
+from toontown.login import AvatarChooser
+from toontown.makeatoon import MakeAToon
 from toontown.toontowngui import TTDialog
+from toontown.toonbase import TTLocalizer
 from toontown.toonbase import FunnyFarmGlobals
 from otp.otpbase import OTPLocalizer
 import random
@@ -15,33 +17,38 @@ class FFClientRepository(DirectObject):
     notify.setInfo(True)
 
     def __init__(self):
-        self.avChooser = None
+        self.avChoice = None
+        self.avCreate = None
         self.playGame = PlayGame.PlayGame()
 
-    def loadPAT(self):
-        self.avChooser = PickAToon()
-        self.avChooser.load()
-
-    def enterPAT(self):
+    def enterChooseAvatar(self):
         base.transitions.noTransitions()
-        if not self.avChooser:
-            self.loadPAT()
-        self.avChooser.enter()
+        self.avChoice = AvatarChooser.AvatarChooser()
+        self.avChoice.load()
+        self.avChoice.enter()
 
-    def exitPAT(self):
+    def exitChooseAvatar(self):
         base.transitions.noTransitions()
-        self.avChooser.exit()
-        self.avChooser = None
+        self.avChoice.exit()
+        self.avChoice = None
 
-    def finishMAT(self, tutorialFlag=0):
+    def enterCreateAvatar(self, index):
+        if self.avChoice:
+            self.exitChooseAvatar()
+        self.avCreate = MakeAToon.MakeAToon('MakeAToon-done', index, 1)
+        self.avCreate.load()
+        self.avCreate.enter()
+
+    def exitCreateAvatar(self, tutorialFlag=0):
+        base.transitions.noTransitions()
+        self.avCreate = None
         if tutorialFlag:
-            self.exitPAT()
             self.playGame.enterTutorial()
             self.setupLocalAvatar(tutorialFlag=tutorialFlag)
         else:
             self.enterTheTooniverse(FunnyFarmGlobals.FunnyFarm)
 
-    def enterHood(self, zoneId, init=False):
+    def enterHood(self, zoneId, init=0):
         if zoneId == FunnyFarmGlobals.FunnyFarm:
             self.playGame.enterFFHood(init=init)
         elif zoneId == FunnyFarmGlobals.FunnyFarmCentral:
@@ -73,8 +80,8 @@ class FFClientRepository(DirectObject):
         self.enterHood(zoneId)
 
     def enterTheTooniverse(self, zoneId):
-        self.exitPAT()
-        self.enterHood(zoneId, init=True)
+        base.transitions.noTransitions()
+        self.enterHood(zoneId, init=1)
         self.setupLocalAvatar()
 
     def exitTheTooniverse(self):
@@ -87,24 +94,25 @@ class FFClientRepository(DirectObject):
             self.playGame.exitStreet()
         elif self.playGame.place:
             self.playGame.exitPlace()
-        base.localAvatar.destroy()
+        base.localAvatar.delete()
         base.localAvatar = None
         camera.reparentTo(render)
         musicMgr.startPAT()
-        self.enterPAT()
-
-    def isPaid(self):
-        return True
+        self.enterChooseAvatar()
 
     def setupLocalAvatar(self, tutorialFlag=0):
         base.localAvatar.reparentTo(render)
         base.localAvatar.setupControls()
+        base.localAvatar.setupSmartCamera()
         base.localAvatar.initInterface()
-        base.localAvatar.addActive()
         base.localAvatar.useLOD(1000)
+        base.localAvatar.addActive()
+        base.localAvatar.startBlink()
         if not tutorialFlag:
-            base.localAvatar.setupSmartCamera()
             base.localAvatar.book.showButton()
             base.localAvatar.laffMeter.start()
             base.localAvatar.startChat()
-        return
+        base.localAvatar.disable()
+
+    def isPaid(self):
+        return True

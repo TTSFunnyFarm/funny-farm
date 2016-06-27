@@ -4,7 +4,7 @@ from direct.showbase import Audio3DManager
 from otp.otpbase import OTPGlobals
 from toontown.toonbase import FunnyFarmGlobals
 from ToonStreet import ToonStreet
-from toontown.building import EliteExterior
+from toontown.hood import SkyUtil
 
 class RRStreet(ToonStreet):
 
@@ -37,7 +37,6 @@ class RRStreet(ToonStreet):
 
     def load(self):
         ToonStreet.load(self)
-        self.sky.setScale(2.0)
         self.geom.find('**/tBlocker1').node().setCollideMask(OTPGlobals.WallBitmask)
         self.geom.find('**/tBlocker2').node().setCollideMask(OTPGlobals.WallBitmask)
         self.train = loader.loadModel('phase_5/models/props/train')
@@ -53,9 +52,6 @@ class RRStreet(ToonStreet):
         self.trainSfx.setLoop(True)
         self.trainSfx.setVolume(5)
         self.audio3d.setDropOffFactor(0.05)
-        #self.bldg = EliteExterior.EliteExterior()
-        #self.bldg.load()
-        #self.bldg.setPosHpr(-60, -36.5, 0.1, 270, 0, 0)
 
     def unload(self):
         ToonStreet.unload(self)
@@ -64,12 +60,10 @@ class RRStreet(ToonStreet):
         self.trainLoop.finish()
         self.train.removeNode()
         self.audio3d.disable()
-        #self.bldg.unload()
         del self.trainSfx
         del self.trainLoop
         del self.train
         del self.audio3d
-        #del self.bldg
 
     def startActive(self):
         self.acceptOnce('enterFFTunnel_trigger', self.__handleFFTunnel)
@@ -100,8 +94,18 @@ class RRStreet(ToonStreet):
         animalType = base.localAvatar.getStyle().getType()
         dialogue = base.loadSfx('phase_3.5/audio/dial/AV_%s_exclaim.ogg' % animalType)
         base.localAvatar.playCurrentDialogue(dialogue, None)
-        base.localAvatar.enterSquish(callback=self.__handleSquish)
+        base.localAvatar.enterSquish(callback=self.__squishDone)
 
-    def __handleSquish(self):
+    def __squishDone(self):
         base.localAvatar.exitSquish()
         base.localAvatar.enable()
+
+    def skyTrack(self, task):
+        return SkyUtil.cloudSkyTrack(task)
+
+    def startSky(self):
+        self.sky.setTransparency(TransparencyAttrib.MDual, 1)
+        self.notify.debug('The sky is: %s' % self.sky)
+        if not self.sky.getTag('sky') == 'Regular':
+            self.endSpookySky()
+        SkyUtil.startCloudSky(self)
