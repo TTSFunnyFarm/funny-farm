@@ -705,9 +705,7 @@ class Movie(DirectObject.DirectObject):
                             sdict['hp'] = hps[targetIndex]
                             if ta[TOON_TRACK_COL] == NPCSOS and track == DROP and hps[targetIndex] == 0:
                                 continue
-                            # temporary
-                            #sdict['kbbonus'] = kbbonuses[targetIndex]
-                            sdict['kbbonus'] = -1
+                            sdict['kbbonus'] = kbbonuses[targetIndex]
                             sdict['died'] = ta[SUIT_DIED_COL] & 1 << targetIndex
                             sdict['revived'] = ta[SUIT_REVIVE_COL] & 1 << targetIndex
                             if sdict['died'] != 0:
@@ -748,9 +746,7 @@ class Movie(DirectObject.DirectObject):
                         sdict['leftSuits'] = leftSuits
                         sdict['rightSuits'] = rightSuits
                         sdict['hp'] = hps[targetIndex]
-                        # temporary
-                        #sdict['kbbonus'] = kbbonuses[targetIndex]
-                        sdict['kbbonus'] = -1
+                        sdict['kbbonus'] = kbbonuses[targetIndex]
                         sdict['died'] = ta[SUIT_DIED_COL] & 1 << targetIndex
                         sdict['revived'] = ta[SUIT_REVIVE_COL] & 1 << targetIndex
                         if sdict['revived'] != 0:

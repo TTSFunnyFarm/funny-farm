@@ -81,9 +81,7 @@ class FFClientRepository(DirectObject):
 
     def enterTheTooniverse(self, zoneId):
         base.transitions.noTransitions()
-        # feature/battles
-        self.enterHood(zoneId, init=True)
-        #self.playGame.enterTutorial()
+        self.enterHood(zoneId, init=1)
         self.setupLocalAvatar()
 
     def exitTheTooniverse(self):
@@ -115,7 +113,6 @@ class FFClientRepository(DirectObject):
             base.localAvatar.laffMeter.start()
             base.localAvatar.startChat()
         base.localAvatar.disable()
-        return
 
     def isPaid(self):
         return True
