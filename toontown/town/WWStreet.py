@@ -18,7 +18,6 @@ class WWStreet(ToonStreet):
         self.titleColor = (0.3, 0.6, 1.0, 1.0)
 
     def enter(self, tunnel=None):
-        musicMgr.startCVSZ()
         ToonStreet.enter(self, tunnel=tunnel)
         if tunnel:
             if tunnel == 'fc':
@@ -27,7 +26,6 @@ class WWStreet(ToonStreet):
         self.startActive()
 
     def exit(self):
-        musicMgr.stopCVSZ()
         ToonStreet.exit(self)
 
     def load(self):

@@ -15,7 +15,6 @@ class HQInterior(Interior):
 
     def load(self):
         Interior.load(self)
-        musicMgr.shopMusicMap[self.zoneId]()
         self.interior.find('**/cream').removeNode() # gotta clean up all the jizz
         self.randomGenerator = random.Random()
         self.randomGenerator.seed(self.zoneId)
@@ -39,7 +38,6 @@ class HQInterior(Interior):
         self.interior.flattenMedium()
 
     def unload(self):
-        musicMgr.stopAllMusic()
         for npc in self.npcs:
             npc.removeActive()
             npc.delete()
@@ -58,10 +56,10 @@ class HQInterior(Interior):
             clerk3 = NPCToons.createLocalNPC(5003)
             clerk4 = NPCToons.createLocalNPC(5004)
         origins = [
-                self.interior.find('**/npc_origin_0'),
-                self.interior.find('**/npc_origin_1'),
-                self.interior.find('**/npc_origin_2'),
-                self.interior.find('**/npc_origin_3')
+            self.interior.find('**/npc_origin_0'),
+            self.interior.find('**/npc_origin_1'),
+            self.interior.find('**/npc_origin_2'),
+            self.interior.find('**/npc_origin_3')
         ]
         key = 0
         self.npcs = [clerk1, clerk2, clerk3, clerk4]

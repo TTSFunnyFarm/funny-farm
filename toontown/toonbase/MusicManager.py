@@ -2,115 +2,62 @@ from pandac.PandaModules import *
 from toontown.toonbase import FunnyFarmGlobals
 
 class MusicManager:
+    notify = directNotify.newCategory('MusicManager')
 
     def __init__(self):
-        self.musicList = map(
-            base.loadMusic, [
-                    'phase_3/audio/bgm/ff_theme.ogg',
-                    'phase_3/audio/bgm/ff_theme_winter.ogg',
-                    'phase_3/audio/bgm/ff_theme_halloween.ogg',
-                    'phase_3/audio/bgm/create_a_toon.ogg',
-                    'phase_6/audio/bgm/OZ_SZ.ogg',
-                    'phase_14/audio/bgm/FF_nbrhood.ogg',
-                    'phase_14/audio/bgm/FF_SZ.ogg',
-                    'phase_14/audio/bgm/FF_SZ_activity.ogg',
-                    'phase_14/audio/bgm/FC_SZ.ogg',
-                    'phase_14/audio/bgm/SS_nbrhood.ogg',
-                    'phase_14/audio/bgm/SS_SZ_activity.ogg',
-                    'phase_14/audio/bgm/CV_SZ.ogg',
-                    'phase_12/audio/bgm/Bossbot_Entry_v2.ogg'
-            ]
-        )
-        self.safezoneMusicMap = {
-            FunnyFarmGlobals.FunnyFarm : self.startFFNbrhood,
-            FunnyFarmGlobals.RicketyRoad : self.startFFSZ,
-            FunnyFarmGlobals.FunnyFarmCentral : self.startFCSZ,
-            FunnyFarmGlobals.SillySprings : self.startSSNbrhood,
-            FunnyFarmGlobals.WintryWay : self.startCVSZ,
-            FunnyFarmGlobals.SecretArea : self.startSecretArea
+        self.pickAToonMusic = [
+            (base.loadMusic('phase_3/audio/bgm/ff_theme.ogg'), 0.5),
+            (base.loadMusic('phase_3/audio/bgm/ff_theme_winter.ogg'), 1.0),
+            (base.loadMusic('phase_3/audio/bgm/ff_theme_halloween.ogg'), 1.0)
+        ]
+        self.safezoneMusic = {
+            FunnyFarmGlobals.Tutorial: (base.loadMusic('phase_6/audio/bgm/OZ_SZ.ogg'), 1.0),
+            FunnyFarmGlobals.FunnyFarm: (base.loadMusic('phase_14/audio/bgm/FF_nbrhood.ogg'), 1.0),
+            FunnyFarmGlobals.RicketyRoad: (base.loadMusic('phase_14/audio/bgm/FF_SZ.ogg'), 1.0),
+            FunnyFarmGlobals.FunnyFarmCentral: (base.loadMusic('phase_14/audio/bgm/FC_SZ.ogg'), 1.0),
+            FunnyFarmGlobals.SillySprings: (base.loadMusic('phase_14/audio/bgm/SS_nbrhood.ogg'), 1.0),
+            FunnyFarmGlobals.WintryWay: (base.loadMusic('phase_14/audio/bgm/CV_SZ.ogg'), 1.0),
+            FunnyFarmGlobals.SecretArea: (base.loadMusic('phase_12/audio/bgm/Bossbot_Entry_v2.ogg'), 1.0)
         }
-        self.shopMusicMap = {
-            FunnyFarmGlobals.FunnyFarm : self.startFFActivity,
-            FunnyFarmGlobals.SillySprings : self.startSSActivity
+        self.shopMusic = {
+            FunnyFarmGlobals.FunnyFarm: (base.loadMusic('phase_14/audio/bgm/FF_SZ_activity.ogg'), 0.5),
+            FunnyFarmGlobals.SillySprings: (base.loadMusic('phase_14/audio/bgm/SS_SZ_activity.ogg'), 1.0)
         }
 
-    def playMusic(self, index, volume=1.0):
-        self.stopAllMusic()
-        base.playMusic(self.musicList[index], looping=1, volume=volume)
+    def playMusic(self, music, looping=0, volume=1.0):
+        self.stopMusic()
+        if music:
+            base.playMusic(music, looping=looping, volume=volume)
 
-    def stopAllMusic(self):
-        for x in self.musicList:
-            x.stop()
+    def stopMusic(self):
+        for t in self.pickAToonMusic:
+            t[0].stop()
+        for t in self.safezoneMusic.keys():
+            self.safezoneMusic[t][0].stop()
+        for t in self.shopMusic.keys():
+            self.shopMusic[t][0].stop()
 
-    def startPAT(self):
-        if base.air.holidayMgr.isWinter():
-            self.playMusic(1)
-        elif base.air.holidayMgr.isHalloween():
-            self.playMusic(2)
+    def playCurrentZoneMusic(self):
+        zoneId = base.localAvatar.getZoneId()
+        if base.cr.playGame.hood or base.cr.playGame.street:
+            if zoneId in self.safezoneMusic.keys():
+                music, volume = self.safezoneMusic[zoneId]
+            else:
+                self.notify.warning('Safezone music for zone %s not in MusicManager.' % str(zoneId))
+                return
         else:
-            self.playMusic(0, volume=0.5)
+            if zoneId in self.shopMusic.keys():
+                music, volume = self.shopMusic[zoneId]
+            else:
+                self.notify.warning('Activity music for zone %s not in MusicManager.' % str(zoneId))
+                return
+        self.playMusic(music, looping=1, volume=volume)
 
-    def stopPAT(self):
-        self.musicList[0].stop()
-        self.musicList[1].stop()
-        self.musicList[2].stop()
-
-    def startMAT(self):
-        self.playMusic(3)
-
-    def stopMAT(self):
-        self.musicList[3].stop()
-
-    def startTutorial(self):
-        self.playMusic(4)
-
-    def stopTutorial(self):
-        self.musicList[4].stop()
-
-    def startFFNbrhood(self):
-        self.playMusic(5)
-
-    def stopFFNbrhood(self):
-        self.musicList[5].stop()
-
-    def startFFSZ(self):
-        self.playMusic(6)
-
-    def stopFFSZ(self):
-        self.musicList[6].stop()
-
-    def startFFActivity(self):
-        self.playMusic(7, volume=0.5)
-
-    def stopFFActivity(self):
-        self.musicList[7].stop()
-
-    def startFCSZ(self):
-        self.playMusic(8)
-
-    def stopFCSZ(self):
-        self.musicList[8].stop()
-
-    def startSSNbrhood(self):
-        self.playMusic(9)
-
-    def stopSSNbrhood(self):
-        self.musicList[9].stop()
-
-    def startSSActivity(self):
-        self.playMusic(10)
-
-    def stopSSActivity(self):
-        self.musicList[10].stop()
-
-    def startCVSZ(self):
-        self.playMusic(11)
-
-    def stopCVSZ(self):
-        self.musicList[11].stop()
-
-    def startSecretArea(self):
-        self.playMusic(12)
-
-    def stopSecretArea(self):
-        self.musicList[12].stop()
+    def playPickAToon(self):
+        if base.air.holidayMgr.isWinter():
+            music, volume = self.pickAToonMusic[1]
+        elif base.air.holidayMgr.isHalloween():
+            music, volume = self.pickAToonMusic[2]
+        else:
+            music, volume = self.pickAToonMusic[0]
+        self.playMusic(music, looping=1, volume=volume)

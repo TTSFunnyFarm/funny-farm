@@ -118,7 +118,7 @@ class FunnyFarmStart:
         self.notify.info('Initializing Client Repository...')
         base.cr = FFClientRepository.FFClientRepository()
 
-        musicMgr.startPAT()
+        musicMgr.playPickAToon()
         titleScreen = TitleScreen.TitleScreen()
         titleScreen.startShow()
 

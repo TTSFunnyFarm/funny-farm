@@ -36,7 +36,6 @@ class ToonHallInterior(Interior):
 
     def load(self):
         Interior.load(self)
-        musicMgr.shopMusicMap[self.zoneId]()
         self.interior.find('**/mainhall').setBin('ground', 0)
         self.interior.find('**/hallway').setBin('ground', 0)
         self.interior.find('**/office').setBin('ground', 0)
@@ -56,7 +55,6 @@ class ToonHallInterior(Interior):
         self.sillyFSM.enterInitialState()
 
     def unload(self):
-        musicMgr.stopAllMusic()
         self.sillyFSM.requestFinalState()
         for npc in self.npcs:
             npc.removeActive()
@@ -166,6 +164,7 @@ class ToonHallInterior(Interior):
         self.phase2Sfx.setLoop(True)
         self.phase3Sfx = self.audio3d.loadSfx('phase_4/audio/sfx/tt_s_prp_sillyMeterPhaseThree.ogg')
         self.phase3Sfx.setLoop(True)
+        self.phase3Sfx.setVolume(0.5)
         self.phase4Sfx = self.audio3d.loadSfx('phase_4/audio/sfx/tt_s_prp_sillyMeterPhaseFour.ogg')
         self.phase4Sfx.setLoop(True)
         self.phase4To5Sfx = self.audio3d.loadSfx('phase_4/audio/sfx/tt_s_prp_sillyMeterPhaseFourToFive.ogg')

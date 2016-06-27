@@ -17,7 +17,6 @@ class FCHood(ToonHood):
         self.titleColor = (1.0, 0.5, 0.4, 1.0)
 
     def enter(self, shop=None, tunnel=None, init=False):
-        musicMgr.startFCSZ()
         ToonHood.enter(self, shop=shop, tunnel=tunnel, init=init)
         if tunnel:
             if tunnel == 'rr':
@@ -32,7 +31,6 @@ class FCHood(ToonHood):
         self.startActive()
 
     def exit(self):
-        musicMgr.stopFCSZ()
         ToonHood.exit(self)
         if base.air.holidayMgr.isWinter():
             self.snow.cleanup()

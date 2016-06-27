@@ -1,21 +1,20 @@
 from pandac.PandaModules import *
-from direct.actor import Actor
+from direct.showbase.DirectObject import DirectObject
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
-from Interior import Interior
 import ToonInteriorColors
 import random
 import Door
 
-class MinnieInterior(Interior):
+class MinnieInterior(DirectObject):
 
     def __init__(self, zoneId):
-        Interior.__init__(self)
         self.zoneId = zoneId
         self.interiorFile = 'phase_14/models/modules/minnie_interior'
 
     def load(self):
-        Interior.load(self)
+        self.interior = loader.loadModel(self.interiorFile)
+        self.interior.reparentTo(render)
         self.randomGenerator = random.Random()
         self.randomGenerator.seed(self.zoneId)
         self.colors = ToonInteriorColors.colors[self.zoneId]
@@ -31,7 +30,9 @@ class MinnieInterior(Interior):
         self.interior.flattenMedium()
 
     def unload(self):
-        Interior.unload(self)
+        self.ignoreAll()
+        self.interior.removeNode()
+        del self.interior
 
     def startActive(self):
         self.acceptOnce('enterdoor_double_round_ur_trigger', self.__handleDoor)
@@ -44,3 +45,19 @@ class MinnieInterior(Interior):
     def __handleEnterFF(self):
         base.cr.playGame.exitPlace()
         base.cr.playGame.enterFFHood(shop='mn')
+
+    def setupDoor(self, name, node):
+        door = loader.loadModel('phase_3.5/models/modules/doors_practical').find('**/' + name)
+        door.reparentTo(self.interior.find('**/' + node))
+        return door
+
+    def fixDoor(self, door):
+        door.find('**/door_*_hole_left').setColor(0, 0, 0, 1)
+        door.find('**/door_*_hole_right').setColor(0, 0, 0, 1)
+        door.find('**/door_*_flat').setDepthOffset(1)
+        door.find('**/door_*_hole_left').setDepthOffset(2)
+        door.find('**/door_*_hole_right').setDepthOffset(2)
+        door.find('**/door_*_left').setDepthOffset(3)
+        door.find('**/door_*_right').setDepthOffset(3)
+        door.find('**/door_*_trigger').setY(-0.24)
+        door.setDepthOffset(3)

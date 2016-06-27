@@ -164,7 +164,7 @@ class Trolley(DirectObject):
         self.dialog.destroy()
         if choice == 1:
             self.fillSlot(0)
-            musicMgr.stopAllMusic()
+            musicMgr.stopMusic()
             base.playMusic(self.trolleySong)
         else:
             base.localAvatar.enable()
@@ -197,7 +197,7 @@ class Trolley(DirectObject):
 
     def handleTrolleyDone(self):
         self.trolleySong.stop()
-        musicMgr.safezoneMusicMap[base.localAvatar.getZoneId()]()
+        musicMgr.playCurrentZoneMusic()
         base.localAvatar.enable()
 
     def enterWaitCountdown(self, ts):

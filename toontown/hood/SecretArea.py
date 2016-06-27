@@ -19,14 +19,12 @@ class SecretArea(ToonHood):
         self.titleColor = (0.5, 0.5, 0.5, 1.0)
 
     def enter(self):
-        musicMgr.startSecretArea()
         ToonHood.enter(self)
         base.avatarData.setLastHood = FunnyFarmGlobals.FunnyFarmCentral
         dataMgr.saveToonData(base.avatarData)
         self.suit.enableBattleDetect(self.enterBattle)
 
     def exit(self):
-        musicMgr.stopSecretArea()
         ToonHood.exit(self)
 
     def load(self):

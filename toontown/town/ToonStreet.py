@@ -13,9 +13,10 @@ class ToonStreet(ToonHood.ToonHood):
         ToonHood.ToonHood.__init__(self)
 
     def enter(self, shop=None, tunnel=None):
+        base.localAvatar.setZoneId(self.zoneId)
+        musicMgr.playCurrentZoneMusic()
         if shop:
             return
-        base.localAvatar.setZoneId(self.zoneId)
         self.title = OnscreenText(self.titleText, fg=self.titleColor, font=ToontownGlobals.getSignFont(), pos=(0, -0.5), scale=TTLocalizer.HtitleText, drawOrder=0, mayChange=1)
         self.spawnTitleText()
 

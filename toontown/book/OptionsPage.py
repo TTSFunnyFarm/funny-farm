@@ -190,23 +190,15 @@ class OptionsTabPage(DirectFrame):
     def __doToggleMusic(self):
         messenger.send('wakeup')
         if base.musicActive:
+            musicMgr.stopMusic()
             base.enableMusic(0)
             settings['music'] = False
         else:
             base.enableMusic(1)
             settings['music'] = True
-            musicMgr.stopAllMusic()
-            self.playCurrentZoneMusic()
+            musicMgr.playCurrentZoneMusic()
         self.settingsChanged = 1
         self.__setMusicButton()
-
-    def playCurrentZoneMusic(self):
-        zoneId = base.localAvatar.getZoneId()
-        if base.cr.playGame.hood or base.cr.playGame.street:
-            playMusic = musicMgr.safezoneMusicMap[zoneId]
-        else:
-            playMusic = musicMgr.shopMusicMap[zoneId]
-        playMusic()
 
     def __setMusicButton(self):
         if base.musicActive:

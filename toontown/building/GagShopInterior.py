@@ -44,7 +44,6 @@ class GagShopInterior(Interior):
 
     def load(self):
         Interior.load(self)
-        musicMgr.shopMusicMap[self.zoneId]()
         self.randomGenerator = random.Random()
         self.randomGenerator.seed(self.zoneId)
         self.colors = ToonInteriorColors.colors[self.zoneId]
@@ -61,7 +60,6 @@ class GagShopInterior(Interior):
         self.interior.flattenMedium()
 
     def unload(self):
-        musicMgr.stopAllMusic()
         for npc in self.npcs:
             npc.removeActive()
             npc.delete()

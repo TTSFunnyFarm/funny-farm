@@ -21,6 +21,8 @@ class ToonHood(DirectObject):
         self.title = None
 
     def enter(self, shop=None, tunnel=None, init=False):
+        base.localAvatar.setZoneId(self.zoneId)
+        musicMgr.playCurrentZoneMusic()
         if shop:
             return
         if not tunnel:
@@ -33,13 +35,13 @@ class ToonHood(DirectObject):
                     base.localAvatar.setSystemMessage(0, TTLocalizer.WinterHolidayMessage)
             else:
                 base.localAvatar.enterTeleportIn(callback=self.__handleTeleport)
-        base.localAvatar.setZoneId(self.zoneId)
         base.avatarData.setLastHood = self.zoneId
         dataMgr.saveToonData(base.avatarData)
         self.title = OnscreenText(self.titleText, fg=self.titleColor, font=ToontownGlobals.getSignFont(), pos=(0, -0.5), scale=TTLocalizer.HtitleText, drawOrder=0, mayChange=1)
         self.spawnTitleText()
 
     def exit(self):
+        musicMgr.stopMusic()
         self.ignoreAll()
         if self.title:
             self.title.cleanup()

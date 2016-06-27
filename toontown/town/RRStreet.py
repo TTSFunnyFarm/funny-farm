@@ -19,7 +19,6 @@ class RRStreet(ToonStreet):
         self.titleColor = (1.0, 0.5, 0.4, 1.0)
 
     def enter(self, tunnel=None):
-        musicMgr.startFFSZ()
         ToonStreet.enter(self, tunnel=tunnel)
         self.trainSfx.play()
         self.audio3d.attachSoundToObject(self.trainSfx, self.train)
@@ -32,7 +31,6 @@ class RRStreet(ToonStreet):
         self.startActive()
 
     def exit(self):
-        musicMgr.stopFFSZ()
         ToonStreet.exit(self)
 
     def load(self):

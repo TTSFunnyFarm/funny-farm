@@ -94,10 +94,10 @@ class FFClientRepository(DirectObject):
             self.playGame.exitStreet()
         elif self.playGame.place:
             self.playGame.exitPlace()
+        camera.reparentTo(render)
         base.localAvatar.delete()
         base.localAvatar = None
-        camera.reparentTo(render)
-        musicMgr.startPAT()
+        musicMgr.playPickAToon()
         self.enterChooseAvatar()
 
     def setupLocalAvatar(self, tutorialFlag=0):

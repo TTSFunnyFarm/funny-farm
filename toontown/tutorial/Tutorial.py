@@ -33,7 +33,7 @@ class Tutorial(ToonHood.ToonHood):
         ]
 
     def enter(self, tunnel=None, init=0):
-        musicMgr.startTutorial()
+        musicMgr.playCurrentZoneMusic()
         Sequence(Wait(0.3), Func(self.toon.enterTeleportIn, 1, 0, self.__handleEntered)).start()
 
     def exit(self):
@@ -448,7 +448,7 @@ class Tutorial(ToonHood.ToonHood):
     def cogSequence(self):
         self.flippy.clearChat()
         cogSeq = Sequence(
-            Func(musicMgr.stopTutorial),
+            Func(musicMgr.stopMusic),
             Func(camera.wrtReparentTo, render),
             Func(self.flippy.loop, 'walk'),
             self.flippy.hprInterval(1, (-30, 0, 0)),

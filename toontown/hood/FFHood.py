@@ -25,7 +25,6 @@ class FFHood(ToonHood):
         self.titleColor = (1.0, 0.5, 0.4, 1.0)
 
     def enter(self, shop=None, tunnel=None, init=False):
-        musicMgr.startFFNbrhood()
         ToonHood.enter(self, shop=shop, tunnel=tunnel, init=init)
         if base.air.holidayMgr.isWinter():
             self.snow.start(camera, self.snowRender)
@@ -52,7 +51,6 @@ class FFHood(ToonHood):
         self.startActive()
 
     def exit(self):
-        musicMgr.stopFFNbrhood()
         ToonHood.exit(self)
         if base.air.holidayMgr.isWinter():
             self.snow.cleanup()

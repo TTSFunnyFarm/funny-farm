@@ -54,7 +54,7 @@ class AvatarChooser:
             return
         self.unload()
         base.setBackgroundColor(ToontownGlobals.DefaultBackgroundColor)
-        musicMgr.stopPAT()
+        musicMgr.stopMusic()
 
     def load(self):
         if self.isLoaded:

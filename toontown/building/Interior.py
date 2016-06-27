@@ -10,8 +10,10 @@ class Interior(DirectObject):
     def load(self):
         self.interior = loader.loadModel(self.interiorFile)
         self.interior.reparentTo(render)
+        musicMgr.playCurrentZoneMusic()
 
     def unload(self):
+        musicMgr.stopMusic()
         self.ignoreAll()
         self.interior.removeNode()
         del self.interior

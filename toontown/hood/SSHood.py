@@ -20,7 +20,6 @@ class SSHood(ToonHood):
         self.titleColor = (0.8, 0.6, 1.0, 1.0)
 
     def enter(self, shop=None, tunnel=None, init=False):
-        musicMgr.startSSNbrhood()
         ToonHood.enter(self, shop=shop, tunnel=tunnel, init=init)
         if shop:
             if shop == 'ps':
@@ -41,7 +40,6 @@ class SSHood(ToonHood):
         self.startActive()
 
     def exit(self):
-        musicMgr.stopSSNbrhood()
         ToonHood.exit(self)
 
     def load(self):
