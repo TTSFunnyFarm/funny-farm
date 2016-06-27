@@ -99,19 +99,28 @@ class LocalToon(Toon.Toon, WalkControls):
         self.quests = []
 
     def delete(self):
-        Toon.Toon.delete(self)
-        WalkControls.delete(self)
-        self.ignoreAll()
-        self.endAllowPies()
-        self.chatMgr.delete()
-        if self.inventory:
-            self.inventory.unload()
-        self.book.unload()
-        self.laffMeter.destroy()
-        del self.chatMgr
-        del self.inventory
-        del self.book
-        del self.laffMeter
+        try:
+            self.LocalToon_deleted
+        except:
+            self.LocalToon_deleted = 1
+            self.ignoreAll()
+            Toon.Toon.delete(self)
+            WalkControls.delete(self)
+            self.stopToonUp()
+            self.endAllowPies()
+            self.laffMeter.destroy()
+            self.chatMgr.delete()
+            if self.inventory:
+                self.inventory.unload()
+            self.book.unload()
+            del self.laffMeter
+            del self.optionsPage
+            del self.mapPage
+            del self.toonPage
+            del self.invPage
+            del self.chatMgr
+            del self.inventory
+            del self.book
 
     def isLocal(self):
         return True
@@ -131,7 +140,7 @@ class LocalToon(Toon.Toon, WalkControls):
         self.setupSmartCamera()
         self.book.showButton()
         self.beginAllowPies()
-        self.inventoryPage.acceptOnscreenHooks()
+        self.invPage.acceptOnscreenHooks()
         self.setAnimState('neutral')
 
     def disable(self):
@@ -141,8 +150,8 @@ class LocalToon(Toon.Toon, WalkControls):
         self.collisionsOff()
         self.book.hideButton()
         self.endAllowPies()
-        self.inventoryPage.ignoreOnscreenHooks()
-        self.inventoryPage.hideInventoryOnscreen()
+        self.invPage.ignoreOnscreenHooks()
+        self.invPage.hideInventoryOnscreen()
 
     def setZoneId(self, zoneId):
         self.zoneId = zoneId
@@ -184,10 +193,10 @@ class LocalToon(Toon.Toon, WalkControls):
         self.toonPage = ToonPage.ToonPage()
         self.toonPage.load()
         self.book.addPage(self.toonPage, pageName=TTLocalizer.ToonPageTitle)
-        self.inventoryPage = InventoryPage.InventoryPage()
-        self.inventoryPage.load()
-        self.book.addPage(self.inventoryPage, pageName=TTLocalizer.InventoryPageTitle)
-        self.inventoryPage.acceptOnscreenHooks()
+        self.invPage = InventoryPage.InventoryPage()
+        self.invPage.load()
+        self.book.addPage(self.invPage, pageName=TTLocalizer.InventoryPageTitle)
+        self.invPage.acceptOnscreenHooks()
         self.laffMeter = LaffMeter(self.style, self.hp, self.maxHp)
         self.laffMeter.setAvatar(self)
         self.laffMeter.setScale(0.075)
