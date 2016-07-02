@@ -33,6 +33,7 @@ class Tutorial(ToonHood.ToonHood):
         ]
 
     def enter(self, tunnel=None, init=0):
+        base.localAvatar.setZoneId(self.zoneId)
         musicMgr.playCurrentZoneMusic()
         Sequence(Wait(0.3), Func(self.toon.enterTeleportIn, 1, 0, self.__handleEntered)).start()
 

@@ -398,7 +398,7 @@ class MakeAToon(StateData.StateData):
 
     def __handleEnterChooseAvatar(self):
         self.unload()
-        musicMgr.startPAT()
+        musicMgr.playPickAToon()
         base.cr.enterChooseAvatar()
 
     def toggleSlide(self):
