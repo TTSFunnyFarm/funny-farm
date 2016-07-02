@@ -59,6 +59,7 @@ class FFHood(ToonHood):
         ToonHood.load(self)
         self.fish = Actor('phase_4/models/props/exteriorfish-zero', {'chan': 'phase_4/models/props/exteriorfish-swim'})
         self.fish.reparentTo(self.geom.find('**/fish_origin'))
+        self.fish.setBlend(frameBlend=True)
         self.fish.loop('chan')
         self.trolley = Trolley.Trolley()
         self.trolley.setup()

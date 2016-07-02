@@ -126,6 +126,7 @@ class ToonHallInterior(Interior):
          'phaseFourToFive': 'phase_4/models/props/tt_a_ara_ttc_sillyMeter_phaseFourToFive',
          'phaseFive': 'phase_4/models/props/tt_a_ara_ttc_sillyMeter_phaseFive'})
         self.sillyMeter.reparentTo(self.interior)
+        self.sillyMeter.setBlend(frameBlend=True)
         self.flatSillyMeter = loader.loadModel('phase_3.5/models/modules/tt_m_ara_int_sillyMeterFlat')
         self.flatSillyMeter.reparentTo(self.interior)
         self.flatSillyMeter.hide()

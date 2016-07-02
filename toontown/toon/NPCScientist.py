@@ -47,6 +47,7 @@ class NPCScientist(Toon.Toon):
         self.__bookActors = []
         self.__holeActors = []
         self.setupToonNodes()
+        self.setBlend(frameBlend=True)
         if self.style.getTorsoSize() == 'short' and self.style.getAnimal() == 'duck':
             sillyReader = loader.loadModel('phase_4/models/props/tt_m_prp_acs_sillyReader')
             for rHand in self.getRightHands():

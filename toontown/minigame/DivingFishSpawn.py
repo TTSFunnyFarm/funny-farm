@@ -53,6 +53,7 @@ class DivingFishSpawn(DirectObject):
         self.fishArray[idCode] = fish
         fish.reparentTo(render)
         fish.setScale(1)
+        fish.setBlend(frameBlend=True)
         fish.moveLerp = Sequence()
         if fish.name == 'clown':
             fish.setH(90 * self.direction)
