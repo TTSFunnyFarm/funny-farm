@@ -19,6 +19,7 @@ class ToonHood(DirectObject):
         self.titleText = None
         self.titleColor = (1, 1, 1, 1)
         self.title = None
+        self.titleTrack = None
 
     def enter(self, shop=None, tunnel=None, init=False):
         base.localAvatar.setZoneId(self.zoneId)
@@ -43,7 +44,9 @@ class ToonHood(DirectObject):
     def exit(self):
         musicMgr.stopMusic()
         self.ignoreAll()
-        if self.title:
+        if self.titleTrack:
+            self.titleTrack.finish()
+            self.titleTrack = None
             self.title.cleanup()
             self.title = None
 
@@ -77,8 +80,8 @@ class ToonHood(DirectObject):
         self.title.setColor(Vec4(*self.titleColor))
         self.title.clearColorScale()
         self.title.setFg(self.titleColor)
-        seq = Sequence(Wait(0.1), Wait(6.0), self.title.colorScaleInterval(0.5, Vec4(1.0, 1.0, 1.0, 0.0)), Func(self.title.hide))
-        seq.start()
+        self.titleTrack = Sequence(Wait(0.1), Wait(6.0), self.title.colorScaleInterval(0.5, Vec4(1.0, 1.0, 1.0, 0.0)), Func(self.title.hide))
+        self.titleTrack.start()
 
     def __handleTeleport(self):
         base.localAvatar.exitTeleportIn()
