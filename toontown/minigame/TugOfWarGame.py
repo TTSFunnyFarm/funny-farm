@@ -1407,12 +1407,6 @@ class TugOfWarGame(Minigame):
                     self.tieers.append(avId)
         self.numJellybeans = self.scoreDict[avId]
 
-        def endGame(task):
-            self.gameOver()
-            return Task.done
-
-        taskMgr.doMethodLater(5.0, endGame, 'endGame')
-
     def enterContestOver(self):
         self.enterCleanup()
         self.__processResults()
