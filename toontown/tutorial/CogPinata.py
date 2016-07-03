@@ -31,6 +31,7 @@ class CogPinata(Actor):
         self.loadModel(self.model)
         self.loadAnims(self.animDict)
         self.reparentTo(self.root)
+        self.setBlend(frameBlend=True)
 
         self.head_locator = self.attachNewNode('temphead')
         self.bodyColl = CollisionTube(0, 0, 1, 0, 0, 5.75, 0.75)
@@ -93,7 +94,6 @@ class CogPinata(Actor):
         self.active = True
         for coll in self.collisions:
             coll.unstash()
-        self.accept('pieSplat', self.__handlePieHit)
 
     def stopActive(self):
         if not self.active:
@@ -109,25 +109,26 @@ class CogPinata(Actor):
     def __handlePieHit(self, pieCode):
         if pieCode == self.id:
             self.stopActive()
-            self.idle.finish()
+            self.idleTrack.finish()
             hitSeq = Sequence(
-                    Func(self.headHitFront),
-                    Wait(self.getDuration('bodyHitFront')),
-                    Func(self.down),
-                    Wait(self.getDuration('down')),
-                    Func(self.unload)
+                Func(self.headHitFront),
+                Wait(self.getDuration('headHitFront')),
+                Func(self.down),
+                Wait(self.getDuration('down')),
+                Func(self.unload)
             )
             hitSeq.start()
 
     def idle(self):
-        self.idle = self.actorInterval('idle')
-        self.idle.loop()
+        self.idleTrack = self.actorInterval('idle')
+        self.idleTrack.loop()
 
     def intoIdle(self):
         Sequence(
-                Func(self.up),
-                Wait(self.getDuration('up')),
-                Func(self.idle)
+            Func(self.up),
+            Wait(self.getDuration('up')),
+            Func(self.idle),
+            Func(self.accept, 'pieSplat', self.__handlePieHit)
         ).start()
 
     def up(self):
