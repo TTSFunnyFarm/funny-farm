@@ -14,11 +14,12 @@ model-path resources/phase_3
 default-model-extension .bam
 
 # Textures
+texture-minfilter mipmap
 texture-anisotropic-degree 16
+textures-power-2 none
 
 # Performance:
 sync-video #t
-textures-power-2 none
 garbage-collect-states #f
 
 # Holidays
