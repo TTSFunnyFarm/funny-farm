@@ -93,6 +93,7 @@ class ToonHood(DirectObject):
         self.sky.reparentTo(camera)
         self.sky.setZ(0.0)
         self.sky.setHpr(0.0, 0.0, 0.0)
+        self.sky.setBin('background', 100)
         ce = CompassEffect.make(NodePath(), CompassEffect.PRot | CompassEffect.PZ)
         self.sky.node().setEffect(ce)
 
@@ -108,6 +109,7 @@ class ToonHood(DirectObject):
         self.sky = loader.loadModel(self.spookySkyFile)
         self.sky.setTag('sky', 'Halloween')
         self.sky.setColor(0.5, 0.5, 0.5, 1)
+        self.sky.setBin('background', 100)
         self.sky.reparentTo(camera)
         self.sky.setTransparency(TransparencyAttrib.MDual, 1)
         fadeIn = self.sky.colorScaleInterval(1.5, Vec4(1, 1, 1, 1), startColorScale=Vec4(1, 1, 1, 0.25), blendType='easeInOut')

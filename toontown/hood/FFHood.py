@@ -4,7 +4,6 @@ from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
 from ToonHood import ToonHood
 from toontown.building import Door
-from toontown.battle import BattleParticles
 from toontown.toon import NPCToons
 from otp.nametag.NametagConstants import *
 from toontown.trolley import Trolley
@@ -26,8 +25,6 @@ class FFHood(ToonHood):
 
     def enter(self, shop=None, tunnel=None, init=False):
         ToonHood.enter(self, shop=shop, tunnel=tunnel, init=init)
-        if base.air.holidayMgr.isWinter():
-            self.snow.start(camera, self.snowRender)
         if shop:
             if shop == 'ps':
                 doorNP = self.geom.find('**/PetShopDoor')
@@ -52,8 +49,6 @@ class FFHood(ToonHood):
 
     def exit(self):
         ToonHood.exit(self)
-        if base.air.holidayMgr.isWinter():
-            self.snow.cleanup()
 
     def load(self):
         ToonHood.load(self)
@@ -63,12 +58,6 @@ class FFHood(ToonHood):
         self.fish.loop('chan')
         self.trolley = Trolley.Trolley()
         self.trolley.setup()
-        if base.air.holidayMgr.isWinter():
-            self.snow = BattleParticles.loadParticleFile('snowdisk.ptf')
-            self.snow.setPos(0, 0, 5)
-            self.snowRender = render.attachNewNode('snowRender')
-            self.snowRender.setDepthWrite(0)
-            self.snowRender.setBin('fixed', 1)
 
     def unload(self):
         ToonHood.unload(self)
