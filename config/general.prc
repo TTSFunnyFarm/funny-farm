@@ -17,10 +17,15 @@ default-model-extension .bam
 texture-minfilter mipmap
 texture-anisotropic-degree 16
 textures-power-2 none
+framebuffer-multisample #t
+multisamples 32
 
 # Performance:
 sync-video #t
 garbage-collect-states #f
+support-threads #t
+lock-to-one-cpu #f
+lock-to-one-core #f
 
 # Holidays
 want-halloween #f
