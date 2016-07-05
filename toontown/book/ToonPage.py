@@ -78,8 +78,18 @@ class ToonPage(ShtikerPage.ShtikerPage):
         self.toon = Toon.Toon()
         self.toon.setDNA(base.localAvatar.style)
         self.toon.reparentTo(self.toonFrame)
-        self.toon.setPos(0, 0, self.toon.getHeight()*-0.18)
-        self.toon.setScale(ToontownGlobals.toonBodyScales[self.toon.style.getType()]*0.38)
+        height = self.toon.getHeight()
+        if height <= 3.0:
+            bodyScale = 0.4
+            zzFactor = -0.22
+        elif height > 3.0 and height <= 4.0:
+            bodyScale = 0.36
+            zzFactor = -0.19
+        else:
+            bodyScale = 0.3
+            zzFactor = -0.16
+        self.toon.setPos(0, 0, height * zzFactor)
+        self.toon.setScale(bodyScale)
         self.toon.getGeomNode().setDepthWrite(1)
         self.toon.getGeomNode().setDepthTest(1)
         self.toon.loop('neutral')
@@ -100,7 +110,7 @@ class ToonPage(ShtikerPage.ShtikerPage):
     def exit(self):
         ShtikerPage.ShtikerPage.exit(self)
         self.cleanupToonStats()
-    
+
     def updateToonStats(self):
         for x in self.gagIcons:
             DirectLabel(parent=self.damageIcons.find('**/%s' % x.getName()), relief=None, 
