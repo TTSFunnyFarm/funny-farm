@@ -11,7 +11,7 @@ from toontown.toonbase import TTLocalizer
 from toontown.toon import Toon
 from toontown.toon.LaffMeter import LaffMeter
 from WalkControls import WalkControls
-from toontown.chat import ChatInput
+from toontown.chat.ChatManager import ChatManager
 from toontown.chat.ChatGlobals import *
 from otp.margins.WhisperPopup import *
 from toontown.book import ShtikerBook
@@ -34,7 +34,7 @@ class LocalToon(Toon.Toon, WalkControls):
     def __init__(self):
         Toon.Toon.__init__(self)
         WalkControls.__init__(self)
-        self.chatMgr = ChatInput.ChatInput()
+        self.chatMgr = ChatManager()
         self.soundWhisper = base.loadSfx('phase_3.5/audio/sfx/GUI_whisper_3.ogg')
         self.soundPhoneRing = base.loadSfx('phase_3.5/audio/sfx/telephone_ring.ogg')
         self.soundSystemMessage = base.loadSfx('phase_3/audio/sfx/clock03.ogg')

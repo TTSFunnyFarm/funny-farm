@@ -378,7 +378,7 @@ class Tutorial(ToonHood.ToonHood):
         self.flippy.clearChat()
         self.toon.startChat()
         self.toon.chatMgr.disableKeyboardShortcuts()
-        self.chat = self.toon.chatMgr.chat_btn
+        self.chat = self.toon.chatMgr.chatButton
         self.chat['command'] = None
         chatSeq = Sequence(
             Func(self.chat.reparentTo, aspect2d),

@@ -9,6 +9,7 @@ from toontown.toon.LocalToon import LocalToon
 from toontown.toontowngui import TTDialog
 from direct.fsm import StateData
 import os
+import re
 
 class NameShop(StateData.StateData):
 
@@ -97,13 +98,12 @@ class NameShop(StateData.StateData):
                 print 'NameShop: Tried to destroy already removed object'
 
     def reviewName(self, name):
-        whitelistFile = 'resources/phase_4/etc/twhitelist.dat'
-        with open(whitelistFile) as whitelist:
-            approvedList = whitelist.read().title().split()
-            import re
+        blacklistFile = 'resources/phase_4/etc/tblacklist.dat'
+        with open(blacklistFile) as blacklist:
+            badWords = blacklist.read().title().split()
             nameWords = re.sub('[^\w]', ' ',  name).split()
             for word in nameWords:
-                if word not in approvedList:
+                if word in badWords:
                     self.rejectName()
                     return
             if len(name) < 3 or len(nameWords) > 4:
