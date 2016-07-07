@@ -24,6 +24,7 @@ from toontown.minigame import CatchGame
 from toontown.minigame import TugOfWarGame
 from toontown.minigame import MazeGame
 from toontown.minigame import DivingGame
+from toontown.minigame import CogThiefGame
 
 class PlayGame(DirectObject):
     notify = directNotify.newCategory('PlayGame')
@@ -33,7 +34,8 @@ class PlayGame(DirectObject):
         CatchGame.CatchGame,
         TugOfWarGame.TugOfWarGame,
         MazeGame.MazeGame,
-        DivingGame.DivingGame
+        DivingGame.DivingGame,
+        CogThiefGame.CogThiefGame
     ]
 
     def __init__(self):
@@ -113,13 +115,11 @@ class PlayGame(DirectObject):
                 self.enterRandomMinigame()
             else:
                 self.minigame = game
-                self.minigame.load()
                 self.minigame.generate()
                 self.minigame.announceGenerate()
                 self.lastGame = self.minigame.getTitle()
         else:
             self.minigame = game
-            self.minigame.load()
             self.minigame.generate()
             self.minigame.announceGenerate()
             self.lastGame = self.minigame.getTitle()
