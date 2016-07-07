@@ -9,9 +9,8 @@ from panda3d.core import *
 if __debug__:
     loadPrcFile('config/general.prc')
 
-from direct.showbase import ShowBase
-
-base = ShowBase.ShowBase()
+import ToonBase
+ToonBase.ToonBase()
 
 class game:
     name = 'toontown'
@@ -20,7 +19,7 @@ class game:
 __builtin__.game = game()
 
 from otp.settings.Settings import Settings
-from direct.gui import DirectGuiGlobals as DGG
+from direct.gui import DirectGuiGlobals
 from direct.interval.IntervalGlobal import *
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals
@@ -31,7 +30,6 @@ from toontown.toonbase import ScreenshotManager
 from toontown.login import DataManager
 from toontown.distributed import FFClientRepository
 from toontown.ai import FFAIRepository
-from toontown.login import TitleScreen
 from toontown.misc import Injector
 import os
 
@@ -42,12 +40,12 @@ class FunnyFarmStart:
     def __init__(self):
         self.notify.info('Starting the game.')
 
-        preferencesFilename = Filename(Filename.getUserAppdataDirectory() + '/FunnyFarm/preferences.json')
-        dir = os.path.dirname(preferencesFilename.toOsSpecific())
+        preferencesFilename = ConfigVariableString('preferences-filename', 'preferences.json').getValue()
+        dir = os.path.dirname(os.getcwd() + '/' + preferencesFilename)
         if not os.path.exists(dir):
             os.makedirs(dir)
-        self.notify.info('Reading %s...' % preferencesFilename.getBasename())
-        __builtin__.settings = Settings(preferencesFilename.toOsSpecific())
+        self.notify.info('Reading %s...' % preferencesFilename)
+        __builtin__.settings = Settings(preferencesFilename)
         if 'fullscreen' not in settings:
             settings['fullscreen'] = False
         if 'music' not in settings:
@@ -72,9 +70,6 @@ class FunnyFarmStart:
         loadPrcFileData('Settings: sfxVol', 'audio-master-sfx-volume %s' % settings['sfxVol'])
         loadPrcFileData('Settings: loadDisplay', 'load-display %s' % settings['loadDisplay'])
         loadPrcFileData('Settings: toonChatSounds', 'toon-chat-sounds %s' % settings['toonChatSounds'])
-        base.toonChatSounds = base.config.GetBool('toon-chat-sounds', 1)
-        base.drawFps = False
-        base.secretAreaFlag = True
         if settings['fullscreen'] == True:
             properties = WindowProperties()
             properties.setSize(settings['res'][0], settings['res'][1])
@@ -87,7 +82,7 @@ class FunnyFarmStart:
             base.enableSoundEffects(0)
         if settings['drawFps'] == True:
             base.setFrameRateMeter(True)
-            base.drawFps = True
+            base.drawFps = 1
 
         __builtin__.loader = FunnyFarmLoader.FunnyFarmLoader(base)
         __builtin__.musicMgr = MusicManager.MusicManager()
@@ -95,18 +90,12 @@ class FunnyFarmStart:
         __builtin__.dataMgr = DataManager.DataManager()
 
         self.notify.info('Setting default GUI sounds')
-        click = loader.loadSfx('phase_3/audio/sfx/GUI_create_toon_fwd.ogg')
-        rollover = loader.loadSfx('phase_3/audio/sfx/GUI_rollover.ogg')
-        DGG.setDefaultClickSound(click)
-        DGG.setDefaultRolloverSound(rollover)
+        DirectGuiGlobals.setDefaultRolloverSound(base.loadSfx('phase_3/audio/sfx/GUI_rollover.ogg'))
+        DirectGuiGlobals.setDefaultClickSound(base.loadSfx('phase_3/audio/sfx/GUI_create_toon_fwd.ogg'))
+        DirectGuiGlobals.setDefaultDialogGeom(loader.loadModel('phase_3/models/gui/dialog_box_gui'))
 
         self.notify.info('Setting default font')
-        DGG.setDefaultFont(ToontownGlobals.getInterfaceFont())
-        DGG.setDefaultDialogGeom(loader.loadModel('phase_3/models/gui/dialog_box_gui'))
-
-        FunnyFarmGlobals.addCullBins()
-        FunnyFarmGlobals.setNametagGlobals()
-        base.enableParticles()
+        DirectGuiGlobals.setDefaultFont(ToontownGlobals.getInterfaceFont())
 
         self.notify.info('Initializing AI Repository...')
         base.air = FFAIRepository.FFAIRepository()
@@ -116,11 +105,9 @@ class FunnyFarmStart:
         loader.loadingScreen.load()
 
         self.notify.info('Initializing Client Repository...')
-        base.cr = FFClientRepository.FFClientRepository()
-
-        musicMgr.playPickAToon()
-        titleScreen = TitleScreen.TitleScreen()
-        titleScreen.startShow()
+        cr = FFClientRepository.FFClientRepository()
+        base.initNametagGlobals()
+        base.startShow(cr)
 
 __builtin__.start = FunnyFarmStart()
 

@@ -28,3 +28,6 @@ lock-to-one-core #f
 # Holidays
 want-halloween #f
 want-winter #f
+
+# Misc.
+want-pets #f

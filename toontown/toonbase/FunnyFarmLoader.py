@@ -15,8 +15,6 @@ class FunnyFarmLoader(Loader.Loader):
         return
 
     def destroy(self):
-        self.loadingScreen.destroy()
-        del self.loadingScreen
         Loader.Loader.destroy(self)
 
     def beginBulkLoad(self, name, label, range, tipCategory):

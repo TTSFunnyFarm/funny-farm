@@ -20,6 +20,7 @@ class FFClientRepository(DirectObject):
         self.avChoice = None
         self.avCreate = None
         self.playGame = PlayGame.PlayGame()
+        self.playingGame = 0
 
     def enterChooseAvatar(self):
         base.transitions.noTransitions()
@@ -66,7 +67,7 @@ class FFClientRepository(DirectObject):
             secretAreaFlag = random.randint(0, 9)
             if not secretAreaFlag:
                 zoneId = FunnyFarmGlobals.SecretArea
-                base.secretAreaFlag = False
+                base.secretAreaFlag = 0
         base.localAvatar.enterTeleportOut(callback=self.__handleTeleport, extraArgs=[zoneId])
 
     def __handleTeleport(self, zoneId):
@@ -83,20 +84,13 @@ class FFClientRepository(DirectObject):
         base.transitions.noTransitions()
         self.enterHood(zoneId, init=1)
         self.setupLocalAvatar()
+        self.playingGame = 1
 
     def exitTheTooniverse(self):
         base.localAvatar.enterTeleportOut(callback=self.__handleExit)
 
     def __handleExit(self):
-        if self.playGame.hood:
-            self.playGame.exitHood()
-        elif self.playGame.street:
-            self.playGame.exitStreet()
-        elif self.playGame.place:
-            self.playGame.exitPlace()
-        camera.reparentTo(render)
-        base.localAvatar.delete()
-        base.localAvatar = None
+        self.cleanupGame()
         musicMgr.playPickAToon()
         self.enterChooseAvatar()
 
@@ -113,6 +107,24 @@ class FFClientRepository(DirectObject):
             base.localAvatar.laffMeter.start()
             base.localAvatar.startChat()
         base.localAvatar.disable()
+
+    def cleanupGame(self):
+        if self.playGame.hood:
+            self.playGame.exitHood()
+        elif self.playGame.street:
+            self.playGame.exitStreet()
+        elif self.playGame.place:
+            self.playGame.exitPlace()
+        camera.reparentTo(render)
+        base.localAvatar.delete()
+        base.localAvatar = None
+        self.playingGame = 0
+
+    def shutdown(self, errorCode = None):
+        if self.playingGame:
+            self.cleanupGame()
+        self.notify.info('Exiting cleanly')
+        base.exitShow(errorCode)
 
     def isPaid(self):
         return True
