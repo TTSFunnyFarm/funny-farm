@@ -172,79 +172,17 @@ PetShopBearSwimPoints = [
     Point3(-5, 30, 3),
     Point3(0, 35, 3)
 ]
-
-def addCullBins():
-    cbm = CullBinManager.getGlobalPtr()
-    cbm.addBin('ground', CullBinManager.BTUnsorted, 18)
-    cbm.addBin('shadow', CullBinManager.BTBackToFront, 19)
-
-def setNametagGlobals():
-    base.mouseWatcherNode.setEnterPattern('mouse-enter-%r')
-    base.mouseWatcherNode.setLeavePattern('mouse-leave-%r')
-    base.mouseWatcherNode.setButtonDownPattern('button-down-%r')
-    base.mouseWatcherNode.setButtonUpPattern('button-up-%r')
-
-    base.wantNametags = True
-    arrow = loader.loadModel('phase_3/models/props/arrow')
-    card = loader.loadModel('phase_3/models/props/panel')
-    speech3d = ChatBalloon(loader.loadModel('phase_3/models/props/chatbox'))
-    thought3d = ChatBalloon(loader.loadModel('phase_3/models/props/chatbox_thought_cutout'))
-    speech2d = ChatBalloon(loader.loadModel('phase_3/models/props/chatbox_noarrow'))
-    chatButtonGui = loader.loadModel('phase_3/models/gui/chat_button_gui')
-    NametagGlobals.setCamera(base.cam)
-    NametagGlobals.setArrowModel(arrow)
-    NametagGlobals.setNametagCard(card, VBase4(-0.5, 0.5, -0.5, 0.5))
-    NametagGlobals.setMouseWatcher(base.mouseWatcherNode)
-    NametagGlobals.setSpeechBalloon3d(speech3d)
-    NametagGlobals.setThoughtBalloon3d(thought3d)
-    NametagGlobals.setSpeechBalloon2d(speech2d)
-    NametagGlobals.setThoughtBalloon2d(thought3d)
-    NametagGlobals.setPageButton(PGButton.SReady, chatButtonGui.find('**/Horiz_Arrow_UP'))
-    NametagGlobals.setPageButton(PGButton.SDepressed, chatButtonGui.find('**/Horiz_Arrow_DN'))
-    NametagGlobals.setPageButton(PGButton.SRollover, chatButtonGui.find('**/Horiz_Arrow_Rllvr'))
-    NametagGlobals.setQuitButton(PGButton.SReady, chatButtonGui.find('**/CloseBtn_UP'))
-    NametagGlobals.setQuitButton(PGButton.SDepressed, chatButtonGui.find('**/CloseBtn_DN'))
-    NametagGlobals.setQuitButton(PGButton.SRollover, chatButtonGui.find('**/CloseBtn_Rllvr'))
-    rolloverSound = DirectGuiGlobals.getDefaultRolloverSound()
-    if rolloverSound:
-        NametagGlobals.setRolloverSound(rolloverSound)
-    clickSound = DirectGuiGlobals.getDefaultClickSound()
-    if clickSound:
-        NametagGlobals.setClickSound(clickSound)
-    NametagGlobals.setToon(base.cam)
-
-    # For whitelist filtering:
-    tpSlant = TextProperties()
-    tpSlant.setSlant(0.3)
-    tpMgr = TextPropertiesManager.getGlobalPtr()
-    tpMgr.setProperties('slant', tpSlant)
-
-    base.marginManager = MarginManager()
-    base.margins = aspect2d.attachNewNode(base.marginManager, DirectGuiGlobals.MIDGROUND_SORT_INDEX + 1)
-    mm = base.marginManager
-
-    # TODO: Dynamicaly add more and reposition cells
-    padding = 0.0225
-
-    # Order: Top to bottom
-    base.leftCells = [
-        mm.addGridCell(0.2 + padding, -0.45, base.a2dTopLeft), # Above boarding groups
-        mm.addGridCell(0.2 + padding, -0.9, base.a2dTopLeft),  # 1
-        mm.addGridCell(0.2 + padding, -1.35, base.a2dTopLeft)  # Below Boarding Groups
-    ]
-
-    # Order: Left to right
-    base.bottomCells = [
-        mm.addGridCell(-0.87, 0.2 + padding, base.a2dBottomCenter), # To the right of the laff meter
-        mm.addGridCell(-0.43, 0.2 + padding, base.a2dBottomCenter), # 1
-        mm.addGridCell(0.01, 0.2 + padding, base.a2dBottomCenter),  # 2
-        mm.addGridCell(0.45, 0.2 + padding, base.a2dBottomCenter),  # 3
-        mm.addGridCell(0.89, 0.2 + padding, base.a2dBottomCenter)   # To the left of the shtiker book
-    ]
-
-    # Order: Bottom to top
-    base.rightCells = [
-        mm.addGridCell(-0.2 - padding, -1.35, base.a2dTopRight), # Above the street map
-        mm.addGridCell(-0.2 - padding, -0.9, base.a2dTopRight),  # Below the friends list
-        mm.addGridCell(-0.2 - padding, -0.45, base.a2dTopRight)  # Behind the friends list
-    ]
+# Maximum experience for each Toon level; we're only defining the first 10
+# because level 10 will be the cap in 1.4.0.
+LevelExperience = [
+    50,
+    100,
+    200,
+    350,
+    500,
+    700,
+    900,
+    1150,
+    1400,
+    1700
+]
