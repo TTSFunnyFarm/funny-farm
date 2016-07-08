@@ -157,7 +157,7 @@ class TugOfWarGame(Minigame):
         self.powerMeter.setPos(0, 0, 0.4)
         self.powerMeter.setPower(8)
         self.powerMeter.setTarget(8)
-        aspect2d.find('**/MinigamePowerMeter*').hide()
+        self.powerMeter.hide()
         self.arrows = [None] * 2
         for x in xrange(len(self.arrows)):
             self.arrows[x] = loader.loadModel('phase_3/models/props/arrow')
@@ -207,7 +207,7 @@ class TugOfWarGame(Minigame):
         self.roundText.destroy()
         del self.roundText
         self.powerMeter.cleanup()
-        aspect2d.find('**/MinigamePowerMeter*').removeNode() # Since the power meter doesn't want to fucking cooperate
+        self.powerMeter.removeNode()
         del self.powerMeter
         for x in self.arrows:
             if x:
