@@ -794,6 +794,7 @@ class LocalToon(Toon.Toon, WalkControls):
         hpr = self.getHpr()
         timestamp32 = globalClockDelta.getFrameNetworkTime(bits=32)
         Emote.globalEmote.disableBody(self)
+        taskMgr.remove('AnimationHandler')
         messenger.send('begin-pie')
         ival = self.getPresentPieInterval(pos[0], pos[1], pos[2], hpr[0])
         ival = Sequence(ival, name=self.uniqueName('localPresentPie'))
@@ -894,6 +895,7 @@ class LocalToon(Toon.Toon, WalkControls):
             del self.pieTracks[sequence]
         if self.__piePowerMeterSequence == sequence:
             self.__piePowerMeter.hide()
+        taskMgr.add(self.handleAnimation, 'AnimationHandler')
 
     def __finishPieTrack(self, sequence):
         if sequence in self.pieTracks:
