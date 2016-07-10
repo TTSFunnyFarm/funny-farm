@@ -8,7 +8,6 @@ class FunnyFarmLoader(Loader.Loader):
 
     def __init__(self, base):
         Loader.Loader.__init__(self, base)
-        Loader.Loader.notify.setInfo(True)
         self.inBulkBlock = None
         self.blockName = None
         self.loadingScreen = ToontownLoadingScreen.ToontownLoadingScreen()
@@ -54,11 +53,8 @@ class FunnyFarmLoader(Loader.Loader):
 
     def tick(self):
         if self.inBulkBlock:
-            now = globalClock.getRealTime()
-            if now - self._lastTickT > self.TickPeriod:
-                self._lastTickT += self.TickPeriod
-                for x in xrange(0, 10):
-                    self.loadingScreen.tick()
+            for i in xrange(10):
+                self.loadingScreen.tick()
 
     def loadModel(self, *args, **kw):
         ret = Loader.Loader.loadModel(self, *args, **kw)

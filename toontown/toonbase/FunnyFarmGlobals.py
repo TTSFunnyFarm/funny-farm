@@ -21,42 +21,62 @@ SecretArea = 2100
 UnknownStreet = 3100
 WintryWay = 4100
 BreezyBend = 5100
-FFHoodText = 'Funny Farm\nPlayground'
-RRStreetText = 'Funny Farm\nRickety Road'
-FCHoodText = 'Funny Farm Central'
-SSHoodText = 'Silly Springs\nPlayground'
-CVHoodText = 'Chilly Village\nPlayground'
-WWStreetText = 'Chilly Village\nWintry Way'
-MMHoodText = 'Moonlit Meadow\nPlayground'
-BBStreetText = 'Moonlit Meadow\nBreezy Bend'
-SecretAreaText = '???'
+lTutorial = 'The Toon-torial'
+lFunnyFarm = 'Funny Farm'
+lFunnyFarmCentral = 'Funny Farm Central'
+lSillySprings = 'Silly Springs'
+lChillyVillage = 'Chilly Village'
+lMoonlitMeadow = 'Moonlit Meadow'
+lRicketyRoad = 'Rickety Road'
+lSecretArea = '???'
+lWintryWay = 'Wintry Way'
+lBreezyBend = 'Breezy Bend'
+lPlayground = 'Playground'
+FFHoodText = lFunnyFarm + '\n' + lPlayground
+FCHoodText = lFunnyFarmCentral
+SSHoodText = lSillySprings + '\n' + lPlayground
+CVHoodText = lChillyVillage + '\n' + lPlayground
+MMHoodText = lMoonlitMeadow + '\n' + lPlayground
+RRStreetText = lFunnyFarm + '\n' + lRicketyRoad
+SecretAreaText = lSecretArea
+WWStreetText = lChillyVillage + '\n' + lWintryWay
+BBStreetText = lMoonlitMeadow + '\n' + lBreezyBend
 HoodHierarchy = {
-    FunnyFarm: (RicketyRoad),
-    FunnyFarmCentral: (SecretArea),
-    SillySprings: (UnknownStreet),
-    ChillyVillage: (WintryWay),
-    MoonlitMeadow: (BreezyBend)
+    FunnyFarm: [RicketyRoad],
+    FunnyFarmCentral: [SecretArea],
+    SillySprings: [UnknownStreet],
+    ChillyVillage: [WintryWay],
+    MoonlitMeadow: [BreezyBend]
+}
+HoodNameDict = {
+    Tutorial: lTutorial,
+    FunnyFarm: lFunnyFarm,
+    FunnyFarmCentral: lFunnyFarmCentral,
+    SillySprings: lSillySprings,
+    ChillyVillage: lChillyVillage,
+    MoonlitMeadow: lMoonlitMeadow,
+    RicketyRoad: lRicketyRoad,
+    SecretArea: lSecretArea,
+    WintryWay: lWintryWay,
+    BreezyBend: lBreezyBend
+}
+HoodTextDict = {
+    FunnyFarm: FFHoodText,
+    FunnyFarmCentral: FCHoodText,
+    SillySprings: SSHoodText,
+    ChillyVillage: CVHoodText,
+    MoonlitMeadow: MMHoodText,
+    RicketyRoad: RRStreetText,
+    SecretArea: SecretAreaText,
+    WintryWay: WWStreetText,
+    BreezyBend: BBStreetText
 }
 
-def getHoodNameFromId(zoneId):
-    if zoneId == FunnyFarm:
-        return ('Funny Farm', 'Playground')
-    elif zoneId == FunnyFarmCentral:
-        return ('Funny Farm Central', '')
-    elif zoneId == SillySprings:
-        return ('Silly Springs', 'Playground')
-    elif zoneId == ChillyVillage:
-        return ('Chilly Village', 'Playground')
-    elif zoneId == MoonlitMeadow:
-        return ('Moonlit Meadow', 'Playground')
-    elif zoneId == RicketyRoad:
-        return ('Funny Farm', 'Rickety Road')
-    elif zoneId == WintryWay:
-        return ('Chilly Village', 'Wintry Way')
-    elif zoneId == BreezyBend:
-        return ('Moonlit Meadow', 'Breezy Bend')
-    elif zoneId == SecretArea:
-        return ('???', '')
+def getHoodId(zoneId):
+    for zones in HoodHierarchy.values():
+        if zoneId in zones:
+            return HoodHierarchy.keys()[HoodHierarchy.values().index(zones)]
+    return zoneId
 
 phaseMap = {
     FunnyFarm: 'phase_14/models/neighborhoods/funny_farm',
@@ -65,7 +85,6 @@ phaseMap = {
     RicketyRoad: 'phase_14/models/streets/rickety_road',
     WintryWay: 'phase_14/models/streets/wintry_way'
 }
-
 SpawnPoints = {
     FunnyFarm: [
         (Point3(-70, 0, 0), Vec3(270, 0, 0)),
@@ -92,7 +111,6 @@ SpawnPoints = {
         (Point3(0, -20, 0), Vec3(0, 0, 0))
     ]
 }
-
 nametagFonts = []
 for font in TTLocalizer.NametagFonts:
     nametagFonts.append(loader.loadFont(font))

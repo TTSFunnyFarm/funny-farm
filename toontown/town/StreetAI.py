@@ -6,10 +6,6 @@ class StreetAI(HoodAI):
     def __init__(self, air, zoneId):
         HoodAI.__init__(self, air, zoneId)
 
-    def createZone(self):
-        self.notify.info('Creating objects... %s, %s' % (FunnyFarmGlobals.getHoodNameFromId(self.zoneId)[0], FunnyFarmGlobals.getHoodNameFromId(self.zoneId)[1]))
-        self.createObjects()
-
     def createJellybeanPlanner(self):
         pass
 

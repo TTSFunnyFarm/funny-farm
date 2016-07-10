@@ -8,8 +8,18 @@ class HoodAI:
         self.air = air
         self.zoneId = zoneId
 
+    def getLocationName(self, zoneId):
+        lookupTable = FunnyFarmGlobals.HoodNameDict
+        isStreet = (self.zoneId % 1000) != 0
+        name = lookupTable.get(self.zoneId, '')
+        if isStreet:
+            hoodId = FunnyFarmGlobals.getHoodId(self.zoneId)
+            hoodName = lookupTable.get(hoodId, '')
+            return '%s, %s' % (hoodName, name)
+        return name
+
     def createZone(self):
-        self.notify.info('Creating objects... %s' % FunnyFarmGlobals.getHoodNameFromId(self.zoneId)[0])
+        self.notify.info('Creating objects... %s' % self.getLocationName(self.zoneId))
         self.createObjects()
 
     def createTreasurePlanner(self):

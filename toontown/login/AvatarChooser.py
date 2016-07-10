@@ -210,8 +210,8 @@ class AvatarChooser:
             self.enter()
 
     def __handleDone(self, data):
-        loader.beginBulkLoad('main', 'Entering. . .', 1000, TTLocalizer.TIP_GENERAL)
-        base.cr.exitChooseAvatar()
+        loader.beginBulkLoad('main', TTLocalizer.EnteringLabel, 1000, TTLocalizer.TIP_GENERAL)
         dataMgr.createLocalAvatar(data)
+        base.cr.exitChooseAvatar()
         loader.endBulkLoad('main')
         base.cr.enterTheTooniverse(data.setLastHood)
