@@ -84,8 +84,7 @@ WhisperToFormatName = 'To %s'
 WhisperFromFormatName = '%s whispers'
 ThoughtOtherFormatName = '%s thinks'
 ThoughtSelfFormatName = 'You think'
-from pandac.PandaModules import TextProperties
-from pandac.PandaModules import TextPropertiesManager
+from panda3d.core import TextProperties, TextPropertiesManager
 shadow = TextProperties()
 shadow.setShadow(-0.025, -0.025)
 shadow.setShadowColor(0, 0, 0, 1)

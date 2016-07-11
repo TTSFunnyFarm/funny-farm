@@ -1,4 +1,4 @@
-from pandac.PandaModules import *
+from panda3d.core import *
 from otp.nametag.NametagFloat3d import NametagFloat3d
 from otp.nametag.Nametag import Nametag
 from Minigame import *
@@ -15,7 +15,7 @@ from toontown.effects import Splash
 from toontown.effects import DustCloud
 import CannonGameGlobals
 from direct.gui.DirectGui import *
-from pandac.PandaModules import *
+from panda3d.core import *
 from toontown.toonbase import TTLocalizer
 LAND_TIME = 2
 WORLD_SCALE = 2.0

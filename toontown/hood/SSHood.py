@@ -1,4 +1,4 @@
-from pandac.PandaModules import *
+from panda3d.core import *
 from direct.actor.Actor import Actor
 from ToonHood import ToonHood
 from toontown.toonbase import ToontownGlobals

@@ -2,8 +2,8 @@ import SuitDNA
 import SuitTimings
 from direct.directnotify import DirectNotifyGlobal
 from direct.distributed.ClockDelta import *
-from pandac.PandaModules import *
-from pandac.PandaModules import Point3
+from panda3d.core import *
+from panda3d.core import Point3
 from toontown.battle import SuitBattleGlobals
 from toontown.toonbase import TTLocalizer
 

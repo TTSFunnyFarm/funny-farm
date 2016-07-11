@@ -1,5 +1,5 @@
 from direct.particles import Particles, ForceGroup
-from pandac.PandaModules import *
+from panda3d.core import *
 
 ParticleTable = {}
 

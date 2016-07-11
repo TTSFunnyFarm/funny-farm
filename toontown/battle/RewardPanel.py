@@ -3,7 +3,7 @@ from direct.directnotify import DirectNotifyGlobal
 from direct.gui.DirectGui import *
 from direct.interval.IntervalGlobal import *
 import math
-from pandac.PandaModules import *
+from panda3d.core import *
 import random
 
 import Fanfare

@@ -1,4 +1,4 @@
-from pandac.PandaModules import *
+from panda3d.core import *
 from direct.showbase import PythonUtil
 from direct.showbase.PythonUtil import *
 from direct.distributed.ClockDelta import *

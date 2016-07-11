@@ -1,4 +1,4 @@
-from pandac.PandaModules import *
+from panda3d.core import *
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.suit import SuitDNA
 from toontown.suit.BattleSuit import BattleSuit

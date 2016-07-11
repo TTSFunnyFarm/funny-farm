@@ -1,5 +1,5 @@
 # Embedded file name: toontown.town.TownBattleCogPanel
-from pandac.PandaModules import *
+from panda3d.core import *
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase.ToontownBattleGlobals import *
 from direct.directnotify import DirectNotifyGlobal
@@ -9,7 +9,7 @@ from toontown.battle import BattleBase
 from toontown.battle import BattleProps
 from direct.task.Task import Task
 from direct.gui.DirectGui import *
-from pandac.PandaModules import *
+from panda3d.core import *
 from toontown.toonbase import TTLocalizer
 
 class TownBattleCogPanel(DirectFrame):
