@@ -8,7 +8,7 @@ class CogPinata(Actor):
 
     def __init__(self, parent, id):
         Actor.__init__(self)
-        self.parent = parent
+        self._parent = parent
         self.id = id
         self.active = False
         path = 'phase_13/models/parties/cogPinata_'
@@ -26,7 +26,7 @@ class CogPinata(Actor):
 
     def load(self):
         self.root = NodePath('CogPinata-%d' % self.id)
-        self.root.reparentTo(self.parent)
+        self.root.reparentTo(self._parent)
 
         self.loadModel(self.model)
         self.loadAnims(self.animDict)
@@ -66,7 +66,7 @@ class CogPinata(Actor):
         self.hole.setScale(3)
         self.hole.setBin('ground', 3)
         self.hole.setDepthOffset(1)
-        self.hole.reparentTo(self.parent)
+        self.hole.reparentTo(self._parent)
 
     def unload(self):
         self.cleanup()

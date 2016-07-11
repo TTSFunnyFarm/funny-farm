@@ -31,6 +31,7 @@ from toontown.login import DataManager
 from toontown.distributed import FFClientRepository
 from toontown.ai import FFAIRepository
 from toontown.misc import Injector
+from toontown.misc import PythonUtil
 import os
 
 class FunnyFarmStart:
