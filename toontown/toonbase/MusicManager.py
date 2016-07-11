@@ -6,22 +6,22 @@ class MusicManager:
 
     def __init__(self):
         self.pickAToonMusic = [
-            (base.loadMusic('phase_3/audio/bgm/ff_theme.ogg'), 0.5),
-            (base.loadMusic('phase_3/audio/bgm/ff_theme_winter.ogg'), 1.0),
-            (base.loadMusic('phase_3/audio/bgm/ff_theme_halloween.ogg'), 1.0)
+            (base.loader.loadMusic('phase_3/audio/bgm/ff_theme.ogg'), 0.5),
+            (base.loader.loadMusic('phase_3/audio/bgm/ff_theme_winter.ogg'), 1.0),
+            (base.loader.loadMusic('phase_3/audio/bgm/ff_theme_halloween.ogg'), 1.0)
         ]
         self.safezoneMusic = {
-            FunnyFarmGlobals.Tutorial: (base.loadMusic('phase_6/audio/bgm/OZ_SZ.ogg'), 1.0),
-            FunnyFarmGlobals.FunnyFarm: (base.loadMusic('phase_14/audio/bgm/FF_nbrhood.ogg'), 1.0),
-            FunnyFarmGlobals.RicketyRoad: (base.loadMusic('phase_14/audio/bgm/FF_SZ.ogg'), 1.0),
-            FunnyFarmGlobals.FunnyFarmCentral: (base.loadMusic('phase_14/audio/bgm/FC_SZ.ogg'), 1.0),
-            FunnyFarmGlobals.SillySprings: (base.loadMusic('phase_14/audio/bgm/SS_nbrhood.ogg'), 1.0),
-            FunnyFarmGlobals.WintryWay: (base.loadMusic('phase_14/audio/bgm/CV_SZ.ogg'), 1.0),
-            FunnyFarmGlobals.SecretArea: (base.loadMusic('phase_12/audio/bgm/Bossbot_Entry_v2.ogg'), 1.0)
+            FunnyFarmGlobals.Tutorial: (base.loader.loadMusic('phase_6/audio/bgm/OZ_SZ.ogg'), 1.0),
+            FunnyFarmGlobals.FunnyFarm: (base.loader.loadMusic('phase_14/audio/bgm/FF_nbrhood.ogg'), 1.0),
+            FunnyFarmGlobals.RicketyRoad: (base.loader.loadMusic('phase_14/audio/bgm/FF_SZ.ogg'), 1.0),
+            FunnyFarmGlobals.FunnyFarmCentral: (base.loader.loadMusic('phase_14/audio/bgm/FC_SZ.ogg'), 1.0),
+            FunnyFarmGlobals.SillySprings: (base.loader.loadMusic('phase_14/audio/bgm/SS_nbrhood.ogg'), 1.0),
+            FunnyFarmGlobals.WintryWay: (base.loader.loadMusic('phase_14/audio/bgm/CV_SZ.ogg'), 1.0),
+            FunnyFarmGlobals.SecretArea: (base.loader.loadMusic('phase_12/audio/bgm/Bossbot_Entry_v2.ogg'), 1.0)
         }
         self.shopMusic = {
-            FunnyFarmGlobals.FunnyFarm: (base.loadMusic('phase_14/audio/bgm/FF_SZ_activity.ogg'), 0.5),
-            FunnyFarmGlobals.SillySprings: (base.loadMusic('phase_14/audio/bgm/SS_SZ_activity.ogg'), 1.0)
+            FunnyFarmGlobals.FunnyFarm: (base.loader.loadMusic('phase_14/audio/bgm/FF_SZ_activity.ogg'), 0.5),
+            FunnyFarmGlobals.SillySprings: (base.loader.loadMusic('phase_14/audio/bgm/SS_SZ_activity.ogg'), 1.0)
         }
 
     def playMusic(self, music, looping=0, volume=1.0):

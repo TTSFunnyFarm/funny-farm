@@ -14,9 +14,9 @@ class Trolley(DirectObject):
 
     def __init__(self):
         self.trolleyCountdownTime = TROLLEY_COUNTDOWN_TIME
-        self.trolleyAwaySfx = base.loadSfx('phase_4/audio/sfx/SZ_trolley_away.ogg')
-        self.trolleyBellSfx = base.loadSfx('phase_4/audio/sfx/SZ_trolley_bell.ogg')
-        self.trolleySong = base.loadMusic('phase_4/audio/bgm/trolley_song.ogg')
+        self.trolleyAwaySfx = base.loader.loadSfx('phase_4/audio/sfx/SZ_trolley_away.ogg')
+        self.trolleyBellSfx = base.loader.loadSfx('phase_4/audio/sfx/SZ_trolley_bell.ogg')
+        self.trolleySong = base.loader.loadMusic('phase_4/audio/bgm/trolley_song.ogg')
 
     def setup(self):
         self.trolleyStation = base.cr.playGame.hood.geom.find('**/*trolley_station*')
@@ -45,7 +45,7 @@ class Trolley(DirectObject):
             key = self.keys[i]
             key.setTwoSided(1)
             ref = self.trolleyCar.attachNewNode('key' + `i` + 'ref')
-            ref.iPosHpr(key)
+            ref.setPosHpr(key, 0, 0, 0, 0, 0, 0)
             self.keyRef.append(ref)
             self.keyInit.append(key.getTransform())
 
@@ -56,7 +56,7 @@ class Trolley(DirectObject):
         for i in xrange(self.numFrontWheels):
             wheel = self.frontWheels[i]
             ref = self.trolleyCar.attachNewNode('frontWheel' + `i` + 'ref')
-            ref.iPosHpr(wheel)
+            ref.setPosHpr(wheel, 0, 0, 0, 0, 0, 0)
             self.frontWheelRef.append(ref)
             self.frontWheelInit.append(wheel.getTransform())
 
@@ -67,7 +67,7 @@ class Trolley(DirectObject):
         for i in xrange(self.numBackWheels):
             wheel = self.backWheels[i]
             ref = self.trolleyCar.attachNewNode('backWheel' + `i` + 'ref')
-            ref.iPosHpr(wheel)
+            ref.setPosHpr(wheel, 0, 0, 0, 0, 0, 0)
             self.backWheelRef.append(ref)
             self.backWheelInit.append(wheel.getTransform())
 

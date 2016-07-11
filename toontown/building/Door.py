@@ -12,8 +12,8 @@ class Door(DirectObject):
         self.door = door
         self.code = code
         self.zoneId = zoneId
-        self.openSfx = base.loadSfx('phase_3.5/audio/sfx/Door_Open_1.ogg')
-        self.closeSfx = base.loadSfx('phase_3.5/audio/sfx/Door_Close_1.ogg')
+        self.openSfx = base.loader.loadSfx('phase_3.5/audio/sfx/Door_Open_1.ogg')
+        self.closeSfx = base.loader.loadSfx('phase_3.5/audio/sfx/Door_Close_1.ogg')
         self.doorX = 1.5
         self.doorTrack = None
         self.doorExitTrack = None

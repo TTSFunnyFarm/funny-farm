@@ -166,9 +166,9 @@ class BattleSuit(Suit.Suit, SuitBase.SuitBase):
         if self.prop == None:
             self.prop = BattleProps.globalPropPool.getProp('propeller')
         if self.propInSound == None:
-            self.propInSound = base.loadSfx('phase_5/audio/sfx/ENC_propeller_in.ogg')
+            self.propInSound = base.loader.loadSfx('phase_5/audio/sfx/ENC_propeller_in.ogg')
         if self.propOutSound == None:
-            self.propOutSound = base.loadSfx('phase_5/audio/sfx/ENC_propeller_out.ogg')
+            self.propOutSound = base.loader.loadSfx('phase_5/audio/sfx/ENC_propeller_out.ogg')
         if base.config.GetBool('want-new-cogs', 0):
             head = self.find('**/to_head')
             if head.isEmpty():

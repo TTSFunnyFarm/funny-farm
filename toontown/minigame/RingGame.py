@@ -85,9 +85,9 @@ class RingGame(Minigame):
         self.notify.debug('load')
         Minigame.load(self)
         self.defineConstants()
-        self.music = base.loadMusic('phase_4/audio/bgm/MG_toontag.ogg')
-        self.sndAmbience = base.loadSfx('phase_4/audio/sfx/AV_ambient_water.ogg')
-        self.sndPerfect = base.loadSfx('phase_4/audio/sfx/ring_perfect.ogg')
+        self.music = base.loader.loadMusic('phase_4/audio/bgm/MG_toontag.ogg')
+        self.sndAmbience = base.loader.loadSfx('phase_4/audio/sfx/AV_ambient_water.ogg')
+        self.sndPerfect = base.loader.loadSfx('phase_4/audio/sfx/ring_perfect.ogg')
         loadBase = 'phase_4/models/minigames/'
         self.environModel = loader.loadModel(loadBase + 'swimming_game')
         self.environModel.setPos(0, self.ENVIRON_LENGTH / 2.0, self.SEA_FLOOR_Z)
@@ -173,8 +173,8 @@ class RingGame(Minigame):
         self.sndTable = {'gotRing': [None] * self.numPlayers,
          'missedRing': [None] * self.numPlayers}
         for i in xrange(0, self.numPlayers):
-            self.sndTable['gotRing'][i] = base.loadSfx('phase_4/audio/sfx/ring_get.ogg')
-            self.sndTable['missedRing'][i] = base.loadSfx('phase_4/audio/sfx/ring_miss.ogg')
+            self.sndTable['gotRing'][i] = base.loader.loadSfx('phase_4/audio/sfx/ring_get.ogg')
+            self.sndTable['missedRing'][i] = base.loader.loadSfx('phase_4/audio/sfx/ring_miss.ogg')
 
         self.__addToonDropShadow(self.getAvatar())
         self.__spawnUpdateEnvironTask()

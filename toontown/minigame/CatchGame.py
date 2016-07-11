@@ -92,11 +92,11 @@ class CatchGame(Minigame):
                 model.setZ(-self.ObjRadius)
             model.flattenMedium()
 
-        self.music = base.loadMusic('phase_4/audio/bgm/MG_toontag.ogg')
-        self.sndGoodCatch = base.loadSfx('phase_4/audio/sfx/SZ_DD_treasure.ogg')
-        self.sndOof = base.loadSfx('phase_4/audio/sfx/MG_cannon_hit_dirt.ogg')
-        self.sndAnvilLand = base.loadSfx('phase_4/audio/sfx/AA_drop_anvil_miss.ogg')
-        self.sndPerfect = base.loadSfx('phase_4/audio/sfx/ring_perfect.ogg')
+        self.music = base.loader.loadMusic('phase_4/audio/bgm/MG_toontag.ogg')
+        self.sndGoodCatch = base.loader.loadSfx('phase_4/audio/sfx/SZ_DD_treasure.ogg')
+        self.sndOof = base.loader.loadSfx('phase_4/audio/sfx/MG_cannon_hit_dirt.ogg')
+        self.sndAnvilLand = base.loader.loadSfx('phase_4/audio/sfx/AA_drop_anvil_miss.ogg')
+        self.sndPerfect = base.loader.loadSfx('phase_4/audio/sfx/ring_perfect.ogg')
         self.toonSDs = {}
         avId = self.localAvId
         toonSD = CatchGameToonSD.CatchGameToonSD(avId, self)

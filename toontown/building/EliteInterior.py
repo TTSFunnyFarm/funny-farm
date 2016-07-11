@@ -14,7 +14,7 @@ class EliteInterior(SuitInteriorBase.SuitInteriorBase):
         self.entranceElevator = Elevator.Elevator(ELEVATOR_NORMAL)
         self.exitElevator = Elevator.Elevator(ELEVATOR_NORMAL)
         self.numFloors = 7
-        self.intermissionMusic = base.loadMusic('phase_14/audio/bgm/elite_intermission.ogg')
+        self.intermissionMusic = base.loader.loadMusic('phase_14/audio/bgm/elite_intermission.ogg')
 
     def enter(self):
         SuitInteriorBase.SuitInteriorBase.enter(self)

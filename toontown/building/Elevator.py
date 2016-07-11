@@ -17,8 +17,8 @@ class Elevator(DirectObject):
             self.modelPath = 'phase_5/models/cogdominium/tt_m_ara_csa_elevatorB'
         else:
             self.notify.error('Invalid elevator type: ' + self.type)
-        self.openSfx = base.loadSfx('phase_5/audio/sfx/elevator_door_open.ogg')
-        self.closeSfx = base.loadSfx('phase_5/audio/sfx/elevator_door_close.ogg')
+        self.openSfx = base.loader.loadSfx('phase_5/audio/sfx/elevator_door_open.ogg')
+        self.closeSfx = base.loader.loadSfx('phase_5/audio/sfx/elevator_door_close.ogg')
         self.countdownTime = ElevatorData[self.type]['countdown']
         self.exitButton = None
         self.clock = None

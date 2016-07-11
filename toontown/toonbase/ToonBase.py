@@ -26,7 +26,7 @@ import time
 from panda3d.core import TrueClock
 
 class ToonBase(OTPBase.OTPBase):
-    notify = directNotify.newCategory('ToonBase')
+    notify = DirectNotifyGlobal.directNotify.newCategory('ToonBase')
     notify.setInfo(1)
 
     def __init__(self):
@@ -54,7 +54,7 @@ class ToonBase(OTPBase.OTPBase):
         tpm.setProperties('candidate_inactive', candidateInactive)
         self.transitions.IrisModelName = 'phase_3/models/misc/iris'
         self.transitions.FadeModelName = 'phase_3/models/misc/fade'
-        self.snapshotSfx = base.loadSfx('phase_4/audio/sfx/Photo_shutter.ogg')
+        self.snapshotSfx = base.loader.loadSfx('phase_4/audio/sfx/Photo_shutter.ogg')
         self.flashTrack = None
         self.exitFunc = self.userExit
         globalClock.setMaxDt(0.2)

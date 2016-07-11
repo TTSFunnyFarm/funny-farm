@@ -35,9 +35,9 @@ class LocalToon(Toon.Toon, WalkControls):
         Toon.Toon.__init__(self)
         WalkControls.__init__(self)
         self.chatMgr = ChatManager()
-        self.soundWhisper = base.loadSfx('phase_3.5/audio/sfx/GUI_whisper_3.ogg')
-        self.soundPhoneRing = base.loadSfx('phase_3.5/audio/sfx/telephone_ring.ogg')
-        self.soundSystemMessage = base.loadSfx('phase_3/audio/sfx/clock03.ogg')
+        self.soundWhisper = base.loader.loadSfx('phase_3.5/audio/sfx/GUI_whisper_3.ogg')
+        self.soundPhoneRing = base.loader.loadSfx('phase_3.5/audio/sfx/telephone_ring.ogg')
+        self.soundSystemMessage = base.loader.loadSfx('phase_3/audio/sfx/clock03.ogg')
         self.zoneId = None
         self.hasGM = False
         self.accessLevel = 0

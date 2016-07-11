@@ -66,15 +66,15 @@ class OptionsTabPage(DirectFrame):
     ChangeDisplayAPI = base.config.GetBool('change-display-api', 0)
 
     def __init__(self, parent = aspect2d):
-        self.parent = parent
+        self._parent = parent
         self.currentSizeIndex = None
 
-        DirectFrame.__init__(self, parent=self.parent, relief=None, pos=(0.0, 0.0, 0.0), scale=(1.0, 1.0, 1.0))
+        DirectFrame.__init__(self, parent=self._parent, relief=None, pos=(0.0, 0.0, 0.0), scale=(1.0, 1.0, 1.0))
 
         self.load()
 
     def destroy(self):
-        self.parent = None
+        self._parent = None
 
         DirectFrame.destroy(self)
 
