@@ -17,6 +17,8 @@ class SecretArea(ToonHood):
         self.skyFile = 'phase_9/models/cogHQ/cog_sky'
         self.titleText = FunnyFarmGlobals.SecretAreaText
         self.titleColor = (0.5, 0.5, 0.5, 1.0)
+        self.townBattle = None
+        self.battle = None
 
     def enter(self):
         ToonHood.enter(self)
@@ -48,6 +50,8 @@ class SecretArea(ToonHood):
         # Usually the battle doesn't end in time for us to unload (assuming the player dies)
         if self.townBattle:
             self.__battleDone()
+        if self.suit:
+            self.suit.delete()
         del self.suit
         del self.townBattle
         del self.battle
@@ -69,3 +73,4 @@ class SecretArea(ToonHood):
         self.battle.cleanupBattle()
         self.battle.delete()
         self.battle = None
+        self.suit = None

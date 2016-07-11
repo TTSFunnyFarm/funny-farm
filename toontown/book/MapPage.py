@@ -68,7 +68,7 @@ class MapPage(ShtikerPage.ShtikerPage):
         else:
             self.safeZoneButton.show()
         zoneId = base.localAvatar.getZoneId()
-        currZone = FunnyFarmGlobals.getHoodNameFromId(zoneId)
+        currZone = FunnyFarmGlobals.HoodTextDict[zoneId]
         self.hoodLabel.show()
         self.hoodLabel['text'] = TTLocalizer.MapPageYouAreHere % currZone
         self.accept('safeZoneTeleport', self.book.teleportTo)

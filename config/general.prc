@@ -12,6 +12,8 @@ audio-library-name p3fmod_audio
 model-path resources
 model-path resources/phase_3
 default-model-extension .bam
+model-cache-models #f
+model-cache-textures #f
 
 # Textures
 texture-minfilter mipmap

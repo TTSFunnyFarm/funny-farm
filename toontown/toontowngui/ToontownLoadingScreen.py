@@ -59,7 +59,7 @@ class ToontownLoadingScreen:
 
     def end(self):
         base.adjustWindowAspectRatio(base.getAspectRatio())
-        self.waitBar.finish(N=50)
+        self.waitBar.finish(N=globalClock.getAverageFrameRate())
         self.waitBar.reparentTo(self.gui)
         self.title.reparentTo(self.gui)
         self.logo.reparentTo(self.gui)
