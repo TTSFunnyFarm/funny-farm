@@ -5,6 +5,8 @@ from toontown.toon.LocalToon import LocalToon
 from toontown.toon.ToonData import ToonData
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
+from toontown.toonbase import TTLocalizer
+from toontown.toontowngui import TTDialog
 import __builtin__
 import yaml.dist as yaml
 import shutil
@@ -20,6 +22,7 @@ class DataManager:
         self.fileExt = '.yaml'
         self.oldDir = Filename.getUserAppdataDirectory() + '/FunnyFarm/db/'
         self.newDir = Filename.getUserAppdataDirectory() + '/FunnyFarm' + '/database/'
+        self.corrupted = 0
         self.toons = [
             '1000001',
             '1000002',
@@ -51,9 +54,14 @@ class DataManager:
         return False
 
     def createToonData(self, index, dna, name):
-        return ToonData(index, dna, name, 20, 20, 0, 40, 0, 12000, 20, None, None, [0, 0, 0, 0, 1, 1, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000, 1, 0, [0, 0, 0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0, 0])
+        return ToonData(index, dna, name, 20, 20, 0, 40, 0, 12000, 20, None, None, [0, 0, 0, 0, 1, 1, 0], 
+                        [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000, 1, 0, 
+                        [0, 0, 0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [], [], [], [], [], [], 
+                        {}, [], 1, 1000, 0, [], [], 0, [], [])
 
     def saveToonData(self, data):
+        if self.corrupted:
+            return None
         index = data.index
         filename = Filename(self.newDir + self.toons[index - 1] + self.fileExt)
         if not os.path.exists(filename.toOsSpecific()):
@@ -61,15 +69,24 @@ class DataManager:
         with open(filename.toOsSpecific(), 'w') as toonData:
             data.encrypt()
             yaml.dump(data, toonData, default_flow_style=False)
-            data.decrypt()
+            try:
+                data.decrypt()
+            except:
+                self.handleDataError()
         return
 
     def loadToonData(self, index):
+        if self.corrupted:
+            return None
         filename = Filename(self.newDir + self.toons[index - 1] + self.fileExt)
         if os.path.exists(filename.toOsSpecific()):
             with open(filename.toOsSpecific(), 'r') as toonData:
                 data = yaml.load(toonData)
-                data.decrypt()
+                try:
+                    data.decrypt()
+                except:
+                    self.handleDataError()
+                    return None
             return data
         return None
 
@@ -79,6 +96,11 @@ class DataManager:
             os.remove(filename.toOsSpecific())
         else:
             self.notify.warning('Tried to delete nonexistent toon data!')
+
+    def handleDataError(self):
+        self.notify.warning('The database has been corrupted. Notifying user.')
+        base.handleGameError('Your database has been corrupted. Please contact support@toontownsfunnyfarm.com for assistance.')
+        self.corrupted = 1
 
     def createLocalAvatar(self, data):
         self.notify.info('================')

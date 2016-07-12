@@ -369,6 +369,15 @@ class ToonBase(OTPBase.OTPBase):
     def playMusic(self, music, looping = 0, interrupt = 1, volume = None, time = 0.0):
         OTPBase.OTPBase.playMusic(self, music, looping, interrupt, volume, time)
 
+    def handleGameError(self, details):
+        if self.cr.playingGame:
+            self.cr.cleanupGame()
+        self.enableMusic(0)
+        render.hide()
+        aspect2d.hide()
+        self.setBackgroundColor(ToontownGlobals.DefaultBackgroundColor)
+        dialog = TTDialog.TTDialog(parent=aspect2dp, text=TTLocalizer.GameError % details, style=TTDialog.Acknowledge, text_wordwrap=16, command=self.exitShow)
+        dialog.show()
 
     # OS X Specific Actions
     def exitOSX(self):

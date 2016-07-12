@@ -42,12 +42,6 @@ class AvatarChooser:
         self.quitButton.show()
         base.transitions.fadeScreen(1.0)
         base.transitions.fadeIn(1.0)
-        if base.air.holidayMgr.isWinter():
-            base.setBackgroundColor(Vec4(0.682, 0.847, 0.99, 1))
-        elif base.air.holidayMgr.isHalloween():
-            base.setBackgroundColor(Vec4(0.118, 0.118, 0.118, 1))
-        else:
-            base.setBackgroundColor(Vec4(0.145, 0.368, 0.78, 1))
 
     def exit(self):
         if not self.isLoaded:
@@ -62,10 +56,13 @@ class AvatarChooser:
         self.buttons = []
         if base.air.holidayMgr.isWinter():
             gui = loader.loadModel('phase_3/models/gui/tt_m_gui_pat_mainGui_christmas')
+            base.setBackgroundColor(Vec4(0.682, 0.847, 0.99, 1))
         elif base.air.holidayMgr.isHalloween():
             gui = loader.loadModel('phase_3/models/gui/tt_m_gui_pat_mainGui_halloween')
+            base.setBackgroundColor(Vec4(0.118, 0.118, 0.118, 1))
         else:
             gui = loader.loadModel('phase_3/models/gui/tt_m_gui_pat_mainGui')
+            base.setBackgroundColor(Vec4(0.145, 0.368, 0.78, 1))
         gui.flattenMedium()
         bgImage = gui.find('**/tt_t_gui_pat_background')
         btnImages = [
