@@ -241,8 +241,8 @@ class LocalToon(Toon.Toon, WalkControls):
         dataMgr.saveToonData(base.avatarData)
 
     def setToonUpIncrement(self):
-        # At 0 hp, there are roughly 20 toonup intervals in 5 minutes, so if we divide the maxHp by 20 
-        # and round to the nearest integer, we'll get an increment that will restore the player's health 
+        # At 0 hp, there are roughly 20 toonup intervals in 5 minutes, so if we divide the maxHp by 20
+        # and round to the nearest integer, we'll get an increment that will restore the player's health
         # from 0 to max in roughly 5 minutes.
         self.toonUpIncrement = int(round(self.maxHp / 20))
 

@@ -5,8 +5,8 @@ import ast
 class ToonData(yaml.YAMLObject):
     yaml_tag = 'LocalToon'
 
-    def __init__(self, index, dna, name, hp, maxHp, money, maxMoney, bankMoney, maxBankMoney, maxCarry, 
-                inventory, experience, trackAccess, hat, glasses, backpack, shoes, nametagStyle, cheesyEffect, 
+    def __init__(self, index, dna, name, hp, maxHp, money, maxMoney, bankMoney, maxBankMoney, maxCarry,
+                inventory, experience, trackAccess, hat, glasses, backpack, shoes, nametagStyle, cheesyEffect,
                 lastHood, level, levelExp, damage, defense, accuracy):
         self.index = index
         self.setDNA = dna
@@ -91,4 +91,3 @@ class ToonData(yaml.YAMLObject):
         self.setDamage = ast.literal_eval(binascii.unhexlify(self.setDamage))
         self.setDefense = ast.literal_eval(binascii.unhexlify(self.setDefense))
         self.setAccuracy = ast.literal_eval(binascii.unhexlify(self.setAccuracy))
-

@@ -348,7 +348,7 @@ class ToonBase(OTPBase.OTPBase):
             localAvatar
         except:
             pass
-        
+
         messenger.send('clientLogout')
         self.cr.shutdown()
         self.notify.warning('Could not request shutdown; exiting anyway.')
@@ -396,4 +396,3 @@ class ToonBase(OTPBase.OTPBase):
         wp = WindowProperties()
         wp.setMinimized(True)
         base.win.requestProperties(wp)
-

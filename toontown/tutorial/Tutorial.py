@@ -505,7 +505,7 @@ class Tutorial(ToonHood.ToonHood):
         self.stopSuitWalkInterval()
         self.townBattle = TownBattle.TownBattle('townbattle-done')
         self.battle = Battle.Battle(self.townBattle, toons=[self.toon], suits=[self.suit], tutorialFlag=1)
-        # Never parent a battle directly to render, always use a battle cell 
+        # Never parent a battle directly to render, always use a battle cell
         # otherwise __faceOff will fuck you in the ass
         self.battle.reparentTo(self.battleCell)
         self.battle.enter()
