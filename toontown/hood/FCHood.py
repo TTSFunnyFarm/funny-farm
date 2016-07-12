@@ -37,19 +37,13 @@ class FCHood(ToonHood):
 
     def load(self):
         ToonHood.load(self)
-        if base.air.holidayMgr.isWinter():
-            self.snow = BattleParticles.loadParticleFile('snowdisk.ptf')
-            self.snow.setPos(0, 0, 5)
-            self.snowRender = render.attachNewNode('snowRender')
-            self.snowRender.setDepthWrite(0)
-            self.snowRender.setBin('fixed', 1)
 
     def unload(self):
         ToonHood.unload(self)
 
     def startActive(self):
         self.acceptOnce('enterRRTunnel_trigger', self.__handleRRTunnel)
-        self.acceptOnce('enterWWTunnel_trigger', self.__handleWWTunnel)
+        #self.acceptOnce('enterWWTunnel_trigger', self.__handleWWTunnel)
 
     def __handleRRTunnel(self, entry):
         tunnelOrigin = self.geom.find('**/RRTunnel').find('**/tunnel_origin')

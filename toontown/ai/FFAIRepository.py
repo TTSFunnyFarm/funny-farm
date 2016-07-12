@@ -37,6 +37,6 @@ class FFAIRepository(DirectObject):
         self.hoods.append(FFHoodAI.FFHoodAI(self))
         self.hoods.append(RRStreetAI.RRStreetAI(self))
         self.hoods.append(FCHoodAI.FCHoodAI(self))
-        self.hoods.append(SSHoodAI.SSHoodAI(self))
-        self.hoods.append(WWStreetAI.WWStreetAI(self))
+        #self.hoods.append(SSHoodAI.SSHoodAI(self))
+        #self.hoods.append(WWStreetAI.WWStreetAI(self))
         self.notify.info('Done.')
