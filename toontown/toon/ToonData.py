@@ -5,9 +5,11 @@ import ast
 class ToonData(yaml.YAMLObject):
     yaml_tag = 'LocalToon'
 
-    def __init__(self, index, dna, name, hp, maxHp, money, maxMoney, bankMoney, maxBankMoney, maxCarry, 
-                inventory, experience, trackAccess, hat, glasses, backpack, shoes, nametagStyle, cheesyEffect, 
-                lastHood, level, levelExp, damage, defense, accuracy):
+    def __init__(self, index, dna, name, hp, maxHp, money, maxMoney, bankMoney, maxBankMoney, maxCarry,
+                inventory, experience, trackAccess, hat, glasses, backpack, shoes, nametagStyle, cheesyEffect,
+                lastHood, level, levelExp, damage, defense, accuracy, clothesTopsList, clothesBottomsList,
+                hatList, glassesList, backpackList, shoesList, quests, questHistory, questCarryLimit, questingZone,
+                trackProgress, hoodsVisited, teleportAccess, fishingRod, fishCollection, fishTank):
         self.index = index
         self.setDNA = dna
         self.setName = name
@@ -33,6 +35,22 @@ class ToonData(yaml.YAMLObject):
         self.setDamage = damage
         self.setDefense = defense
         self.setAccuracy = accuracy
+        self.setClothesTopsList = clothesTopsList
+        self.setClothesBottomsList = clothesBottomsList
+        self.setHatList = hatList
+        self.setGlassesList = glassesList
+        self.setBackpackList = backpackList
+        self.setShoesList = shoesList
+        self.setQuests = quests
+        self.setQuestHistory = questHistory
+        self.setQuestCarryLimit = questCarryLimit
+        self.setQuestingZone = questingZone
+        self.setTrackProgress = trackProgress
+        self.setHoodsVisited = hoodsVisited
+        self.setTeleportAccess = teleportAccess
+        self.setFishingRod = fishingRod
+        self.setFishCollection = fishCollection
+        self.setFishTank = fishTank
 
     def encrypt(self):
         self.setDNA = binascii.hexlify(str(self.setDNA))
@@ -59,6 +77,22 @@ class ToonData(yaml.YAMLObject):
         self.setDamage = binascii.hexlify(str(self.setDamage))
         self.setDefense = binascii.hexlify(str(self.setDefense))
         self.setAccuracy = binascii.hexlify(str(self.setAccuracy))
+        self.setClothesTopsList = binascii.hexlify(str(self.setClothesTopsList))
+        self.setClothesBottomsList = binascii.hexlify(str(self.setClothesBottomsList))
+        self.setHatList = binascii.hexlify(str(self.setHatList))
+        self.setGlassesList = binascii.hexlify(str(self.setGlassesList))
+        self.setBackpackList = binascii.hexlify(str(self.setBackpackList))
+        self.setShoesList = binascii.hexlify(str(self.setShoesList))
+        self.setQuests = binascii.hexlify(str(self.setQuests))
+        self.setQuestHistory = binascii.hexlify(str(self.setQuestHistory))
+        self.setQuestCarryLimit = bin(self.setQuestCarryLimit)
+        self.setQuestingZone = bin(self.setQuestingZone)
+        self.setTrackProgress = bin(self.setTrackProgress)
+        self.setHoodsVisited = binascii.hexlify(str(self.setHoodsVisited))
+        self.setTeleportAccess = binascii.hexlify(str(self.setTeleportAccess))
+        self.setFishingRod = bin(self.setFishingRod)
+        self.setFishCollection = binascii.hexlify(str(self.setFishCollection))
+        self.setFishTank = binascii.hexlify(str(self.setFishTank))
 
     def decrypt(self):
         self.setDNA = ast.literal_eval(binascii.unhexlify(self.setDNA))
@@ -91,4 +125,19 @@ class ToonData(yaml.YAMLObject):
         self.setDamage = ast.literal_eval(binascii.unhexlify(self.setDamage))
         self.setDefense = ast.literal_eval(binascii.unhexlify(self.setDefense))
         self.setAccuracy = ast.literal_eval(binascii.unhexlify(self.setAccuracy))
-
+        self.setClothesTopsList = ast.literal_eval(binascii.unhexlify(self.setClothesTopsList))
+        self.setClothesBottomsList = ast.literal_eval(binascii.unhexlify(self.setClothesBottomsList))
+        self.setHatList = ast.literal_eval(binascii.unhexlify(self.setHatList))
+        self.setGlassesList = ast.literal_eval(binascii.unhexlify(self.setGlassesList))
+        self.setBackpackList = ast.literal_eval(binascii.unhexlify(self.setBackpackList))
+        self.setShoesList = ast.literal_eval(binascii.unhexlify(self.setShoesList))
+        self.setQuests = ast.literal_eval(binascii.unhexlify(self.setQuests))
+        self.setQuestHistory = ast.literal_eval(binascii.unhexlify(self.setQuestHistory))
+        self.setQuestCarryLimit = int(self.setQuestCarryLimit, 0)
+        self.setQuestingZone = int(self.setQuestingZone, 0)
+        self.setTrackProgress = int(self.setTrackProgress, 0)
+        self.setHoodsVisited = ast.literal_eval(binascii.unhexlify(self.setHoodsVisited))
+        self.setTeleportAccess = ast.literal_eval(binascii.unhexlify(self.setTeleportAccess))
+        self.setFishingRod = int(self.setFishingRod, 0)
+        self.setFishCollection = ast.literal_eval(binascii.unhexlify(self.setFishCollection))
+        self.setFishTank = ast.literal_eval(binascii.unhexlify(self.setFishTank))

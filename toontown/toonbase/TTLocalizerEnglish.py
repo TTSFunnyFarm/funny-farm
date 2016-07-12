@@ -9822,3 +9822,4 @@ InteractivePropTrackBonusTerms = {0: 'Super Toon-Up!',
  5: 'Super Squirt!',
  6: ''}
 PlayingCardUnknown = 'Card Name is unknown'
+GameError = 'It looks like the game has encountered an issue.\n\nDetails:\n%s'
