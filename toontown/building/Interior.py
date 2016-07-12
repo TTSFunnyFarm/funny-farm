@@ -10,6 +10,9 @@ class Interior(DirectObject):
     def load(self):
         self.interior = loader.loadModel(self.interiorFile)
         self.interior.reparentTo(render)
+        gsg = base.win.getGsg()
+        if gsg:
+            self.interior.prepareScene(gsg)
         musicMgr.playCurrentZoneMusic()
 
     def unload(self):

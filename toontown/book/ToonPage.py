@@ -96,9 +96,11 @@ class ToonPage(ShtikerPage.ShtikerPage):
         self.toon.startBlink()
         self.toon.hprInterval(10, (360, 0, 0)).loop()
 
-        self.level = DirectLabel(parent=self, relief=None, text=(TTLocalizer.ToonPageLevel % base.localAvatar.getLevel()), 
+        self.level = DirectLabel(parent=self, relief=None, text=TTLocalizer.ToonPageLevel % base.localAvatar.getLevel(), 
          pos=(-0.45, 0, -0.25), scale=0.08)
         # TODO: add exp wait bar
+        self.levelExp = DirectLabel(parent=self, relief=None, text=TTLocalizer.ToonPageExperience % (base.localAvatar.getLevelExp(), 
+         base.localAvatar.getMaxLevelExp()), pos=(-0.45, 0, -0.35), scale=0.06)
 
     def unload(self):
         ShtikerPage.ShtikerPage.unload(self)

@@ -64,9 +64,12 @@ class ToonHood(DirectObject):
             self.sky.setScale(1.0)
             self.sky.setFogOff()
             self.startSky()
+        self.sky.flattenMedium()
         self.geom.reparentTo(render)
         self.geom.flattenMedium()
-        self.sky.flattenMedium()
+        gsg = base.win.getGsg()
+        if gsg:
+            self.geom.prepareScene(gsg)
 
     def unload(self):
         self.stopSky()

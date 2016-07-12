@@ -891,7 +891,7 @@ class InventoryNew(InventoryBase.InventoryBase, DirectFrame):
         self.deleteExitButton.hide()
         if self.bldg == 1:
             self.runButton.hide()
-            self.sosButton.show()
+            self.sosButton.hide()
             self.passButton.show()
         elif self.tutorialFlag == 1:
             self.runButton.hide()
@@ -900,7 +900,7 @@ class InventoryNew(InventoryBase.InventoryBase, DirectFrame):
             self.fireButton.hide()
         else:
             self.runButton.show()
-            self.sosButton.show()
+            self.sosButton.hide()
             self.passButton.show()
             self.fireButton.show()
             if localAvatar.getPinkSlips() > 0:
