@@ -1,9 +1,11 @@
 from panda3d.core import *
 
-loadPrcFileData('', 'window-title Toontown\'s Funny Farm')
-loadPrcFileData('', 'win-size 600 375')
-loadPrcFileData('', 'win-fixed-size 1')
-loadPrcFileData('', 'icon-filename resources/phase_3/etc/funnyfarm.ico')
+loadPrcFileData('launcher config', '''
+window-title Toontown\'s Funny Farm
+win-size 600 375
+win-fixed-size 1
+icon-filename resources/phase_3/etc/funnyfarm.ico
+''')
 
 from direct.showbase.ShowBase import ShowBase
 
