@@ -398,15 +398,24 @@ class LocalToon(Toon.Toon, WalkControls):
             self.inventory.updateGUI()
         self.experience.saveExp()
 
-    def setLevel(self, level, levelExp):
+    def setLevel(self, level):
         self.level = level
-        self.levelExp = levelExp
         base.avatarData.setLevel = self.level
-        base.avatarData.setLevelExp = self.levelExp
         dataMgr.saveToonData(base.avatarData)
 
     def getLevel(self):
         return self.level
+
+    def setLevelExp(self, levelExp):
+        self.levelExp = levelExp
+        base.avatarData.setLevelExp = self.levelExp
+        dataMgr.saveToonData(base.avatarData)
+
+    def getLevelExp(self):
+        return self.levelExp
+
+    def getMaxLevelExp(self):
+        return FunnyFarmGlobals.LevelExperience[self.level - 1]
 
     def setDamage(self, damageArray):
         self.damage = damageArray

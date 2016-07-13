@@ -53,8 +53,11 @@ class FunnyFarmLoader(Loader.Loader):
 
     def tick(self):
         if self.inBulkBlock:
-            for i in xrange(10):
-                self.loadingScreen.tick()
+            now = globalClock.getRealTime()
+            if now - self._lastTickT > self.TickPeriod:
+                self._lastTickT += self.TickPeriod
+                for i in xrange(10):
+                    self.loadingScreen.tick()
 
     def loadModel(self, *args, **kw):
         ret = Loader.Loader.loadModel(self, *args, **kw)
