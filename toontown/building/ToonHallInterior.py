@@ -174,7 +174,7 @@ class ToonHallInterior(Interior):
         self.phase5Sfx.setLoop(True)
         self.arrowSfx = self.audio3d.loadSfx('phase_4/audio/sfx/tt_s_prp_sillyMeterArrow.ogg')
         self.arrowSfx.setLoop(False)
-        self.audio3d.setDropOffFactor(0.1)
+        self.audio3d.setDropOffFactor(0.05)
         self.accept('SillyMeterPhase', self.selectPhase)
         self.accept('SillyMeterIsRunning', self.sillyMeterIsRunning)
         self.selectPhase(3)
