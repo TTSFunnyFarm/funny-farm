@@ -5,6 +5,9 @@ win-size 800 600
 cursor-filename phase_3/etc/toonmono.cur
 icon-filename phase_3/etc/funnyfarm.ico
 
+# Audio
+audio-library-name p3openal_audio
+
 # Models
 model-path resources
 model-path resources/phase_3
