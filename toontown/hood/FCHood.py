@@ -26,14 +26,10 @@ class FCHood(ToonHood):
             elif tunnel == 'ww':
                 tunnelOrigin = self.geom.find('**/WWTunnel').find('**/tunnel_origin')
             base.localAvatar.tunnelIn(tunnelOrigin)
-        if base.air.holidayMgr.isWinter():
-            self.snow.start(camera, self.snowRender)
         self.startActive()
 
     def exit(self):
         ToonHood.exit(self)
-        if base.air.holidayMgr.isWinter():
-            self.snow.cleanup()
 
     def load(self):
         ToonHood.load(self)

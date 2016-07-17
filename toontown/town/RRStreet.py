@@ -48,8 +48,7 @@ class RRStreet(ToonStreet):
         self.audio3d = Audio3DManager.Audio3DManager(base.sfxManagerList[0], camera)
         self.trainSfx = self.audio3d.loadSfx('phase_14/audio/sfx/train_loop.ogg')
         self.trainSfx.setLoop(True)
-        self.trainSfx.setVolume(5)
-        self.audio3d.setDropOffFactor(0.05)
+        self.audio3d.setDropOffFactor(0.04)
 
     def unload(self):
         ToonStreet.unload(self)
