@@ -28,6 +28,8 @@ class SecretArea(ToonHood):
 
     def exit(self):
         ToonHood.exit(self)
+        if self.suit:
+            self.suit.disableBattleDetect()
 
     def load(self):
         ToonHood.load(self)
@@ -58,6 +60,7 @@ class SecretArea(ToonHood):
 
     def enterBattle(self, collEvent):
         base.localAvatar.disable()
+        self.suit.disableBattleDetect()
         self.townBattle = TownBattle('townbattle-done')
         self.battle = Battle(self.townBattle, toons=[base.localAvatar], suits=[self.suit], secretArea=1)
         self.battle.reparentTo(self.battleCell)
