@@ -5732,7 +5732,7 @@ TutorialIntro = [
     'Welcome to Funny Farm.',
     'Many many years ago, Toontown was invaded by evil business robots called Cogs.',
     'The Cogs despise all silliness, and they can\'t take a joke!',
-    'For 10 long years the toons fought Cogs with silly jokes and gags...',
+    'For 10 long years the Toons fought Cogs with silly jokes and gags...',
     '...until one day, they became too strong for us.',
     'We left Toontown and came to Funny Farm, a faraway land that we abandoned long ago.',
     'But I\'ll tell you more on that later. Let\'s get you some gags.'
