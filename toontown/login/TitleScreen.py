@@ -32,6 +32,9 @@ class TitleScreen(DirectObject):
         self.logo.hide()
         self.titleText = DirectLabel(parent=aspect2d, relief=None, pos=(0, 0, -0.5), text='Click to begin!', text_scale=0.1, text_fg=(1, 1, 1, 1), text_align=TextNode.ACenter, text_font=FunnyFarmGlobals.getMinnieFont(), text_shadow=(0, 0, 0, 1))
         self.titleText.hide()
+        gameVersion = config.GetString('game-version', 'no_version_set')
+        self.versionText = DirectLabel(parent=base.a2dBottomLeft, relief=None, pos=(0.033, 0, 0.025), text=gameVersion, text_scale=0.06, text_fg=Vec4(1, 1, 1, 1), text_align=TextNode.ALeft, text_font=FunnyFarmGlobals.getMinnieFont(), text_shadow=(0, 0, 0, 1))
+        self.versionText.hide()
         self.ground = loader.loadModel('phase_4/models/minigames/toon_cannon_gameground')
         self.ground.reparentTo(render)
         self.ground.setScale(1.1)
@@ -48,11 +51,13 @@ class TitleScreen(DirectObject):
         taskMgr.remove('showTimeout')
         self.logo.removeNode()
         self.titleText.destroy()
+        self.versionText.destroy()
         self.ground.removeNode()
         self.sky.removeNode()
         self.fireworkShow.disable()
         del self.logo
         del self.titleText
+        del self.versionText
         del self.ground
         del self.sky
         del self.fireworkShow
@@ -62,6 +67,8 @@ class TitleScreen(DirectObject):
         self.track.append(camera.posHprInterval(6.0, pos=(0, -350, 55), hpr=(0, 12, 0), blendType='easeInOut'))
         self.track.append(Func(self.logo.show))
         self.track.append(self.logo.colorScaleInterval(2.0, colorScale=(1, 1, 1, 1), startColorScale=(1, 1, 1, 0)))
+        self.track.append(Func(self.versionText.show))
+        self.track.append(self.versionText.colorScaleInterval(1.0, colorScale=(1, 1, 1, 1), startColorScale=(1, 1, 1, 0)))
         self.track.append(Func(self.titleText.show))
         self.track.append(self.titleText.colorScaleInterval(1.0, colorScale=(1, 1, 1, 1), startColorScale=(1, 1, 1, 0)))
         self.titleSeq = Sequence(self.titleText.colorScaleInterval(1.0, (1, 1, 1, 0.2)), self.titleText.colorScaleInterval(1.0, (1, 1, 1, 1)))
