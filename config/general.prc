@@ -33,3 +33,4 @@ want-winter #f
 
 # Misc.
 want-pets #f
+game-version ff-dev
