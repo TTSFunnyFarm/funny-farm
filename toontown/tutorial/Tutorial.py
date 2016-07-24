@@ -44,7 +44,7 @@ class Tutorial(ToonHood.ToonHood):
         self.toon.book.showButton()
         self.book['command'] = self.toon.book.open
         self.chat['command'] = self.toon.chatMgr.openChatInput
-        self.chat['extraArgs'] = [None]
+        self.chat['extraArgs'] = ['']
         self.toon.chatMgr.enableKeyboardShortcuts()
 
     def __handleEntered(self):
@@ -137,7 +137,7 @@ class Tutorial(ToonHood.ToonHood):
         self.toon.lookAt(self.flippy)
         self.toon.setY(self.flippy, 7.5)
         camera.setPosHpr(-2, 7, 3.3, 205, 5, 0)
-        Sequence(Wait(1), Func(self.introSequence, 0)).start()
+        Sequence(Wait(0.5), Func(self.introSequence, 0)).start()
 
     def introChat(self, pageNumber):
         if pageNumber >= len(TTLocalizer.TutorialIntro) - 1:
@@ -557,7 +557,7 @@ class Tutorial(ToonHood.ToonHood):
             Func(self.exitOutro)
         )
         Sequence(
-            Wait(1),
+            Wait(0.5),
             Func(self.disableToon),
             Func(camera.wrtReparentTo, self.flippy),
             Func(camera.setPosHpr, 0, 9, 4, 180, 0, 0),
