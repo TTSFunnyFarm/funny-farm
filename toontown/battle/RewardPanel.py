@@ -28,7 +28,7 @@ class RewardPanel(DirectFrame):
         gscale = (TTLocalizer.RPdirectFrame[0], TTLocalizer.RPdirectFrame[1], TTLocalizer.RPdirectFrame[2] * 1.1)
         DirectFrame.__init__(self, relief=None, geom=DGG.getDefaultDialogGeom(), geom_color=ToontownGlobals.GlobalDialogColor, geom_pos=Point3(0, 0, -.05), geom_scale=gscale, pos=(0, 0, 0.587))
         self.initialiseoptions(RewardPanel)
-        self.avNameLabel = DirectLabel(parent=self, relief=None, pos=(0, 0, 0.3), text=name, text_scale=0.08)
+        self.avNameLabel = DirectLabel(parent=self, relief=None, pos=(0, 0, 0.29), text=name, text_scale=0.08)
         self.gagExpFrame = DirectFrame(parent=self, relief=None, pos=(-0.32, 0, 0.24))
         self.itemFrame = DirectFrame(parent=self, relief=None, text=TTLocalizer.RewardPanelItems, text_pos=(0, 0.2), text_scale=0.08)
         self.cogPartFrame = DirectFrame(parent=self, relief=None, text=TTLocalizer.RewardPanelCogPart, text_pos=(0, 0.2), text_scale=0.08)
@@ -91,7 +91,7 @@ class RewardPanel(DirectFrame):
         self.skipButton = DirectButton(parent=self, relief=None, image=(self._battleGui.find('**/tt_t_gui_gen_skipSectionUp'),
          self._battleGui.find('**/tt_t_gui_gen_skipSectionDown'),
          self._battleGui.find('**/tt_t_gui_gen_skipSectionRollOver'),
-         self._battleGui.find('**/tt_t_gui_gen_skipSectionDisabled')), pos=(0.815, 0, -0.395), scale=(0.39, 1.0, 0.39), text=('',
+         self._battleGui.find('**/tt_t_gui_gen_skipSectionDisabled')), pos=(0.75, 0, -0.45), scale=(0.39, 1.0, 0.39), text=('',
          TTLocalizer.RewardPanelSkip,
          TTLocalizer.RewardPanelSkip,
          ''), text_scale=TTLocalizer.RPskipScale, text_fg=Vec4(1, 1, 1, 1), text_shadow=Vec4(0, 0, 0, 1), text_pos=TTLocalizer.RPskipPos, textMayChange=0, command=self._handleSkip)
