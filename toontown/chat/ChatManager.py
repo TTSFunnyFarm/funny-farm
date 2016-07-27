@@ -35,7 +35,7 @@ class ChatManager(DirectObject):
         self.chatButton = DirectButton(image=(self.gui.find('**/ChtBx_ChtBtn_UP'), self.gui.find('**/ChtBx_ChtBtn_DN'), self.gui.find('**/ChtBx_ChtBtn_RLVR')), pos=(0.0683, 0, -0.072), parent=base.a2dTopLeft, scale=1.179, relief=None, image_color=Vec4(1, 1, 1, 1), text=('', OTPLocalizer.ChatManagerChat, OTPLocalizer.ChatManagerChat), text_align=TextNode.ALeft, text_scale=TTLocalizer.TCMnormalButton, text_fg=Vec4(1, 1, 1, 1), text_shadow=Vec4(0, 0, 0, 1), text_pos=(-0.0525, -0.09), textMayChange=0, sortOrder=DGG.FOREGROUND_SORT_INDEX, command=self.openChatInput, extraArgs=[''])
         self.chatFrame = DirectFrame(parent=base.a2dTopLeft, image=self.gui.find('**/Chat_Bx_FNL'), relief=None, pos=(0.24, 0, -0.2), state=DGG.NORMAL, sortOrder=DGG.FOREGROUND_SORT_INDEX)
         self.chatFrame.hide()
-        self.chatEntry = DirectEntry(parent=self.chatFrame, relief=None, scale=0.05, pos=(-0.2, 0, 0.11), entryFont=OTPGlobals.getInterfaceFont(), width=8.6, numLines=3, cursorKeys=0, focus=1, clickSound=None, rolloverSound=None, command=self.sendChat)
+        self.chatEntry = DirectEntry(parent=self.chatFrame, relief=None, scale=0.05, pos=(-0.2, 0, 0.11), entryFont=OTPGlobals.getInterfaceFont(), width=8.6, numLines=3, cursorKeys=0, focus=1, clickSound=None, rolloverSound=None, command=self.handleChat)
         self.chatEntry.bind(DGG.OVERFLOW, self.chatOverflow)
         self.sendButton = DirectButton(parent=self.chatFrame, image=(self.gui.find('**/ChtBx_ChtBtn_UP'), self.gui.find('**/ChtBx_ChtBtn_DN'), self.gui.find('**/ChtBx_ChtBtn_RLVR')), pos=(0.182, 0, -0.088), relief=None, text=('', OTPLocalizer.ChatInputNormalSayIt, OTPLocalizer.ChatInputNormalSayIt), text_scale=0.06, text_fg=Vec4(1, 1, 1, 1), text_shadow=Vec4(0, 0, 0, 1), text_pos=(0, -0.09), textMayChange=0, command=self.sendChat)
         self.cancelButton = DirectButton(parent=self.chatFrame, image=(self.gui.find('**/CloseBtn_UP'), self.gui.find('**/CloseBtn_DN'), self.gui.find('**/CloseBtn_Rllvr')), pos=(-0.151, 0, -0.088), relief=None, text=('', OTPLocalizer.ChatInputNormalCancel, OTPLocalizer.ChatInputNormalCancel), text_scale=0.06, text_fg=Vec4(1, 1, 1, 1), text_shadow=Vec4(0, 0, 0, 1), text_pos=(0, -0.09), textMayChange=0, command=self.closeChatInput)
@@ -81,15 +81,20 @@ class ChatManager(DirectObject):
         self.enableKeyboardShortcuts()
         self.state = 'closed'
 
-    def sendChat(self, *args):
+    def handleChat(self, chat):
+        # To mimick how Toontown's clickSound is played
+        if len(chat) > 1:
+            base.playSfx(DGG.getDefaultClickSound())
+        self.sendChat()
+
+    def chatOverflow(self, chat):
+        self.sendChat()
+
+    def sendChat(self):
         chat = self.chatEntry.get()
-        dialogue = None
         if len(chat) > 0:
             if chat[0] == '.':
                 base.localAvatar.setChatAbsolute(chat[1:], CFThought)
             else:
-                base.localAvatar.setChatAbsolute(chat, CFSpeech|CFTimeout, dialogue=dialogue)
+                base.localAvatar.setChatAbsolute(chat, CFSpeech|CFTimeout, dialogue=None)
         self.closeChatInput()
-
-    def chatOverflow(self, overflowText):
-        self.sendChat(self.chatEntry.get())
