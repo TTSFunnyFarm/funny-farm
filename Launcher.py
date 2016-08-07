@@ -20,23 +20,19 @@ class FFPatcher:
         self.filesToUpdate = []
 
     def generateFileList(self):
-        # Grab the file list for the particular platform the user is on.
+        # Get the platform the user is on.
         if sys.platform == 'win32':
             self.platform = 'windows'
-            if not self.manifest:
-                manifestUrl = urllib2.urlopen('http://cdn.toontownsfunnyfarm.com/windows/manifest.json')
-                self.manifest = json.loads(manifestUrl.read())
         elif sys.platform == 'unknown':
             if platform.system() == 'Linux':
                 self.platform = 'linux'
-                if not self.manifest:
-                    manifestUrl = urllib2.urlopen('http://cdn.toontownsfunnyfarm.com/linux/manifest.json')
-                    self.manifest = json.loads(manifestUrl.read())
             elif platform.system() == 'Darwin':
                 self.platform = 'mac'
-                if not self.manifest:
-                    manifestUrl = urllib2.urlopen('http://cdn.toontownsfunnyfarm.com/mac/manifest.json')
-                    self.manifest = json.loads(manifestUrl.read())
+
+        # Grab the file list for the particular platform the user is on.
+        if not self.manifest:
+            manifestUrl = urllib2.urlopen('http://cdn.toontownsfunnyfarm.com/%s/manifest.json' % self.platform)
+            self.manifest = json.loads(manifestUrl.read())
 
         self.fileList = self.manifest.get('files').keys()
 
