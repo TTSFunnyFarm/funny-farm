@@ -127,6 +127,9 @@ class FFPatcher:
 
 from panda3d.core import *
 
+if __debug__:
+    loadPrcFile('config/launcher.prc')
+
 from direct.showbase.ShowBase import ShowBase
 
 ShowBase()
@@ -150,7 +153,8 @@ class Launcher:
         self.frame = DirectFrame(parent=render2d, relief=None, image=background)
         self.versionText = DirectLabel(parent=base.a2dTopLeft, relief=None, text='Funny Farm Launcher v%s' % self.version, pos=(0.5, 0, -0.1), scale=0.08, text_fg=(1.0, 1.0, 1.0, 1.0))
         self.text = DirectLabel(relief=None, text='', pos=(0, 0, -0.5), scale=0.15, text_fg=(1.0, 1.0, 1.0, 1.0))
-        self.setIcon()
+        if not __debug__:
+            self.setIcon()
         self.patcher = FFPatcher(self)
 
     def setIcon(self):
@@ -175,7 +179,10 @@ class Launcher:
 
     def checkForUpdates(self):
         self.text['text'] = 'Checking for updates...'
-        self.patcher.patch()
+        if not __debug__:
+            self.patcher.patch()
+        else:
+            Sequence(Wait(2), Func(self.startGame)).start()
 
     def updateFiles(self, curFile, totalFiles):
         self.text['text'] = 'Updating file %s of %s' % (curFile, totalFiles)
@@ -194,27 +201,27 @@ class Launcher:
         del self.versionText
         del self.text
         base.closeWindow(base.win)
-        if sys.platform == 'win32':
-            os._exit(0)
 
     def startGame(self):
         # This is where we would execute FFEngine.exe.
         # So technically, since all this launcher does is check for updates,
         # the user could just execute FFEngine.exe and the game will run fine; it just would not have checked for updates
-        if sys.platform == 'win32':
-            Popen('funnyfarm.exe', creationflags=0x08000000)
+        if __debug__:
             self.exit()
-        elif sys.platform == 'unknown':
-            if platform.system() == 'Linux':
+            Popen('StartGame.bat')
+        else:
+            if sys.platform == 'win32':
                 self.exit()
-                os.system('chmod +x ./funnyfarm')
-                os.system('./funnyfarm')
-                os._exit(0)
-            elif platform.system() == 'Darwin':
-                self.exit()
-                os.system('chmod +x ./startFF.sh')
-                os.system('./startFF.sh')
-                os._exit(0)
+                Popen('funnyfarm.exe', creationflags=0x08000000)
+            elif sys.platform == 'unknown':
+                if platform.system() == 'Linux':
+                    self.exit()
+                    os.system('chmod +x ./funnyfarm')
+                    os.system('./funnyfarm')
+                elif platform.system() == 'Darwin':
+                    self.exit()
+                    os.system('chmod +x ./startFF.sh')
+                    os.system('./startFF.sh')
 
 
 launcher = Launcher()
