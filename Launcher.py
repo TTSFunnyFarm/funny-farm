@@ -128,7 +128,7 @@ class FFPatcher:
 from panda3d.core import *
 
 if __debug__:
-    loadPrcFile('config/launcher.prc')
+    loadPrcFile('config/launcher/general.prc')
 
 from direct.showbase.ShowBase import ShowBase
 
