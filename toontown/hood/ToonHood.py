@@ -38,7 +38,6 @@ class ToonHood(DirectObject):
                 base.localAvatar.enterTeleportIn(callback=self.__handleTeleport)
         base.avatarData.setLastHood = self.zoneId
         dataMgr.saveToonData(base.avatarData)
-        self.title = OnscreenText(self.titleText, fg=self.titleColor, font=ToontownGlobals.getSignFont(), pos=(0, -0.5), scale=TTLocalizer.HtitleText, drawOrder=0, mayChange=1)
         self.spawnTitleText()
 
     def exit(self):
@@ -78,11 +77,16 @@ class ToonHood(DirectObject):
         del self.geom
         del self.sky
 
+    def getHoodText(self):
+        hoodId = FunnyFarmGlobals.getHoodId(self.zoneId)
+        hoodText = FunnyFarmGlobals.hoodNameMap[hoodId]
+        streetName = FunnyFarmGlobals.StreetNames.get(self.zoneId)
+        if streetName:
+            hoodText = hoodText + '\n' + streetName
+        return hoodText
+
     def spawnTitleText(self):
-        self.title.show()
-        self.title.setColor(Vec4(*self.titleColor))
-        self.title.clearColorScale()
-        self.title.setFg(self.titleColor)
+        self.title = OnscreenText(self.getHoodText(), fg=self.titleColor, font=ToontownGlobals.getSignFont(), pos=(0, -0.5), scale=TTLocalizer.HtitleText, drawOrder=0, mayChange=1)
         self.titleTrack = Sequence(Wait(0.1), Wait(6.0), self.title.colorScaleInterval(0.5, Vec4(1.0, 1.0, 1.0, 0.0)), Func(self.title.hide))
         self.titleTrack.start()
 

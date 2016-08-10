@@ -13,7 +13,6 @@ class FCHood(ToonHood):
         self.spookyHoodFile = 'phase_14/models/neighborhoods/funny_farm_central_halloween'
         self.winterHoodFile = 'phase_14/models/neighborhoods/funny_farm_central_winter'
         self.skyFile = 'phase_3.5/models/props/TT_sky'
-        self.titleText = FunnyFarmGlobals.FCHoodText
         self.titleColor = (1.0, 0.5, 0.4, 1.0)
 
     def enter(self, shop=None, tunnel=None, init=False):

@@ -18,18 +18,19 @@ class game:
 
 __builtin__.game = game()
 
-from otp.settings.Settings import Settings
 from direct.gui import DirectGuiGlobals
 from direct.interval.IntervalGlobal import *
+from direct.stdpy import threading
+from otp.settings.Settings import Settings
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
-from toontown.toonbase import FunnyFarmLoader
-from toontown.toonbase import MusicManager
-from toontown.toonbase import ScreenshotManager
-from toontown.login import DataManager
-from toontown.distributed import FFClientRepository
-from toontown.ai import FFAIRepository
+from toontown.toonbase.MusicManager import MusicManager
+from toontown.toonbase.ScreenshotManager import ScreenshotManager
+from toontown.login.DataManager import DataManager
+from toontown.login.TitleScreen import TitleScreen
+from toontown.ai.FFAIRepository import FFAIRepository
+from toontown.distributed.FFClientRepository import FFClientRepository
 from toontown.misc import Injector
 import os
 
@@ -84,30 +85,32 @@ class FunnyFarmStart:
             base.setFrameRateMeter(True)
             base.drawFps = 1
 
-        __builtin__.loader = FunnyFarmLoader.FunnyFarmLoader(base)
-        __builtin__.musicMgr = MusicManager.MusicManager()
-        __builtin__.screenshotMgr = ScreenshotManager.ScreenshotManager()
-        __builtin__.dataMgr = DataManager.DataManager()
-
-        self.notify.info('Setting default GUI sounds')
+        self.notify.info('Setting default GUI globals')
         DirectGuiGlobals.setDefaultRolloverSound(base.loadSfx('phase_3/audio/sfx/GUI_rollover.ogg'))
         DirectGuiGlobals.setDefaultClickSound(base.loadSfx('phase_3/audio/sfx/GUI_create_toon_fwd.ogg'))
         DirectGuiGlobals.setDefaultDialogGeom(loader.loadModel('phase_3/models/gui/dialog_box_gui'))
-
-        self.notify.info('Setting default font')
         DirectGuiGlobals.setDefaultFont(ToontownGlobals.getInterfaceFont())
 
         self.notify.info('Initializing AI Repository...')
-        base.air = FFAIRepository.FFAIRepository()
+        base.air = FFAIRepository()
         base.air.preloadAvatars()
         base.air.createManagers()
-        base.air.createSafeZones()
         loader.loadingScreen.load()
 
+        __builtin__.musicMgr = MusicManager()
+        __builtin__.screenshotMgr = ScreenshotManager()
+        __builtin__.dataMgr = DataManager()
+
         self.notify.info('Initializing Client Repository...')
-        cr = FFClientRepository.FFClientRepository()
+        cr = FFClientRepository()
         base.initNametagGlobals()
         base.startShow(cr)
+        # Can't start a new thread right away otherwise we'll crash panda
+        taskMgr.doMethodLater(0.1, self.startAI, 'startAI')
+
+    def startAI(self, task):
+        threading.Thread(target=base.air.createSafeZones).start()
+        return task.done
 
 __builtin__.start = FunnyFarmStart()
 

@@ -17,7 +17,6 @@ class ToonStreet(ToonHood.ToonHood):
         musicMgr.playCurrentZoneMusic()
         if shop:
             return
-        self.title = OnscreenText(self.titleText, fg=self.titleColor, font=ToontownGlobals.getSignFont(), pos=(0, -0.5), scale=TTLocalizer.HtitleText, drawOrder=0, mayChange=1)
         self.spawnTitleText()
 
     def exit(self):

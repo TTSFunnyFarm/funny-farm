@@ -14,7 +14,6 @@ class WWStreet(ToonStreet):
         self.spookyHoodFile = 'phase_14/models/streets/wintry_way'
         self.winterHoodFile = 'phase_14/models/streets/wintry_way'
         self.skyFile = 'phase_3.5/models/props/BR_sky'
-        self.titleText = FunnyFarmGlobals.WWStreetText
         self.titleColor = (0.3, 0.6, 1.0, 1.0)
 
     def enter(self, tunnel=None):

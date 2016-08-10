@@ -4,21 +4,18 @@ from HolidayManagerAI import HolidayManagerAI
 from toontown.hood import FFHoodAI
 from toontown.hood import FCHoodAI
 from toontown.hood import SSHoodAI
-from toontown.town import RRStreetAI
-from toontown.town import WWStreetAI
 
 class FFAIRepository(DirectObject):
     notify = directNotify.newCategory('AIRepository')
     notify.setInfo(True)
 
     def __init__(self):
-        self.preloaded = []
         self.hoods = []
-        self.streets = []
         self.cogHeadquarters = []
-        self.jellybeanPlanners = {}
+        self.modelMap = {}
         self.suitPlanners = {}
-        self.buildingPlanners = {}
+        self.buildingManagers = {}
+        self.isLoaded = 0
 
     def preloadAvatars(self):
         self.notify.info('Preloading avatars...')
@@ -35,8 +32,7 @@ class FFAIRepository(DirectObject):
     def createSafeZones(self):
         self.notify.info('Creating safe zones...')
         self.hoods.append(FFHoodAI.FFHoodAI(self))
-        self.hoods.append(RRStreetAI.RRStreetAI(self))
         self.hoods.append(FCHoodAI.FCHoodAI(self))
-        #self.hoods.append(SSHoodAI.SSHoodAI(self))
-        #self.hoods.append(WWStreetAI.WWStreetAI(self))
+        messenger.send('ai-done')
         self.notify.info('Done.')
+        self.isLoaded = 1

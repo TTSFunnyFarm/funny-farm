@@ -86,6 +86,6 @@ class TitleScreen(DirectObject):
         self.track.finish()
         self.titleSeq.finish()
         self.track = Sequence()
-        self.track.append(Parallel(self.titleText.colorScaleInterval(1.0, (1, 1, 1, 0)), Sequence(Func(base.transitions.fadeOut, 1.0), Wait(1.5), Func(self.unload), Func(base.cr.enterChooseAvatar))))
+        self.track.append(Parallel(self.titleText.colorScaleInterval(1.0, (1, 1, 1, 0)), Sequence(Func(base.transitions.fadeOut, 1.0), Wait(1.5), Func(self.unload), Func(base.cr.begin))))
         self.track.start()
         return Task.done
