@@ -1,22 +1,14 @@
 from pandac.PandaModules import *
 from direct.showbase.DirectObject import DirectObject
-import random
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
-from toontown.tutorial import Tutorial
+from toontown.hood import ZoneUtil
 from toontown.hood import FFHood
 from toontown.hood import FCHood
 from toontown.hood import SSHood
 from toontown.hood import SecretArea
-from toontown.town import RRStreet
-from toontown.town import WWStreet
-from toontown.building import Door
-from toontown.building import PetShopInterior
-from toontown.building import GagShopInterior
-from toontown.building import HQInterior
-from toontown.building import ToonHallInterior
-from toontown.building import MickeyInterior, MinnieInterior
-from toontown.building import EliteInterior
+from toontown.town import FFStreet
+from toontown.tutorial import Tutorial
 from toontown.minigame import Purchase
 from toontown.minigame import RingGame
 from toontown.minigame import CannonGame
@@ -25,9 +17,18 @@ from toontown.minigame import TugOfWarGame
 from toontown.minigame import MazeGame
 from toontown.minigame import DivingGame
 from toontown.minigame import CogThiefGame
+import random
 
 class PlayGame(DirectObject):
     notify = directNotify.newCategory('PlayGame')
+    Hood2ClassDict = {
+        FunnyFarmGlobals.FunnyFarm: FFHood.FFHood,
+        FunnyFarmGlobals.FunnyFarmCentral: FCHood.FCHood,
+        FunnyFarmGlobals.SillySprings: SSHood.SSHood
+    }
+    Street2ClassDict = {
+        FunnyFarmGlobals.FunnyFarm: FFStreet.FFStreet
+    }
     MINIGAMES = [
         RingGame.RingGame,
         CannonGame.CannonGame,
@@ -41,33 +42,38 @@ class PlayGame(DirectObject):
     def __init__(self):
         self.hood = None
         self.street = None
-        self.place = None
         self.minigame = None
         self.purchase = None
         self.lastGame = None
 
-    def enterHood(self, hood, name, loadCount, tunnel=None, init=False):
-        self.hood = hood
-        loader.beginBulkLoad('hood', TTLocalizer.HeadingToHood % name, loadCount, TTLocalizer.TIP_GENERAL)
+    def enterHood(self, zoneId, tunnel=None, init=0):
+        if zoneId not in self.Hood2ClassDict.keys():
+            return
+        name = FunnyFarmGlobals.hoodNameMap[zoneId]
+        count = FunnyFarmGlobals.safeZoneCountMap[zoneId]
+        loader.beginBulkLoad('hood', TTLocalizer.HeadingToHood % name, count, TTLocalizer.TIP_GENERAL)
+        self.hood = self.Hood2ClassDict[zoneId]()
         self.hood.load()
         loader.endBulkLoad('hood')
         self.hood.enter(tunnel=tunnel, init=init)
 
-    def enterHoodFromShop(self, hood, shop=None):
-        self.hood = hood
-        self.hood.load()
-        self.hood.enter(shop=shop)
-
     def exitHood(self):
         ModelPool.garbageCollect()
         TexturePool.garbageCollect()
+        if self.hood.place:
+            self.hood.exitPlace()
         self.hood.exit()
         self.hood.unload()
         self.hood = None
 
-    def enterStreet(self, street, name, loadCount, tunnel=None):
-        self.street = street
-        loader.beginBulkLoad('street', TTLocalizer.HeadingToHood % name, loadCount, TTLocalizer.TIP_GENERAL)
+    def enterStreet(self, zoneId, tunnel=None):
+        hoodId = ZoneUtil.getCanonicalHoodId(zoneId)
+        if hoodId not in self.Street2ClassDict.keys():
+            return
+        name = FunnyFarmGlobals.StreetNames[zoneId]
+        count = FunnyFarmGlobals.townCountMap[hoodId]
+        loader.beginBulkLoad('street', TTLocalizer.HeadingToHood % name, count, TTLocalizer.TIP_STREET)
+        self.street = self.Street2ClassDict[hoodId](zoneId)
         self.street.load()
         loader.endBulkLoad('street')
         self.street.enter(tunnel=tunnel)
@@ -75,100 +81,41 @@ class PlayGame(DirectObject):
     def exitStreet(self):
         ModelPool.garbageCollect()
         TexturePool.garbageCollect()
+        if self.street.place:
+            self.street.exitPlace()
         self.street.exit()
         self.street.unload()
         self.street = None
 
-    def enterPlace(self, place, code, zoneId):
-        self.place = place
-        self.place.load()
-        door = Door.Door(self.place.door, code, zoneId)
-        door.avatarExit(base.localAvatar)
+    def exitActiveZone(self):
+        if self.hood:
+            self.exitHood()
+        elif self.street:
+            self.exitStreet()
 
-    def exitPlace(self):
-        ModelPool.garbageCollect()
-        TexturePool.garbageCollect()
-        self.place.unload()
-        self.place = None
+    def getActiveZone(self):
+        if self.hood:
+            return self.hood
+        elif self.street:
+            return self.street
 
-    def enterSuitPlace(self, place):
-        self.place = place
-        self.place.loadNextFloor()
-
-    def enterSecretArea(self):
-        self.hood = SecretArea.SecretArea()
-        loader.beginBulkLoad('hood', '???', 400, TTLocalizer.TIP_GENERAL)
+    def enterTutorial(self):
+        name = TTLocalizer.Tutorial
+        count = FunnyFarmGlobals.townCountMap[FunnyFarmGlobals.Tutorial]
+        loader.beginBulkLoad('hood', TTLocalizer.HeadingToHood % name, count, TTLocalizer.TIP_GENERAL)
+        self.hood = Tutorial.Tutorial()
         self.hood.load()
         loader.endBulkLoad('hood')
         self.hood.enter()
 
-    def enterTutorial(self):
-        hood = Tutorial.Tutorial()
-        self.enterHood(hood, 'The Toon-torial', 400)
-
-    def enterFFHood(self, shop=None, tunnel=None, init=False):
-        hood = FFHood.FFHood()
-        if shop:
-            self.enterHoodFromShop(hood, shop=shop)
-        else:
-            self.enterHood(hood, 'Funny Farm', 200, tunnel=tunnel, init=init)
-
-    def enterFCHood(self, shop=None, tunnel=None, init=False):
-        hood = FCHood.FCHood()
-        self.enterHood(hood, 'Funny Farm Central', 100, tunnel=tunnel, init=init)
-
-    def enterSSHood(self, shop=None, tunnel=None, init=False):
-        hood = SSHood.SSHood()
-        if shop:
-            self.enterHoodFromShop(hood, shop=shop)
-        else:
-            self.enterHood(hood, 'Silly Springs', 100, tunnel=tunnel, init=init)
-
-    def enterRRStreet(self, tunnel=None):
-        street = RRStreet.RRStreet()
-        self.enterStreet(street, 'Rickety Road', 100, tunnel=tunnel)
-
-    def enterWWStreet(self, tunnel=None):
-        street = WWStreet.WWStreet()
-        self.enterStreet(street, 'Wintry Way', 100, tunnel=tunnel)
-
-    def enterPetShop(self, zoneId):
-        place = PetShopInterior.PetShopInterior(zoneId)
-        self.enterPlace(place, 'ps_int', zoneId)
-
-    def enterGagShop(self, zoneId):
-        place = GagShopInterior.GagShopInterior(zoneId)
-        self.enterPlace(place, 'gs_int', zoneId)
-
-    def enterHQDoor0(self, zoneId):
-        place = HQInterior.HQInterior(zoneId)
-        self.place = place
-        self.place.load()
-        door = Door.Door(self.place.door, 'hq_int0', zoneId)
-        door.avatarExit(base.localAvatar)
-
-    def enterHQDoor1(self, zoneId):
-        place = HQInterior.HQInterior(zoneId)
-        self.place = place
-        self.place.load()
-        door = Door.Door(self.place.door2, 'hq_int1', zoneId)
-        door.avatarExit(base.localAvatar)
-
-    def enterToonHall(self, zoneId):
-        place = ToonHallInterior.ToonHallInterior(zoneId)
-        self.enterPlace(place, 'th_int', zoneId)
-
-    def enterMickeyHouse(self, zoneId):
-        place = MickeyInterior.MickeyInterior(zoneId)
-        self.enterPlace(place, 'mc_int', zoneId)
-
-    def enterMinnieHouse(self, zoneId):
-        place = MinnieInterior.MinnieInterior(zoneId)
-        self.enterPlace(place, 'mn_int', zoneId)
-
-    def enterEliteInterior(self, zoneId):
-        place = EliteInterior.EliteInterior(zoneId)
-        self.enterSuitPlace(place)
+    def enterSecretArea(self):
+        name = TTLocalizer.SecretArea
+        count = FunnyFarmGlobals.safeZoneCountMap[FunnyFarmGlobals.SecretArea]
+        loader.beginBulkLoad('hood', name, count, TTLocalizer.TIP_GENERAL)
+        self.hood = SecretArea.SecretArea()
+        self.hood.load()
+        loader.endBulkLoad('hood')
+        self.hood.enter()
 
     def enterRandomMinigame(self):
         if hasattr(self.hood, 'geom'):
@@ -182,15 +129,15 @@ class PlayGame(DirectObject):
                 del game
                 self.enterRandomMinigame()
             else:
-                self.minigame = game
-                self.minigame.generate()
-                self.minigame.announceGenerate()
-                self.lastGame = self.minigame.getTitle()
+                self.enterMinigame(game)
         else:
-            self.minigame = game
-            self.minigame.generate()
-            self.minigame.announceGenerate()
-            self.lastGame = self.minigame.getTitle()
+            self.enterMinigame(game)
+
+    def enterMinigame(self, minigame):
+        self.minigame = minigame
+        self.minigame.generate()
+        self.minigame.announceGenerate()
+        self.lastGame = self.minigame.getTitle()
 
     def exitMinigame(self):
         ModelPool.garbageCollect()

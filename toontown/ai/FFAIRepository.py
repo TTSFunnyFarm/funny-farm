@@ -1,9 +1,10 @@
 from direct.showbase.DirectObject import DirectObject
 from toontown.toon import Toon, ToonHead
-from HolidayManagerAI import HolidayManagerAI
+from toontown.toon import NPCToons
 from toontown.hood import FFHoodAI
 from toontown.hood import FCHoodAI
 from toontown.hood import SSHoodAI
+from HolidayManagerAI import HolidayManagerAI
 
 class FFAIRepository(DirectObject):
     notify = directNotify.newCategory('AIRepository')
@@ -22,6 +23,7 @@ class FFAIRepository(DirectObject):
         Toon.loadModels()
         Toon.compileGlobalAnimList()
         Toon.loadDialog()
+        NPCToons.generateZone2NpcDict()
         self.notify.info('Preloading Toon heads...')
         ToonHead.preloadToonHeads()
 

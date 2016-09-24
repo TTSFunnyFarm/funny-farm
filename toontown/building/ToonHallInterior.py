@@ -3,19 +3,16 @@ from direct.actor import Actor
 from direct.interval.IntervalGlobal import *
 from direct.fsm import ClassicFSM, State
 from direct.showbase import Audio3DManager
-from toontown.toonbase import ToontownGlobals
-from toontown.toonbase import FunnyFarmGlobals
-from toontown.toon import NPCToons
+from toontown.hood import ZoneUtil
 from Interior import Interior
 import ToonInteriorColors
+import InteriorStorage
 import random
-import Door
 
 class ToonHallInterior(Interior):
 
-    def __init__(self, zoneId):
-        Interior.__init__(self)
-        self.zoneId = zoneId
+    def __init__(self, shopId, zoneId):
+        Interior.__init__(self, shopId, zoneId)
         self.interiorFile = 'phase_3.5/models/modules/tt_m_ara_int_toonhall'
         self.sillyFSM = ClassicFSM.ClassicFSM('SillyOMeter', [State.State('Setup', self.enterSetup, self.exitSetup, ['Phase1',
                 'Phase2',
@@ -34,6 +31,29 @@ class ToonHallInterior(Interior):
            State.State('Flat', self.enterFlat, self.exitFlat, ['Off', 'Phase1']),
            State.State('Off', self.enterOff, self.exitOff, [])], 'Setup', 'Off')
 
+    def replaceRandomInModel(self, model):
+        baseTag = 'random_'
+        npc = model.findAllMatches('**/' + baseTag + '???_*')
+        for i in range(npc.getNumPaths()):
+            np = npc.getPath(i)
+            name = np.getName()
+            b = len(baseTag)
+            category = name[b + 4:]
+            key1 = name[b]
+            key2 = name[b + 1]
+            if key1 == 'm':
+                model = InteriorStorage.findNode(category)
+                model.reparentTo(np)
+                if key2 == 'r':
+                    self.replaceRandomInModel(model)
+            elif key1 == 't':
+                texture = InteriorStorage.findTexture(category, self.zoneId)
+                np.setTexture(texture, 100)
+                newNP = np
+                if key2 == 'c':
+                    colorIndex = InteriorStorage.ZoneStyles[self.zoneId][category][1]
+                    newNP.setColorScale(self.colors[category][colorIndex])
+
     def load(self):
         Interior.load(self)
         self.interior.find('**/mainhall').setBin('ground', 0)
@@ -41,66 +61,37 @@ class ToonHallInterior(Interior):
         self.interior.find('**/office').setBin('ground', 0)
         self.randomGenerator = random.Random()
         self.randomGenerator.seed(self.zoneId)
-        self.colors = ToonInteriorColors.colors[self.zoneId]
-        self.interior.find('**/door_origin').setScale(0.8, 0.8, 0.8)
+        hoodId = ZoneUtil.getCanonicalHoodId(self.zoneId)
+        self.colors = ToonInteriorColors.colors[hoodId]
+        self.replaceRandomInModel(self.interior)
+        doorOrigin = self.interior.find('**/door_origin')
+        doorOrigin.setScale(0.8, 0.8, 0.8)
+        doorOrigin.setPos(doorOrigin, 0, -0.025, 0)
         self.door = self.setupDoor('door_double_round_ur', 'door_origin')
-        doorColor = self.colors['TI_door'][1]
-        self.door.setColor(doorColor)
-        self.fixDoor(self.door)
-        self.generateNPCs()
-        self.acceptOnce('avatarExitDone', self.startActive)
+        if self.zoneId in InteriorStorage.ZoneStyles:
+            doorColor = InteriorStorage.ZoneStyles[self.zoneId].get('TI_door', 0)
+        else:
+            doorColor = 0
+        self.door.setColor(self.colors['TI_door'][doorColor])
         del self.colors
         del self.randomGenerator
         self.interior.flattenMedium()
         self.sillyFSM.enterInitialState()
+        self.acceptOnce('avatarExitDone', self.startActive)
 
     def unload(self):
         self.sillyFSM.requestFinalState()
-        for npc in self.npcs:
-            npc.removeActive()
-            npc.delete()
-            del npc
         Interior.unload(self)
 
     def generateNPCs(self):
-        flippy = NPCToons.createLocalNPC(2001)
-        dimm = NPCToons.createLocalNPC(2018)
-        surlee = NPCToons.createLocalNPC(2019)
-        prepostera = NPCToons.createLocalNPC(2020)
-        origins = [
-                self.interior.find('**/npc_origin_0'),
-                self.interior.find('**/npc_origin_1'),
-                self.interior.find('**/npc_origin_2'),
-                self.interior.find('**/npc_origin_3')
-        ]
-        key = 0
-        self.npcs = [flippy, dimm, surlee, prepostera]
-        for npc in self.npcs:
-            key += 1
-            pos = origins[key - 1].getPos()
-            hpr = origins[key - 1].getHpr()
-            npc.reparentTo(render)
-            npc.setPosHpr(pos, hpr)
-            npc.addActive()
-        flippy.useLOD(1000)
-        dimm.initPos()
-        surlee.initPos()
-        prepostera.initPos()
-        dimm.setAnimState('ScientistJealous')
-        surlee.setAnimState('ScientistJealous')
-        prepostera.setAnimState('ScientistEmcee')
-
-    def startActive(self):
-        self.acceptOnce('enterdoor_double_round_ur_trigger', self.__handleDoor)
-
-    def __handleDoor(self, entry):
-        door = Door.Door(self.door, 'th_int', self.zoneId)
-        door.avatarEnter(base.localAvatar)
-        self.acceptOnce('avatarEnterDone', self.__handleEnterFF)
-
-    def __handleEnterFF(self):
-        base.cr.playGame.exitPlace()
-        base.cr.playGame.enterFFHood(shop='th')
+        Interior.generateNPCs(self)
+        self.npcs[0].useLOD(1000)
+        self.npcs[1].initPos()
+        self.npcs[2].initPos()
+        self.npcs[3].initPos()
+        self.npcs[1].setAnimState('ScientistJealous')
+        self.npcs[2].setAnimState('ScientistJealous')
+        self.npcs[3].setAnimState('ScientistEmcee')
 
     def sillyMeterIsRunning(self, isRunning):
         if isRunning:
@@ -165,7 +156,6 @@ class ToonHallInterior(Interior):
         self.phase2Sfx.setLoop(True)
         self.phase3Sfx = self.audio3d.loadSfx('phase_4/audio/sfx/tt_s_prp_sillyMeterPhaseThree.ogg')
         self.phase3Sfx.setLoop(True)
-        self.phase3Sfx.setVolume(0.5)
         self.phase4Sfx = self.audio3d.loadSfx('phase_4/audio/sfx/tt_s_prp_sillyMeterPhaseFour.ogg')
         self.phase4Sfx.setLoop(True)
         self.phase4To5Sfx = self.audio3d.loadSfx('phase_4/audio/sfx/tt_s_prp_sillyMeterPhaseFourToFive.ogg')
@@ -174,7 +164,7 @@ class ToonHallInterior(Interior):
         self.phase5Sfx.setLoop(True)
         self.arrowSfx = self.audio3d.loadSfx('phase_4/audio/sfx/tt_s_prp_sillyMeterArrow.ogg')
         self.arrowSfx.setLoop(False)
-        self.audio3d.setDropOffFactor(0.05)
+        self.audio3d.setDropOffFactor(0.1)
         self.accept('SillyMeterPhase', self.selectPhase)
         self.accept('SillyMeterIsRunning', self.sillyMeterIsRunning)
         self.selectPhase(3)

@@ -4,21 +4,21 @@ from direct.showbase import PythonUtil
 from toontown.toon import NPCToons
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
-from toontown.hood import ToonHood
+from toontown.hood.ToonHood import ToonHood
 from otp.nametag.NametagConstants import *
 from toontown.tutorial.CogPinata import CogPinata
 from toontown.hood import SkyUtil
 from toontown.suit import SuitDNA
 from toontown.suit import BattleSuit
-from toontown.battle import Battle
-from toontown.town import TownBattle
+from toontown.battle.Battle import Battle
+from toontown.town.TownBattle import TownBattle
 
-class Tutorial(ToonHood.ToonHood):
+class Tutorial(ToonHood):
     notify = directNotify.newCategory('Tutorial')
     notify.setInfo(1)
 
     def __init__(self):
-        ToonHood.ToonHood.__init__(self)
+        ToonHood.__init__(self)
         self.zoneId = FunnyFarmGlobals.Tutorial
         self.hoodFile = 'phase_14/models/streets/tutorial_street'
         self.spookyHoodFile = self.hoodFile
@@ -54,11 +54,14 @@ class Tutorial(ToonHood.ToonHood):
         self.acceptOnce('enter' + self.flippy.collNodePath.node().getName(), self.enterIntro)
 
     def load(self):
-        ToonHood.ToonHood.load(self)
+        ToonHood.load(self)
         self.spookyMusic = base.loadMusic('phase_12/audio/bgm/Bossbot_Factory_v3.ogg')
         self.battleMusic = base.loadMusic('phase_3.5/audio/bgm/encntr_general_bg.ogg')
 
-        self.flippy = NPCToons.createLocalNPC(2001)
+        self.townBattle = TownBattle('townbattle-done')
+        self.townBattle.load()
+
+        self.flippy = NPCToons.createLocalNPC(1001)
         self.flippy.reparentTo(render)
         self.flippy.setPosHpr(0, 20, -0.5, 180, 0, 0)
         self.flippy.initializeBodyCollisions('toon')
@@ -106,7 +109,9 @@ class Tutorial(ToonHood.ToonHood):
         self.battleCell.setPosHpr(0, 90, -0.5, 270, 0, 0)
 
     def unload(self):
-        ToonHood.ToonHood.unload(self)
+        ToonHood.unload(self)
+        self.townBattle.unload()
+        self.townBattle.cleanup()
         self.guiCogs.removeNode()
         self.guiSquirt.removeNode()
         self.guiBldgs.removeNode()
@@ -115,6 +120,7 @@ class Tutorial(ToonHood.ToonHood):
         self.flower.removeNode()
         del self.spookyMusic
         del self.battleMusic
+        del self.townBattle
         del self.flippy
         del self.guiCogs
         del self.guiSquirt
@@ -503,8 +509,7 @@ class Tutorial(ToonHood.ToonHood):
     def enterBattle(self, collEntry):
         self.disableToon()
         self.stopSuitWalkInterval()
-        self.townBattle = TownBattle.TownBattle('townbattle-done')
-        self.battle = Battle.Battle(self.townBattle, toons=[self.toon], suits=[self.suit], tutorialFlag=1)
+        self.battle = Battle(self.townBattle, toons=[self.toon], suits=[self.suit], tutorialFlag=1)
         # Never parent a battle directly to render, always use a battle cell 
         # otherwise __faceOff will fuck you in the ass
         self.battle.reparentTo(self.battleCell)
@@ -518,12 +523,9 @@ class Tutorial(ToonHood.ToonHood):
         self.battleMusic.stop()
         base.playMusic(self.spookyMusic, looping=1)
         self.ignore(self.townBattle.doneEvent)
-        self.townBattle.unload()
-        self.townBattle.cleanup()
-        self.townBattle = None
         self.battle.cleanupBattle()
         self.battle.delete()
-        self.battle = None
+        del self.battle
         self.enterOutro()
 
     def startSuitWalkInterval(self):
@@ -567,16 +569,12 @@ class Tutorial(ToonHood.ToonHood):
 
     def exitOutro(self):
         self.enableToon()
-        self.acceptOnce('enterFFTunnel_trigger', self.__handleFFTunnel)
+        self.startActive()
 
-    def __handleFFTunnel(self, entry):
-        tunnelOrigin = self.geom.find('**/FFTunnel').find('**/tunnel_origin')
-        self.toon.tunnelOut(tunnelOrigin)
-        self.acceptOnce('tunnelOutMovieDone', self.__handleEnterFF)
-
-    def __handleEnterFF(self):
-        base.cr.playGame.exitHood()
-        base.cr.playGame.enterFFHood(tunnel='rr')
+    def enterHood(self, zoneId):
+        # For now we're just entering through the rickety road tunnel
+        tunnel = '1100'
+        base.cr.playGame.enterHood(zoneId, tunnel=tunnel)
 
     # Misc. functions
 

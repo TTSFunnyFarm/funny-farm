@@ -178,9 +178,9 @@ def createNpcsInZone(zoneId):
 def createLocalNPC(npcId):
     import Toon
     import NPCScientist
-    if npcId not in NPCToonDict:
+    if npcId not in FFNPCToonDict:
         return None
-    desc = NPCToonDict[npcId]
+    desc = FFNPCToonDict[npcId]
     canonicalZoneId, name, dnaType, gender, protected, type = desc
     if type == NPC_SCIENTIST:
         npc = NPCScientist.NPCScientist()
@@ -11743,7 +11743,64 @@ FFNPCToonDict = {
          1),
         'm',
         1,
-        NPC_FISHERMAN)
+        NPC_FISHERMAN),
+ 1013: (1514,
+        lnames[2019],
+        ('fll',
+         'ss',
+         's',
+         'm',
+         15,
+         0,
+         15,
+         15,
+         99,
+         27,
+         86,
+         27,
+         39,
+         27),
+        'm',
+        1,
+        NPC_SCIENTIST),
+ 1014: (1514,
+        lnames[2018],
+        ('pls',
+         'ls',
+         'l',
+         'm',
+         9,
+         0,
+         9,
+         9,
+         98,
+         27,
+         86,
+         27,
+         38,
+         27),
+        'm',
+        1,
+        NPC_SCIENTIST),
+ 1015: (1514,
+        lnames[2020],
+        ('hss',
+         'ms',
+         'm',
+         'm',
+         20,
+         0,
+         20,
+         20,
+         97,
+         27,
+         86,
+         27,
+         37,
+         27),
+        'm',
+        1,
+        NPC_SCIENTIST),
 }
 
 try:

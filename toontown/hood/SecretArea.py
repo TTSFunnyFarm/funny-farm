@@ -15,7 +15,6 @@ class SecretArea(ToonHood):
         self.spookyHoodFile = 'phase_14/models/modules/secret_area'
         self.winterHoodFile = 'phase_14/models/modules/secret_area'
         self.skyFile = 'phase_9/models/cogHQ/cog_sky'
-        self.titleText = FunnyFarmGlobals.SecretAreaText
         self.titleColor = (0.5, 0.5, 0.5, 1.0)
         self.townBattle = None
         self.battle = None

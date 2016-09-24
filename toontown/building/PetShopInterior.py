@@ -1,36 +1,63 @@
 from pandac.PandaModules import *
 from direct.actor.Actor import Actor
 from direct.interval.IntervalGlobal import *
-from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
-from toontown.toon import NPCToons
+from toontown.hood import ZoneUtil
 from Interior import Interior
 import ToonInteriorColors
+import InteriorStorage
 import random
-import Door
 
 class PetShopInterior(Interior):
 
-    def __init__(self, zoneId):
-        self.zoneId = zoneId
+    def __init__(self, shopId, zoneId):
+        Interior.__init__(self, shopId, zoneId)
         self.interiorFile = 'phase_4/models/modules/PetShopInterior'
+
+    def replaceRandomInModel(self, model):
+        baseTag = 'random_'
+        npc = model.findAllMatches('**/' + baseTag + '???_*')
+        for i in range(npc.getNumPaths()):
+            np = npc.getPath(i)
+            name = np.getName()
+            b = len(baseTag)
+            category = name[b + 4:]
+            key1 = name[b]
+            key2 = name[b + 1]
+            if key1 == 'm':
+                model = InteriorStorage.findNode(category)
+                model.reparentTo(np)
+                if key2 == 'r':
+                    self.replaceRandomInModel(model)
+            elif key1 == 't':
+                texture = InteriorStorage.findTexture(category, self.zoneId)
+                np.setTexture(texture, 100)
+                newNP = np
+                if key2 == 'c':
+                    colorIndex = InteriorStorage.ZoneStyles[self.zoneId][category][1]
+                    newNP.setColorScale(self.colors[category][colorIndex])
 
     def load(self):
         Interior.load(self)
         self.randomGenerator = random.Random()
         self.randomGenerator.seed(self.zoneId)
-        self.colors = ToonInteriorColors.colors[self.zoneId]
-        self.generateNPCs()
         self.generateFish()
-        self.interior.find('**/door_origin').setScale(0.8, 0.8, 0.8)
+        hoodId = ZoneUtil.getCanonicalHoodId(self.zoneId)
+        self.colors = ToonInteriorColors.colors[hoodId]
+        self.replaceRandomInModel(self.interior)
+        doorOrigin = self.interior.find('**/door_origin')
+        doorOrigin.setScale(0.8, 0.8, 0.8)
+        doorOrigin.setPos(doorOrigin, 0, -0.25, 0)
         self.door = self.setupDoor('door_double_round_ur', 'door_origin')
-        doorColor = self.colors['TI_door'][0]
-        self.door.setColor(doorColor)
-        self.fixDoor(self.door)
-        self.acceptOnce('avatarExitDone', self.startActive)
+        if self.zoneId in InteriorStorage.ZoneStyles:
+            doorColor = InteriorStorage.ZoneStyles[self.zoneId].get('TI_door', 0)
+        else:
+            doorColor = 0
+        self.door.setColor(self.colors['TI_door'][doorColor])
         del self.colors
         del self.randomGenerator
         self.interior.flattenMedium()
+        self.acceptOnce('avatarExitDone', self.startActive)
 
     def unload(self):
         self.bearSwim.finish()
@@ -41,37 +68,7 @@ class PetShopInterior(Interior):
             fish.removeNode()
             del fish
         del self.fish
-        for npc in self.npcs:
-            npc.removeActive()
-            npc.delete()
-            del npc
-        del self.npcs
         Interior.unload(self)
-
-    def generateNPCs(self):
-        if self.zoneId == FunnyFarmGlobals.FunnyFarm:
-            clerk1 = NPCToons.createLocalNPC(2013)
-            clerk2 = NPCToons.createLocalNPC(2014)
-            clerk3 = NPCToons.createLocalNPC(2015)
-        elif self.zoneId == FunnyFarmGlobals.SillySprings:
-            clerk1 = NPCToons.createLocalNPC(5009)
-            clerk2 = NPCToons.createLocalNPC(5010)
-            clerk3 = NPCToons.createLocalNPC(5011)
-        origins = [
-                self.interior.find('**/npc_origin_0'),
-                self.interior.find('**/npc_origin_1'),
-                self.interior.find('**/npc_origin_2')
-        ]
-        key = 0
-        self.npcs = [clerk1, clerk2, clerk3]
-        for npc in self.npcs:
-            key += 1
-            pos = origins[key - 1].getPos()
-            hpr = origins[key - 1].getHpr()
-            npc.reparentTo(render)
-            npc.setPosHpr(pos, hpr)
-            npc.addActive()
-        return
 
     def generateFish(self):
         self.fish = []
@@ -97,18 +94,3 @@ class PetShopInterior(Interior):
                 self.bearSwim.loop()
             self.fish.append(fish)
         return
-
-    def startActive(self):
-        self.acceptOnce('enterdoor_double_round_ur_trigger', self.__handleDoor)
-
-    def __handleDoor(self, entry):
-        door = Door.Door(self.door, 'ps_int', self.zoneId)
-        door.avatarEnter(base.localAvatar)
-        self.acceptOnce('avatarEnterDone', self.__handleEnterHood)
-
-    def __handleEnterHood(self):
-        base.cr.playGame.exitPlace()
-        if self.zoneId == FunnyFarmGlobals.FunnyFarm:
-            base.cr.playGame.enterFFHood(shop='ps')
-        elif self.zoneId == FunnyFarmGlobals.SillySprings:
-            base.cr.playGame.enterSSHood(shop='ps')

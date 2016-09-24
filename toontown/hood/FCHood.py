@@ -1,7 +1,6 @@
-from pandac.PandaModules import *
+from panda3d.core import *
 from toontown.toonbase import FunnyFarmGlobals
 from ToonHood import ToonHood
-from toontown.battle import BattleParticles
 import SkyUtil
 
 class FCHood(ToonHood):
@@ -17,15 +16,6 @@ class FCHood(ToonHood):
 
     def enter(self, shop=None, tunnel=None, init=False):
         ToonHood.enter(self, shop=shop, tunnel=tunnel, init=init)
-        if tunnel:
-            if tunnel == 'rr':
-                tunnelOrigin = self.geom.find('**/RRTunnel').find('**/tunnel_origin')
-            #elif tunnel == 'rr':
-                #tunnelOrigin = self.geom.find('**/RRTunnel').find('**/tunnel_origin')
-            elif tunnel == 'ww':
-                tunnelOrigin = self.geom.find('**/WWTunnel').find('**/tunnel_origin')
-            base.localAvatar.tunnelIn(tunnelOrigin)
-        self.startActive()
 
     def exit(self):
         ToonHood.exit(self)
@@ -35,28 +25,6 @@ class FCHood(ToonHood):
 
     def unload(self):
         ToonHood.unload(self)
-
-    def startActive(self):
-        self.acceptOnce('enterRRTunnel_trigger', self.__handleRRTunnel)
-        #self.acceptOnce('enterWWTunnel_trigger', self.__handleWWTunnel)
-
-    def __handleRRTunnel(self, entry):
-        tunnelOrigin = self.geom.find('**/RRTunnel').find('**/tunnel_origin')
-        base.localAvatar.tunnelOut(tunnelOrigin)
-        self.acceptOnce('tunnelOutMovieDone', self.__handleEnterRR)
-
-    def __handleEnterRR(self):
-        base.cr.playGame.exitHood()
-        base.cr.playGame.enterRRStreet(tunnel='fc')
-
-    def __handleWWTunnel(self, entry):
-        tunnelOrigin = self.geom.find('**/WWTunnel').find('**/tunnel_origin')
-        base.localAvatar.tunnelOut(tunnelOrigin)
-        self.acceptOnce('tunnelOutMovieDone', self.__handleEnterWW)
-
-    def __handleEnterWW(self):
-        base.cr.playGame.exitHood()
-        base.cr.playGame.enterWWStreet(tunnel='fc')
 
     def skyTrack(self, task):
         return SkyUtil.cloudSkyTrack(task)

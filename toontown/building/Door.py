@@ -3,41 +3,24 @@ from direct.interval.IntervalGlobal import *
 from direct.showbase import PythonUtil
 from direct.showbase.DirectObject import DirectObject
 from toontown.toonbase import ToontownGlobals
-from toontown.toonbase import FunnyFarmGlobals
 
 class Door(DirectObject):
     notify = directNotify.newCategory('Door')
 
-    def __init__(self, door, code, zoneId):
+    def __init__(self, door, code):
         self.door = door
         self.code = code
-        self.zoneId = zoneId
         self.openSfx = base.loadSfx('phase_3.5/audio/sfx/Door_Open_1.ogg')
         self.closeSfx = base.loadSfx('phase_3.5/audio/sfx/Door_Close_1.ogg')
         self.doorX = 1.5
         self.doorTrack = None
         self.doorExitTrack = None
-        # Kinda hacky, but it works
-        if self.code == 'ps':
-            if zoneId == FunnyFarmGlobals.FunnyFarm:
-                name = 'door_double_round_ur'
-            elif zoneId == FunnyFarmGlobals.SillySprings:
-                name = 'door_double_curved_ur'
-        elif self.code == 'gs':
-            if zoneId == FunnyFarmGlobals.FunnyFarm:
-                name = 'door_double_square_ur'
-            elif zoneId == FunnyFarmGlobals.SillySprings:
-                name = 'door_double_curved_ur'
-        elif self.code == 'th' or self.code == 'mc' or self.code == 'mn':
-            name = 'door_double_round_ur'
+        if 'int' in self.code:
+            self.rightDoor = self.door.find('**/' + self.door.getName() + '_right')
+            self.leftDoor = self.door.find('**/' + self.door.getName() + '_left')
         else:
-            name = self.door.getName()
-        if self.code == 'hq0' or self.code == 'hq1':
-            self.rightDoor = self.door.find('**/rightDoor_*')
-            self.leftDoor = self.door.find('**/leftDoor_*')
-        else:
-            self.rightDoor = self.door.find('**/' + name + '_right')
-            self.leftDoor = self.door.find('**/' + name + '_left')
+            self.rightDoor = self.door.find('**/rightDoor*')
+            self.leftDoor = self.door.find('**/leftDoor*')
         self.rightSwing = True
         self.leftSwing = True
 
@@ -45,14 +28,17 @@ class Door(DirectObject):
         return ('%s-%s' % (idString, str(id(self))))
 
     def getDoorNodePath(self):
-        if self.code == 'hq0':
-            building = base.cr.playGame.hood.geom.find('**/ToonHQ')
+        if 'int' in self.code:
+            otherNP = self.door.getParent()
+        elif self.code == 'door_0':
+            building = base.cr.playGame.getActiveZone().geom.find('**/*toon_landmark_hq*')
             otherNP = building.find('**/door_origin_0')
-        elif self.code == 'hq1':
-            building = base.cr.playGame.hood.geom.find('**/ToonHQ')
+        elif self.code == 'door_1':
+            building = base.cr.playGame.getActiveZone().geom.find('**/*toon_landmark_hq*')
             otherNP = building.find('**/door_origin_1')
         else:
-            otherNP = self.door.getParent()
+            building = self.door
+            otherNP = building.find('**/*door_origin*')
         return otherNP
 
     def avatarEnter(self, avatar):
@@ -77,7 +63,7 @@ class Door(DirectObject):
 
     def exitDone(self):
         base.localAvatar.enable()
-        if self.code == 'th_int':
+        if self.code == 'toonhall_int':
             base.camLens.setMinFov(ToontownGlobals.CogHQCameraFov/(4./3.))
 
     def getAvatarEnqueueTrack(self, avatar, duration):

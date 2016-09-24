@@ -48,6 +48,32 @@ StreetNames = {
     MoonlitMeadow: 'Playground',
     BreezyBend: 'Breezy Bend'
 }
+HoodName2Id = {
+    'ff': FunnyFarm,
+    'fc': FunnyFarmCentral,
+    'ss': SillySprings,
+    'cv': ChillyVillage,
+    'mm': MoonlitMeadow
+}
+HoodId2Name = {
+    FunnyFarm: 'ff',
+    FunnyFarmCentral: 'fc',
+    SillySprings: 'ss',
+    ChillyVillage: 'cv',
+    MoonlitMeadow: 'mm',
+}
+
+def getIdFromName(hoodName):
+    id = HoodName2Id.get(hoodName)
+    if id:
+        return id
+    return None
+
+def getNameFromId(hoodId):
+    name = HoodId2Name.get(hoodId)
+    if name:
+        return name
+    return None
 
 def getHoodId(zoneId):
     for zones in HoodHierarchy.values():
@@ -61,6 +87,15 @@ phaseMap = {
     SillySprings: 'phase_14/models/neighborhoods/silly_springs',
     RicketyRoad: 'phase_14/models/streets/rickety_road',
     WintryWay: 'phase_14/models/streets/wintry_way'
+}
+safeZoneCountMap = {
+    FunnyFarm: 6,
+    FunnyFarmCentral: 6,
+    SecretArea: 10
+}
+townCountMap = {
+    Tutorial: 40,
+    FunnyFarm: 40
 }
 SpawnPoints = {
     FunnyFarm: [

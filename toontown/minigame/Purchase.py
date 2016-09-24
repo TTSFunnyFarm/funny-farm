@@ -239,7 +239,7 @@ class Purchase(PurchaseBase):
         base.cr.playGame.exitMinigamePurchase()
         base.localAvatar.reparentTo(render)
         base.localAvatar.enable()
-        base.cr.enterHood(base.cr.playGame.hood.zoneId)
+        base.cr.playGame.enterHood(base.cr.playGame.hood.zoneId)
 
     def __timerExpired(self):
         self.__handleBackToPlayground()
