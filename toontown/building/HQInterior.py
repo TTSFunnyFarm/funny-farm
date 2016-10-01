@@ -29,9 +29,9 @@ class HQInterior(Interior):
         self.door = self.setupDoor('door_double_round_ur', 'door_origin_0')
         self.door.setColor(self.colors['TI_door'][doorColor])
         self.door.find('**/door_double_round_ur_trigger').setName('door_0_trigger')
-        #self.door2 = self.setupDoor('door_double_round_ur', 'door_origin_1')
-        #self.door2.setColor(self.colors['TI_door'][doorColor])
-        #self.door2.find('**/door_double_round_ur_trigger').setName('door_1_trigger')
+        self.door2 = self.setupDoor('door_double_round_ur', 'door_origin_1')
+        self.door2.setColor(self.colors['TI_door'][doorColor])
+        self.door2.find('**/door_double_round_ur_trigger').setName('door_1_trigger')
         del self.colors
         self.interior.flattenMedium()
         self.acceptOnce('avatarExitDone', self.startActive)

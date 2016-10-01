@@ -66,6 +66,9 @@ ZoneStyles = {
     1516: {
         'TI_door': 1
     },
+    1610: {
+        'TI_door': 1
+    },
     2510: {
         'TI_wallpaper': (0, 1),
         'TI_wallpaper_border': (0, 1),
