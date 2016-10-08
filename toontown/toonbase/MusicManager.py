@@ -1,27 +1,30 @@
 from panda3d.core import *
 from toontown.toonbase import FunnyFarmGlobals
+from toontown.building.Interior import Interior
 
 class MusicManager:
     notify = directNotify.newCategory('MusicManager')
 
     def __init__(self):
         self.pickAToonMusic = [
-            (base.loader.loadMusic('phase_3/audio/bgm/ff_theme.ogg'), 0.5),
-            (base.loader.loadMusic('phase_3/audio/bgm/ff_theme_winter.ogg'), 1.0),
-            (base.loader.loadMusic('phase_3/audio/bgm/ff_theme_halloween.ogg'), 1.0)
+            base.loader.loadMusic('phase_3/audio/bgm/ff_theme.ogg'),
+            base.loader.loadMusic('phase_3/audio/bgm/ff_theme_winter.ogg'),
+            base.loader.loadMusic('phase_3/audio/bgm/ff_theme_halloween.ogg')
         ]
         self.safezoneMusic = {
-            FunnyFarmGlobals.Tutorial: (base.loader.loadMusic('phase_6/audio/bgm/OZ_SZ.ogg'), 1.0),
-            FunnyFarmGlobals.FunnyFarm: (base.loader.loadMusic('phase_14/audio/bgm/FF_nbrhood.ogg'), 1.0),
-            FunnyFarmGlobals.RicketyRoad: (base.loader.loadMusic('phase_14/audio/bgm/FF_SZ.ogg'), 1.0),
-            FunnyFarmGlobals.FunnyFarmCentral: (base.loader.loadMusic('phase_14/audio/bgm/FC_SZ.ogg'), 1.0),
-            FunnyFarmGlobals.SillySprings: (base.loader.loadMusic('phase_14/audio/bgm/SS_nbrhood.ogg'), 1.0),
-            FunnyFarmGlobals.WintryWay: (base.loader.loadMusic('phase_14/audio/bgm/CV_SZ.ogg'), 1.0),
-            FunnyFarmGlobals.SecretArea: (base.loader.loadMusic('phase_12/audio/bgm/Bossbot_Entry_v2.ogg'), 1.0)
+            FunnyFarmGlobals.Tutorial: base.loader.loadMusic('phase_6/audio/bgm/OZ_SZ.ogg'),
+            FunnyFarmGlobals.FunnyFarm: base.loader.loadMusic('phase_14/audio/bgm/FF_nbrhood.ogg'),
+            FunnyFarmGlobals.FunnyFarmCentral: base.loader.loadMusic('phase_14/audio/bgm/FC_SZ.ogg'),
+            FunnyFarmGlobals.SecretArea: base.loader.loadMusic('phase_12/audio/bgm/Bossbot_Entry_v2.ogg'),
+            FunnyFarmGlobals.SillySprings: base.loader.loadMusic('phase_14/audio/bgm/SS_nbrhood.ogg')
         }
-        self.shopMusic = {
-            FunnyFarmGlobals.FunnyFarm: (base.loader.loadMusic('phase_14/audio/bgm/FF_SZ_activity.ogg'), 0.5),
-            FunnyFarmGlobals.SillySprings: (base.loader.loadMusic('phase_14/audio/bgm/SS_SZ_activity.ogg'), 1.0)
+        self.townMusic = {
+            FunnyFarmGlobals.FunnyFarm: base.loader.loadMusic('phase_14/audio/bgm/FF_SZ.ogg'),
+            FunnyFarmGlobals.ChillyVillage: base.loader.loadMusic('phase_14/audio/bgm/CV_SZ.ogg'),
+        }
+        self.activityMusic = {
+            FunnyFarmGlobals.FunnyFarm: base.loader.loadMusic('phase_14/audio/bgm/FF_SZ_activity.ogg'),
+            FunnyFarmGlobals.SillySprings: base.loader.loadMusic('phase_14/audio/bgm/SS_SZ_activity.ogg')
         }
 
     def playMusic(self, music, looping=0, volume=1.0):
@@ -31,33 +34,47 @@ class MusicManager:
 
     def stopMusic(self):
         for t in self.pickAToonMusic:
-            t[0].stop()
+            t.stop()
         for t in self.safezoneMusic.keys():
-            self.safezoneMusic[t][0].stop()
-        for t in self.shopMusic.keys():
-            self.shopMusic[t][0].stop()
+            self.safezoneMusic[t].stop()
+        for t in self.townMusic.keys():
+            self.townMusic[t].stop()
+        for t in self.activityMusic.keys():
+            self.activityMusic[t].stop()
 
     def playCurrentZoneMusic(self):
-        zoneId = base.localAvatar.getZoneId()
-        if base.cr.playGame.hood or base.cr.playGame.street:
-            if zoneId in self.safezoneMusic.keys():
-                music, volume = self.safezoneMusic[zoneId]
-            else:
-                self.notify.warning('Safezone music for zone %s not in MusicManager.' % str(zoneId))
-                return
+        zoneId = FunnyFarmGlobals.getHoodId(base.localAvatar.getZoneId())
+        zone = base.cr.playGame.getActiveZone()
+        if zone.place:
+            if isinstance(zone.place, Interior):
+                if not zone.place.musicOk:
+                    return
+            lookupTable = self.activityMusic
+            volume = 0.7
+        elif base.cr.playGame.hood:
+            lookupTable = self.safezoneMusic
+            volume = 1.0
+        elif base.cr.playGame.street:
+            lookupTable = self.townMusic
+            volume = 1.0
         else:
-            if zoneId in self.shopMusic.keys():
-                music, volume = self.shopMusic[zoneId]
-            else:
-                self.notify.warning('Activity music for zone %s not in MusicManager.' % str(zoneId))
-                return
+            self.notify.warning('playCurrentZoneMusic(): localAvatar is not currently in a valid zone.')
+            return None
+        if zoneId in lookupTable.keys():
+            music = lookupTable[zoneId]
+        else:
+            self.notify.warning('playCurrentZoneMusic(): music for zone %s not in MusicManager.' % str(zoneId))
+            return None
         self.playMusic(music, looping=1, volume=volume)
 
     def playPickAToon(self):
         if base.air.holidayMgr.isWinter():
-            music, volume = self.pickAToonMusic[1]
+            music = self.pickAToonMusic[1]
+            volume = 1.0
         elif base.air.holidayMgr.isHalloween():
-            music, volume = self.pickAToonMusic[2]
+            music = self.pickAToonMusic[2]
+            volume = 1.0
         else:
-            music, volume = self.pickAToonMusic[0]
+            music = self.pickAToonMusic[0]
+            volume = 0.5
         self.playMusic(music, looping=1, volume=volume)

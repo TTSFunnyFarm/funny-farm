@@ -1,164 +1,145 @@
 from panda3d.core import *
-from direct.showbase.DirectObject import DirectObject
-from direct.gui.DirectGui import *
+from direct.actor.Actor import Actor
 from direct.interval.IntervalGlobal import *
-from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import ToontownGlobals
-from toontown.toonbase import TTLocalizer
+from toontown.toonbase import FunnyFarmGlobals
+from toontown.building.Building import Building
+from toontown.building import GagShopInterior
+from toontown.building import PetShopInterior
+from toontown.building import HQInterior
+from toontown.building import ToonHallInterior
+from toontown.building import MickeyInterior
+from toontown.building import MinnieInterior
+from toontown.building import ToonInterior
+from toontown.building import Door
+from toontown.trolley.Trolley import Trolley
+from Hood import Hood
 
-class ToonHood(DirectObject):
-    notify = directNotify.newCategory('ToonHood')
+class ToonHood(Hood):
+    Shop2ClassDict = {
+        'gag_shop': GagShopInterior.GagShopInterior,
+        'pet_shop': PetShopInterior.PetShopInterior,
+        'door_0': HQInterior.HQInterior,
+        'door_1': HQInterior.HQInterior,
+        'toonhall': ToonHallInterior.ToonHallInterior,
+        'mickey_house': MickeyInterior.MickeyInterior,
+        'minnie_house': MinnieInterior.MinnieInterior,
+        'default': ToonInterior.ToonInterior
+    }
 
     def __init__(self):
-        self.zoneId = None
-        self.hoodFile = None
-        self.spookyHoodFile = None
-        self.winterHoodFile = None
-        self.skyFile = None
-        self.spookySkyFile = 'phase_3.5/models/props/BR_sky'
-        self.titleText = None
-        self.titleColor = (1, 1, 1, 1)
-        self.title = None
-        self.titleTrack = None
+        Hood.__init__(self)
+        self.fish = None
+        self.trolley = None
+        self.telescope = None
+        self.animSeq = None
+        self.buildings = None
 
-    def enter(self, shop=None, tunnel=None, init=False):
+    def enter(self, shop=None, tunnel=None, init=0):
         base.localAvatar.setZoneId(self.zoneId)
         musicMgr.playCurrentZoneMusic()
+        self.setupLandmarkBuildings()
         if shop:
+            building = self.geom.find('**/tb%s:toon_landmark*' % shop[2:])
+            if building.isEmpty():
+                building = self.geom.find('**/%s' % shop)
+            door = Door.Door(building, shop)
+            door.avatarExit(base.localAvatar)
+            self.acceptOnce('avatarExitDone', self.startActive)
             return
-        if not tunnel:
-            base.localAvatar.setRandomSpawn(self.zoneId)
-            if init:
-                Sequence(Wait(0.3), Func(base.localAvatar.enterTeleportIn, 1, 0, self.__handleTeleport)).start()
-                if base.air.holidayMgr.isHalloween():
-                    base.localAvatar.setSystemMessage(0, TTLocalizer.HalloweenHolidayMessage)
-                elif base.air.holidayMgr.isWinter():
-                    base.localAvatar.setSystemMessage(0, TTLocalizer.WinterHolidayMessage)
-            else:
-                base.localAvatar.enterTeleportIn(callback=self.__handleTeleport)
-        base.avatarData.setLastHood = self.zoneId
-        dataMgr.saveToonData(base.avatarData)
-        self.title = OnscreenText(self.titleText, fg=self.titleColor, font=ToontownGlobals.getSignFont(), pos=(0, -0.5), scale=TTLocalizer.HtitleText, drawOrder=0, mayChange=1)
-        self.spawnTitleText()
+        Hood.enter(self, shop=shop, tunnel=tunnel, init=init)
 
     def exit(self):
-        musicMgr.stopMusic()
-        self.ignoreAll()
-        if self.titleTrack:
-            self.titleTrack.finish()
-            self.titleTrack = None
-            self.title.cleanup()
-            self.title = None
+        Hood.exit(self)
+        if self.buildings:
+            self.destroyLandmarkBuildings()
 
     def load(self):
-        if base.air.holidayMgr.isHalloween():
-            self.geom = loader.loadModel(self.spookyHoodFile)
-            self.startSpookySky()
-        elif base.air.holidayMgr.isWinter():
-            self.geom = loader.loadModel(self.winterHoodFile)
-            self.startSnowySky()
-        else:
-            self.geom = loader.loadModel(self.hoodFile)
-            self.sky = loader.loadModel(self.skyFile)
-            self.sky.setTag('sky', 'Regular')
-            self.sky.setScale(1.0)
-            self.sky.setFogOff()
-            self.startSky()
-        self.sky.flattenMedium()
-        self.geom.reparentTo(render)
-        self.geom.flattenMedium()
-        gsg = base.win.getGsg()
-        if gsg:
-            self.geom.prepareScene(gsg)
+        Hood.load(self)
+        if not self.geom.find('**/fish_origin').isEmpty():
+            self.fish = Actor('phase_4/models/props/exteriorfish-zero', {'chan': 'phase_4/models/props/exteriorfish-swim'})
+            self.fish.reparentTo(self.geom.find('**/fish_origin'))
+            self.fish.setBlend(frameBlend=True)
+            self.fish.loop('chan')
+        if not self.geom.find('**/*trolley_station*').isEmpty():
+            self.trolley = Trolley()
+            self.trolley.setup()
 
     def unload(self):
-        self.stopSky()
-        self.geom.removeNode()
-        self.sky.removeNode()
-        del self.geom
-        del self.sky
+        Hood.unload(self)
+        if self.fish:
+            self.fish.stop()
+            self.fish.cleanup()
+            self.fish.removeNode()
+            del self.fish
+        if self.trolley:
+            self.trolley.removeActive()
+            self.trolley.delete()
+            del self.trolley
 
-    def spawnTitleText(self):
-        self.title.show()
-        self.title.setColor(Vec4(*self.titleColor))
-        self.title.clearColorScale()
-        self.title.setFg(self.titleColor)
-        self.titleTrack = Sequence(Wait(0.1), Wait(6.0), self.title.colorScaleInterval(0.5, Vec4(1.0, 1.0, 1.0, 0.0)), Func(self.title.hide))
-        self.titleTrack.start()
+    def startActive(self):
+        Hood.startActive(self)
+        if self.trolley:
+            self.trolley.addActive()
 
-    def __handleTeleport(self):
-        base.localAvatar.exitTeleportIn()
-        base.localAvatar.enable()
-        if base.localAvatar.hp <= 0:
-            base.localAvatar.setAnimState('Sad')
+    def setupLandmarkBuildings(self):
+        self.buildings = []
+        for building in self.geom.findAllMatches('**/tb*toon_landmark*'):
+            zoneStr = building.getName().split(':')
+            block = int(zoneStr[0][2:])
+            zoneId = self.zoneId + 500 + block
+            self.buildings.append(Building(zoneId))
+        for building in self.buildings:
+            building.load()
 
-    def startSky(self):
-        self.sky.reparentTo(camera)
-        self.sky.setZ(0.0)
-        self.sky.setHpr(0.0, 0.0, 0.0)
-        self.sky.setBin('background', 100)
-        ce = CompassEffect.make(NodePath(), CompassEffect.PRot | CompassEffect.PZ)
-        self.sky.node().setEffect(ce)
+    def destroyLandmarkBuildings(self):
+        for building in self.buildings:
+            building.unload()
+            del building
+        self.buildings = None
 
-    def stopSky(self):
-        taskMgr.remove('skyTrack')
-        self.sky.reparentTo(hidden)
+    def handleDoorTrigger(self, collEntry):
+        building = collEntry.getIntoNodePath().getParent()
+        for shopId in self.Shop2ClassDict.keys():
+            if shopId in building.getName():
+                door = Door.Door(building, shopId)
+                door.avatarEnter(base.localAvatar)
+                if 'door' in building.getName():
+                    building = self.geom.find('**/*toon_landmark_hq*')
+                zoneStr = building.getName().split(':')
+                block = int(zoneStr[0][2:])
+                zoneId = self.zoneId + 500 + block
+                self.acceptOnce('avatarEnterDone', self.enterPlace, [shopId, zoneId])
+                return
+        door = Door.Door(building, 'default')
+        door.avatarEnter(base.localAvatar)
+        try:
+            zoneStr = building.getName()[2:4]
+            zoneId = self.zoneId + 500 + int(zoneStr)
+        except:
+            zoneStr = building.getName()[2]
+            zoneId = self.zoneId + 500 + int(zoneStr)
+        self.acceptOnce('avatarEnterDone', self.enterPlace, ['default', zoneId])
 
-    def startSpookySky(self):
-        if not self.spookySkyFile:
+    def enterPlace(self, shopId, zoneId):
+        self.exit()
+        self.geom.reparentTo(hidden)
+        self.geom.stash()
+        if shopId not in self.Shop2ClassDict.keys():
+            self.notify.warning('Could not find shopId: %s' % shopId)
             return
-        if hasattr(self, 'sky') and self.sky:
-            self.stopSky()
-        self.sky = loader.loadModel(self.spookySkyFile)
-        self.sky.setTag('sky', 'Halloween')
-        self.sky.setScale(1.0)
-        self.sky.setDepthTest(0)
-        self.sky.setDepthWrite(0)
-        self.sky.setColor(0.5, 0.5, 0.5, 1)
-        self.sky.setBin('background', 100)
-        self.sky.reparentTo(camera)
-        self.sky.setTransparency(TransparencyAttrib.MDual, 1)
-        fadeIn = self.sky.colorScaleInterval(1.5, Vec4(1, 1, 1, 1), startColorScale=Vec4(1, 1, 1, 0.25), blendType='easeInOut')
-        fadeIn.start()
-        self.sky.setZ(0.0)
-        self.sky.setHpr(0.0, 0.0, 0.0)
-        ce = CompassEffect.make(NodePath(), CompassEffect.PRot | CompassEffect.PZ)
-        self.sky.node().setEffect(ce)
+        self.place = self.Shop2ClassDict[shopId](shopId, zoneId)
+        self.place.load()
+        if shopId == 'door_1':
+            door = Door.Door(self.place.door2, shopId + '_int')
+        else:
+            door = Door.Door(self.place.door, shopId + '_int')
+        door.avatarExit(base.localAvatar)
 
-    def endSpookySky(self):
-        if hasattr(self, 'sky') and self.sky:
-            self.sky.reparentTo(hidden)
-        if hasattr(self, 'sky'):
-            self.sky = loader.loadModel(self.skyFile)
-            self.sky.setTag('sky', 'Regular')
-            self.sky.setScale(1.0)
-            self.startSky()
-
-    def startSnowySky(self):
-        if hasattr(self, 'sky') and self.sky:
-            self.stopSky()
-        self.sky = loader.loadModel(self.spookySkyFile)
-        self.sky.setTag('sky', 'Winter')
-        self.sky.setScale(1.0)
-        self.sky.setDepthTest(0)
-        self.sky.setDepthWrite(0)
-        self.sky.setColor(1, 1, 1, 1)
-        self.sky.setBin('background', 100)
-        self.sky.setFogOff()
-        self.sky.reparentTo(camera)
-        self.sky.setTransparency(TransparencyAttrib.MDual, 1)
-        fadeIn = self.sky.colorScaleInterval(1.5, Vec4(1, 1, 1, 1), startColorScale=Vec4(1, 1, 1, 0.25), blendType='easeInOut')
-        fadeIn.start()
-        self.sky.setZ(0.0)
-        self.sky.setHpr(0.0, 0.0, 0.0)
-        ce = CompassEffect.make(NodePath(), CompassEffect.PRot | CompassEffect.PZ)
-        self.sky.node().setEffect(ce)
-
-    def endSnowySky(self):
-        if hasattr(self, 'sky') and self.sky:
-            self.sky.reparentTo(hidden)
-        if hasattr(self, 'sky'):
-            self.sky = loader.loadModel(self.skyFile)
-            self.sky.setTag('sky', 'Regular')
-            self.sky.setScale(1.0)
-            self.startSky()
+    def exitPlace(self):
+        ModelPool.garbageCollect()
+        TexturePool.garbageCollect()
+        self.place.unload()
+        self.place = None
+        self.geom.unstash()
+        self.geom.reparentTo(render)

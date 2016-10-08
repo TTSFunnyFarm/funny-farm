@@ -5,4 +5,3 @@ class FFHoodAI(HoodAI):
 
     def __init__(self, air):
         HoodAI.__init__(self, air, FunnyFarmGlobals.FunnyFarm)
-        self.createZone()

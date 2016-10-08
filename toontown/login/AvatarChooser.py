@@ -40,7 +40,6 @@ class AvatarChooser:
             self.load()
         self.bg.show()
         self.quitButton.show()
-        base.transitions.fadeScreen(1.0)
         base.transitions.fadeIn(1.0)
 
     def exit(self):

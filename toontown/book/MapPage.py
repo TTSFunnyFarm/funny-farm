@@ -61,20 +61,25 @@ class MapPage(ShtikerPage.ShtikerPage):
     def enter(self):
         ShtikerPage.ShtikerPage.enter(self)
         if base.cr.playGame.hood:
-            if base.cr.playGame.hood.zoneId == FunnyFarmGlobals.SecretArea:
+            if base.cr.playGame.hood.place:
+                self.safeZoneButton.show()
+            elif base.cr.playGame.hood.zoneId == FunnyFarmGlobals.SecretArea:
                 self.safeZoneButton.show()
             else:
                 self.safeZoneButton.hide()
         else:
             self.safeZoneButton.show()
         zoneId = base.localAvatar.getZoneId()
-        currZone = FunnyFarmGlobals.HoodTextDict[zoneId]
+        hoodName = FunnyFarmGlobals.hoodNameMap.get(FunnyFarmGlobals.getHoodId(zoneId), '')
+        streetName = FunnyFarmGlobals.StreetNames.get(zoneId, '')
         self.hoodLabel.show()
-        self.hoodLabel['text'] = TTLocalizer.MapPageYouAreHere % currZone
+        self.hoodLabel['text'] = TTLocalizer.MapPageYouAreHere % (hoodName, streetName)
         self.accept('safeZoneTeleport', self.book.teleportTo)
 
     def exit(self):
         ShtikerPage.ShtikerPage.exit(self)
 
     def backToSafeZone(self):
-        messenger.send('safeZoneTeleport', [base.avatarData.setLastHood])
+        zoneId = base.localAvatar.getZoneId()
+        hoodId = FunnyFarmGlobals.getHoodId(zoneId)
+        messenger.send('safeZoneTeleport', [hoodId])

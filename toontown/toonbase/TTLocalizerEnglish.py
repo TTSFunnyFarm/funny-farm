@@ -143,6 +143,13 @@ MyEstate = ('to', 'in', 'your house')
 WelcomeValley = ('to', 'in', 'Welcome Valley')
 GolfZone = ('to', 'in', lGolfZone)
 PartyHood = ('to the', 'in the', lPartyHood)
+Tutorial = 'the Toon-torial'
+FunnyFarm = 'Funny Farm'
+FunnyFarmCentral = 'Funny Farm Central'
+SillySprings = 'Silly Springs'
+ChillyVillage = 'Chilly Village'
+MoonlitMeadow = 'Moonlit Meadow'
+SecretArea = '???'
 Factory = 'Factory'
 Headquarters = 'Headquarters'
 SellbotFrontEntrance = 'Front Entrance'
@@ -4758,7 +4765,7 @@ MapPageTitle = 'Map'
 MapPageBackToPlayground = 'Back to Playground'
 MapPageBackToCogHQ = 'Back to Cog Headquarters'
 MapPageGoHome = 'Go Home'
-MapPageYouAreHere = 'You are in: %s'
+MapPageYouAreHere = 'You are in: %s\n%s'
 MapPageYouAreAtHome = 'You are at\nyour estate'
 MapPageYouAreAtSomeonesHome = 'You are at %s estate'
 MapPageGoTo = 'Go To\n%s'
@@ -7735,12 +7742,7 @@ NPCToonNames = {20000: 'Tutorial Tom',
  7006: 'Gimmy Ahand',
  7007: 'Dewin Tymme',
  7008: 'Ima Cagedtoon',
- 7009: 'Jimmy Thelock',
-91913: 'Shockley', # 9/19/13 = Closing of Toontown, just a random number to start with so we don't take up other IDs
-91914: 'Sir Max',  # Feel free to add other TTR members in as needed.
-91915: 'McQuack',
-91916: 'Hawkheart',
-91917: 'King Leroy'}
+ 7009: 'Jimmy Thelock'}
 zone2TitleDict = {2513: ('Toon Hall', ''),
  2514: ('Toontown Bank', ''),
  2516: ('Toontown School House', ''),
@@ -8277,6 +8279,11 @@ zone2TitleDict = {2513: ('Toon Hall', ''),
  3828: ("Snowman's Land", ''),
  3829: ('Pinecone Zone', ''),
  3830: ('Wait and See Goggle Defogging', '')}
+FFZone2TitleDict = {1514: 'Toon Hall',
+ 1510: 'Gag Shop',
+ 1511: 'Pet Shop',
+ 1512: lToonHQ,
+}
 ClosetTimeoutMessage = 'Sorry, you ran out\n of time.'
 ClosetNotOwnerMessage = "This isn't your closet, but you may try on the clothes."
 ClosetPopupOK = lOK

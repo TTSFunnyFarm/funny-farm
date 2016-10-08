@@ -1143,13 +1143,9 @@ class LocalToon(Toon.Toon, WalkControls):
             self.sillySurgeText = False
 
     def died(self):
-        if base.cr.playGame.hood:
-            base.cr.playGame.exitHood()
-        elif base.cr.playGame.street:
-            base.cr.playGame.exitStreet()
-        elif base.cr.playGame.place:
-            base.cr.playGame.exitPlace()
+        base.cr.playGame.exitActiveZone()
         self.reparentTo(render)
         self.enable()
-        zoneId = base.avatarData.setLastHood
-        base.cr.enterHood(zoneId)
+        zoneId = self.getZoneId()
+        hoodId = FunnyFarmGlobals.getHoodId(zoneId)
+        base.cr.playGame.enterHood(hoodId)

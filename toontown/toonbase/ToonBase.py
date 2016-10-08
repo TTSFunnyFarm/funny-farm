@@ -318,10 +318,10 @@ class ToonBase(OTPBase.OTPBase):
 
     def startShow(self, cr):
         self.cr = cr
-        from toontown.login import TitleScreen
+        from toontown.login.TitleScreen import TitleScreen
         musicMgr.playPickAToon()
-        self.titleScreen = TitleScreen.TitleScreen()
-        self.titleScreen.startShow()
+        titleScreen = TitleScreen()
+        titleScreen.startShow()
 
     def removeGlitchMessage(self):
         self.ignore('InputState-forward')

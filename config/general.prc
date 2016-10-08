@@ -21,7 +21,7 @@ texture-anisotropic-degree 16
 textures-power-2 none
 
 # Performance:
-sync-video #t
+sync-video #f
 garbage-collect-states #f
 support-threads #t
 lock-to-one-cpu #f
