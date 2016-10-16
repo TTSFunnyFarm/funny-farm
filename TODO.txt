@@ -1,1 +1,9 @@
+- Last 3 trolley games (toon escape, slingshot, jungle vines)
+- Remake Funny Farm playground (Patrick)
+- Funny Farm 1200 street
+- Silly Springs playground (Patrick)
+- Silly Springs 2100 street (Patrick)
+- Suit / Building AI
 - Fishing
+- Initial work for toontasks
+
