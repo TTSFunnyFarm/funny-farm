@@ -476,6 +476,8 @@ class LocalToon(Toon.Toon, WalkControls):
 
     def setRandomSpawn(self, zoneId):
         if zoneId not in FunnyFarmGlobals.SpawnPoints.keys():
+            self.setPos(0, 0, 0)
+            self.setHpr(0, 0, 0)
             return
         spawnPoints = FunnyFarmGlobals.SpawnPoints[zoneId]
         spawn = random.choice(spawnPoints)

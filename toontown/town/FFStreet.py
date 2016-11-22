@@ -40,7 +40,7 @@ class FFStreet(Street):
 
     def loadTrain(self):
         self.train = loader.loadModel('phase_5/models/props/train')
-        self.train.reparentTo(render)
+        self.train.reparentTo(self.geom)
         cb = CollisionBox(Point3(0, 14.25, 5), 3.5, 14.25, 6)
         self.trainColl = self.train.attachNewNode(CollisionNode('train_collision'))
         self.trainColl.node().addSolid(cb)

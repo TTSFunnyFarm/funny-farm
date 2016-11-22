@@ -91,11 +91,13 @@ phaseMap = {
 safeZoneCountMap = {
     FunnyFarm: 6,
     FunnyFarmCentral: 6,
-    SecretArea: 10
+    SecretArea: 10,
+    SillySprings: 6
 }
 townCountMap = {
     Tutorial: 40,
-    FunnyFarm: 40
+    FunnyFarm: 40,
+    SillySprings: 40
 }
 SpawnPoints = {
     FunnyFarm: [
@@ -111,13 +113,6 @@ SpawnPoints = {
         (Point3(-60, -50, 0), Vec3(315, 0, 0)),
         (Point3(-55, 55, 0), Vec3(225, 0, 0)),
         (Point3(55, 55, 0), Vec3(135, 0, 0))
-    ],
-    SillySprings: [
-        (Point3(0, -35, 0), Vec3(0, 0, 0)),
-        (Point3(-50, -5, 0), Vec3(300, 0, 0)),
-        (Point3(23, 30, 0), Vec3(180, 0, 0)),
-        (Point3(-23, 30, 0), Vec3(180, 0, 0)),
-        (Point3(50, -10, 0), Vec3(90, 0, 0))
     ],
     SecretArea: [
         (Point3(0, -20, 0), Vec3(0, 0, 0))
