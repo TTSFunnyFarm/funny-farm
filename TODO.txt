@@ -1,9 +1,13 @@
-- Last 3 trolley games (toon escape, slingshot, jungle vines)
-- Remake Funny Farm playground (Patrick)
-- Funny Farm 1200 street
-- Silly Springs playground (Patrick)
-- Silly Springs 2100 street (Patrick)
-- Suit / Building AI
-- Fishing
-- Initial work for toontasks
+Suit AI:
+  - Fix remaining bugs with spawning and basic roaming
+  - Add battle cells; make battles work
+  - Cog buildings, maybe? (Might not be needed for 1.4)
 
+ToonTasks:
+  TBD
+
+Jobs for people besides Patrick:
+  - Come up with shop names for Funny Farm streets and/or Silly Springs streets; write them down
+  - Come up with respective NPCs for those shops
+  - Create a few task storylines, quick and easy ones for Funny Farm (maybe you can use these to help you come up with names).
+  - Anyone who is familiar with the level editor is welcome to create some streets for me, lmk and I'll give you details.
