@@ -66,7 +66,7 @@ class SuitPlannerAI(DirectObject):
     def createNewSuit(self):
         # Currently just generates a random suit based on the hood info. 
         # We can add arguments to create specific suits later, if needed.
-        newSuit = BattleSuitAI()
+        newSuit = BattleSuitAI(self)
         newSuit.setZoneId(self.zoneId)
         level, type, track = self.pickLevelTypeAndTrack()
         newSuit.setupSuitDNA(level, type, track)

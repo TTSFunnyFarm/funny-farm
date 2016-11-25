@@ -67,6 +67,9 @@ class BattleSuit(Suit, SuitBase):
         self.cleanupLoseActor()
         self.stop()
         taskMgr.remove(self.uniqueName('blink-task'))
+        if hasattr(self, 'mtrack'):
+            self.mtrack.pause()
+            del self.mtrack
 
     def delete(self):
         self.notify.debug('BattleSuit %d: deleting' % self.getDoId())
@@ -278,6 +281,13 @@ class BattleSuit(Suit, SuitBase):
         del self.cRayNode
         del self.cRay
         del self.lifter
+
+    def setState(self, state):
+        if self.fsm == None:
+            return 0
+        if self.fsm.getCurrentState().getName() == state:
+            return 0
+        return self.fsm.request(state)
 
     def setBrushOff(self, index):
         self.setChatAbsolute(SuitDialog.getBrushOffText(self.getStyleName(), index), CFSpeech | CFTimeout)

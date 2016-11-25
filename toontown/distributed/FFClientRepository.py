@@ -69,6 +69,8 @@ class FFClientRepository(DirectObject):
         if tutorialFlag:
             self.playGame.enterTutorial()
             self.setupLocalAvatar(tutorialFlag=tutorialFlag)
+            NametagGlobals.setMasterArrowsOn(1)
+            self.playingGame = 1
         else:
             self.enterTheTooniverse(FunnyFarmGlobals.FunnyFarm)
 

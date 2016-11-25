@@ -15,6 +15,8 @@ class SuitPlanner(DirectObject):
 
     def delete(self):
         self.ignoreAll()
+        taskMgr.remove('%d-sptCreateSuit' % self.zoneId)
+        taskMgr.remove('%d-sptRemoveSuit' % self.zoneId)
         del self.zoneId
         del self.activeSuits
 
@@ -39,13 +41,14 @@ class SuitPlanner(DirectObject):
         newSuit.enterFromSky(requestStatus['posA'], requestStatus['posB'])
         newSuit.startUpdatePosition()
         self.activeSuits[newSuit.doId] = newSuit
-        taskMgr.doMethodLater(SuitTimings.fromSky, self.__handleCreateSuit, '%d-sptCreateSuit' % doId, [doId])
+        taskMgr.doMethodLater(SuitTimings.fromSky, self.__handleCreateSuit, '%d-sptCreateSuit' % self.zoneId, [doId])
 
     def __handleCreateSuit(self, doId):
         suit = self.activeSuits[doId]
         suit.exitFromSky()
 
     def deleteSuit(self, doId):
+        # Instantly removes the suit from the scene graph
         if doId in self.activeSuits.keys():
             suit = self.activeSuits[doId]
             suit.disable()
@@ -53,11 +56,12 @@ class SuitPlanner(DirectObject):
             self.activeSuits.pop(doId)
 
     def removeSuit(self, doId):
+        # Makes the suit fly away first, then deletes it
         if doId in self.activeSuits.keys():
             suit = self.activeSuits[doId]
             suit.exitWalk()
             suit.enterToSky()
-            taskMgr.doMethodLater(SuitTimings.toSky, self.__handleRemoveSuit, '%d-sptRemoveSuit' % doId, [doId])
+            taskMgr.doMethodLater(SuitTimings.toSky, self.__handleRemoveSuit, '%d-sptRemoveSuit' % self.zoneId, [doId])
     
     def __handleRemoveSuit(self, doId):
         suit = self.activeSuits[doId]
@@ -80,7 +84,7 @@ class SuitPlanner(DirectObject):
             self.activeSuits[suit.doId] = suit
             time = ai.requestTime(suit.doId)
             if time == 0:
-                return
+                continue
             suit.enterWalk(status['posA'], status['posB'], time)
 
     def unloadSuits(self):

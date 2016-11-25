@@ -46,6 +46,7 @@ class Street(ToonHood):
     def unload(self):
         ToonHood.unload(self)
         self.sp.unloadSuits()
+        self.sp.delete()
 
     def enterHood(self, zoneId):
         tunnel = str(self.zoneId)

@@ -9,9 +9,10 @@ import random
 class BattleSuitAI(SuitBase):
     notify = directNotify.newCategory('BattleSuitAI')
 
-    def __init__(self):
+    def __init__(self, suitPlanner):
         SuitBase.__init__(self)
         self.doId = id(self)
+        self.sp = suitPlanner
         self.name = ''
         self.zoneId = 0
         self.legList = None
@@ -24,12 +25,8 @@ class BattleSuitAI(SuitBase):
         return ('%s-%s' % (idString, self.doId))
 
     def generate(self):
-        # Initialize the suit's position
-        self.legList = SuitPoints.SuitPoints.get(self.zoneId, [])
-        # TODO Figure out another way to choose a position; too many suits spawning 
-        # in the same spot / extremely close together
-        self.point = random.choice(self.legList)
-        # Send our info over to SuitPlanner
+        self.initializePath()
+        # Sends the info over to SuitPlanner
         messenger.send('generateSuit', [{'doId': self.doId,
          'zoneId': self.zoneId,
          'dna': self.dna,
@@ -38,8 +35,8 @@ class BattleSuitAI(SuitBase):
          'posA': self.point[-1],
          'posB': self.getNextPoint(self.point)[-1]}])
         # This task waits until BattleSuit finishes landing, then starts the walking task.
-        # It's important that we add the 0.1 second delay, otherwise the AI's "fromSky" often 
-        # finishes before the client does, resulting in no update event being received.
+        # It's important that we add the 0.1 second delay, otherwise the AI's "fromSky" delay often 
+        # finishes before the client's does, resulting in no update event being received.
         taskMgr.doMethodLater(SuitTimings.fromSky + 0.1, self.nextPoint, self.uniqueName('fromSky')) 
 
     def delete(self):
@@ -57,6 +54,17 @@ class BattleSuitAI(SuitBase):
         dna.newSuitRandom(type, track)
         self.dna = dna
         self.setLevel(level)
+
+    def initializePath(self):
+        self.legList = SuitPoints.SuitPoints.get(self.zoneId, [])
+        # First try picking a random point
+        self.point = random.choice(self.legList)
+        for doId in self.sp.activeSuits:
+            suit = self.sp.activeSuits[doId]
+            # If the suit is within 30 units of any other suit, try again.
+            # We don't want any suits spawning on top of each other.
+            if (self.point[-1] - suit.point[-1]).length() < 30:
+                self.initializePath()
 
     def nextPoint(self, task):
         prevPoint = self.point
