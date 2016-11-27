@@ -1,4 +1,4 @@
-from pandac.PandaModules import *
+from panda3d.core import *
 from direct.actor import Actor
 from direct.interval.IntervalGlobal import *
 from direct.fsm import ClassicFSM, State
@@ -68,10 +68,9 @@ class ToonHallInterior(Interior):
         doorOrigin.setScale(0.8, 0.8, 0.8)
         doorOrigin.setPos(doorOrigin, 0, -0.025, 0)
         self.door = self.setupDoor('door_double_round_ur', 'door_origin')
+        doorColor = 0
         if self.zoneId in InteriorStorage.ZoneStyles:
             doorColor = InteriorStorage.ZoneStyles[self.zoneId].get('TI_door', 0)
-        else:
-            doorColor = 0
         self.door.setColor(self.colors['TI_door'][doorColor])
         del self.colors
         del self.randomGenerator

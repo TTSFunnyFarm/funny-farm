@@ -1,4 +1,4 @@
-from pandac.PandaModules import *
+from panda3d.core import *
 from toontown.toonbase import FunnyFarmGlobals
 from Interior import Interior
 import ToonInteriorColors
@@ -22,10 +22,9 @@ class HQInterior(Interior):
             doorOrigin.setScale(0.8, 0.8, 0.8)
             doorOrigin.setPos(doorOrigin, 0, -0.1, 0)
 
+        doorColor = 0
         if self.zoneId in InteriorStorage.ZoneStyles:
             doorColor = InteriorStorage.ZoneStyles[self.zoneId].get('TI_door', 0)
-        else:
-            doorColor = 0
         self.door = self.setupDoor('door_double_round_ur', 'door_origin_0')
         self.door.setColor(self.colors['TI_door'][doorColor])
         self.door.find('**/door_double_round_ur_trigger').setName('door_0_trigger')
