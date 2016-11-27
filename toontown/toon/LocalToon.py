@@ -1149,5 +1149,8 @@ class LocalToon(Toon.Toon, WalkControls):
         self.reparentTo(render)
         self.enable()
         zoneId = self.getZoneId()
-        hoodId = FunnyFarmGlobals.getHoodId(zoneId)
+        if zoneId == FunnyFarmGlobals.SecretArea:
+            hoodId = FunnyFarmGlobals.FunnyFarmCentral
+        else:
+            hoodId = FunnyFarmGlobals.getHoodId(zoneId)
         base.cr.playGame.enterHood(hoodId)
