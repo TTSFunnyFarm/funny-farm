@@ -85,8 +85,7 @@ phaseMap = {
     FunnyFarm: 'phase_14/models/neighborhoods/funny_farm',
     FunnyFarmCentral: 'phase_14/models/neighborhoods/funny_farm_central',
     SillySprings: 'phase_14/models/neighborhoods/silly_springs',
-    RicketyRoad: 'phase_14/models/streets/rickety_road',
-    WintryWay: 'phase_14/models/streets/wintry_way'
+    RicketyRoad: 'phase_14/models/streets/funny_farm_1100'
 }
 safeZoneCountMap = {
     FunnyFarm: 6,

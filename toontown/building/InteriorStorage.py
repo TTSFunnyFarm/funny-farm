@@ -5,13 +5,12 @@ import random
 
 ModelPath = 'phase_3.5/models/modules/'
 TexturePath = 'phase_3.5/maps/'
-ToonInteriors = {
-    'TI_room': 'toon_interior',
-    'TI_room_2': 'toon_interior_2',
-    'TI_room_L': 'toon_interior_L',
-    'TI_room_T': 'toon_interior_T',
-    'TI_hall': 'tt_m_ara_int_toonhall'
-}
+ToonInteriors = [
+    'toon_interior',
+    'toon_interior_2',
+    'toon_interior_L',
+    'toon_interior_T'
+]
 ModelDict = {
     'TI_paper_trashcan': 'paper_trashcan',
     'TI_big_planter': 'big_planter',
