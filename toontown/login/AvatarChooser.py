@@ -40,7 +40,7 @@ class AvatarChooser:
             self.load()
         self.bg.show()
         self.quitButton.show()
-        base.transitions.fadeIn(1.0)
+        base.transitions.noTransitions()
 
     def exit(self):
         if not self.isLoaded:
@@ -94,7 +94,6 @@ class AvatarChooser:
         quitGui.removeNode()
         trashcanGui.removeNode()
         self.isLoaded = 1
-        return
 
     def unload(self):
         if not self.isLoaded:

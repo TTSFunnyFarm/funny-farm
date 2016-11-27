@@ -35,6 +35,6 @@ class FFAIRepository(DirectObject):
         self.notify.info('Creating safe zones...')
         self.hoods.append(FFHoodAI.FFHoodAI(self))
         self.hoods.append(FCHoodAI.FCHoodAI(self))
-        messenger.send('ai-done')
         self.notify.info('Done.')
         self.isLoaded = 1
+        messenger.send('ai-done')
