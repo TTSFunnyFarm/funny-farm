@@ -10,7 +10,7 @@ class FFStreet(Street):
     def __init__(self, zoneId):
         Street.__init__(self)
         self.zoneId = zoneId
-        self.hoodFile = FunnyFarmGlobals.phaseMap[zoneId]
+        self.hoodFile = 'phase_14/models/streets/funny_farm_%d' % zoneId
         self.spookyHoodFile = '%s_halloween' % self.hoodFile
         self.winterHoodFile = '%s_winter' % self.hoodFile
         self.skyFile = 'phase_3.5/models/props/TT_sky'
