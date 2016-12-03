@@ -62,4 +62,4 @@ class Street(ToonHood):
         ToonHood.exitPlace(self)
         for doId in self.sp.activeSuits.keys():
             suit = self.sp.activeSuits[doId]
-            suit.removeActive()
+            suit.addActive()
