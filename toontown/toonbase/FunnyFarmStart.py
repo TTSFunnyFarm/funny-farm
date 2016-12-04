@@ -42,7 +42,6 @@ from toontown.login.TitleScreen import TitleScreen
 from toontown.ai.FFAIRepository import FFAIRepository
 from toontown.distributed.FFClientRepository import FFClientRepository
 from toontown.misc import Injector
-from toontown.misc import PythonUtil
 
 class FunnyFarmStart:
     notify = directNotify.newCategory('FunnyFarmStart')
