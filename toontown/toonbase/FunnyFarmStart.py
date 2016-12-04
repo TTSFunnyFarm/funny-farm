@@ -1,13 +1,24 @@
-import __builtin__
-
+from panda3d.core import *
+import __builtin__, os
+from otp.settings.Settings import Settings
 from toontown.toonbase.FunnyFarmLogger import FunnyFarmLogger
 
 __builtin__.logger = FunnyFarmLogger()
 
-from panda3d.core import *
-
 if __debug__:
     loadPrcFile('config/general.prc')
+
+# This has to be done before ToonBase loads so we can use antialiasing
+preferencesFilename = ConfigVariableString('preferences-filename', 'preferences.json').getValue()
+dir = os.path.dirname(os.getcwd() + '/' + preferencesFilename)
+if not os.path.exists(dir):
+    os.makedirs(dir)
+print('Reading %s...' % preferencesFilename)
+__builtin__.settings = Settings(preferencesFilename)
+if 'antialiasing' not in settings:
+    settings['antialiasing'] = 0
+loadPrcFileData('Settings: MSAA', 'framebuffer-multisample %s' % (settings['antialiasing'] > 0))
+loadPrcFileData('Settings: MSAA samples', 'multisamples %i' % settings['antialiasing'])
 
 import ToonBase
 ToonBase.ToonBase()
@@ -21,7 +32,6 @@ __builtin__.game = game()
 from direct.gui import DirectGuiGlobals
 from direct.interval.IntervalGlobal import *
 from direct.stdpy import threading
-from otp.settings.Settings import Settings
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
@@ -33,7 +43,6 @@ from toontown.ai.FFAIRepository import FFAIRepository
 from toontown.distributed.FFClientRepository import FFClientRepository
 from toontown.misc import Injector
 from toontown.misc import PythonUtil
-import os
 
 class FunnyFarmStart:
     notify = directNotify.newCategory('FunnyFarmStart')
@@ -42,12 +51,6 @@ class FunnyFarmStart:
     def __init__(self):
         self.notify.info('Starting the game.')
 
-        preferencesFilename = ConfigVariableString('preferences-filename', 'preferences.json').getValue()
-        dir = os.path.dirname(os.getcwd() + '/' + preferencesFilename)
-        if not os.path.exists(dir):
-            os.makedirs(dir)
-        self.notify.info('Reading %s...' % preferencesFilename)
-        __builtin__.settings = Settings(preferencesFilename)
         if 'fullscreen' not in settings:
             settings['fullscreen'] = False
         if 'music' not in settings:

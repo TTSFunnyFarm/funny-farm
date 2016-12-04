@@ -1,5 +1,8 @@
 from panda3d.core import *
-from toontown.toonbase import FunnyFarmGlobals
+from direct.interval.IntervalGlobal import *
+from otp.nametag.NametagConstants import *
+from toontown.toon import NPCToons
+from toontown.toonbase import FunnyFarmGlobals, TTLocalizer
 from toontown.suit import SuitDNA
 from toontown.suit.BattleSuit import BattleSuit
 from ToonHood import ToonHood
@@ -18,6 +21,7 @@ class SecretArea(ToonHood):
         self.titleColor = (0.5, 0.5, 0.5, 1.0)
         self.townBattle = None
         self.battle = None
+        self.bear = None
 
     def enter(self):
         ToonHood.enter(self)
@@ -53,6 +57,9 @@ class SecretArea(ToonHood):
             self.__battleDone()
         if self.suit:
             self.suit.delete()
+        if self.bear:
+            self.bear.removeActive()
+            self.bear.delete()
         del self.suit
         del self.townBattle
         del self.battle
@@ -76,3 +83,40 @@ class SecretArea(ToonHood):
         self.battle.delete()
         self.battle = None
         self.suit = None
+        if base.localAvatar.hp > 0:
+            # Uh ohhhh! Hax!!!!!
+            musicMgr.stopMusic()
+            self.bear = NPCToons.createLocalNPC(6001)
+            self.bear.reparentTo(hidden)
+            self.bear.setPosHpr(0, 60, 0, 180, 0, 0)
+            self.bear.initializeBodyCollisions('toon')
+            self.bear.useLOD(1000)
+            self.bear.startBlink()
+            self.teleportInSeq = Sequence(
+                Wait(4),
+                Func(self.bear.reparentTo, render),
+                Func(self.bear.setAnimState, 'neutral'),
+                Func(self.bear.addActive),
+                Wait(0.01),
+                Func(self.bear.setAnimState, 'TeleportIn', callback = self.bearGiveSpeech),
+            )
+            self.teleportInSeq.start()
+
+    def bearChat(self, pageNumber):
+        if pageNumber >= len(TTLocalizer.SecretAreaHacked) - 1:
+            self.bear.setChatAbsolute(TTLocalizer.SecretAreaHacked[-1], CFSpeech | CFTimeout)
+            base.localAvatar.stopUpdateSmartCamera()
+            base.localAvatar.takeDamage(base.localAvatar.maxHp)
+            base.localAvatar.disableAvatarControls()
+        else:
+            self.bear.setLocalPageChat(TTLocalizer.SecretAreaHacked[pageNumber], None)
+            self.acceptOnce('Nametag-nextChat', self.bearChat, [pageNumber + 1])
+
+    def bearGiveSpeech(self):
+            self.startSpeech = Sequence(
+                Func(musicMgr.playMusic, base.loadMusic('phase_14/audio/bgm/SKP_enctr_bg.ogg'), True),
+                Func(self.bear.setAnimState, 'neutral'),
+                Wait(1),
+                Func(self.bearChat, 0),
+            )
+            self.startSpeech.start()
