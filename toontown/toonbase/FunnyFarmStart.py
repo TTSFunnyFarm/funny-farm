@@ -107,7 +107,6 @@ class FunnyFarmStart:
         self.notify.info('Initializing Client Repository...')
         cr = FFClientRepository()
         base.initNametagGlobals()
-        Injector.openInjector()
         base.startShow(cr)
         # Can't start a new thread right away otherwise we'll crash panda
         taskMgr.doMethodLater(0.1, self.startAI, 'startAI')
