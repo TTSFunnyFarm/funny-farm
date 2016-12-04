@@ -7632,6 +7632,7 @@ NPCToonNames = {20000: 'Tutorial Tom',
  5320: 'April',
  5321: 'Professor Ivy',
  5322: 'Fisherman Rose',
+ 6001: 'Bear E. Funny',
  8001: 'Graham Pree',
  8002: 'Ivona Race',
  8003: 'Anita Winn',
@@ -9833,3 +9834,8 @@ InteractivePropTrackBonusTerms = {0: 'Super Toon-Up!',
  6: ''}
 PlayingCardUnknown = 'Card Name is unknown'
 GameError = 'It looks like the game has encountered an issue.\n\nDetails:\n%s'
+SecretAreaHacked = ['Uhh... hey there.',
+                    "Hate to tell you this, but I'm afraid you just broke the game.",
+                    "Yeah, you really weren't supposed to be able to defeat that level 12 Cog. We had nothing planned!",
+                    "Though I guess I shouldn't be too sorry for you...",
+                    '...you dirty hacker.']
