@@ -5774,7 +5774,7 @@ TutorialCog = [
     'It\'s happening already.',
     'Quick! Go defeat that Cog!'
 ]
-TutorialOutro = 'Meet me at the Toon Hall. This is not good...'
+TutorialOutro = 'This can\'t be happening... I have to go and investigate!'
 MissingKeySanityCheck = 'Ignore me'
 SellbotBossName = 'Senior V. P.'
 CashbotBossName = 'C. F. O.'
