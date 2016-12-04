@@ -107,9 +107,6 @@ class SecretArea(ToonHood):
             self.bear.setChatAbsolute(TTLocalizer.SecretAreaHacked[-1], CFSpeech | CFTimeout)
             base.localAvatar.stopUpdateSmartCamera()
             base.localAvatar.takeDamage(base.localAvatar.maxHp)
-            # wrtReparentTo and relative positioning send the camera far away for some reason
-            #camera.setPos(base.localAvatar.getX(), base.localAvatar.getY() + (-6.5 - max(base.localAvatar.height, 3.0)), base.localAvatar.getZ() + ((base.localAvatar.height * (1.0/3.0)) + 2.2))
-            #camera.setHpr(base.localAvatar.getH(), 0, 0)
             base.localAvatar.disableAvatarControls()
         else:
             self.bear.setLocalPageChat(TTLocalizer.SecretAreaHacked[pageNumber], None)
