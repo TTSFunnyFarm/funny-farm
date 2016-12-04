@@ -147,6 +147,7 @@ class ToonBase(OTPBase.OTPBase):
         self.localAvatarStyle = None
         self.drawFps = 0
         self.secretAreaFlag = 1
+        base.needRestartAntialiasing = False
         return
 
     def openMainWindow(self, *args, **kw):
@@ -318,6 +319,8 @@ class ToonBase(OTPBase.OTPBase):
 
     def startShow(self, cr):
         self.cr = cr
+        if settings['antialiasing']:
+            render.setAntialias(AntialiasAttrib.MAuto)
         from toontown.login.TitleScreen import TitleScreen
         musicMgr.playPickAToon()
         titleScreen = TitleScreen()
