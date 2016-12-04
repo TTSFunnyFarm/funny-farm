@@ -750,6 +750,7 @@ class Toon(Avatar.Avatar, ToonHead):
         for bookActor, hand in zip(self.__bookActors, hands):
             bookActor.reparentTo(hand)
             bookActor.hide()
+            bookActor.setBlend(frameBlend = True)
 
         return self.__bookActors
 
@@ -766,6 +767,7 @@ class Toon(Avatar.Avatar, ToonHead):
             else:
                 holeName = 'toon-portal'
             ha.setName(holeName)
+            ha.setBlend(frameBlend = True)
 
         return self.__holeActors
 
