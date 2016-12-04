@@ -22,6 +22,7 @@ class NametagGroup:
         self.nametag2d = Nametag2d()
         self.nametag3d = Nametag3d()
         self.icon = PandaNode('icon')
+        self.id = id(self)
 
         self.chatTimeoutTask = None
 
@@ -99,7 +100,7 @@ class NametagGroup:
         return 0.2
 
     def getUniqueId(self):
-        return 'Nametag-%d' % id(self)
+        return 'Nametag-%d' % self.id
 
     def hasButton(self):
         return bool(self.getButtons())
@@ -216,6 +217,8 @@ class NametagGroup:
 
     def __doChatTimeout(self, task):
         self._setChat('', 0)
+        # For LocalToon:
+        messenger.send('%s-clearChat' % self.getUniqueId())
         return task.done
 
     def _stopChatTimeout(self):
