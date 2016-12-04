@@ -100,20 +100,3 @@ class NPCScientist(Toon.Toon):
                     clipBoard.unstash()
                 clipBoard = None
         return
-
-    def setAnimState(self, animName, animMultiplier = 1.0, timestamp = None, animType = None, callback = None, extraArgs = []):
-        if not animName or animName == 'None':
-            return
-        if timestamp == None:
-            ts = 0.0
-        else:
-            ts = globalClockDelta.localElapsedTime(timestamp)
-        if base.config.GetBool('check-invalid-anims', True):
-            if animMultiplier > 1.0 and animName in ['neutral']:
-                animMultiplier = 1.0
-        if self.animFSM.getStateNamed(animName):
-            self.animFSM.request(animName, [animMultiplier,
-             ts,
-             callback,
-             extraArgs])
-        return

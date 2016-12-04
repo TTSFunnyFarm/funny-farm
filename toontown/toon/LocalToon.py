@@ -20,6 +20,7 @@ from toontown.book import MapPage
 from toontown.book import ToonPage
 from toontown.book import InventoryPage
 from otp.otpbase import OTPGlobals
+from otp.nametag.NametagConstants import *
 import InventoryNew
 import Experience
 import random
@@ -179,6 +180,21 @@ class LocalToon(Toon.Toon, WalkControls):
     def stopChat(self):
         self.chatMgr.deleteGui()
         self.chatMgr.disableKeyboardShortcuts()
+
+    def setChatAbsolute(self, chatString, chatFlags, dialogue = None, interrupt = 1):
+        # Only makes the local avatar active when they say something,
+        # so that their nametag isn't always showing in the margins
+        self.addActive()
+        Toon.Toon.setChatAbsolute(self, chatString, chatFlags, dialogue=dialogue, interrupt=interrupt)
+        # Message is sent from NametagGroup
+        self.accept('%s-clearChat' % self.nametag.getUniqueId(), self.chatTimeout)
+        if chatFlags&CFThought:
+            # Makes it so thought bubbles don't appear in the margins
+            self.chatTimeout()
+
+    def chatTimeout(self):
+        self.ignore('%s-clearChat' % self.nametag.getUniqueId())
+        self.removeActive()
 
     def initInterface(self):
         self.book = ShtikerBook.ShtikerBook()
@@ -1145,7 +1161,11 @@ class LocalToon(Toon.Toon, WalkControls):
     def died(self):
         base.cr.playGame.exitActiveZone()
         self.reparentTo(render)
+        self.setupCamera()
         self.enable()
         zoneId = self.getZoneId()
-        hoodId = FunnyFarmGlobals.getHoodId(zoneId)
+        if zoneId == FunnyFarmGlobals.SecretArea:
+            hoodId = FunnyFarmGlobals.FunnyFarmCentral
+        else:
+            hoodId = FunnyFarmGlobals.getHoodId(zoneId)
         base.cr.playGame.enterHood(hoodId)

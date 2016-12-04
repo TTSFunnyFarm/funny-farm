@@ -107,10 +107,12 @@ class OptionsTabPage(DirectFrame):
         self.ToonChatSounds_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=15, pos=(leftMargin, 0, textStartHeight - 2 * textRowHeight + 0.025))
         self.ToonChatSounds_Label.setScale(0.9)
         self.Fps_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - 3 * textRowHeight))
+        self.Antialias_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - 4 * textRowHeight))
         self.Music_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord), command=self.__doToggleMusic)
         self.SoundFX_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight), command=self.__doToggleSfx)
         self.Fps_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 3), command=self.__doToggleFps)
         #self.Friends_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 3), command=self.__doToggleAcceptFriends)
+        self.Antialias_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 4), command=self.__doToggleAntialias)
         #self.Whispers_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 4), command=self.__doToggleAcceptWhispers)
         self.DisplaySettingsButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image3_color=Vec4(0.5, 0.5, 0.5, 0.5), image_scale=button_image_scale, text=TTLocalizer.OptionsPageChange, text3_fg=(0.5, 0.5, 0.5, 0.75), text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 5), command=self.__doDisplaySettings)
         #self.speedChatStyleLeftArrow = DirectButton(parent=self, relief=None, image=(gui.find('**/Horiz_Arrow_UP'),
@@ -145,6 +147,7 @@ class OptionsTabPage(DirectFrame):
         self.__setDisplaySettings()
         self.__setToonChatSoundsButton()
         self.__setFpsButton()
+        self._setAntialiasingButton()
         #self.speedChatStyleText.enter()
         #self.speedChatStyleIndex = base.localAvatar.getSpeedChatStyleIndex()
         #self.updateSpeedChatStyle()
@@ -243,6 +246,19 @@ class OptionsTabPage(DirectFrame):
             settings['drawFps'] = True
         self.__setFpsButton()
 
+    def __doToggleAntialias(self):
+        messenger.send('wakeup')
+        if settings['antialiasing']:
+            render.setAntialias(AntialiasAttrib.MNone)
+            settings['antialiasing'] = 0
+        else:
+            render.setAntialias(AntialiasAttrib.MAuto)
+            settings['antialiasing'] = 2
+        loadPrcFileData('Settings: MSAA', 'framebuffer-multisample %s' % (settings['antialiasing'] > 0))
+        loadPrcFileData('Settings: MSAA samples', 'multisamples %i' % settings['antialiasing'])
+        base.needRestartAntialiasing = True
+        self._setAntialiasingButton()
+
     def __setSoundFXButton(self):
         if base.sfxActive:
             self.SoundFX_Label['text'] = TTLocalizer.OptionsPageSFXOnLabel
@@ -273,6 +289,16 @@ class OptionsTabPage(DirectFrame):
         else:
             self.Fps_Label['text'] = TTLocalizer.OptionsPageFpsOffLabel
             self.Fps_toggleButton['text'] = TTLocalizer.OptionsPageToggleOn
+
+    def _setAntialiasingButton(self):
+        if settings['antialiasing']:
+            self.Antialias_Label['text'] = TTLocalizer.OptionsPageAntialiasingOnLabel
+            self.Antialias_toggleButton['text'] = TTLocalizer.OptionsPageToggleOff
+        else:
+            self.Antialias_Label['text'] = TTLocalizer.OptionsPageAntialiasingOffLabel
+            self.Antialias_toggleButton['text'] = TTLocalizer.OptionsPageToggleOn
+        if base.needRestartAntialiasing:
+            self.Antialias_Label['text'] += TTLocalizer.OptionsPageRequiresRestart
 
     def __doToggleAcceptFriends(self):
         messenger.send('wakeup')

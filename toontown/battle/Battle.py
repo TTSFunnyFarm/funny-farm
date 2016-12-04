@@ -95,6 +95,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         self.notify.debug('cleanupBattle(%s)' % self.doId)
         self.__battleCleanedUp = 1
         base.camLens.setMinFov(ToontownGlobals.DefaultCameraFov/(4./3.))
+        NametagGlobals.setMasterArrowsOn(1)
         self.ignoreAll()
         for suit in self.activeSuits:
             self.removeSuit(suit)
