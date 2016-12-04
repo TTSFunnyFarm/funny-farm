@@ -1163,6 +1163,7 @@ class LocalToon(Toon.Toon, WalkControls):
     def died(self):
         base.cr.playGame.exitActiveZone()
         self.reparentTo(render)
+        self.setupCamera()
         self.enable()
         zoneId = self.getZoneId()
         if zoneId == FunnyFarmGlobals.SecretArea:

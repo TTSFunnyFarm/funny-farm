@@ -1350,6 +1350,23 @@ class Toon(Avatar.Avatar, ToonHead):
         for bookActor in self.getBookActors():
             bookActor.hide()
 
+    def setAnimState(self, animName, animMultiplier = 1.0, timestamp = None, animType = None, callback = None, extraArgs = []):
+        if not animName or animName == 'None':
+            return
+        if timestamp == None:
+            ts = 0.0
+        else:
+            ts = globalClockDelta.localElapsedTime(timestamp)
+        if base.config.GetBool('check-invalid-anims', True):
+            if animMultiplier > 1.0 and animName in ['neutral']:
+                animMultiplier = 1.0
+        if self.animFSM.getStateNamed(animName):
+            self.animFSM.request(animName, [animMultiplier,
+             ts,
+             callback,
+             extraArgs])
+        return
+
     def getWake(self):
         if not self.wake:
             self.wake = Wake.Wake(render, self)
@@ -2061,7 +2078,7 @@ class Toon(Avatar.Avatar, ToonHead):
         Emote.globalEmote.disableBody(self)
         self.playingAnim = 'sit-start'
         if self.isLocal():
-            self.track = Sequence(ActorInterval(self, 'sit-start'), Func(self.b_setAnimState, 'Sit', animMultiplier))
+            self.track = Sequence(ActorInterval(self, 'sit-start'), Func(self.setAnimState, 'Sit', animMultiplier))
         else:
             self.track = Sequence(ActorInterval(self, 'sit-start'))
         self.track.start(ts)
@@ -2104,7 +2121,7 @@ class Toon(Avatar.Avatar, ToonHead):
         self.ignore('wakeup')
         self.takeOffSuit()
         base.cr.playGame.getPlace().fsm.request('final')
-        self.b_setAnimState('TeleportOut', 1, self.__handleAfkExitTeleport, [0])
+        self.setAnimState('TeleportOut', 1, self.__handleAfkExitTeleport, [0])
         return Task.done
 
     def __handleAfkExitTeleport(self, requestStatus):
@@ -2155,7 +2172,7 @@ class Toon(Avatar.Avatar, ToonHead):
         self.setSpeed(self.forwardSpeed, self.rotateSpeed)
         if self.isLocal() and emoteIndex != Emote.globalEmote.EmoteSleepIndex:
             if self.sleepFlag:
-                self.b_setAnimState('Happy', self.animMultiplier)
+                self.setAnimState('Happy', self.animMultiplier)
             self.wakeUp()
         duration = 0
         self.emoteTrack, duration = Emote.globalEmote.doEmote(self, emoteIndex, ts)
@@ -2186,9 +2203,9 @@ class Toon(Avatar.Avatar, ToonHead):
     def __finishEmote(self, task):
         if self.isLocal():
             if self.hp > 0:
-                self.b_setAnimState('Happy')
+                self.setAnimState('Happy')
             else:
-                self.b_setAnimState('Sad')
+                self.setAnimState('Sad')
         return Task.done
 
     def exitEmote(self):
