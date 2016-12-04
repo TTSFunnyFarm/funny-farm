@@ -80,7 +80,6 @@ class FFClientRepository(DirectObject):
         base.localAvatar.setupSmartCamera()
         base.localAvatar.initInterface()
         base.localAvatar.useLOD(1000)
-        base.localAvatar.addActive()
         base.localAvatar.startBlink()
         if not tutorialFlag:
             base.localAvatar.book.showButton()
