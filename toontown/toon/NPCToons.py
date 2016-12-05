@@ -1,4 +1,4 @@
-from pandac.PandaModules import *
+from panda3d.core import *
 from otp.nametag.NametagGroup import *
 from toontown.toonbase import ToontownGlobals
 import random
@@ -59,7 +59,7 @@ NPC_PETCLERK = 6
 NPC_KARTCLERK = 7
 NPC_PARTYPERSON = 8
 NPC_SPECIALQUESTGIVER = 9
-NPC_FLIPPYTOONHALL = 10
+NPC_FLIPPY = 10
 NPC_SCIENTIST = 11
 NPC_SNOWBALLGIVER = 12
 CLERK_COUNTDOWN_TIME = 120
@@ -111,7 +111,7 @@ def createNPC(air, npcId, desc, zoneId, posIndex = 0, questCallback = None):
     elif type == NPC_SPECIALQUESTGIVER:
         return False
         npc = DistributedNPCSpecialQuestGiverAI.DistributedNPCSpecialQuestGiverAI(air, npcId)
-    elif type == NPC_FLIPPYTOONHALL:
+    elif type == NPC_FLIPPY:
         npc = DistributedNPCFlippyInToonHallAI.DistributedNPCFlippyInToonHallAI(air, npcId)
     elif type == NPC_SCIENTIST:
         return False
@@ -170,25 +170,34 @@ def createNpcsInZone(zoneId):
     npcIdList = zone2NpcDict.get(canonicalZoneId, [])
     for i in xrange(len(npcIdList)):
         npcId = npcIdList[i]
-        npcs.append(createLocalNPC(npcId))
+        npcs.append(createLocalNPC(npcId, True))
 
     return npcs
 
 
-def createLocalNPC(npcId):
+def createLocalNPC(npcId, functional = False):
     import Toon
+    import NPCToon
     import NPCScientist
+    import NPCFlippy
     if npcId not in FFNPCToonDict:
         return None
     desc = FFNPCToonDict[npcId]
     canonicalZoneId, name, dnaType, gender, protected, type = desc
-    if type == NPC_SCIENTIST:
-        npc = NPCScientist.NPCScientist()
-    else:
+    if not functional:
         npc = Toon.Toon()
+        # if type == NPC_FLIPPY:
+            # npc.setScale(1.25) # TODO: Reposition tutorial camera and elements to account for this
+    elif type == NPC_SCIENTIST:
+        npc = NPCScientist.NPCScientist()
+    elif type == NPC_FLIPPY:
+        npc = NPCFlippy.NPCFlippy()
+    else:
+        npc = NPCToon.NPCToon()
     npc.setName(name)
     npc.setPickable(0)
     npc.setPlayerType(NametagGroup.CCNonPlayer)
+    npc.npcId = npcId
     dna = ToonDNA.ToonDNA()
     if dnaType == 'r':
         dnaList = getRandomDNA(npcId, gender)
@@ -11553,7 +11562,7 @@ FFNPCToonDict = {
         2),
         'm',
         1,
-        NPC_FLIPPYTOONHALL),
+        NPC_FLIPPY),
  1002: (1510,
         lnames[2006],
         ('dsl',
@@ -11922,7 +11931,7 @@ if config.GetBool('want-new-toonhall', 1):
       2),
      'm',
      1,
-     NPC_FLIPPYTOONHALL)
+     NPC_FLIPPY)
 else:
     NPCToonDict[2001] = (2513,
      lnames[2001],
