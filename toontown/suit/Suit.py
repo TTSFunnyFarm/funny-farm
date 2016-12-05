@@ -365,6 +365,7 @@ class Suit(Avatar.Avatar):
             self.Suit_deleted
         except:
             self.Suit_deleted = 1
+            self.ignoreAll()
             if self.leftHand:
                 self.leftHand.removeNode()
                 self.leftHand = None

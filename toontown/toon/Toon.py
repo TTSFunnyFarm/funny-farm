@@ -584,6 +584,7 @@ class Toon(Avatar.Avatar, ToonHead):
             self.Toon_deleted
         except:
             self.Toon_deleted = 1
+            self.ignoreAll()
             self.stopAnimations()
             self.rightHands = None
             self.rightHand = None
