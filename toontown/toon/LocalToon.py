@@ -228,6 +228,7 @@ class LocalToon(Toon.Toon, WalkControls):
         self.accept('time-delete-up', self.__endTossPie)
         self.accept('pieHit', self.__pieHit)
         self.accept('interrupt-pie', self.interruptPie)
+        self.accept('shift-f1', self.sayLocation)
 
     def enableDebug(self):
         onScreenDebug.enabled = True
@@ -1169,3 +1170,8 @@ class LocalToon(Toon.Toon, WalkControls):
         else:
             hoodId = FunnyFarmGlobals.getHoodId(zoneId)
         base.cr.playGame.enterHood(hoodId)
+
+    def sayLocation(self):
+        locStr = "X: {0}\nY: {1}\nZ: {2}\nH: {3}\nZone: {4}\nVersion: {5}".format(round(self.getX(), 3), round(self.getY(), 3), round(self.getZ(), 3), round(self.getH(), 3),
+                                                                                  self.zoneId, config.GetString('game-version', 'no_version_set'))
+        self.setChatAbsolute(locStr, CFThought)
