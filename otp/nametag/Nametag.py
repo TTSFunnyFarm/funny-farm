@@ -50,6 +50,7 @@ class Nametag(ClickablePopup):
 
     def destroy(self):
         ClickablePopup.destroy(self)
+        self.ignoreAll()
 
     def setContents(self, contents):
         self.contents = contents
