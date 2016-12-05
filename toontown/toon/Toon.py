@@ -506,6 +506,7 @@ class Toon(Avatar.Avatar, ToonHead):
         self.setFont(ToontownGlobals.getToonFont())
         self.setSpeechFont(ToontownGlobals.getToonFont())
         self.soundChatBubble = base.loadSfx('phase_3/audio/sfx/GUI_balloon_popup.ogg')
+        self.doId = id(self)
         self.animFSM = ClassicFSM('Toon', [State('off', self.enterOff, self.exitOff),
          State('neutral', self.enterNeutral, self.exitNeutral),
          State('victory', self.enterVictory, self.exitVictory),
@@ -3144,3 +3145,6 @@ class Toon(Avatar.Avatar, ToonHead):
 
     def exitScientistPlay(self):
         self.stop()
+
+    def uniqueName(self, idString):
+        return ("%s-%s" % (idString, self.doId))
