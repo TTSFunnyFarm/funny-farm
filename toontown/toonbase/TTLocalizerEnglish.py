@@ -4241,8 +4241,12 @@ AvatarChoiceDeletePasswordOK = lOK
 AvatarChoiceDeletePasswordCancel = lCancel
 AvatarChoiceDeleteWrongPassword = 'That password does not seem to match.  To delete this Toon, enter your password.'
 AvatarChoiceDeleteWrongConfirm = 'You didn\'t type the right thing.  To delete %(name)s, type "%(confirm)s" and click OK.  Do not type the quotation marks.  Click Cancel if you have changed your mind.'
+AvatarChoiceRenameTitle = 'Rename your Toon'
+AvatarChoiceRename = 'The Toon Council has rejected your name. Please enter a new name.'
+AvatarChoiceRenameRejected = 'That name will not work. Please enter a new name.'
 AvatarChooserPickAToon = 'Pick  A  Toon  To  Play'
 AvatarChooserQuit = lQuit
+AvatarChooserRename = "Rename"
 DateOfBirthEntryMonths = ['Jan',
  'Feb',
  'Mar',
