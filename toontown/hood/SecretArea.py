@@ -36,6 +36,8 @@ class SecretArea(ToonHood):
 
     def load(self):
         ToonHood.load(self)
+        self.townBattle = TownBattle('townbattle-done')
+        self.townBattle.load()
         suitDNA = SuitDNA.SuitDNA()
         suitDNA.newSuit('tbc')
         self.suit = BattleSuit()
@@ -67,7 +69,6 @@ class SecretArea(ToonHood):
     def enterBattle(self, collEvent):
         base.localAvatar.disable()
         self.suit.disableBattleDetect()
-        self.townBattle = TownBattle('townbattle-done')
         self.battle = Battle(self.townBattle, toons=[base.localAvatar], suits=[self.suit], secretArea=1)
         self.battle.reparentTo(self.battleCell)
         self.battle.enter()
