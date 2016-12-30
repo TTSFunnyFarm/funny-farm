@@ -86,6 +86,7 @@ class Avatar(Actor, ShadowCaster):
         try:
             self.Avatar_deleted
         except:
+            self.ignoreAll()
             self.deleteNametag3d()
             Actor.cleanup(self)
             if self.ManagesNametagAmbientLightChanged:

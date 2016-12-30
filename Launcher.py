@@ -1,15 +1,31 @@
-import hashlib
-import urllib
-import urllib2
+from panda3d.core import *
+from direct.showbase.ShowBase import ShowBase
+from direct.gui.DirectGui import *
+from direct.interval.IntervalGlobal import *
 import sys
+if sys.platform == 'win32':
+    from subprocess import Popen
+import hashlib
+import urllib2
 import platform
 import json
 import os
+import tempfile
+import shutil
+import atexit
+
+if __debug__:
+    loadPrcFile('config/launcher/general.prc')
+
+ShowBase()
+
+DGG.setDefaultFont(loader.loadFont('resources/phase_3/models/fonts/ImpressBT.ttf'))
 
 class FFPatcher:
 
     def __init__(self, launcher):
         self.launcher = launcher
+        self.http = HTTPClient()
         self.platform = ''
         self.manifest = None
         self.fileList = None
@@ -64,29 +80,32 @@ class FFPatcher:
         elif method == 'update':
             self.launcher.updateFiles(self.currentFile, self.numOutdatedFiles)
 
-        # Resource files need to have the "resources/" prefix stripped from them
-        # or else they won't be found on the CDN.
-        if file.startswith('resources/'):
-            file = file.strip('resources/')
-
         url = 'http://cdn.toontownsfunnyfarm.com/%s/%s' % (self.platform, file)
 
-        # If the file begins with "phase_", we know it belongs in the "resources" folder,
-        # so we will have to add the "resources/" prefix back. We will also do this with
-        # files that start with "lib", except they belong in the "lib" folder.
-        # Otherwise, place it in the root.
-        if file.startswith('phase_'):
-            if not os.path.exists('resources/'):
-                os.mkdir('resources/')
+        self.channel = self.http.makeChannel(True)
+        self.channel.beginGetDocument(DocumentSpec(url))
+        self.rf = Ramfile()
+        self.channel.downloadToRam(self.rf)
 
-            urllib.urlretrieve(url, 'resources/' + file)
-        elif file.startswith('lib'):
-            if not os.path.exists('lib/'):
-                os.mkdir('lib/')
+        while self.channel.run():
+            base.graphicsEngine.renderFrame()
 
-            urllib.urlretrieve(url, 'lib/' + file)
-        else:
-            urllib.urlretrieve(url, file)
+        if not self.channel.isDownloadComplete():
+            # Some error happened
+            return
+
+        # Save to disk
+        self.ensureDir(file)
+        with open(file, 'wb') as f:
+            f.write(self.rf.getData())
+
+    @staticmethod
+    def ensureDir(filename):
+        d = os.path.dirname(filename)
+        try:
+            os.makedirs(d)
+        except:
+            pass
 
     def patch(self):
         # Generate our file list.
@@ -125,35 +144,17 @@ class FFPatcher:
         self.launcher.startGame()
 
 
-from panda3d.core import *
-
-if __debug__:
-    loadPrcFile('config/launcher/general.prc')
-
-from direct.showbase.ShowBase import ShowBase
-
-ShowBase()
-
-from direct.gui.DirectGui import *
-
-DGG.setDefaultFont(loader.loadFont('resources/phase_3/models/fonts/ImpressBT.ttf'))
-
-from direct.interval.IntervalGlobal import *
-if sys.platform == 'win32':
-    from subprocess import Popen
-import tempfile
-import shutil
-import atexit
-
 class Launcher:
-    version = '1.0.0'
+    version = '1.1.0'
 
     def __init__(self):
         background = loader.loadTexture('resources/phase_3/maps/launcher_gui.jpg')
         self.frame = DirectFrame(parent=render2d, relief=None, image=background)
         self.versionText = DirectLabel(parent=base.a2dTopLeft, relief=None, text='Funny Farm Launcher v%s' % self.version, pos=(0.5, 0, -0.1), scale=0.08, text_fg=(1.0, 1.0, 1.0, 1.0))
         self.text = DirectLabel(relief=None, text='', pos=(0, 0, -0.5), scale=0.15, text_fg=(1.0, 1.0, 1.0, 1.0))
-        if not __debug__:
+        if __debug__:
+            pass
+        else:
             self.setIcon()
         self.patcher = FFPatcher(self)
 
@@ -179,10 +180,10 @@ class Launcher:
 
     def checkForUpdates(self):
         self.text['text'] = 'Checking for updates...'
-        if not __debug__:
-            self.patcher.patch()
-        else:
+        if __debug__:
             Sequence(Wait(2), Func(self.startGame)).start()
+        else:
+            Sequence(Func(base.graphicsEngine.renderFrame), Wait(2), Func(self.patcher.patch)).start()
 
     def updateFiles(self, curFile, totalFiles):
         self.text['text'] = 'Updating file %s of %s' % (curFile, totalFiles)
@@ -201,6 +202,10 @@ class Launcher:
         del self.versionText
         del self.text
         base.closeWindow(base.win)
+        if __debug__:
+            pass
+        else:
+            os._exit(0)
 
     def startGame(self):
         # This is where we would execute FFEngine.exe.
@@ -211,8 +216,8 @@ class Launcher:
             Popen('StartGame.bat')
         else:
             if sys.platform == 'win32':
-                self.exit()
                 Popen('funnyfarm.exe', creationflags=0x08000000)
+                self.exit()
             elif sys.platform == 'unknown':
                 if platform.system() == 'Linux':
                     self.exit()

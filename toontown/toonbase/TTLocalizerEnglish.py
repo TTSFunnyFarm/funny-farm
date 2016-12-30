@@ -229,22 +229,23 @@ QuestsDefaultLeaving = ('Bye!',
  'Good luck!',
  'Have fun in Toontown!',
  'See you later!')
-QuestsDefaultReject = ('Heya, _avName_!',
- 'Whatcha need?',
- 'Hello! How are you doing?',
- 'Hi there.',
- "Sorry _avName_, I'm a bit busy right now.",
+QuestsDefaultReject = ('Hello.',
+ 'Can I help you?',
+ 'How are you?',
+ 'Hello there.',
+ "I'm a little busy now, _avName_.",
  'Yes?',
- 'Howdy, _avName_.',
+ 'Howdy, _avName_!',
  'Welcome, _avName_!',
- "Hey, _avName_! How's it hanging?",
- "Need any help?",
- "Hi _avName_, what brings you here?",
- # Beta ramblings - to be removed later on
- "These new gags from Goofy's Gag Shop are pretty nifty.",
- "I just bought a new gag earlier. That'll show those Cogs!",
- "I heard that Soggy Nell's building was taken over by the cogs. That could never happen here... right?",
- "I've heard rumors of gigantic Cog HQs being made on the outskirts of Toontown. I sure hope they are only rumors.")
+ "Hey, _avName_! How's it going?",
+ 'Did you know you can open your Shticker Book by hitting F8?',
+ 'You can use your map to teleport back to the playground!',
+ 'To get more gags, play Trolley games!',
+ 'You can get more Laff points by completing ToonTasks.',
+ 'Every ToonTask gives you a reward.',
+ 'Some ToonTask rewards let you carry more gags.',
+ 'If you press the Page Up key, you can look up!',
+ 'If you press the Tab key, you can see different views of your surroundings!')
 QuestsDefaultTierNotDone = ('Hello, _avName_! You must finish your current ToonTasks before getting a new one.', 'Hi there! You need to finish the ToonTasks you are working on in order to get a new one.', 'Hi, _avName_! Before I can give you a new ToonTask, you need to finish the ones you have.')
 QuestsDefaultQuest = None
 QuestsDefaultVisitQuestDialog = ('I heard _toNpcName_ is looking for you._where_',
@@ -4240,8 +4241,12 @@ AvatarChoiceDeletePasswordOK = lOK
 AvatarChoiceDeletePasswordCancel = lCancel
 AvatarChoiceDeleteWrongPassword = 'That password does not seem to match.  To delete this Toon, enter your password.'
 AvatarChoiceDeleteWrongConfirm = 'You didn\'t type the right thing.  To delete %(name)s, type "%(confirm)s" and click OK.  Do not type the quotation marks.  Click Cancel if you have changed your mind.'
+AvatarChoiceRenameTitle = 'Rename your Toon'
+AvatarChoiceRename = 'The Toon Council has rejected your name. Please enter a new name.'
+AvatarChoiceRenameRejected = 'That name will not work. Please enter a new name.'
 AvatarChooserPickAToon = 'Pick  A  Toon  To  Play'
 AvatarChooserQuit = lQuit
+AvatarChooserRename = "Rename"
 DateOfBirthEntryMonths = ['Jan',
  'Feb',
  'Mar',
@@ -5774,7 +5779,7 @@ TutorialCog = [
     'It\'s happening already.',
     'Quick! Go defeat that Cog!'
 ]
-TutorialOutro = 'Meet me at the Toon Hall. This is not good...'
+TutorialOutro = 'This can\'t be happening... I have to go and investigate!'
 MissingKeySanityCheck = 'Ignore me'
 SellbotBossName = 'Senior V. P.'
 CashbotBossName = 'C. F. O.'

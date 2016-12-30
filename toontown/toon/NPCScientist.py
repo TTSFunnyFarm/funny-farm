@@ -1,11 +1,11 @@
 from panda3d.core import *
 from toontown.toonbase import TTLocalizer, ToontownGlobals
-import Toon
+import NPCToonBase
 
-class NPCScientist(Toon.Toon):
+class NPCScientist(NPCToonBase.NPCToonBase):
 
     def __init__(self):
-        Toon.Toon.__init__(self)
+        NPCToonBase.NPCToonBase.__init__(self)
         self.show()
 
     def sillyMeterIsRunning(self, isRunning):

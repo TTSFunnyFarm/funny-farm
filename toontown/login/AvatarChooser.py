@@ -7,7 +7,7 @@ from toontown.toonbase import TTLocalizer
 from toontown.toontowngui import TTDialog
 from toontown.toon import ToonHead
 from toontown.toon import ToonDNA
-import sys
+import sys, re
 
 MAX_AVATARS = 6
 POSITIONS = (Vec3(-0.840167, 0, 0.359333),
@@ -86,6 +86,8 @@ class AvatarChooser:
             button = DirectButton(parent=self.bg, image=btnImages[i], relief=None, pos=POSITIONS[i], scale=1.01, text=(TTLocalizer.AvatarChoiceMakeAToon,), text_scale=0.1, text_font=ToontownGlobals.getSignFont(), text_fg=(0, 1, 0.8, 0.5), text1_scale=TTLocalizer.ACmakeAToon, text1_font=ToontownGlobals.getSignFont(), text1_fg=(0, 1, 0.8, 1), text2_scale=TTLocalizer.ACmakeAToon, text2_font=ToontownGlobals.getSignFont(), text2_fg=(0.3, 1, 0.9, 1), command=self.__handleCreate, extraArgs=[i + 1])
             button.delete = DirectButton(parent=button, image=(trashcanGui.find('**/TrashCan_CLSD'), trashcanGui.find('**/TrashCan_OPEN'), trashcanGui.find('**/TrashCan_RLVR')), text=('', TTLocalizer.AvatarChoiceDelete, TTLocalizer.AvatarChoiceDelete), text_fg=(1, 1, 1, 1), text_shadow=(0, 0, 0, 1), text_scale=0.15, text_pos=(0, -0.1), text_font=ToontownGlobals.getInterfaceFont(), relief=None, pos=DELETE_POSITIONS[i], scale=0.45, command=self.__handleDelete, extraArgs=[i + 1])
             button.delete.hide()
+            button.rename = DirectButton(parent=button, relief=None, image=(quitGui.find('**/QuitBtn_UP'), quitGui.find('**/QuitBtn_DN'), quitGui.find('**/QuitBtn_RLVR')), text=(TTLocalizer.AvatarChoiceNameYourToon, TTLocalizer.AvatarChoiceNameYourToon, TTLocalizer.AvatarChoiceNameYourToon), text_fg=(1, 1, 1, 1), text_shadow=(0, 0, 0, 1), text_scale=0.15, text_pos=(0, 0.03), text_font=ToontownGlobals.getInterfaceFont(), pos=(-0.2, 0, -0.3), scale=0.45, image_scale=(2, 1, 3), command=self.__handleRename, extraArgs=[i + 1])
+            button.rename.hide()
             self.buttons.append(button)
 
         self.quitButton = DirectButton(parent=self.bg, image=(quitHover, quitHover, quitHover), relief=None, text=TTLocalizer.AvatarChooserQuit, text_font=ToontownGlobals.getSignFont(), text_fg=(0.977, 0.816, 0.133, 1), text_pos=TTLocalizer.ACquitButtonPos, text_scale=TTLocalizer.ACquitButton, image_scale=1, image1_scale=1.05, image2_scale=1.05, scale=1.05, pos=(1.08, 0, -0.907), command=base.userExit)
@@ -93,6 +95,8 @@ class AvatarChooser:
         gui.removeNode()
         quitGui.removeNode()
         trashcanGui.removeNode()
+        self.renameFrame = None
+        self.renameEntry = None
         self.isLoaded = 1
 
     def unload(self):
@@ -102,6 +106,7 @@ class AvatarChooser:
             self.buttons.remove(button)
             button.destroy()
             button.delete.destroy()
+            button.rename.destroy()
         del self.buttons
         self.bg.destroy()
         del self.bg
@@ -135,6 +140,16 @@ class AvatarChooser:
         headModel.startBlink()
         headModel.startLookAround()
 
+        colorstring = TTLocalizer.NumToColor[dna.headColor]
+        animaltype = TTLocalizer.AnimalToSpecies[dna.getAnimal()]
+        tempname = colorstring + ' ' + animaltype
+        reviewedName = self.reviewName(data.setName, data.index)
+        if reviewedName == tempname:
+           # oh no! this toon has a rejected name probably
+           data.setName = reviewedName
+           dataMgr.saveToonData(data)
+           button.rename.show()
+
         nameText = DirectLabel(parent=button, text=data.setName, relief=None, scale=0.08, pos=NAME_POSITIONS[data.index - 1], hpr=(0, 0, NAME_ROTATIONS[data.index - 1]), text_fg=(1, 1, 1, 1), text_shadow=(0, 0, 0, 1), text_wordwrap=8, text_font=ToontownGlobals.getToonFont(), state=DGG.DISABLED)
         button.name = data.setName
         button['command'] = self.__handleChoice
@@ -144,6 +159,36 @@ class AvatarChooser:
         button['text_fg'] = (1, 0.9, 0.1, 1)
         button.delete.show()
 
+    def reviewName(self, name, index):
+        blacklistFile = 'resources/phase_4/etc/tblacklist.dat'
+        # We need two lists: one uppercase and one lowercase.
+        # That means we have to open 2 blacklist files because whatever
+        # changes we make to it are saved to the "blacklist" variable.
+        with open(blacklistFile) as blacklist:
+            badWords = blacklist.read().split()
+        with open(blacklistFile) as blacklist:
+            badWordsTitled = blacklist.read().title().split()
+        
+        nameWords = re.sub('[^\w]', ' ',  name).split()
+        for word in nameWords:
+            if word in badWords or word in badWordsTitled:
+                name = self.findTempName(name, index)
+                break
+        if len(name) < 3 or len(nameWords) > 4:
+            name = self.findTempName(name, index)
+        if name.replace(' ', '').strip() == '':
+            name = self.findTempName(name, index)
+        return name
+
+    def findTempName(self, name, index):
+        data = dataMgr.loadToonData(index)
+        dna = ToonDNA.ToonDNA()
+        dna.newToonFromProperties(*data.setDNA)
+        colorstring = TTLocalizer.NumToColor[dna.headColor]
+        animaltype = TTLocalizer.AnimalToSpecies[dna.getAnimal()]
+        tempname = colorstring + ' ' + animaltype
+        return tempname
+
     def __handleCreate(self, index):
         base.transitions.fadeOut()
         Sequence(Wait(1), Func(base.cr.enterCreateAvatar, index)).start()
@@ -151,6 +196,52 @@ class AvatarChooser:
     def __handleChoice(self, data):
         base.transitions.fadeOut()
         Sequence(Wait(1), Func(self.__handleDone, data)).start()
+
+    def __handleRename(self, index):
+        deleteText = TTLocalizer.AvatarChoiceRename
+        if self.renameFrame == None:
+            buttons = loader.loadModel('phase_3/models/gui/dialog_box_buttons_gui')
+            nameBalloon = loader.loadModel('phase_3/models/props/chatbox_input')
+            okButtonImage = (buttons.find('**/ChtBx_OKBtn_UP'), buttons.find('**/ChtBx_OKBtn_DN'), buttons.find('**/ChtBx_OKBtn_Rllvr'))
+            cancelButtonImage = (buttons.find('**/CloseBtn_UP'), buttons.find('**/CloseBtn_DN'), buttons.find('**/CloseBtn_Rllvr'))
+            self.renameFrame = DirectFrame(pos=(0, 0, 0), parent=aspect2dp, relief=None, image=DGG.getDefaultDialogGeom(), image_color=ToontownGlobals.GlobalDialogColor, image_scale=(1.4, 1.0, 1.0), text=deleteText, text_wordwrap=19, text_scale=TTLocalizer.ACdeleteWithPasswordFrame, text_pos=(0, 0.25), textMayChange=1, sortOrder=NO_FADE_SORT_INDEX)
+            self.renameFrame.hide()
+            self.renameEntry = DirectEntry(parent=self.renameFrame, relief=None, image=nameBalloon, image1_color=(0.8, 0.8, 0.8, 1.0), scale=0.064, pos=(-0.3, 0.0, -0.2), width=10, numLines=1, focus=1, cursorKeys=1, autoCapitalize=1, command=self.__handleRenameOK, extraArgs = [index])
+            DirectLabel(parent=self.renameFrame, relief=None, pos=(0, 0, 0.35), text=TTLocalizer.AvatarChoiceRenameTitle, textMayChange=0, text_scale=0.08)
+            DirectButton(parent=self.renameFrame, image=okButtonImage, relief=None, text=TTLocalizer.AvatarChoiceDeletePasswordOK, text_scale=0.06, text_pos=(0.0, -0.1), textMayChange=0, pos=(-0.22, 0.0, -0.35), command=self.__handleRenameOK, extraArgs = [None, index])
+            DirectButton(parent=self.renameFrame, image=cancelButtonImage, relief=None, text=TTLocalizer.AvatarChoiceDeletePasswordCancel, text_scale=0.06, text_pos=(0.0, -0.1), textMayChange=1, pos=(0.2, 0.0, -0.35), command=self.__handleRenameCancel)
+            buttons.removeNode()
+            nameBalloon.removeNode()
+        else:
+            self.renameFrame['text'] = deleteText
+            self.renameEntry['focus'] = 1
+            self.renameEntry.enterText('')
+        base.transitions.fadeScreen(0.5)
+        self.renameFrame.show()
+        return
+
+    def __handleRenameOK(self, _, index):
+        name = self.renameEntry.get()
+        data = dataMgr.loadToonData(index)
+        reviewedName = self.reviewName(name, index)
+        print " NAME: {0}, REVIEW: {1}".format(name, reviewedName)
+        if name == reviewedName:
+            self.renameFrame.hide()
+            base.transitions.noTransitions()
+            data.setName = name
+            dataMgr.saveToonData(data)
+            # Hacky way of updating the gui
+            self.unload()
+            self.load()
+            self.enter()
+        else:
+            self.renameFrame['text'] = TTLocalizer.AvatarChoiceRenameRejected
+            self.renameEntry['focus'] = 1
+            self.renameEntry.enterText('')
+
+    def __handleRenameCancel(self):
+        self.renameFrame.hide()
+        base.transitions.noTransitions()
 
     def __handleDelete(self, index):
         name = self.buttons[index - 1].name
