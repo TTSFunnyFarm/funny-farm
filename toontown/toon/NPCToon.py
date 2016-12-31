@@ -70,6 +70,8 @@ class NPCToon(NPCToonBase):
     def handleCollisionSphereEnter(self, collEntry):
         if self.allowedToTalk():
             self.avatarEnter()
+            self.nametag3d.clearDepthTest()
+            self.nametag3d.clearBin()
             self.nametag3d.setDepthTest(0)
             self.nametag3d.setBin('fixed', 0)
             self.lookAt(base.localAvatar) # Look at the avatar...
@@ -93,11 +95,10 @@ class NPCToon(NPCToonBase):
         av.startLookAround()
         self.startLookAround()
         self.detectAvatars()
-        self.initPos()
+        #self.initPos()
         if isLocalToon:
             base.localAvatar.posCamera(0, 0)
             taskMgr.remove(self.uniqueName('clearMovie'))
-            self.clearMovie(None)
             self.nametag3d.clearDepthTest()
             self.nametag3d.clearBin()
 
@@ -253,6 +254,7 @@ class NPCToon(NPCToonBase):
         taskMgr.doMethodLater(5.5, self.clearMovie, self.uniqueName('clearMovie'))
 
     def clearMovie(self, task):
+        self.finishMovie(base.localAvatar, 1, 0)
         self.pendingAvId = None
         self.pendingQuests = None
         self.pendingTracks = None
