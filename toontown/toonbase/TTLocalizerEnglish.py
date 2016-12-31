@@ -7753,7 +7753,7 @@ NPCToonNames = {20000: 'Tutorial Tom',
  7008: 'Ima Cagedtoon',
  7009: 'Jimmy Thelock',
  10001: 'Worker Thomas',
- 10002: 'Worker Buford',
+ 10002: 'Worker Gerald',
  10003: 'Worker Zowie',
  10004: 'Architect Aaron',
  10005: 'Director Dudley'}
