@@ -6,6 +6,7 @@ from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.building import Door
+from toontown.toon import NPCToons
 import ZoneUtil
 
 class Hood(DirectObject):
@@ -22,6 +23,7 @@ class Hood(DirectObject):
         self.title = None
         self.titleTrack = None
         self.place = None
+        self.npcs = []
 
     def enter(self, shop=None, tunnel=None, init=0):
         if tunnel:
@@ -49,6 +51,8 @@ class Hood(DirectObject):
     def exit(self):
         musicMgr.stopMusic()
         self.ignoreAll()
+        for npc in self.npcs:
+            npc.removeActive()
         if self.titleTrack:
             self.titleTrack.finish()
             self.titleTrack = None
@@ -72,6 +76,7 @@ class Hood(DirectObject):
         self.sky.flattenMedium()
         self.geom.reparentTo(render)
         self.geom.flattenMedium()
+        self.npcs = NPCToons.createNpcsInZone(self.zoneId)
         gsg = base.win.getGsg()
         if gsg:
             self.geom.prepareScene(gsg)
@@ -82,6 +87,11 @@ class Hood(DirectObject):
         self.sky.removeNode()
         del self.geom
         del self.sky
+        for npc in self.npcs:
+            npc.removeActive()
+            npc.delete()
+            del npc
+        del self.npcs
 
     def getHoodText(self):
         hoodId = FunnyFarmGlobals.getHoodId(self.zoneId)
@@ -103,6 +113,8 @@ class Hood(DirectObject):
             base.localAvatar.setAnimState('Sad')
 
     def startActive(self):
+        for npc in self.npcs:
+            npc.addActive()
         for door in self.geom.findAllMatches('**/*door_trigger*'):
             self.acceptOnce('enter%s' % door.getName(), self.handleDoorTrigger)
         for linkTunnel in self.geom.findAllMatches('**/linktunnel*'):
