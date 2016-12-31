@@ -57,7 +57,7 @@ class DataManager:
         return ToonData(index, dna, name, 20, 20, 0, 40, 0, 12000, 20, None, None, [0, 0, 0, 0, 1, 1, 0], 
                         [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000, 1, 0, 
                         [0, 0, 0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [], [], [], [], [], [], 
-                        {}, [], 1, 1000, 0, [], [], 0, [], [])
+                        {}, [], 1, 1000, 0, [], [], 0, [], [], 0)
 
     def saveToonData(self, data):
         if self.corrupted:
@@ -99,7 +99,7 @@ class DataManager:
 
     def handleDataError(self):
         self.notify.warning('The database has been corrupted. Notifying user.')
-        base.handleGameError('Your database has been corrupted. Please contact support@toontownsfunnyfarm.com for assistance.')
+        base.handleGameError('Your database has been corrupted. Please contact The Toontown\'s Funny Farm Team for assistance.')
         self.corrupted = 1
 
     def createLocalAvatar(self, data):
@@ -135,3 +135,4 @@ class DataManager:
         base.localAvatar.setDamage(data.setDamage)
         base.localAvatar.setDefense(data.setDefense)
         base.localAvatar.setAccuracy(data.setAccuracy)
+        base.localAvatar.setTutorialAck(data.setTutorialAck)
