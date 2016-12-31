@@ -98,11 +98,13 @@ townCountMap = {
 }
 SpawnPoints = {
     FunnyFarm: [
-        (Point3(-70, 0, 0), Vec3(270, 0, 0)),
+        (Point3(-52.5, 0, 0), Vec3(270, 0, 0)),
         (Point3(70, 0, 0), Vec3(90, 0, 0)),
-        (Point3(0, -60, 0), Vec3(0, 0, 0)),
         (Point3(0, 60, 0), Vec3(180, 0, 0)),
-        (Point3(-65, 60, 0), Vec3(225, 0, 0))
+        (Point3(-65, 60, 0), Vec3(225, 0, 0)),
+        (Point3(80, 50, 0), Vec3(135, 0, 0)),
+        (Point3(35, -40, 0), Vec3(25, 0, 0)),
+        (Point3(-35, -40, 0), Vec3(335, 0, 0))
     ],
     FunnyFarmCentral: [
         (Point3(0, 0, 0), Vec3(0, 0, 0)),
