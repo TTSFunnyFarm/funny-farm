@@ -148,6 +148,7 @@ class NameShop(StateData.StateData):
             self.doneStatus = 'done-tutorial'
         else:
             self.doneStatus = 'done'
+            base.localAvatar.setTutorialAck(1)
         messenger.send(self.doneEvent)
 
     def __handleBackward(self):

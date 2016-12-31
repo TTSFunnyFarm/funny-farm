@@ -300,4 +300,9 @@ class AvatarChooser:
         dataMgr.createLocalAvatar(data)
         base.cr.exitChooseAvatar()
         loader.endBulkLoad('main')
-        base.cr.enterTheTooniverse(data.setLastHood)
+        if not base.localAvatar.tutorialAck:
+            base.cr.exitCreateAvatar(tutorialFlag=1)
+            # If they crashed/exited in the tutorial, there's a chance they lost some laff points
+            base.localAvatar.setHealth(20, 20)
+        else:
+            base.cr.enterTheTooniverse(data.setLastHood)
