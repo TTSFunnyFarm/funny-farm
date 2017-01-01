@@ -9,7 +9,7 @@ class ToonData(yaml.YAMLObject):
                 inventory, experience, trackAccess, hat, glasses, backpack, shoes, nametagStyle, cheesyEffect,
                 lastHood, level, levelExp, damage, defense, accuracy, clothesTopsList, clothesBottomsList,
                 hatList, glassesList, backpackList, shoesList, quests, questHistory, questCarryLimit, questingZone,
-                trackProgress, hoodsVisited, teleportAccess, fishingRod, fishCollection, fishTank):
+                trackProgress, hoodsVisited, teleportAccess, fishingRod, fishCollection, fishTank, tutorialAck):
         self.index = index
         self.setDNA = dna
         self.setName = name
@@ -51,6 +51,7 @@ class ToonData(yaml.YAMLObject):
         self.setFishingRod = fishingRod
         self.setFishCollection = fishCollection
         self.setFishTank = fishTank
+        self.setTutorialAck = tutorialAck
 
     def encrypt(self):
         self.setDNA = binascii.hexlify(str(self.setDNA))
@@ -93,6 +94,7 @@ class ToonData(yaml.YAMLObject):
         self.setFishingRod = bin(self.setFishingRod)
         self.setFishCollection = binascii.hexlify(str(self.setFishCollection))
         self.setFishTank = binascii.hexlify(str(self.setFishTank))
+        self.setTutorialAck = bin(self.setTutorialAck)
 
     def decrypt(self):
         self.setDNA = ast.literal_eval(binascii.unhexlify(self.setDNA))
@@ -141,3 +143,8 @@ class ToonData(yaml.YAMLObject):
         self.setFishingRod = int(self.setFishingRod, 0)
         self.setFishCollection = ast.literal_eval(binascii.unhexlify(self.setFishCollection))
         self.setFishTank = ast.literal_eval(binascii.unhexlify(self.setFishTank))
+        try:
+            self.setTutorialAck = int(self.setTutorialAck, 0)
+        except:
+            self.setTutorialAck = 1
+

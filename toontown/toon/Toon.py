@@ -769,7 +769,6 @@ class Toon(Avatar.Avatar, ToonHead):
             else:
                 holeName = 'toon-portal'
             ha.setName(holeName)
-            ha.setBlend(frameBlend = True)
 
         return self.__holeActors
 

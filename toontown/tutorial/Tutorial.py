@@ -40,12 +40,14 @@ class Tutorial(ToonHood):
     def exit(self):
         self.spookyMusic.stop()
         self.ignoreAll()
-        self.toon.laffMeter.start()
-        self.toon.book.showButton()
-        self.book['command'] = self.toon.book.open
-        self.chat['command'] = self.toon.chatMgr.openChatInput
-        self.chat['extraArgs'] = ['']
-        self.toon.chatMgr.enableKeyboardShortcuts()
+        # This will always be true unless we're exiting from a crash or deliberate close out of the game
+        if base.localAvatar.tutorialAck:
+            self.toon.laffMeter.start()
+            self.toon.book.showButton()
+            self.book['command'] = self.toon.book.open
+            self.chat['command'] = self.toon.chatMgr.openChatInput
+            self.chat['extraArgs'] = ['']
+            self.toon.chatMgr.enableKeyboardShortcuts()
 
     def __handleEntered(self):
         self.toon.exitTeleportIn()
@@ -573,8 +575,8 @@ class Tutorial(ToonHood):
 
     def enterHood(self, zoneId):
         # For now we're just entering through the rickety road tunnel
-        tunnel = '1100'
-        base.cr.playGame.enterHood(zoneId, tunnel=tunnel)
+        base.cr.playGame.enterHood(zoneId, tunnel='1100')
+        base.localAvatar.setTutorialAck(1)
 
     # Misc. functions
 

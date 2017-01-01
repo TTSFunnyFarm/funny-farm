@@ -133,8 +133,10 @@ class FFClientRepository(DirectObject):
     def cleanupGame(self):
         self.playGame.exitActiveZone()
         camera.reparentTo(render)
-        base.localAvatar.delete()
-        base.localAvatar = None
+        # If we're in the tutorial, don't even bother cleaning up localAvatar; too many errors
+        if base.localAvatar.tutorialAck:
+            base.localAvatar.delete()
+            base.localAvatar = None
         NametagGlobals.setMasterArrowsOn(0)
         self.playingGame = 0
 

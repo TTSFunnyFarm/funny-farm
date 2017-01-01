@@ -162,6 +162,11 @@ class LocalToon(Toon.Toon, WalkControls):
     def getZoneId(self):
         return self.zoneId
 
+    def setTutorialAck(self, tutorialAck):
+        self.tutorialAck = tutorialAck
+        base.avatarData.setTutorialAck = tutorialAck
+        dataMgr.saveToonData(base.avatarData)
+
     def considerToonUp(self, zoneId):
         safezones = FunnyFarmGlobals.HoodHierarchy.keys()
         if zoneId in safezones and not self.isToonedUp():

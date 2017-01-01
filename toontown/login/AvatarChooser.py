@@ -140,13 +140,10 @@ class AvatarChooser:
         headModel.startBlink()
         headModel.startLookAround()
 
-        colorstring = TTLocalizer.NumToColor[dna.headColor]
-        animaltype = TTLocalizer.AnimalToSpecies[dna.getAnimal()]
-        tempname = colorstring + ' ' + animaltype
-        reviewedName = self.reviewName(data.setName, data.index)
-        if reviewedName == tempname:
+        status = self.reviewName(data.setName)
+        if status == 0:
            # oh no! this toon has a rejected name probably
-           data.setName = reviewedName
+           data.setName = self.findTempName(data.index)
            dataMgr.saveToonData(data)
            button.rename.show()
 
@@ -159,7 +156,7 @@ class AvatarChooser:
         button['text_fg'] = (1, 0.9, 0.1, 1)
         button.delete.show()
 
-    def reviewName(self, name, index):
+    def reviewName(self, name):
         blacklistFile = 'resources/phase_4/etc/tblacklist.dat'
         # We need two lists: one uppercase and one lowercase.
         # That means we have to open 2 blacklist files because whatever
@@ -169,18 +166,19 @@ class AvatarChooser:
         with open(blacklistFile) as blacklist:
             badWordsTitled = blacklist.read().title().split()
         
+        status = 1
         nameWords = re.sub('[^\w]', ' ',  name).split()
         for word in nameWords:
             if word in badWords or word in badWordsTitled:
-                name = self.findTempName(name, index)
+                status = 0
                 break
         if len(name) < 3 or len(nameWords) > 4:
-            name = self.findTempName(name, index)
+            status = 0
         if name.replace(' ', '').strip() == '':
-            name = self.findTempName(name, index)
-        return name
+            status = 0
+        return status
 
-    def findTempName(self, name, index):
+    def findTempName(self, index):
         data = dataMgr.loadToonData(index)
         dna = ToonDNA.ToonDNA()
         dna.newToonFromProperties(*data.setDNA)
@@ -223,9 +221,9 @@ class AvatarChooser:
     def __handleRenameOK(self, _, index):
         name = self.renameEntry.get()
         data = dataMgr.loadToonData(index)
-        reviewedName = self.reviewName(name, index)
-        print " NAME: {0}, REVIEW: {1}".format(name, reviewedName)
-        if name == reviewedName:
+        status = self.reviewName(name)
+        print " NAME: {0}, REVIEW: {1}".format(name, status)
+        if status == 1:
             self.renameFrame.hide()
             base.transitions.noTransitions()
             data.setName = name
@@ -300,4 +298,9 @@ class AvatarChooser:
         dataMgr.createLocalAvatar(data)
         base.cr.exitChooseAvatar()
         loader.endBulkLoad('main')
-        base.cr.enterTheTooniverse(data.setLastHood)
+        if not base.localAvatar.tutorialAck:
+            base.cr.exitCreateAvatar(tutorialFlag=1)
+            # If they crashed/exited in the tutorial, there's a chance they lost some laff points
+            base.localAvatar.setHealth(20, 20)
+        else:
+            base.cr.enterTheTooniverse(data.setLastHood)

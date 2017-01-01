@@ -97,7 +97,7 @@ class NPCToon(NPCToonBase):
         self.detectAvatars()
         #self.initPos()
         if isLocalToon:
-            base.localAvatar.posCamera(0, 0)
+            #base.localAvatar.posCamera(0, 0)
             taskMgr.remove(self.uniqueName('clearMovie'))
             self.nametag3d.clearDepthTest()
             self.nametag3d.clearBin()
@@ -136,8 +136,8 @@ class NPCToon(NPCToonBase):
             rejectString = self.chooseQuestDialogReject()
             rejectString = self.fillInQuestNames(rejectString, avName=base.avatarData.setName)
             self.setChatAbsolute(rejectString, CFSpeech | CFTimeout)
-            if isLocalToon:
-                base.localAvatar.posCamera(0, 0)
+            #if isLocalToon:
+                #base.localAvatar.posCamera(0, 0)
             return
         if mode == NPCToons.QUEST_MOVIE_TIER_NOT_DONE:
             rejectString = self.chooseQuestDialogTierNotDone()
