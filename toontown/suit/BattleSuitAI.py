@@ -34,10 +34,8 @@ class BattleSuitAI(SuitBase):
          'elite': self.isElite,
          'posA': self.point[-1],
          'posB': self.getNextPoint(self.point)[-1]}])
-        # This task waits until BattleSuit finishes landing, then starts the walking task.
-        # It's important that we add the 0.1 second delay, otherwise the AI's "fromSky" delay often 
-        # finishes before the client's does, resulting in no update event being received.
-        taskMgr.doMethodLater(SuitTimings.fromSky + 0.1, self.nextPoint, self.uniqueName('fromSky')) 
+        # Waits until BattleSuit finishes landing, then starts the walking task.
+        taskMgr.doMethodLater(SuitTimings.fromSky + 0.1, self.nextPoint, self.uniqueName('fromSky'))
 
     def delete(self):
         SuitBase.delete(self)
@@ -65,6 +63,12 @@ class BattleSuitAI(SuitBase):
             # We don't want any suits spawning on top of each other.
             if (self.point[-1] - suit.point[-1]).length() < 30:
                 self.initializePath()
+                return
+        # We don't want suits spawning on top of our battles either!
+        if not render.find('**/battleCell').isEmpty():
+            cell = render.find('**/battleCell')
+            if (self.point[-1] - cell.getPos()).length() < 12:
+                self.initializePath()
 
     def nextPoint(self, task):
         prevPoint = self.point
@@ -87,6 +91,3 @@ class BattleSuitAI(SuitBase):
 
     def getLegTime(self, posA, posB):
         return (posA - posB).length() / ToontownGlobals.SuitWalkSpeed
-
-    def enterBattle(self):
-        taskMgr.remove(self.uniqueName('move'))

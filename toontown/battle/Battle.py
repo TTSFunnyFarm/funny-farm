@@ -6,6 +6,7 @@ from direct.task.Task import Task
 from otp.nametag import NametagGlobals
 from otp.nametag.NametagConstants import *
 from toontown.toonbase import ToontownGlobals
+from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.suit import Suit
 from BattleCalculator import BattleCalculator
@@ -429,15 +430,10 @@ class Battle(DirectObject, NodePath, BattleBase):
             self.removeSuit(suit)
         doneStatus = 'run'
         messenger.send(self.townBattle.doneEvent, [doneStatus])
-        if base.cr.playGame.hood:
-            base.cr.playGame.exitHood()
-        elif base.cr.playGame.street:
-            base.cr.playGame.exitStreet()
-        elif base.cr.playGame.place:
-            base.cr.playGame.exitPlace()
+        base.cr.playGame.exitActiveZone()
         base.localAvatar.enable()
-        zoneId = base.avatarData.setLastHood
-        base.cr.enterHood(zoneId)
+        zoneId = FunnyFarmGlobals.getHoodId(base.localAvatar.zoneId)
+        base.cr.playGame.enterHood(zoneId)
 
     def __requestMovie(self, timeout = 0):
         movieDelay = 0
@@ -732,6 +728,8 @@ class Battle(DirectObject, NodePath, BattleBase):
             self.activeSuits.remove(suit)
         suit.disable()
         suit.delete()
+        messenger.send('removeActiveSuit', [suit.doId])
+        messenger.send('upkeepPopulation-%d' % base.localAvatar.zoneId, [None])
 
     def isSuitLured(self, suit):
         if self.luredSuits.count(suit) != 0:

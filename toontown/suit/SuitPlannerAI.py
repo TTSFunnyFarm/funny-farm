@@ -1,8 +1,10 @@
 from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
+from direct.task import Task
 from toontown.building import SuitBuildingGlobals
 from toontown.battle import SuitBattleGlobals
 from BattleSuitAI import BattleSuitAI
+import SuitPoints
 import SuitDNA
 import random
 
@@ -19,7 +21,7 @@ class SuitPlannerAI(DirectObject):
             10,
             40,
             40),
-            (1, 2, 3, 4),
+            (1, 2, 3),
             []
         ]
     }
@@ -31,7 +33,7 @@ class SuitPlannerAI(DirectObject):
     SUIT_HOOD_INFO_TRACK = 5
     SUIT_HOOD_INFO_LVL = 6
     SUIT_HOOD_INFO_HEIGHTS = 7
-    MAX_SUIT_TYPES = 6
+    MAX_SUIT_TYPES = 8
     POP_ADJUST_DELAY = 120
     for zoneId in SuitHoodInfo.keys():
         currHoodInfo = SuitHoodInfo[zoneId]
@@ -54,7 +56,9 @@ class SuitPlannerAI(DirectObject):
     def generate(self):
         self.createSuits()
         self.initTasks()
-        self.accept('removeSuitAI', self.removeSuit)
+        self.accept('createNewSuit-%d' % self.zoneId, self.createNewSuit)
+        self.accept('upkeepPopulation-%d' % self.zoneId, self.upkeepPopulation)
+        self.accept('requestBattle-%d' % self.zoneId, self.requestBattle)
 
     def createSuits(self):
         hoodInfo = self.SuitHoodInfo[self.zoneId]
@@ -75,11 +79,16 @@ class SuitPlannerAI(DirectObject):
         self.notify.info('creating suit in zone %d' % self.zoneId)
 
     def removeSuit(self, doId):
+        # Removes both AI and client
+        self.removeSuitAI(doId)
+        messenger.send('removeSuit', [doId])
+
+    def removeSuitAI(self, doId):
+        # Removes only the AI side
         if doId in self.activeSuits.keys():
             suit = self.activeSuits[doId]
             suit.delete()
             self.activeSuits.pop(doId)
-            messenger.send('removeSuit', [doId])
 
     def requestSuits(self):
         # SuitPlanner asked what suits are on its street; give it all the info
@@ -147,3 +156,34 @@ class SuitPlannerAI(DirectObject):
                 self.createNewSuit()
         self.__waitForNextAdjust()
         return task.done
+
+    def upkeepPopulation(self, task):
+        # Considers adding another suit to upkeep the population
+        suitCount = len(self.activeSuits)
+        maxSuits = self.SuitHoodInfo[self.zoneId][self.SUIT_HOOD_INFO_MAX]
+        minSuits = self.SuitHoodInfo[self.zoneId][self.SUIT_HOOD_INFO_MIN]
+        if suitCount >= maxSuits:
+            choice = 0
+        elif suitCount < minSuits:
+            choice = 1
+        else:
+            choice = random.choice((0, 0, 0, 1, 1, 1))
+        if choice:
+            self.createNewSuit()
+        return Task.done
+
+    def requestBattle(self, suitId, pos):
+        if suitId not in self.activeSuits.keys():
+            return
+        # Don't need the suit AI anymore, the battle will take it from here
+        self.removeSuitAI(suitId)
+        # Find the nearest battle cell
+        distances = []
+        for cell in SuitPoints.BattleCells[self.zoneId]:
+            dist = (pos - cell[0]).length()
+            distances.append(dist)
+        choice = min(distances)
+        index = distances.index(choice)
+        cell = SuitPoints.BattleCells[self.zoneId][index]
+        # Send it over to the client!
+        messenger.send('sptRequestBattle-%d' % self.zoneId, [suitId, cell])

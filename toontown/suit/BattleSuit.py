@@ -221,8 +221,10 @@ class BattleSuit(Suit, SuitBase):
             else:
                 animTrack.append(Func(self.loop, 'neutral'))
             self.attachPropeller()
-            propTrack = Parallel(SoundInterval(self.propInSound, duration=waitTime + dur, node=self), Sequence(ActorInterval(self.prop, 'propeller', constrainedLoop=1, duration=waitTime + spinTime, startTime=0.0, endTime=spinTime), ActorInterval(self.prop, 'propeller', duration=propDur - openTime, startTime=openTime), Func(self.detachPropeller)))
-            return Parallel(lerpPosTrack, shadowTrack, fadeInTrack, animTrack, propTrack, name='trackName')
+            propTrack = Parallel(Sequence(ActorInterval(self.prop, 'propeller', constrainedLoop=1, duration=waitTime + spinTime, startTime=0.0, endTime=spinTime), ActorInterval(self.prop, 'propeller', duration=propDur - openTime, startTime=openTime), Func(self.detachPropeller)))
+            if not base.cr.playGame.getActiveZone().place:
+                propTrack.append(SoundInterval(self.propInSound, duration=waitTime + dur, node=self))
+            return Parallel(lerpPosTrack, shadowTrack, fadeInTrack, animTrack, propTrack, name=self.uniqueName('trackName'))
         else:
             lerpPosTrack = Sequence(Wait(impactLength), LerpPosInterval(self, timeTillLanding, skyPos, startPos=pos))
             shadowTrack = Sequence(Func(self.dropShadow.reparentTo, render), Func(self.dropShadow.setPos, pos), self.dropShadow.scaleInterval(timeTillLanding, Vec3(0.01, 0.01, 1.0), startScale=self.scale), Func(self.dropShadow.reparentTo, self.getShadowJoint()), Func(self.dropShadow.setPos, 0, 0, 0))
@@ -230,8 +232,10 @@ class BattleSuit(Suit, SuitBase):
             actInt = ActorInterval(self, 'landing', loop=0, startTime=dur, endTime=0.0)
             self.attachPropeller()
             self.prop.hide()
-            propTrack = Parallel(SoundInterval(self.propOutSound, duration=waitTime + dur, node=self), Sequence(Func(self.prop.show), ActorInterval(self.prop, 'propeller', endTime=openTime, startTime=propDur), ActorInterval(self.prop, 'propeller', constrainedLoop=1, duration=propDur - openTime, startTime=spinTime, endTime=0.0), Func(self.detachPropeller)))
-            return Parallel(ParallelEndTogether(lerpPosTrack, shadowTrack, fadeOutTrack), actInt, propTrack, name='trackName')
+            propTrack = Parallel(Sequence(Func(self.prop.show), ActorInterval(self.prop, 'propeller', endTime=openTime, startTime=propDur), ActorInterval(self.prop, 'propeller', constrainedLoop=1, duration=propDur - openTime, startTime=spinTime, endTime=0.0), Func(self.detachPropeller)))
+            if not base.cr.playGame.getActiveZone().place:
+                propTrack.append(SoundInterval(self.propOutSound, duration=waitTime + dur, node=self))
+            return Parallel(ParallelEndTogether(lerpPosTrack, shadowTrack, fadeOutTrack), actInt, propTrack, name=self.uniqueName('trackName'))
         return
 
     def enableBattleDetect(self, handler):
@@ -296,12 +300,11 @@ class BattleSuit(Suit, SuitBase):
         self.setBrushOff(SuitDialog.getBrushOffIndex(self.getStyleName()))
 
     def __handleToonCollision(self, collEntry):
-        if not base.localAvatar.wantBattles:
-            return
         toonId = base.localAvatar.getDoId()
         self.notify.debug('BattleSuit: requesting a Battle with toon: %d' % toonId)
-        messenger.send('requestBattle', [self.getPos(), self.getHpr()])
+        self.exitWalk()
         self.enterWaitForBattle()
+        messenger.send('requestBattle-%d' % base.localAvatar.zoneId, [self.doId, self.getPos()])
 
     def calculateHeading(self, a, b):
         xdelta = b[0] - a[0]
@@ -357,8 +360,7 @@ class BattleSuit(Suit, SuitBase):
         self.detachPropeller()
 
     def enterWalk(self, posA, posB, time):
-        #self.enableBattleDetect(self.__handleToonCollision)
-        self.enableBattleDetect(self.__handleBrushOff)
+        self.enableBattleDetect(self.__handleToonCollision)
         self.loop('walk', 0)
         h = self.calculateHeading(posA, posB)
         pos = self.getPosAtTime(posA, posB, time)
@@ -439,6 +441,7 @@ class BattleSuit(Suit, SuitBase):
 
     def showHpText(self, number, bonus = 0, scale = 1, attackTrack = -1):
         if self.HpTextEnabled and not self.ghostMode:
+            number = int(number)
             if number != 0:
                 if self.hpText:
                     self.hideHpText()

@@ -170,7 +170,6 @@ class TownBattle(StateData.StateData):
     def enter(self, event, bldg = 0, creditMultiplier = 1, tutorialFlag = 0):
         if not self.isLoaded:
             self.load()
-        print 'Battle Event %s' % event
         self.battleEvent = event
         self.fsm.enterInitialState()
         base.localAvatar.laffMeter.start()

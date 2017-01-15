@@ -153,6 +153,7 @@ class LocalToon(Toon.Toon, WalkControls):
         self.endAllowPies()
         self.invPage.ignoreOnscreenHooks()
         self.invPage.hideInventoryOnscreen()
+        self.stopLookAround()
 
     def setZoneId(self, zoneId):
         self.zoneId = zoneId
