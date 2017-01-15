@@ -1,10 +1,9 @@
-Suit AI:
-  - Fix remaining bugs with spawning and basic roaming
-  - Add battle cells; make battles work
-  - Cog buildings, maybe? (Might not be needed for 1.4)
-
 ToonTasks:
   TBD
+
+Miscellaneous:
+  - Gag shop purchasing
+  - Playground treasures
 
 Jobs for people besides Patrick:
   - Come up with shop names for Funny Farm streets and/or Silly Springs streets; write them down
