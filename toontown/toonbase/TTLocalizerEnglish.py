@@ -4278,6 +4278,7 @@ InventoryPageDeleteTitle = 'DELETE GAGS'
 InventoryPageTrackFull = 'You have all the gags in the %s track.'
 InventoryPagePluralPoints = 'You will get a new\n%(trackName)s gag when you\nget %(numPoints)s more %(trackName)s points.'
 InventoryPageSinglePoint = 'You will get a new\n%(trackName)s gag when you\nget %(numPoints)s more %(trackName)s point.'
+InventoryPagePowerUp = 'You will get a new\n%(trackName)s gag when you reach level %(level)s.'
 InventoryPageNoAccess = 'You do not have access to the %s track yet.'
 NPCFriendPageTitle = 'SOS Toons'
 PartyDateFormat = '%(mm)s %(dd)d, %(yyyy).4d'
@@ -5013,6 +5014,7 @@ InventorySkillCredit = 'Skill credit: %s'
 InventorySkillCreditNone = 'Skill credit: None'
 InventoryDetailAmount = '%(numItems)s / %(maxItems)s'
 InventoryDetailData = 'Accuracy: %(accuracy)s\n%(damageString)s: %(damage)d%(bonus)s\n%(singleOrGroup)s'
+InventoryPowerupDetail = 'Effect: %s'
 InventoryTrackExp = '%(curExp)s / %(nextExp)s'
 InventoryUberTrackExp = '%(nextExp)s to Go!'
 InventoryGuestExp = 'Guest Limit'
@@ -5053,13 +5055,13 @@ BattleGlobalTracks = ['power-up',
  'squirt',
  'drop']
 BattleGlobalNPCTracks = ['restock', 'toons hit', 'cogs miss']
-BattleGlobalAvPropStrings = (('Feather',
-  'Megaphone',
-  'Lipstick',
-  'Bamboo Cane',
-  'Pixie Dust',
-  'Juggling Balls',
-  'High Dive'),
+BattleGlobalAvPropStrings = (('Toon-up Soda',
+  'Damage Punch',
+  'Defense Cola',
+  'Accuracy Aid',
+  'Toon-up Smoothie',
+  'Damage Shake',
+  'Defense Daiquiri'),
  ('Banana Peel',
   'Rake',
   'Marbles',

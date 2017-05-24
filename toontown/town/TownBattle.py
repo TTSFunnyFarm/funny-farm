@@ -382,31 +382,13 @@ class TownBattle(StateData.StateData):
             self.level = doneStatus['level']
             self.toonPanels[self.localNum].setValues(self.localNum, self.track, self.level)
             if self.track == HEAL_TRACK:
-                if self.__isGroupHeal(self.level):
-                    response = {}
-                    response['mode'] = 'Attack'
-                    response['track'] = self.track
-                    response['level'] = self.level
-                    response['target'] = self.target
-                    messenger.send(self.battleEvent, [response])
-                    self.fsm.request('AttackWait')
-                elif self.numToons == 3 or self.numToons == 4:
-                    self.fsm.request('ChooseToon')
-                elif self.numToons == 2:
-                    response = {}
-                    response['mode'] = 'Attack'
-                    response['track'] = self.track
-                    response['level'] = self.level
-                    if self.localNum == 0:
-                        response['target'] = 1
-                    elif self.localNum == 1:
-                        response['target'] = 0
-                    else:
-                        self.notify.error('Bad localNum value: %s' % self.localNum)
-                    messenger.send(self.battleEvent, [response])
-                    self.fsm.request('AttackWait')
-                else:
-                    self.notify.error('Heal was chosen when number of toons is %s' % self.numToons)
+                self.fsm.request('AttackWait')
+                response = {}
+                response['mode'] = 'Attack'
+                response['track'] = self.track
+                response['level'] = self.level
+                response['target'] = 0
+                messenger.send(self.battleEvent, [response])
             elif self.__isCogChoiceNecessary():
                 self.notify.debug('choice needed')
                 self.fsm.request('ChooseCog')

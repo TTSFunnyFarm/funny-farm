@@ -9,7 +9,7 @@ import BattleExperience
 import BattleParticles
 import MovieDrop
 import MovieFire
-import MovieHeal
+import MoviePowerUp
 import MovieLure
 import MovieNPCSOS
 import MoviePetSOS
@@ -421,8 +421,7 @@ class Movie(DirectObject.DirectObject):
             if ival:
                 track.append(ival)
                 camTrack.append(camIval)
-            hasHealBonus = 0
-            ival, camIval = MovieHeal.doHeals(self.__findToonAttack(HEAL), hasHealBonus)
+            ival, camIval = MoviePowerUp.doPowerUp(self.__findToonAttack(HEAL))
             if ival:
                 track.append(ival)
                 camTrack.append(camIval)
@@ -504,7 +503,7 @@ class Movie(DirectObject.DirectObject):
          id3]
         self.uberList = uberList
 
-    def genAttackDicts(self, toons, suits, id0, tr0, le0, tg0, hp0, ac0, hpb0, kbb0, died0, revive0, id1, tr1, le1, tg1, hp1, ac1, hpb1, kbb1, died1, revive1, id2, tr2, le2, tg2, hp2, ac2, hpb2, kbb2, died2, revive2, id3, tr3, le3, tg3, hp3, ac3, hpb3, kbb3, died3, revive3, sid0, at0, stg0, dm0, sd0, sb0, st0, sid1, at1, stg1, dm1, sd1, sb1, st1, sid2, at2, stg2, dm2, sd2, sb2, st2, sid3, at3, stg3, dm3, sd3, sb3, st3):
+    def genAttackDicts(self, toons, suits, id0, tr0, le0, tg0, hp0, ac0, hpb0, kbb0, died0, revive0, id1, tr1, le1, tg1, hp1, ac1, hpb1, kbb1, died1, revive1, id2, tr2, le2, tg2, hp2, ac2, hpb2, kbb2, died2, revive2, id3, tr3, le3, tg3, hp3, ac3, hpb3, kbb3, died3, revive3, sid0, at0, stg0, dm0, sd0, sb0, st0, hit0, sid1, at1, stg1, dm1, sd1, sb1, st1, hit1, sid2, at2, stg2, dm2, sd2, sb2, st2, hit2, sid3, at3, stg3, dm3, sd3, sb3, st3, hit3):
         if self.track and self.track.isPlaying():
             self.notify.warning('genAttackDicts() - track is playing!')
         toonAttacks = ((id0,
@@ -554,28 +553,32 @@ class Movie(DirectObject.DirectObject):
           dm0,
           sd0,
           sb0,
-          st0),
+          st0,
+          hit0),
          (sid1,
           at1,
           stg1,
           dm1,
           sd1,
           sb1,
-          st1),
+          st1,
+          hit1),
          (sid2,
           at2,
           stg2,
           dm2,
           sd2,
           sb2,
-          st2),
+          st2,
+          hit2),
          (sid3,
           at3,
           stg3,
           dm3,
           sd3,
           sb3,
-          st3))
+          st3,
+          hit3))
         self.__genSuitAttackDicts(toons, suits, suitAttacks)
 
     def __genToonAttackDicts(self, toons, suits, toonAttacks):
@@ -658,37 +661,15 @@ class Movie(DirectObject.DirectObject):
                         if len(targets) > 0:
                             adict['target'] = targets
                 elif track == HEAL:
-                    if levelAffectsGroup(HEAL, level):
-                        targets = []
-                        for t in toons:
-                            if t != toonId and t != -1:
-                                target = self.battle.findToon(t)
-                                if target == None:
-                                    continue
-                                tdict = {}
-                                tdict['toon'] = target
-                                tdict['hp'] = hps[toons.index(t)]
-                                self.notify.debug('HEAL: toon: %d healed for hp: %d' % (target.doId, hps[toons.index(t)]))
-                                targets.append(tdict)
-
-                        if len(targets) > 0:
-                            adict['target'] = targets
-                        else:
-                            targetGone = 1
+                    targetId = toons[0]
+                    target = self.battle.findToon(targetId)
+                    if target != None:
+                        tdict = {}
+                        tdict['toon'] = target
+                        tdict['hp'] = hps[0]
+                        adict['target'] = tdict
                     else:
-                        targetIndex = ta[TOON_TGT_COL]
-                        if targetIndex < 0:
-                            targetGone = 1
-                        else:
-                            targetId = toons[targetIndex]
-                            target = self.battle.findToon(targetId)
-                            if target != None:
-                                tdict = {}
-                                tdict['toon'] = target
-                                tdict['hp'] = hps[targetIndex]
-                                adict['target'] = tdict
-                            else:
-                                targetGone = 1
+                        targetGone = 1
                 elif attackAffectsGroup(track, level, ta[TOON_TRACK_COL]):
                     targets = []
                     for s in suits:
@@ -820,6 +801,7 @@ class Movie(DirectObject.DirectObject):
                 adict['battle'] = self.battle
                 adict['playByPlayText'] = self.playByPlayText
                 adict['taunt'] = sa[SUIT_TAUNT_COL]
+                adict['hit'] = sa[7]
                 hps = sa[SUIT_HP_COL]
                 if adict['group'] == ATK_TGT_GROUP:
                     targets = []

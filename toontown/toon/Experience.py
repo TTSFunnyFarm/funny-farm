@@ -63,7 +63,10 @@ class Experience:
 
     def maxOutExp(self):
         for track in xrange(0, len(Tracks)):
-            self.experience[track] = MaxSkill
+            if track == HEAL_TRACK:
+                self.experience[track] = MaxPowerUpSkill
+            else:
+                self.experience[track] = MaxSkill
         self.owner.inventory.updateGUI()
         self.saveExp()
 

@@ -48,6 +48,9 @@ class BattleCalculator:
         self.__skillCreditMultiplier = 1
         self.tutorialFlag = tutorialFlag
         self.trainTrapTriggered = False
+        self.damageBoostActive = 0
+        self.defenseBoostActive = 0
+        self.suitDefenseBoostActive = 0
 
     def setSkillCreditMultiplier(self, mult):
         self.__skillCreditMultiplier = mult
@@ -143,6 +146,7 @@ class BattleCalculator:
         else:
             randChoice = random.randint(0, 99)
         propAcc = AvPropAccuracy[atkTrack][atkLevel]
+        propAcc = self.__calcAccuracyStatBonus(atkTrack, propAcc)
         if atkTrack == LURE:
             treebonus = self.__toonCheckGagBonus(attack[TOON_ID_COL], atkTrack, atkLevel)
             propBonus = self.__checkPropBonus(atkTrack)
@@ -257,8 +261,7 @@ class BattleCalculator:
                 targetList = self.battle.activeToonIds
             else:
                 for currToon in self.battle.activeToonIds:
-                    if attack[TOON_ID_COL] != currToon:
-                        targetList.append(currToon)
+                    targetList.append(currToon)
 
         else:
             targetList = self.battle.activeSuits
@@ -503,7 +506,9 @@ class BattleCalculator:
                 else:
                     organicBonus = toon.checkGagBonus(attackTrack, attackLevel)
                     propBonus = self.__checkPropBonus(attackTrack)
+                    self.damageBoostActive = 0
                     attackDamage = getAvPropDamage(attackTrack, attackLevel, toon.experience.getExp(attackTrack), organicBonus, propBonus, self.propAndOrganicBonusStack)
+                    attackDamage = self.__calcDamageStatBonus(attackTrack, attackDamage)
                 if not self.__combatantDead(targetId, toon=toonTarget):
                     if self.__suitIsLured(targetId) and atkTrack == DROP:
                         self.notify.debug('not setting validTargetAvail, since drop on a lured suit')
@@ -516,8 +521,8 @@ class BattleCalculator:
                     attackDamage = suit = self.battle.findSuit(targetId).getHP()
                 result = attackDamage
                 if atkTrack == HEAL:
-                    if not self.__attackHasHit(attack, suit=0):
-                        result = result * 0.2
+                    #if not self.__attackHasHit(attack, suit=0):
+                        #result = result * 0.2
                     if self.notify.getDebug():
                         self.notify.debug('toon does ' + str(result) + ' healing to toon(s)')
                 else:
@@ -638,7 +643,7 @@ class BattleCalculator:
                     damageDone = attack[TOON_HP_COL][position]
                 if damageDone <= 0 or self.immortalSuits:
                     continue
-                if track == HEAL or track == PETSOS:
+                if track == PETSOS:
                     currTarget = targets[position]
                     if self.CAP_HEALS:
                         toonHp = self.__getToonHp(currTarget)
@@ -649,6 +654,21 @@ class BattleCalculator:
                     self.toonHPAdjusts[currTarget] += damageDone
                     totalDamages = totalDamages + damageDone
                     continue
+                if track == HEAL:
+                    level = attack[TOON_LVL_COL]
+                    if level == 0 or level == 4:
+                        currTarget = targets[position]
+                        if self.CAP_HEALS:
+                            toonHp = self.__getToonHp(currTarget)
+                            toonMaxHp = self.__getToonMaxHp(currTarget)
+                            if toonHp + damageDone > toonMaxHp:
+                                damageDone = toonMaxHp - toonHp
+                                attack[TOON_HP_COL][position] = damageDone
+                        self.toonHPAdjusts[currTarget] += damageDone
+                        totalDamages = totalDamages + damageDone
+                    else:
+                        totalDamages = 0
+                    continue    
                 currTarget = targets[position]
                 currTarget.setHP(currTarget.getHP() - damageDone)
                 targetId = currTarget.getDoId()
@@ -917,11 +937,8 @@ class BattleCalculator:
                     lastTrack = atkTrack
                 lastAttacks.append(attack)
                 if self.itemIsCredit(atkTrack, atkLevel):
-                    if atkTrack == TRAP or atkTrack == LURE:
+                    if atkTrack == HEAL or atkTrack == TRAP or atkTrack == LURE:
                         pass
-                    elif atkTrack == HEAL:
-                        if damagesDone != 0:
-                            self.__addAttackExp(attack)
                     else:
                         self.__addAttackExp(attack)
 
@@ -1031,6 +1048,40 @@ class BattleCalculator:
         self.__processBonuses(hp=1)
         self.__postProcessToonAttacks()
         return
+
+    def __calcDamageStatBonus(self, trackIndex, damage):
+        if trackIndex == HEAL:
+            return damage
+        boost = base.localAvatar.damage[trackIndex - 1]
+        if boost != 0:
+            self.damageBoostActive = 1
+            newDamage = int(round(damage * (1 + (float(boost) / 100))))
+            return newDamage
+        return damage
+
+    def __calcDefenseStatBonus(self, suitDept, damage):
+        if suitDept == 's':
+            trackIndex = 0
+        elif suitDept == 'm':
+            trackIndex = 1
+        elif suitDept == 'l':
+            trackIndex = 2
+        elif suitDept == 'c':
+            trackIndex = 3
+        boost = base.localAvatar.defense[trackIndex]
+        if boost != 0:
+            self.defenseBoostActive = 1
+            newDamage = int(round(damage - (damage * (float(boost) / 100))))
+            return newDamage
+        return damage
+
+    def __calcAccuracyStatBonus(self, trackIndex, accuracy):
+        if trackIndex == HEAL:
+            return accuracy
+        boost = base.localAvatar.accuracy[trackIndex - 1]
+        if boost != 0:
+            return accuracy + boost
+        return accuracy
 
     def __knockBackAtk(self, attackIndex, toon = 1):
         if toon and (self.battle.toonAttacks[attackIndex][TOON_TRACK_COL] == THROW or self.battle.toonAttacks[attackIndex][TOON_TRACK_COL] == SQUIRT):
@@ -1144,13 +1195,17 @@ class BattleCalculator:
             toonId = targetList[currTarget]
             toon = self.battle.getToon(toonId)
             result = 0
+            attack[7] = 0 # hit or miss flag
             if self.TOONS_TAKE_NO_DAMAGE:
                 result = 0
             elif self.__suitAtkHit(attackIndex):
+                attack[7] = 1
                 atkType = attack[SUIT_ATK_COL]
                 theSuit = self.battle.findSuit(attack[SUIT_ID_COL])
                 atkInfo = SuitBattleGlobals.getSuitAttack(theSuit.dna.name, theSuit.getLevel(), atkType)
+                self.defenseBoostActive = 0
                 result = atkInfo['hp']
+                result = self.__calcDefenseStatBonus(theSuit.dna.dept, result)
             targetIndex = self.battle.activeToonIds.index(toonId)
             attack[SUIT_HP_COL][targetIndex] = result
 
@@ -1277,6 +1332,8 @@ class BattleCalculator:
         if self.CLEAR_SUIT_ATTACKERS:
             self.SuitAttackers = {}
         self.toonAtkOrder = []
+        self.damageBoostActive = 0
+        self.defenseBoostActive = 0
         attacks = findToonAttack(self.battle.activeToonIds, self.battle.toonAttacks, PETSOS)
         for atk in attacks:
             self.toonAtkOrder.append(atk[TOON_ID_COL])

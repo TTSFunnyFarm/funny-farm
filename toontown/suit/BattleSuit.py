@@ -47,6 +47,7 @@ class BattleSuit(Suit, SuitBase):
         self.sillySurgeText = False
         self.interactivePropTrackBonus = -1
         self.hpText = None
+        self.strText = None
         self.hp = None
         self.maxHp = None
         return
@@ -494,6 +495,66 @@ class BattleSuit(Suit, SuitBase):
                 seq = Sequence(self.hpText.posInterval(1.0, Point3(0, 0, self.height + 1.5), blendType='easeOut'), Wait(0.85), self.hpText.colorInterval(0.1, Vec4(r, g, b, 0), 0.1), Func(self.hideHpText))
                 seq.start()
 
+    def showHpTextBoost(self, number, boost):
+        if self.HpTextEnabled and not self.ghostMode:
+            if self.hpText:
+                self.hideHpText()
+            self.HpTextGenerator.setFont(OTPGlobals.getSignFont())
+            stringText = TextNode('stringText')
+            stringText.setFont(OTPGlobals.getSignFont())
+            if boost == 1:
+                stringText.setText('Boost')
+                if number <= 0:
+                    if number == 0:
+                        self.HpTextGenerator.setText('-%d' % number)
+                    else:
+                        self.HpTextGenerator.setText(str(number))
+                else:
+                    self.HpTextGenerator.setText('+%d' % number)
+            elif boost == 2:
+                stringText.setText('Resist')
+                if number <= 0:
+                    if number == 0:
+                        self.HpTextGenerator.setText('-%d' % number)
+                    else:
+                        self.HpTextGenerator.setText(str(number))
+                else:
+                    self.HpTextGenerator.setText('+%d' % number)
+            if number <= 0:
+                r = 0.9
+                g = 0
+                b = 0
+                a = 1
+            else:
+                r = 0
+                g = 0.9
+                b = 0
+                a = 1
+            self.HpTextGenerator.clearShadow()
+            self.HpTextGenerator.setAlign(TextNode.ACenter)
+            self.HpTextGenerator.setTextColor(r, g, b, a)
+            self.hpTextNode = self.HpTextGenerator.generate()
+            self.hpText = self.attachNewNode(self.hpTextNode)
+            self.hpText.setScale(1)
+            self.hpText.setBillboardPointEye()
+            self.hpText.setBin('fixed', 100)
+            
+            stringText.clearShadow()
+            stringText.setAlign(TextNode.ACenter)
+            stringText.setTextColor(r, g, b, a)
+            strTextNode = stringText.generate()
+            self.strText = self.attachNewNode(strTextNode)
+            self.strText.setScale(0.5)
+            self.strText.setBillboardPointEye()
+            self.strText.setBin('fixed', 100)
+            
+            self.nametag3d.setDepthTest(0)
+            self.nametag3d.setBin('fixed', 99)
+            self.hpText.setPos(0, 0, self.height / 2)
+            self.strText.setPos(0, 0, (self.height / 2) + 1.0)
+            seq = Sequence(Parallel(self.hpText.posInterval(1.0, Point3(0, 0, self.height + 1.5), blendType='easeOut'), self.strText.posInterval(1.0, Point3(0, 0, self.height + 2.5), blendType='easeOut')), Wait(0.85), Parallel(self.hpText.colorInterval(0.1, Vec4(r, g, b, 0), 0.1), self.strText.colorInterval(0.1, Vec4(r, g, b, 0), 0.1)), Func(self.hideHpText))
+            seq.start()
+
     def showHpString(self, text, duration = 0.85, scale = 0.7):
         if self.HpTextEnabled and not self.ghostMode:
             if text != '':
@@ -519,10 +580,12 @@ class BattleSuit(Suit, SuitBase):
             taskMgr.remove(self.uniqueName('hpText'))
             self.hpText.removeNode()
             self.hpText = None
-        if self.sillySurgeText:
-            self.nametag3d.clearDepthTest()
-            self.nametag3d.clearBin()
-            self.sillySurgeText = False
+        if self.strText:
+            self.strText.removeNode()
+            self.strText = None
+        self.nametag3d.clearDepthTest()
+        self.nametag3d.clearBin()
+        self.sillySurgeText = False
 
     def getAvIdName(self):
         try:

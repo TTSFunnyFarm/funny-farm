@@ -72,6 +72,22 @@ Props = ((5, 'partyBall', 'partyBall'),
   'glass',
   'glass-mod',
   'glass-chan'),
+ (5,
+  'glass-tu',
+  'glass-mod',
+  'glass-chan'),
+ (5,
+  'glass-dmg',
+  'glass-mod',
+  'glass-chan'),
+ (5,
+  'glass-def',
+  'glass-mod',
+  'glass-chan'),
+ (5,
+  'glass-acc',
+  'glass-mod',
+  'glass-chan'),
  (4, 'water-gun', 'water-gun'),
  (3.5, 'bottle', 'bottle'),
  (5,
@@ -194,7 +210,8 @@ Props = ((5, 'partyBall', 'partyBall'),
  (4,
   'splashdown',
   'SZ_splashdown-mod',
-  'SZ_splashdown-chan'))
+  'SZ_splashdown-chan'),
+ )
 CreampieColor = VBase4(250.0 / 255.0, 241.0 / 255.0, 24.0 / 255.0, 1.0)
 FruitpieColor = VBase4(55.0 / 255.0, 40.0 / 255.0, 148.0 / 255.0, 1.0)
 BirthdayCakeColor = VBase4(253.0 / 255.0, 119.0 / 255.0, 220.0 / 255.0, 1.0)
@@ -228,7 +245,11 @@ Variants = ('tart',
  'geyser',
  'ship',
  'trolley',
- 'traintrack')
+ 'traintrack',
+ 'glass-tu',
+ 'glass-dmg',
+ 'glass-def',
+ 'glass-acc')
 
 class PropPool:
     notify = DirectNotifyGlobal.directNotify.newCategory('PropPool')
@@ -379,6 +400,14 @@ class PropPool:
             self.props[name] = self.props[name].find('**/ship_gag')
         elif name == 'trolley':
             self.props[name] = self.props[name].find('**/trolley_car')
+        elif name == 'glass-tu':
+            self.props[name].find('**/scale_joint_water/+GeomNode').setColor(0, 1, 0, 1)
+        elif name == 'glass-dmg':
+            self.props[name].find('**/scale_joint_water/+GeomNode').setColor(1, 0, 0, 1)
+        elif name == 'glass-def':
+            self.props[name].find('**/scale_joint_water/+GeomNode').setColor(0, 0, 1, 1)
+        elif name == 'glass-acc':
+            self.props[name].find('**/scale_joint_water/+GeomNode').setColor(1, 0.35, 0, 1)
 
     def unloadProps(self):
         for p in self.props.values():

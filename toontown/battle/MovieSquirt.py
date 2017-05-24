@@ -189,7 +189,12 @@ def __getSuitTrack(suit, tContact, tDodge, hp, hpbonus, kbbonus, anim, died, lef
             sival = Parallel(ActorInterval(suit, anim), MovieUtil.createSuitStunInterval(suit, beforeStun, afterStun))
         else:
             sival = ActorInterval(suit, anim)
-        showDamage = Func(suit.showHpText, -hp, openEnded=0, attackTrack=SQUIRT_TRACK)
+        if base.cr.playGame.street.battle.battleCalc.damageBoostActive:
+            showDamage = Func(suit.showHpTextBoost, -hp, 1)
+        elif base.cr.playGame.street.battle.battleCalc.suitDefenseBoostActive:
+            showDamage = Func(suit.showHpTextBoost, -hp, 2)
+        else:
+            showDamage = Func(suit.showHpText, -hp, openEnded=0, attackTrack=SQUIRT_TRACK)
         updateHealthBar = Func(suit.updateHealthBar, hp)
         suitTrack.append(Wait(tContact))
         suitTrack.append(showDamage)

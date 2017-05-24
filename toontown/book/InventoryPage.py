@@ -87,13 +87,16 @@ class InventoryPage(ShtikerPage.ShtikerPage):
                 uberCurrExp = curExp - ToontownBattleGlobals.regMaxSkill
                 self.trackProgress['value'] = uberCurrExp
             else:
-                morePoints = nextExp - curExp
-                if morePoints == 1:
-                    str = TTLocalizer.InventoryPageSinglePoint % {'trackName': trackName,
-                     'numPoints': morePoints}
+                if trackIndex == 0:
+                    str = TTLocalizer.InventoryPagePowerUp % {'trackName': trackName, 'level': nextExp}
                 else:
-                    str = TTLocalizer.InventoryPagePluralPoints % {'trackName': trackName,
-                     'numPoints': morePoints}
+                    morePoints = nextExp - curExp
+                    if morePoints == 1:
+                        str = TTLocalizer.InventoryPageSinglePoint % {'trackName': trackName,
+                         'numPoints': morePoints}
+                    else:
+                        str = TTLocalizer.InventoryPagePluralPoints % {'trackName': trackName,
+                         'numPoints': morePoints}
             self.trackInfo['text'] = str
             self.trackProgress['text'] = trackText
             self.trackProgress['frameColor'] = (ToontownBattleGlobals.TrackColors[trackIndex][0] * 0.6,
@@ -104,7 +107,8 @@ class InventoryPage(ShtikerPage.ShtikerPage):
              ToontownBattleGlobals.TrackColors[trackIndex][1],
              ToontownBattleGlobals.TrackColors[trackIndex][2],
              1)
-            self.trackProgress.show()
+            if trackIndex != 0:
+                self.trackProgress.show()
         else:
             str = TTLocalizer.InventoryPageNoAccess % trackName
             self.trackInfo['text'] = str

@@ -56,6 +56,9 @@ class LocalToon(Toon.Toon, WalkControls):
         self.damage = [0, 0, 0, 0, 0, 0]
         self.defense = [0, 0, 0, 0]
         self.accuracy = [0, 0, 0, 0, 0, 0]
+        self.damageEffect = 0
+        self.defenseEffect = 0
+        self.accuracyEffect = 0
         self.maxNPCFriends = 16
         self.tossTrack = None
         self.pieTracks = {}
@@ -79,6 +82,7 @@ class LocalToon(Toon.Toon, WalkControls):
         self.tunnelX = 0.0
         self.inventory = None
         self.hpText = None
+        self.strText = None
         self.sillySurgeText = False
         self.interactivePropTrackBonus = -1
         self.cogTypes = [0,
@@ -463,6 +467,36 @@ class LocalToon(Toon.Toon, WalkControls):
 
     def getAccuracy(self):
         return self.accuracy
+
+    def setDamageEffect(self, effect):
+        self.damageEffect = effect
+        for val in self.damage:
+            val += self.damageEffect
+
+    def removeDamageEffect(self):
+        for val in self.damage:
+            val -= self.damageEffect
+        self.damageEffect = 0
+
+    def setDefenseEffect(self, effect):
+        self.defenseEffect = effect
+        for val in self.defense:
+            val += self.defenseEffect
+
+    def removeDefenseEffect(self):
+        for val in self.defense:
+            val -= self.defenseEffect
+        self.defenseEffect = 0
+
+    def setAccuracyEffect(self, effect):
+        self.accuracyEffect = effect
+        for val in self.accuracy:
+            val += self.accuracyEffect
+
+    def removeAccuracyEffect(self):
+        for val in self.accuracy:
+            val -= self.accuracyEffect
+        self.accuracyEffect = 0
 
     def setEarnedExperience(self, earnedExp):
         self.earnedExperience = earnedExp
@@ -1053,8 +1087,18 @@ class LocalToon(Toon.Toon, WalkControls):
         oldHp = self.hp
         self.hp = max(self.hp - hpLost, 0)
         hpLost = oldHp - self.hp
-        if hpLost > 0:
-            self.showHpText(-hpLost, bonus)
+        if hpLost >= 0:
+            # a little hacky but whatever
+            if base.cr.playGame.street:
+                if base.cr.playGame.street.battle:
+                    if base.cr.playGame.street.battle.battleCalc.defenseBoostActive:
+                        self.showHpTextBoost(-hpLost, 2)
+                    else:
+                        self.showHpText(-hpLost, bonus)
+                else:
+                    self.showHpText(-hpLost, bonus)
+            else:
+                self.showHpText(-hpLost, bonus)
             self.setHealth(self.hp, self.maxHp)
             if self.hp <= 0 and oldHp > 0:
                 self.setupCamera()
@@ -1085,57 +1129,119 @@ class LocalToon(Toon.Toon, WalkControls):
 
     def showHpText(self, number, bonus = 0, scale = 1, attackTrack = -1):
         if self.HpTextEnabled and not self.ghostMode:
-            if number != 0:
-                if self.hpText:
-                    self.hideHpText()
-                self.HpTextGenerator.setFont(OTPGlobals.getSignFont())
-                if number < 0:
+            if self.hpText:
+                self.hideHpText()
+            self.HpTextGenerator.setFont(OTPGlobals.getSignFont())
+            if number <= 0:
+                if number == 0:
+                    self.HpTextGenerator.setText('-' + str(number))
+                else:
                     self.HpTextGenerator.setText(str(number))
-                    if self.interactivePropTrackBonus > -1 and self.interactivePropTrackBonus == attackTrack:
-                        self.sillySurgeText = True
-                        if attackTrack in TTLocalizer.InteractivePropTrackBonusTerms:
-                            self.HpTextGenerator.setText(str(number) + '\n' + TTLocalizer.InteractivePropTrackBonusTerms[attackTrack])
-                else:
-                    self.HpTextGenerator.setText('+' + str(number))
-                self.HpTextGenerator.clearShadow()
-                self.HpTextGenerator.setAlign(TextNode.ACenter)
-                if bonus == 1:
-                    r = 1.0
-                    g = 1.0
-                    b = 0
-                    a = 1
-                elif bonus == 2:
-                    r = 1.0
-                    g = 0.5
-                    b = 0
-                    a = 1
-                elif number < 0:
-                    r = 0.9
-                    g = 0
-                    b = 0
-                    a = 1
-                    if self.interactivePropTrackBonus > -1 and self.interactivePropTrackBonus == attackTrack:
-                        r = 0
-                        g = 0
-                        b = 1
-                        a = 1
-                else:
+                if self.interactivePropTrackBonus > -1 and self.interactivePropTrackBonus == attackTrack:
+                    self.sillySurgeText = True
+                    if attackTrack in TTLocalizer.InteractivePropTrackBonusTerms:
+                        self.HpTextGenerator.setText(str(number) + '\n' + TTLocalizer.InteractivePropTrackBonusTerms[attackTrack])
+            else:
+                self.HpTextGenerator.setText('+' + str(number))
+            self.HpTextGenerator.clearShadow()
+            self.HpTextGenerator.setAlign(TextNode.ACenter)
+            if bonus == 1:
+                r = 1.0
+                g = 1.0
+                b = 0
+                a = 1
+            elif bonus == 2:
+                r = 1.0
+                g = 0.5
+                b = 0
+                a = 1
+            elif number <= 0:
+                r = 0.9
+                g = 0
+                b = 0
+                a = 1
+                if self.interactivePropTrackBonus > -1 and self.interactivePropTrackBonus == attackTrack:
                     r = 0
-                    g = 0.9
-                    b = 0
+                    g = 0
+                    b = 1
                     a = 1
-                self.HpTextGenerator.setTextColor(r, g, b, a)
-                self.hpTextNode = self.HpTextGenerator.generate()
-                self.hpText = self.attachNewNode(self.hpTextNode)
-                self.hpText.setScale(scale)
-                self.hpText.setBillboardPointEye()
-                self.hpText.setBin('fixed', 100)
-                if self.sillySurgeText:
-                    self.nametag3d.setDepthTest(0)
-                    self.nametag3d.setBin('fixed', 99)
-                self.hpText.setPos(0, 0, self.height / 2)
-                seq = Sequence(self.hpText.posInterval(1.0, Point3(0, 0, self.height + 1.5), blendType='easeOut'), Wait(0.85), self.hpText.colorInterval(0.1, Vec4(r, g, b, 0), 0.1), Func(self.hideHpText))
-                seq.start()
+            else:
+                r = 0
+                g = 0.9
+                b = 0
+                a = 1
+            self.HpTextGenerator.setTextColor(r, g, b, a)
+            self.hpTextNode = self.HpTextGenerator.generate()
+            self.hpText = self.attachNewNode(self.hpTextNode)
+            self.hpText.setScale(scale)
+            self.hpText.setBillboardPointEye()
+            self.hpText.setBin('fixed', 100)
+            if self.sillySurgeText:
+                self.nametag3d.setDepthTest(0)
+                self.nametag3d.setBin('fixed', 99)
+            self.hpText.setPos(0, 0, self.height / 2)
+            seq = Sequence(self.hpText.posInterval(1.0, Point3(0, 0, self.height + 1.5), blendType='easeOut'), Wait(0.85), self.hpText.colorInterval(0.1, Vec4(r, g, b, 0), 0.1), Func(self.hideHpText))
+            seq.start()
+
+    def showHpTextBoost(self, number, boost):
+        if self.HpTextEnabled and not self.ghostMode:
+            if self.hpText:
+                self.hideHpText()
+            self.HpTextGenerator.setFont(OTPGlobals.getSignFont())
+            stringText = TextNode('stringText')
+            stringText.setFont(OTPGlobals.getSignFont())
+            if boost == 1:
+                stringText.setText('Boost')
+                if number <= 0:
+                    if number == 0:
+                        self.HpTextGenerator.setText('-%d' % number)
+                    else:
+                        self.HpTextGenerator.setText(str(number))
+                else:
+                    self.HpTextGenerator.setText('+%d' % number)
+            elif boost == 2:
+                stringText.setText('Resist')
+                if number <= 0:
+                    if number == 0:
+                        self.HpTextGenerator.setText('-%d' % number)
+                    else:
+                        self.HpTextGenerator.setText(str(number))
+                else:
+                    self.HpTextGenerator.setText('+%d' % number)
+            if number <= 0:
+                r = 0.9
+                g = 0
+                b = 0
+                a = 1
+            else:
+                r = 0
+                g = 0.9
+                b = 0
+                a = 1
+            self.HpTextGenerator.clearShadow()
+            self.HpTextGenerator.setAlign(TextNode.ACenter)
+            self.HpTextGenerator.setTextColor(r, g, b, a)
+            self.hpTextNode = self.HpTextGenerator.generate()
+            self.hpText = self.attachNewNode(self.hpTextNode)
+            self.hpText.setScale(1)
+            self.hpText.setBillboardPointEye()
+            self.hpText.setBin('fixed', 100)
+            
+            stringText.clearShadow()
+            stringText.setAlign(TextNode.ACenter)
+            stringText.setTextColor(r, g, b, a)
+            strTextNode = stringText.generate()
+            self.strText = self.attachNewNode(strTextNode)
+            self.strText.setScale(0.5)
+            self.strText.setBillboardPointEye()
+            self.strText.setBin('fixed', 100)
+            
+            self.nametag3d.setDepthTest(0)
+            self.nametag3d.setBin('fixed', 99)
+            self.hpText.setPos(0, 0, self.height / 2)
+            self.strText.setPos(0, 0, (self.height / 2) + 1.0)
+            seq = Sequence(Parallel(self.hpText.posInterval(1.0, Point3(0, 0, self.height + 1.5), blendType='easeOut'), self.strText.posInterval(1.0, Point3(0, 0, self.height + 2.5), blendType='easeOut')), Wait(0.85), Parallel(self.hpText.colorInterval(0.1, Vec4(r, g, b, 0), 0.1), self.strText.colorInterval(0.1, Vec4(r, g, b, 0), 0.1)), Func(self.hideHpText))
+            seq.start()
 
     def showHpString(self, text, duration = 0.85, scale = 0.7):
         if self.HpTextEnabled and not self.ghostMode:
@@ -1162,10 +1268,12 @@ class LocalToon(Toon.Toon, WalkControls):
             taskMgr.remove(self.uniqueName('hpText'))
             self.hpText.removeNode()
             self.hpText = None
-        if self.sillySurgeText:
-            self.nametag3d.clearDepthTest()
-            self.nametag3d.clearBin()
-            self.sillySurgeText = False
+        if self.strText:
+            self.strText.removeNode()
+            self.strText = None
+        self.nametag3d.clearDepthTest()
+        self.nametag3d.clearBin()
+        self.sillySurgeText = False
 
     def died(self):
         base.cr.playGame.exitActiveZone()

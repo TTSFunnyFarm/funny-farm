@@ -338,7 +338,12 @@ def __throwPie(throw, delay, hitCount):
         pieTrack.append(Func(battle.movie.clearRenderProp, pies[0]))
     if hitSuit:
         suitResponseTrack = Sequence()
-        showDamage = Func(suit.showHpText, -hp, openEnded=0, attackTrack=THROW_TRACK)
+        if base.cr.playGame.street.battle.battleCalc.damageBoostActive:
+            showDamage = Func(suit.showHpTextBoost, -hp, 1)
+        elif base.cr.playGame.street.battle.battleCalc.suitDefenseBoostActive:
+            showDamage = Func(suit.showHpTextBoost, -hp, 2)
+        else:
+            showDamage = Func(suit.showHpText, -hp, openEnded=0, attackTrack=THROW_TRACK)
         updateHealthBar = Func(suit.updateHealthBar, hp)
         sival = []
         if kbbonus > 0:

@@ -49,7 +49,7 @@ PropTypeToTrackBonus = {AnimPropTypes.Hydrant: SQUIRT_TRACK,
  AnimPropTypes.Mailbox: THROW_TRACK,
  AnimPropTypes.Trashcan: HEAL_TRACK}
 # Experience points needed to unlock the gag at the indexed position
-Levels = [[0, 0, 0, 0, 0, 0, 0],       # Power-up (won't recieve experience; unlocked at certain levels)
+Levels = [[0, 10, 15, 20, 25, 30, 35], # Power-up (level-based)
  [0, 20, 100, 500, 2000, 4000, 8000],  # Trap
  [0, 20, 100, 500, 2000, 4000, 8000],  # Lure
  [0, 20, 100, 500, 2000, 4000, 8000],  # Sound
@@ -59,6 +59,7 @@ Levels = [[0, 0, 0, 0, 0, 0, 0],       # Power-up (won't recieve experience; unl
 regMaxSkill = 8000
 UberSkill = 500
 MaxSkill = UberSkill + regMaxSkill
+MaxPowerUpSkill = 35
 UnpaidMaxSkills = [Levels[0][1] - 1,
  Levels[1][1] - 1,
  Levels[2][1] - 1,
@@ -82,17 +83,17 @@ def gagIsVelvetRoped(track, level):
     return False
 
 
-MaxToonAcc = 95
+MaxToonAcc = 100
 StartingLevel = 0
 CarryLimits = (
   ( # Power-up
-    (1, 0, 0, 0, 0, 0, 0),
-    (3, 1, 0, 0, 0, 0, 0),
-    (3, 3, 1, 0, 0, 0, 0),
-    (3, 3, 3, 1, 0, 0, 0),
-    (3, 3, 3, 3, 1, 0, 0),
-    (3, 3, 3, 3, 3, 1, 0),
-    (3, 3, 3, 3, 3, 3, 1)
+    (2, 0, 0, 0, 0, 0, 0),
+    (2, 2, 0, 0, 0, 0, 0),
+    (2, 2, 2, 0, 0, 0, 0),
+    (2, 2, 2, 2, 0, 0, 0),
+    (2, 2, 2, 2, 2, 0, 0),
+    (2, 2, 2, 2, 2, 2, 0),
+    (2, 2, 2, 2, 2, 2, 2)
   ),
   ( # Trap
     (5, 0, 0, 0, 0, 0, 0),
@@ -214,13 +215,13 @@ AvProps = (('feather',
   'safe',
   'piano',
   'piano'))
-AvPropsNew = (('inventory_feather',
-  'inventory_megaphone',
-  'inventory_lipstick',
-  'inventory_bamboo_cane',
-  'inventory_pixiedust',
-  'inventory_juggling_cubes',
-  'inventory_ladder'),
+AvPropsNew = (('power_up_green',
+  'power_up_red',
+  'power_up_blue',
+  'power_up_orange',
+  'power_up_green',
+  'power_up_red',
+  'power_up_blue'),
  ('inventory_bannana_peel',
   'inventory_rake',
   'inventory_marbles',
@@ -284,13 +285,13 @@ AvLureBonusAccuracy = (60,
  100)
 AvTrackAccStrings = TTLocalizer.BattleGlobalAvTrackAccStrings
 AvPropDamage = (
- (((0, 0), (0, 0)),
-  ((0, 0), (0, 0)),
-  ((0, 0), (0, 0)),
-  ((0, 0), (0, 0)),
-  ((0, 0), (0, 0)),
-  ((0, 0), (0, 0)),
-  ((0, 0), (0, 0))),
+ (((10, 10), (0, 0)),
+  ((20, 20), (0, 0)),
+  ((20, 20), (0, 0)),
+  ((25, 25), (0, 0)),
+  ((40, 40), (0, 0)),
+  ((40, 40), (0, 0)),
+  ((40, 40), (0, 0))),
  (((10, 12), (Levels[1][0], Levels[1][1])),
   ((18, 20), (Levels[1][1], Levels[1][2])),
   ((30, 35), (Levels[1][2], Levels[1][3])),
@@ -363,13 +364,20 @@ AvPropTargetCat = ((ATK_SINGLE_TARGET,
   ATK_SINGLE_TARGET,
   ATK_SINGLE_TARGET,
   ATK_GROUP_TARGET))
-AvPropTarget = (0,
+AvPropTarget = (1,
  3,
  0,
  2,
  3,
  3,
  3)
+PowerupEffects = ('+10 Laff Points',
+ '+20% Boost\nto all damage.\n\nLasts 4 turns.',
+ '+20% Boost\nto all defense.\n\nLasts 4 turns.',
+ '+25% Boost\nto all accuracy.\n\nLasts 4 turns.',
+ '+40 Laff Points',
+ '+40% Boost\nto all damage.\n\nLasts 4 turns.',
+ '+40% Boost\nto all defense.\n\nLasts 4 turns.')
 
 def getAvPropDamage(attackTrack, attackLevel, exp, organicBonus = False, propBonus = False, propAndOrganicBonusStack = False):
     minD = AvPropDamage[attackTrack][attackLevel][0][0]
