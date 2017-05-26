@@ -76,9 +76,9 @@ def __getSuitTrack(sound, lastSoundThatHit, delay, hitCount, targets, totalDamag
             battle = sound['battle']
             kbbonus = target['kbbonus']
             suitTrack = Sequence()
-            if base.cr.playGame.street.battle.battleCalc.damageBoostActive:
+            if base.cr.playGame.getActiveZone().battle.battleCalc.damageBoostActive:
                 showDamage = Func(suit.showHpTextBoost, -totalDamage, 1)
-            elif base.cr.playGame.street.battle.battleCalc.suitDefenseBoostActive:
+            elif base.cr.playGame.getActiveZone().battle.battleCalc.suitDefenseBoostActive:
                 showDamage = Func(suit.showHpTextBoost, -totalDamage, 2)
             else:
                 showDamage = Func(suit.showHpText, -totalDamage, openEnded=0)

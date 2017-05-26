@@ -22,6 +22,8 @@ class Hood(DirectObject):
         self.title = None
         self.titleTrack = None
         self.place = None
+        self.battle = None
+        self.battleCell = None
 
     def enter(self, shop=None, tunnel=None, init=0):
         if tunnel:

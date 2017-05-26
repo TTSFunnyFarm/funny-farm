@@ -43,7 +43,7 @@ class Tutorial(ToonHood):
         # This will always be true unless we're exiting from a crash or deliberate close out of the game
         if base.localAvatar.tutorialAck:
             self.toon.laffMeter.start()
-            self.toon.book.showButton()
+            self.toon.book.hideButton()
             self.book['command'] = self.toon.book.open
             self.chat['command'] = self.toon.chatMgr.openChatInput
             self.chat['extraArgs'] = ['']
@@ -527,7 +527,9 @@ class Tutorial(ToonHood):
         self.ignore(self.townBattle.doneEvent)
         self.battle.cleanupBattle()
         self.battle.delete()
-        del self.battle
+        self.battle = None
+        # They've made it far enough to where we can say they finished the tutorial.
+        base.localAvatar.setTutorialAck(1)
         self.enterOutro()
 
     def startSuitWalkInterval(self):
@@ -576,7 +578,6 @@ class Tutorial(ToonHood):
     def enterHood(self, zoneId):
         # For now we're just entering through the rickety road tunnel
         base.cr.playGame.enterHood(zoneId, tunnel='1100')
-        base.localAvatar.setTutorialAck(1)
 
     # Misc. functions
 

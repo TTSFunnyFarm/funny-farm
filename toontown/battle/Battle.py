@@ -300,7 +300,7 @@ class Battle(DirectObject, NodePath, BattleBase):
             else:
                 targetId = self.activeSuits[target].doId
             self.requestAttack(track, level, targetId)
-            #base.localAvatar.inventory.useItem(track, level)
+            base.localAvatar.inventory.useItem(track, level)
         elif mode == 'Run':
             self.notify.debug('got a run')
             self.requestRun()

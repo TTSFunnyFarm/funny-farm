@@ -315,9 +315,9 @@ def __createSuitDamageTrack(battle, suit, hp, lure, trapProp):
             trapProp.setY(trapProp.getY() + rakeOffset)
         else:
             parent = render
-    if base.cr.playGame.street.battle.battleCalc.damageBoostActive:
+    if base.cr.playGame.getActiveZone().battle.battleCalc.damageBoostActive:
         showDamage = Func(suit.showHpTextBoost, -hp, 1)
-    elif base.cr.playGame.street.battle.battleCalc.suitDefenseBoostActive:
+    elif base.cr.playGame.getActiveZone().battle.battleCalc.suitDefenseBoostActive:
         showDamage = Func(suit.showHpTextBoost, -hp, 2)
     else:
         showDamage = Func(suit.showHpText, -hp, openEnded=0)
@@ -474,9 +474,9 @@ def createSuitReactionToTrain(battle, suit, hp, lure, trapProp):
     distance = suitPos.getX() - TRAIN_STARTING_X
     timeToGetHit = distance / TRAIN_SPEED
     suitTrack = Sequence()
-    if base.cr.playGame.street.battle.battleCalc.damageBoostActive:
+    if base.cr.playGame.getActiveZone().battle.battleCalc.damageBoostActive:
         showDamage = Func(suit.showHpTextBoost, -hp, 1)
-    elif base.cr.playGame.street.battle.battleCalc.suitDefenseBoostActive:
+    elif base.cr.playGame.getActiveZone().battle.battleCalc.suitDefenseBoostActive:
         showDamage = Func(suit.showHpTextBoost, -hp, 2)
     else:
         showDamage = Func(suit.showHpText, -hp, openEnded=0)

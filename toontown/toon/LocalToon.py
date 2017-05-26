@@ -1089,12 +1089,9 @@ class LocalToon(Toon.Toon, WalkControls):
         hpLost = oldHp - self.hp
         if hpLost >= 0:
             # a little hacky but whatever
-            if base.cr.playGame.street:
-                if base.cr.playGame.street.battle:
-                    if base.cr.playGame.street.battle.battleCalc.defenseBoostActive:
-                        self.showHpTextBoost(-hpLost, 2)
-                    else:
-                        self.showHpText(-hpLost, bonus)
+            if base.cr.playGame.getActiveZone().battle:
+                if base.cr.playGame.getActiveZone().battle.battleCalc.defenseBoostActive:
+                    self.showHpTextBoost(-hpLost, 2)
                 else:
                     self.showHpText(-hpLost, bonus)
             else:
@@ -1104,7 +1101,6 @@ class LocalToon(Toon.Toon, WalkControls):
                 self.setupCamera()
                 camera.wrtReparentTo(render)
                 self.setAnimState('Died', callback=self.died)
-        return
 
     def startToonUp(self, healFrequency):
         self.stopToonUp()
