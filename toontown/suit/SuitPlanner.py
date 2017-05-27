@@ -35,6 +35,7 @@ class SuitPlanner(DirectObject):
         newSuit = BattleSuit()
         doId = requestStatus['doId']
         newSuit.setDoId(doId)
+        self.activeSuits[newSuit.doId] = newSuit
         newSuit.setDNA(requestStatus['dna'])
         newSuit.setLevel(requestStatus['level'])
         newSuit.setElite(requestStatus['elite'])
@@ -44,7 +45,6 @@ class SuitPlanner(DirectObject):
         newSuit.reparentTo(base.cr.playGame.street.geom)
         newSuit.enterFromSky(requestStatus['posA'], requestStatus['posB'])
         newSuit.startUpdatePosition()
-        self.activeSuits[newSuit.doId] = newSuit
         taskMgr.doMethodLater(SuitTimings.fromSky, self.__handleCreateSuit, '%d-sptCreateSuit' % self.zoneId, [newSuit])
 
     def __handleCreateSuit(self, suit):
@@ -60,6 +60,7 @@ class SuitPlanner(DirectObject):
         # Makes the suit fly away first, then deletes it
         if doId in self.activeSuits.keys():
             suit = self.activeSuits[doId]
+            self.removeActiveSuit(doId)
             suit.exitWalk()
             suit.enterToSky()
             taskMgr.doMethodLater(SuitTimings.toSky, self.__handleRemoveSuit, '%d-sptRemoveSuit' % self.zoneId, [suit])
@@ -83,6 +84,7 @@ class SuitPlanner(DirectObject):
             suit.setLevel(status['level'])
             suit.setElite(status['elite'])
             suit.initializeBodyCollisions('suit')
+            suit.getGeomNode().setName('suit-%d' % suit.doId)
             suit.addActive()
             suit.reparentTo(base.cr.playGame.street.geom)
             suit.startUpdatePosition()
