@@ -1,4 +1,4 @@
-from pandac.PandaModules import *
+from panda3d.core import *
 from toontown.toonbase.ToontownGlobals import *
 from direct.gui.DirectGui import *
 from toontown.toonbase import TTLocalizer

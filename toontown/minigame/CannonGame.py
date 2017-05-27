@@ -1,4 +1,4 @@
-from pandac.PandaModules import *
+from panda3d.core import *
 from otp.nametag.NametagFloat3d import NametagFloat3d
 from otp.nametag.Nametag import Nametag
 from Minigame import *
@@ -15,7 +15,7 @@ from toontown.effects import Splash
 from toontown.effects import DustCloud
 import CannonGameGlobals
 from direct.gui.DirectGui import *
-from pandac.PandaModules import *
+from panda3d.core import *
 from toontown.toonbase import TTLocalizer
 LAND_TIME = 2
 WORLD_SCALE = 2.0
@@ -110,15 +110,15 @@ class CannonGame(Minigame):
         self.jarImage.reparentTo(hidden)
         self.rewardPanel = DirectLabel(parent=hidden, relief=None, pos=(-0.173, 0.0, -0.55), scale=0.65, text='', text_scale=0.2, text_fg=(0.95, 0.95, 0, 1), text_pos=(0, -.13), text_font=ToontownGlobals.getSignFont(), image=self.jarImage)
         self.rewardPanelTitle = DirectLabel(parent=self.rewardPanel, relief=None, pos=(0, 0, 0.06), scale=0.08, text=TTLocalizer.CannonGameReward, text_fg=(0.95, 0.95, 0, 1), text_shadow=(0, 0, 0, 1))
-        self.music = base.loadMusic('phase_4/audio/bgm/MG_cannon_game.ogg')
-        self.sndCannonMove = base.loadSfx('phase_4/audio/sfx/MG_cannon_adjust.ogg')
-        self.sndCannonFire = base.loadSfx('phase_4/audio/sfx/MG_cannon_fire_alt.ogg')
-        self.sndHitGround = base.loadSfx('phase_4/audio/sfx/MG_cannon_hit_dirt.ogg')
-        self.sndHitTower = base.loadSfx('phase_4/audio/sfx/MG_cannon_hit_tower.ogg')
-        self.sndHitWater = base.loadSfx('phase_4/audio/sfx/MG_cannon_splash.ogg')
-        self.sndWhizz = base.loadSfx('phase_4/audio/sfx/MG_cannon_whizz.ogg')
-        self.sndWin = base.loadSfx('phase_4/audio/sfx/MG_win.ogg')
-        self.sndRewardTick = base.loadSfx('phase_3.5/audio/sfx/tick_counter.ogg')
+        self.music = base.loader.loadMusic('phase_4/audio/bgm/MG_cannon_game.ogg')
+        self.sndCannonMove = base.loader.loadSfx('phase_4/audio/sfx/MG_cannon_adjust.ogg')
+        self.sndCannonFire = base.loader.loadSfx('phase_4/audio/sfx/MG_cannon_fire_alt.ogg')
+        self.sndHitGround = base.loader.loadSfx('phase_4/audio/sfx/MG_cannon_hit_dirt.ogg')
+        self.sndHitTower = base.loader.loadSfx('phase_4/audio/sfx/MG_cannon_hit_tower.ogg')
+        self.sndHitWater = base.loader.loadSfx('phase_4/audio/sfx/MG_cannon_splash.ogg')
+        self.sndWhizz = base.loader.loadSfx('phase_4/audio/sfx/MG_cannon_whizz.ogg')
+        self.sndWin = base.loader.loadSfx('phase_4/audio/sfx/MG_win.ogg')
+        self.sndRewardTick = base.loader.loadSfx('phase_3.5/audio/sfx/tick_counter.ogg')
         guiModel = 'phase_4/models/gui/cannon_game_gui'
         cannonGui = loader.loadModel(guiModel)
         self.aimPad = DirectFrame(image=cannonGui.find('**/CannonFire_PAD'), relief=None, pos=(0.7, 0, -0.553333), scale=0.8)
@@ -278,7 +278,7 @@ class CannonGame(Minigame):
             else:
                 y = yMax
         else:
-            y = self.randomNumGen.randint(yMin, yMax)
+            y = self.randomNumGen.randint(int(yMin), int(yMax))
         xRange = TOWER_X_RANGE
         if self.DEBUG_TOWER_RANGE:
             if self.DEBUG_TOWER_FAR_LEFT:

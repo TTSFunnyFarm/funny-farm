@@ -42,6 +42,7 @@ from toontown.login.TitleScreen import TitleScreen
 from toontown.ai.FFAIRepository import FFAIRepository
 from toontown.distributed.FFClientRepository import FFClientRepository
 from toontown.misc import Injector
+from toontown.misc import PythonUtil
 
 class FunnyFarmStart:
     notify = directNotify.newCategory('FunnyFarmStart')
@@ -89,8 +90,8 @@ class FunnyFarmStart:
             base.drawFps = 1
 
         self.notify.info('Setting default GUI globals')
-        DirectGuiGlobals.setDefaultRolloverSound(base.loadSfx('phase_3/audio/sfx/GUI_rollover.ogg'))
-        DirectGuiGlobals.setDefaultClickSound(base.loadSfx('phase_3/audio/sfx/GUI_create_toon_fwd.ogg'))
+        DirectGuiGlobals.setDefaultRolloverSound(base.loader.loadSfx('phase_3/audio/sfx/GUI_rollover.ogg'))
+        DirectGuiGlobals.setDefaultClickSound(base.loader.loadSfx('phase_3/audio/sfx/GUI_create_toon_fwd.ogg'))
         DirectGuiGlobals.setDefaultDialogGeom(loader.loadModel('phase_3/models/gui/dialog_box_gui'))
         DirectGuiGlobals.setDefaultFont(ToontownGlobals.getInterfaceFont())
 

@@ -5,7 +5,7 @@ from direct.task.Task import Task
 from toontown.suit import SuitDNA
 from direct.actor import Actor
 from ToonHead import *
-from pandac.PandaModules import *
+from panda3d.core import *
 from direct.interval.IntervalGlobal import *
 from direct.directnotify import DirectNotifyGlobal
 from toontown.toonbase import ToontownGlobals
@@ -390,47 +390,47 @@ def loadDialog():
     DogDialogueFiles = ('AV_dog_short', 'AV_dog_med', 'AV_dog_long', 'AV_dog_question', 'AV_dog_exclaim', 'AV_dog_howl')
     global DogDialogueArray
     for file in DogDialogueFiles:
-        DogDialogueArray.append(base.loadSfx(loadPath + file + '.ogg'))
+        DogDialogueArray.append(base.loader.loadSfx(loadPath + file + '.ogg'))
 
     catDialogueFiles = ('AV_cat_short', 'AV_cat_med', 'AV_cat_long', 'AV_cat_question', 'AV_cat_exclaim', 'AV_cat_howl')
     global CatDialogueArray
     for file in catDialogueFiles:
-        CatDialogueArray.append(base.loadSfx(loadPath + file + '.ogg'))
+        CatDialogueArray.append(base.loader.loadSfx(loadPath + file + '.ogg'))
 
     horseDialogueFiles = ('AV_horse_short', 'AV_horse_med', 'AV_horse_long', 'AV_horse_question', 'AV_horse_exclaim', 'AV_horse_howl')
     global HorseDialogueArray
     for file in horseDialogueFiles:
-        HorseDialogueArray.append(base.loadSfx(loadPath + file + '.ogg'))
+        HorseDialogueArray.append(base.loader.loadSfx(loadPath + file + '.ogg'))
 
     rabbitDialogueFiles = ('AV_rabbit_short', 'AV_rabbit_med', 'AV_rabbit_long', 'AV_rabbit_question', 'AV_rabbit_exclaim', 'AV_rabbit_howl')
     global RabbitDialogueArray
     for file in rabbitDialogueFiles:
-        RabbitDialogueArray.append(base.loadSfx(loadPath + file + '.ogg'))
+        RabbitDialogueArray.append(base.loader.loadSfx(loadPath + file + '.ogg'))
 
     mouseDialogueFiles = ('AV_mouse_short', 'AV_mouse_med', 'AV_mouse_long', 'AV_mouse_question', 'AV_mouse_exclaim', 'AV_mouse_howl')
     global MouseDialogueArray
     for file in mouseDialogueFiles:
-        MouseDialogueArray.append(base.loadSfx(loadPath + file + '.ogg'))
+        MouseDialogueArray.append(base.loader.loadSfx(loadPath + file + '.ogg'))
 
     duckDialogueFiles = ('AV_duck_short', 'AV_duck_med', 'AV_duck_long', 'AV_duck_question', 'AV_duck_exclaim', 'AV_duck_howl')
     global DuckDialogueArray
     for file in duckDialogueFiles:
-        DuckDialogueArray.append(base.loadSfx(loadPath + file + '.ogg'))
+        DuckDialogueArray.append(base.loader.loadSfx(loadPath + file + '.ogg'))
 
     monkeyDialogueFiles = ('AV_monkey_short', 'AV_monkey_med', 'AV_monkey_long', 'AV_monkey_question', 'AV_monkey_exclaim', 'AV_monkey_howl')
     global MonkeyDialogueArray
     for file in monkeyDialogueFiles:
-        MonkeyDialogueArray.append(base.loadSfx(loadPath + file + '.ogg'))
+        MonkeyDialogueArray.append(base.loader.loadSfx(loadPath + file + '.ogg'))
 
     bearDialogueFiles = ('AV_bear_short', 'AV_bear_med', 'AV_bear_long', 'AV_bear_question', 'AV_bear_exclaim', 'AV_bear_howl')
     global BearDialogueArray
     for file in bearDialogueFiles:
-        BearDialogueArray.append(base.loadSfx(loadPath + file + '.ogg'))
+        BearDialogueArray.append(base.loader.loadSfx(loadPath + file + '.ogg'))
 
     pigDialogueFiles = ('AV_pig_short', 'AV_pig_med', 'AV_pig_long', 'AV_pig_question', 'AV_pig_exclaim', 'AV_pig_howl')
     global PigDialogueArray
     for file in pigDialogueFiles:
-        PigDialogueArray.append(base.loadSfx(loadPath + file + '.ogg'))
+        PigDialogueArray.append(base.loader.loadSfx(loadPath + file + '.ogg'))
 
 
 def unloadDialog():
@@ -505,7 +505,7 @@ class Toon(Avatar.Avatar, ToonHead):
         self.setTag('pieCode', str(ToontownGlobals.PieCodeToon))
         self.setFont(ToontownGlobals.getToonFont())
         self.setSpeechFont(ToontownGlobals.getToonFont())
-        self.soundChatBubble = base.loadSfx('phase_3/audio/sfx/GUI_balloon_popup.ogg')
+        self.soundChatBubble = base.loader.loadSfx('phase_3/audio/sfx/GUI_balloon_popup.ogg')
         self.doId = id(self)
         self.animFSM = ClassicFSM('Toon', [State('off', self.enterOff, self.exitOff),
          State('neutral', self.enterNeutral, self.exitNeutral),
@@ -1796,7 +1796,7 @@ class Toon(Avatar.Avatar, ToonHead):
 
     def getSoundTeleport(self):
         if not self.soundTeleport:
-            self.soundTeleport = base.loadSfx('phase_3.5/audio/sfx/AV_teleport.ogg')
+            self.soundTeleport = base.loader.loadSfx('phase_3.5/audio/sfx/AV_teleport.ogg')
         return self.soundTeleport
 
     def getTeleportOutTrack(self, autoFinishTrack = 1):
@@ -1840,7 +1840,7 @@ class Toon(Avatar.Avatar, ToonHead):
         pass
 
     def enterTeleportOut(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
-        name = self.name
+        name = self._name
         if hasattr(self, 'doId'):
             name += '-' + str(self.doId)
         self.notify.debug('enterTeleportOut %s' % name)
@@ -1865,7 +1865,7 @@ class Toon(Avatar.Avatar, ToonHead):
         self.setActiveShadow(0)
 
     def finishTeleportOut(self, callback = None, extraArgs = []):
-        name = self.name
+        name = self._name
         if hasattr(self, 'doId'):
             name += '-' + str(self.doId)
         self.notify.debug('finishTeleportOut %s' % name)
@@ -1881,7 +1881,7 @@ class Toon(Avatar.Avatar, ToonHead):
         return
 
     def exitTeleportOut(self):
-        name = self.name
+        name = self._name
         if hasattr(self, 'doId'):
             name += '-' + str(self.doId)
         self.notify.debug('exitTeleportOut %s' % name)

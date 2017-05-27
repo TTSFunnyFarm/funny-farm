@@ -1,4 +1,4 @@
-from pandac.PandaModules import *
+from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
 from toontown.toonbase import ToontownGlobals
 from ElevatorConstants import *
@@ -17,8 +17,8 @@ class SuitInteriorBase(DirectObject):
         self.exitElevator = None
         self.numFloors = 0
         self.currentFloor = 0
-        self.waitMusic = base.loadMusic('phase_7/audio/bgm/encntr_toon_winning_indoor.ogg')
-        self.elevatorMusic = base.loadMusic('phase_7/audio/bgm/tt_elevator.ogg')
+        self.waitMusic = base.loader.loadMusic('phase_7/audio/bgm/encntr_toon_winning_indoor.ogg')
+        self.elevatorMusic = base.loader.loadMusic('phase_7/audio/bgm/tt_elevator.ogg')
 
     def enter(self):
         self.entranceElevator.openDoors(callback=self.exitTheElevator)

@@ -1,4 +1,4 @@
-from pandac.PandaModules import *
+from panda3d.core import *
 from direct.showbase import PythonUtil
 from direct.showbase.PythonUtil import *
 from direct.distributed.ClockDelta import *
@@ -36,9 +36,9 @@ class LocalToon(Toon.Toon, WalkControls):
         Toon.Toon.__init__(self)
         WalkControls.__init__(self)
         self.chatMgr = ChatManager()
-        self.soundWhisper = base.loadSfx('phase_3.5/audio/sfx/GUI_whisper_3.ogg')
-        self.soundPhoneRing = base.loadSfx('phase_3.5/audio/sfx/telephone_ring.ogg')
-        self.soundSystemMessage = base.loadSfx('phase_3/audio/sfx/clock03.ogg')
+        self.soundWhisper = base.loader.loadSfx('phase_3.5/audio/sfx/GUI_whisper_3.ogg')
+        self.soundPhoneRing = base.loader.loadSfx('phase_3.5/audio/sfx/telephone_ring.ogg')
+        self.soundSystemMessage = base.loader.loadSfx('phase_3/audio/sfx/clock03.ogg')
         self.zoneId = None
         self.hasGM = False
         self.accessLevel = 0
@@ -268,8 +268,8 @@ class LocalToon(Toon.Toon, WalkControls):
         dataMgr.saveToonData(base.avatarData)
 
     def setToonUpIncrement(self):
-        # At 0 hp, there are roughly 20 toonup intervals in 5 minutes, so if we divide the maxHp by 20 
-        # and round to the nearest integer, we'll get an increment that will restore the player's health 
+        # At 0 hp, there are roughly 20 toonup intervals in 5 minutes, so if we divide the maxHp by 20
+        # and round to the nearest integer, we'll get an increment that will restore the player's health
         # from 0 to max in roughly 5 minutes.
         self.toonUpIncrement = int(round(self.maxHp / 20))
 

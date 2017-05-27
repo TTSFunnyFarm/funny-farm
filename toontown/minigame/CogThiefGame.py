@@ -1,4 +1,4 @@
-from pandac.PandaModules import Point3, CollisionSphere, CollisionNode, CollisionHandlerEvent, NodePath, TextNode
+from panda3d.core import Point3, CollisionSphere, CollisionNode, CollisionHandlerEvent, NodePath, TextNode
 from direct.distributed.ClockDelta import globalClockDelta
 from direct.interval.IntervalGlobal import Wait, LerpFunctionInterval, LerpHprInterval, Sequence, Parallel, Func, SoundInterval, ActorInterval, ProjectileInterval, Track, LerpScaleInterval, WaitInterval, LerpPosHprInterval
 from direct.gui.DirectGui import DirectLabel
@@ -65,7 +65,7 @@ class CogThiefGame(Minigame):
     def load(self):
         self.notify.debug('load')
         Minigame.load(self)
-        self.music = base.loadMusic('phase_4/audio/bgm/MG_CogThief.ogg')
+        self.music = base.loader.loadMusic('phase_4/audio/bgm/MG_CogThief.ogg')
         self.initCogInfo()
         for barrelIndex in range(CTGG.NumBarrels):
             barrel = loader.loadModel('phase_4/models/minigames/cogthief_game_gagTank')
@@ -125,9 +125,9 @@ class CogThiefGame(Minigame):
         self.loadCogs()
         self.toonHitTracks = {}
         self.toonPieTracks = {}
-        self.sndOof = base.loadSfx('phase_4/audio/sfx/MG_cannon_hit_dirt.ogg')
-        self.sndRewardTick = base.loadSfx('phase_3.5/audio/sfx/tick_counter.ogg')
-        self.sndPerfect = base.loadSfx('phase_4/audio/sfx/ring_perfect.ogg')
+        self.sndOof = base.loader.loadSfx('phase_4/audio/sfx/MG_cannon_hit_dirt.ogg')
+        self.sndRewardTick = base.loader.loadSfx('phase_3.5/audio/sfx/tick_counter.ogg')
+        self.sndPerfect = base.loader.loadSfx('phase_4/audio/sfx/ring_perfect.ogg')
         self.timer = ToontownTimer.ToontownTimer()
         self.timer.posInTopRightCorner()
         self.timer.hide()
@@ -192,8 +192,8 @@ class CogThiefGame(Minigame):
         self.sndTable = {'hitBySuit': [None] * self.numPlayers,
          'falling': [None] * self.numPlayers}
         for i in xrange(self.numPlayers):
-            self.sndTable['hitBySuit'][i] = base.loadSfx('phase_4/audio/sfx/MG_Tag_C.ogg')
-            self.sndTable['falling'][i] = base.loadSfx('phase_4/audio/sfx/MG_cannon_whizz.ogg')
+            self.sndTable['hitBySuit'][i] = base.loader.loadSfx('phase_4/audio/sfx/MG_Tag_C.ogg')
+            self.sndTable['falling'][i] = base.loader.loadSfx('phase_4/audio/sfx/MG_cannon_whizz.ogg')
 
         base.playMusic(self.music, looping=1, volume=0.8)
         self.introTrack = self.getIntroTrack()

@@ -1,4 +1,4 @@
-from pandac.PandaModules import *
+from panda3d.core import *
 from direct.gui.DirectGui import *
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
@@ -28,7 +28,7 @@ class ToonPage(ShtikerPage.ShtikerPage):
 
     def load(self):
         ShtikerPage.ShtikerPage.load(self)
-        
+
         invGui = loader.loadModel('phase_3.5/models/gui/inventory_icons')
         self.gagIcons = [
             invGui.find('**/inventory_bannana_peel'), # goddammit disney you had 1 job
@@ -49,7 +49,7 @@ class ToonPage(ShtikerPage.ShtikerPage):
         suitGui.removeNode()
         panel = loader.loadModel('phase_4/models/gui/gag_shop_purchase_gui').find('**/Goofys_Sign')
         self.title = DirectFrame(
-         parent=self, relief=None, image=panel, image_scale=0.8, text=base.localAvatar.getName(), 
+         parent=self, relief=None, image=panel, image_scale=0.8, text=base.localAvatar.getName(),
          text_scale=0.08, pos=(0, 0, 0.61), text_wordwrap=12)
 
         self.damagePanel = DirectFrame(parent=self, relief=None, image=panel, image_scale=(0.6, 1.0, 0.7),
@@ -73,7 +73,7 @@ class ToonPage(ShtikerPage.ShtikerPage):
             geom = x.copyTo(self.accuracyIcons)
             geom.setPos(GagIconPoints[self.gagIcons.index(x)])
 
-        self.toonFrame = DirectFrame(parent=self, relief=None, image=loader.loadModel('phase_3.5/models/modules/trophy_frame'), 
+        self.toonFrame = DirectFrame(parent=self, relief=None, image=loader.loadModel('phase_3.5/models/modules/trophy_frame'),
          pos=(-0.45, 0, 0.2), scale=0.25)
         self.toon = Toon.Toon()
         self.toon.setDNA(base.localAvatar.style)
@@ -96,7 +96,7 @@ class ToonPage(ShtikerPage.ShtikerPage):
         self.toon.startBlink()
         self.toon.hprInterval(10, (360, 0, 0)).loop()
 
-        self.level = DirectLabel(parent=self, relief=None, text=TTLocalizer.ToonPageLevel % base.localAvatar.getLevel(), 
+        self.level = DirectLabel(parent=self, relief=None, text=TTLocalizer.ToonPageLevel % base.localAvatar.getLevel(),
          pos=(-0.45, 0, -0.25), scale=0.08)
         # TODO: add exp wait bar
         self.levelExp = DirectLabel(parent=self, relief=None, text=TTLocalizer.ToonPageExperience % (base.localAvatar.getLevelExp(), 
@@ -115,12 +115,12 @@ class ToonPage(ShtikerPage.ShtikerPage):
 
     def updateToonStats(self):
         for x in self.gagIcons:
-            DirectLabel(parent=self.damageIcons.find('**/%s' % x.getName()), relief=None, 
+            DirectLabel(parent=self.damageIcons.find('**/%s' % x.getName()), relief=None,
              text=str(base.localAvatar.damage[self.gagIcons.index(x)]), scale=0.08, pos=(0, 0, -0.15))
-            DirectLabel(parent=self.accuracyIcons.find('**/%s' % x.getName()), relief=None, 
+            DirectLabel(parent=self.accuracyIcons.find('**/%s' % x.getName()), relief=None,
              text=str(base.localAvatar.accuracy[self.gagIcons.index(x)]), scale=0.08, pos=(0, 0, -0.15))
         for x in self.suitIcons:
-            DirectLabel(parent=self.defenseIcons.find('**/%s' % x.getName()), relief=None, 
+            DirectLabel(parent=self.defenseIcons.find('**/%s' % x.getName()), relief=None,
              text=str(base.localAvatar.defense[self.suitIcons.index(x)]), scale=0.73, pos=(0, 0, -1.25))
         self.level['text'] = TTLocalizer.ToonPageLevel % base.localAvatar.getLevel()
         return

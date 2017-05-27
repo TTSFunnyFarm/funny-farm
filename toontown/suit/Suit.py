@@ -2,13 +2,13 @@ from direct.actor import Actor
 from otp.avatar import Avatar
 import SuitDNA
 from toontown.toonbase import ToontownGlobals
-from pandac.PandaModules import *
+from panda3d.core import *
 from otp.nametag.NametagGroup import NametagGroup
 from toontown.battle import SuitBattleGlobals
 from direct.task.Task import Task
 from toontown.battle import BattleProps
 from toontown.toonbase import TTLocalizer
-from pandac.PandaModules import VirtualFileMountHTTP, VirtualFileSystem, Filename, DSearchPath
+from panda3d.core import VirtualFileMountHTTP, VirtualFileSystem, Filename, DSearchPath
 from direct.showbase import AppRunnerGlobal
 import string
 import os
@@ -259,7 +259,7 @@ def loadDialog(level):
          'COG_VO_statement',
          'COG_VO_question']
         for file in SuitDialogFiles:
-            SuitDialogArray.append(base.loadSfx(loadPath + file + '.ogg'))
+            SuitDialogArray.append(base.loader.loadSfx(loadPath + file + '.ogg'))
 
         SuitDialogArray.append(SuitDialogArray[0])
         SuitDialogArray.append(SuitDialogArray[1])

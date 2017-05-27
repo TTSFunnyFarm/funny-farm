@@ -1,4 +1,4 @@
-from pandac.PandaModules import *
+from panda3d.core import *
 from direct.interval.IntervalGlobal import *
 from direct.distributed.ClockDelta import *
 from direct.showbase.DirectObject import DirectObject
@@ -267,12 +267,12 @@ class Battle(DirectObject, NodePath, BattleBase):
         NametagGlobals.setMasterArrowsOn(0)
         self.townBattle.exitOff()
         self.townBattle.setState('Attack')
-        
+
         for toon in self.activeToons:
             self.townBattle.updateLaffMeter(self.activeToons.index(toon), toon.hp)
         for i in range(len(self.activeSuits)):
             self.townBattle.cogPanels[i].setCogInformation(self.activeSuits[i])
-        
+
         self.accept(self.localToonBattleEvent, self.__handleLocalToonBattleEvent)
         if not self.tutorialFlag:
             self.startTimer()
@@ -464,7 +464,7 @@ class Battle(DirectObject, NodePath, BattleBase):
                 self.toonAttacks[t] = getToonAttack(t)
             if self.toonAttacks[t][TOON_TRACK_COL] != NO_ATTACK:
                 self.addHelpfulToon(t)
-        
+
         self.battleCalc.calculateRound()
         for t in self.activeToonIds:
             self.sendEarnedExperience(t)

@@ -55,7 +55,7 @@ Levels = [[0, 10, 15, 20, 25, 30, 35], # Power-up (level-based)
  [0, 20, 100, 500, 2000, 4000, 8000],  # Sound
  [0, 10, 50, 400, 2000, 4000, 8000],   # Throw
  [0, 10, 50, 400, 2000, 4000, 8000],   # Squirt
- [0, 20, 100, 500, 2000, 4000, 8000]]  # Drop            
+ [0, 20, 100, 500, 2000, 4000, 8000]]  # Drop
 regMaxSkill = 8000
 UberSkill = 500
 MaxSkill = UberSkill + regMaxSkill

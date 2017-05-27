@@ -71,7 +71,7 @@ class FFStreet(Street):
         base.localAvatar.disable()
         base.localAvatar.setAnimState('neutral')
         animalType = base.localAvatar.getStyle().getType()
-        dialogue = base.loadSfx('phase_3.5/audio/dial/AV_%s_exclaim.ogg' % animalType)
+        dialogue = base.loader.loadSfx('phase_3.5/audio/dial/AV_%s_exclaim.ogg' % animalType)
         base.localAvatar.playCurrentDialogue(dialogue, None)
         base.localAvatar.enterSquish(callback=self.__squishDone)
 

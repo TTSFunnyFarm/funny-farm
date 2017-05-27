@@ -2,8 +2,8 @@ import SuitDNA
 import SuitTimings
 from direct.directnotify import DirectNotifyGlobal
 from direct.distributed.ClockDelta import *
-from pandac.PandaModules import *
-from pandac.PandaModules import Point3
+from panda3d.core import *
+from panda3d.core import Point3
 from toontown.battle import SuitBattleGlobals
 from toontown.toonbase import TTLocalizer
 from otp.avatar.Avatar import Avatar
@@ -49,7 +49,7 @@ class SuitBase:
     def setLevel(self, level):
         self.level = level
         if isinstance(self, Avatar):
-            nameWLevel = TTLocalizer.SuitBaseNameWithLevel % {'name': self.name,
+            nameWLevel = TTLocalizer.SuitBaseNameWithLevel % {'name': self._name,
              'dept': self.getStyleDept(),
              'level': self.getActualLevel()}
             self.setDisplayName(nameWLevel)

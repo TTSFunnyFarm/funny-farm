@@ -6,7 +6,7 @@ from direct.fsm import StateData
 from direct.gui.DirectGui import *
 from direct.interval.IntervalGlobal import *
 from direct.task import Task
-from pandac.PandaModules import *
+from panda3d.core import *
 import random
 import BodyShop
 import ColorShop
@@ -281,11 +281,11 @@ class MakeAToon(StateData.StateData):
         self.cos.load()
         self.cls.load()
         self.ns.load()
-        self.music = base.loadMusic('phase_3/audio/bgm/create_a_toon.ogg')
+        self.music = base.loader.loadMusic('phase_3/audio/bgm/create_a_toon.ogg')
         self.musicVolume = base.config.GetFloat('makeatoon-music-volume', 1)
         self.sfxVolume = base.config.GetFloat('makeatoon-sfx-volume', 1)
-        self.soundBack = base.loadSfx('phase_3/audio/sfx/GUI_create_toon_back.ogg')
-        self.crashSounds = map(base.loadSfx, ['phase_3/audio/sfx/tt_s_ara_mat_crash_boing.ogg',
+        self.soundBack = base.loader.loadSfx('phase_3/audio/sfx/GUI_create_toon_back.ogg')
+        self.crashSounds = map(base.loader.loadSfx, ['phase_3/audio/sfx/tt_s_ara_mat_crash_boing.ogg',
                                               'phase_3/audio/sfx/tt_s_ara_mat_crash_glassBoing.ogg',
                                               'phase_3/audio/sfx/tt_s_ara_mat_crash_wood.ogg',
                                               'phase_3/audio/sfx/tt_s_ara_mat_crash_woodBoing.ogg',

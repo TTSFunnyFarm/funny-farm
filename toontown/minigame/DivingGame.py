@@ -300,7 +300,7 @@ class DivingGame(Minigame):
         Minigame.load(self)
         loadBase = 'phase_4/models/minigames/'
         loadBaseShip = 'phase_5/models/props/'
-        self.sndAmbience = base.loadSfx('phase_4/audio/sfx/AV_ambient_water.ogg')
+        self.sndAmbience = base.loader.loadSfx('phase_4/audio/sfx/AV_ambient_water.ogg')
         self.environModel = loader.loadModel(loadBase + 'diving_game')
         self.boatModel = self.environModel.find('**/boat')
         self.skyModel = self.environModel.find('**/sky')
@@ -343,7 +343,7 @@ class DivingGame(Minigame):
         hitSoundName = 'diving_game_hit.ogg'
         hitSoundPath = 'phase_4/audio/sfx/%s' % hitSoundName
         self.hitSound = loader.loadSfx(hitSoundPath)
-        self.music = base.loadMusic('phase_4/audio/bgm/MG_Target.ogg')
+        self.music = base.loader.loadMusic('phase_4/audio/bgm/MG_Target.ogg')
         self.addSound('dropGold', 'diving_treasure_drop_off.ogg', 'phase_4/audio/sfx/')
         self.addSound('getGold', 'diving_treasure_pick_up.ogg', 'phase_4/audio/sfx/')
         self.swimSound = loader.loadSfx('phase_4/audio/sfx/diving_swim_loop.ogg')

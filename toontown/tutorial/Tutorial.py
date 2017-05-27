@@ -1,4 +1,4 @@
-from pandac.PandaModules import *
+from panda3d.core import *
 from direct.interval.IntervalGlobal import *
 from direct.showbase import PythonUtil
 from toontown.toon import NPCToons
@@ -57,8 +57,8 @@ class Tutorial(ToonHood):
 
     def load(self):
         ToonHood.load(self)
-        self.spookyMusic = base.loadMusic('phase_12/audio/bgm/Bossbot_Factory_v3.ogg')
-        self.battleMusic = base.loadMusic('phase_3.5/audio/bgm/encntr_general_bg.ogg')
+        self.spookyMusic = base.loader.loadMusic('phase_12/audio/bgm/Bossbot_Factory_v3.ogg')
+        self.battleMusic = base.loader.loadMusic('phase_3.5/audio/bgm/encntr_general_bg.ogg')
 
         self.townBattle = TownBattle('townbattle-done')
         self.townBattle.load()
@@ -78,7 +78,7 @@ class Tutorial(ToonHood):
         self.guiFarm = gui.find('**/toon_buildings')
         self.tart = loader.loadModel('phase_3.5/models/props/tart')
         self.flower = loader.loadModel('phase_3.5/models/props/squirting-flower')
-        self.restockSfx = base.loadSfx('phase_9/audio/sfx/CHQ_SOS_pies_restock.ogg')
+        self.restockSfx = base.loader.loadSfx('phase_9/audio/sfx/CHQ_SOS_pies_restock.ogg')
         self.guiCogs.setPosHprScale(-1.25, 8, 0, 0, 0, 0, 0.01, 0.01, 0.01)
         self.guiSquirt.setPosHprScale(-1.25, 8, 0, 0, 0, 0, 1.875, 1.875, 1.875)
         self.guiBldgs.setPosHprScale(-1.25, 8, 0, 0, 0, 0, 1.875, 1.875, 1.875)
@@ -587,7 +587,7 @@ class Tutorial(ToonHood):
         text.setY(yPos)
 
     def addInventory(self, track, level, number):
-        countSound = base.loadSfx('phase_3.5/audio/sfx/tick_counter.ogg')
+        countSound = base.loader.loadSfx('phase_3.5/audio/sfx/tick_counter.ogg')
         base.playSfx(countSound)
         self.inventory.buttonBoing(track, level)
         self.inventory.addItems(track, level, number)

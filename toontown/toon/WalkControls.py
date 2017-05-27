@@ -1,4 +1,4 @@
-from pandac.PandaModules import *
+from panda3d.core import *
 from direct.showbase.PythonUtil import *
 from direct.distributed.ClockDelta import *
 from direct.interval.IntervalGlobal import *
@@ -31,8 +31,8 @@ class WalkControls(DirectObject):
         self.cTrav.setRespectPrevTransform(1)
         self.avatarControlsEnabled = 0
         self.controlManager = ControlManager.ControlManager(True, False)
-        self.soundWalk = base.loadSfx('phase_3.5/audio/sfx/AV_footstep_walkloop.ogg')
-        self.soundRun = base.loadSfx('phase_3.5/audio/sfx/AV_footstep_runloop.ogg')
+        self.soundWalk = base.loader.loadSfx('phase_3.5/audio/sfx/AV_footstep_walkloop.ogg')
+        self.soundRun = base.loader.loadSfx('phase_3.5/audio/sfx/AV_footstep_runloop.ogg')
 
     def delete(self):
         self.ignoreAll()

@@ -1,4 +1,4 @@
-from pandac.PandaModules import *
+from panda3d.core import *
 from direct.interval.IntervalGlobal import *
 from direct.showbase import PythonUtil
 from direct.showbase.DirectObject import DirectObject
@@ -10,8 +10,8 @@ class Door(DirectObject):
     def __init__(self, door, code):
         self.door = door
         self.code = code
-        self.openSfx = base.loadSfx('phase_3.5/audio/sfx/Door_Open_1.ogg')
-        self.closeSfx = base.loadSfx('phase_3.5/audio/sfx/Door_Close_1.ogg')
+        self.openSfx = base.loader.loadSfx('phase_3.5/audio/sfx/Door_Open_1.ogg')
+        self.closeSfx = base.loader.loadSfx('phase_3.5/audio/sfx/Door_Close_1.ogg')
         self.doorX = 1.5
         self.doorTrack = None
         self.doorExitTrack = None

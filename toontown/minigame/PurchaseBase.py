@@ -3,7 +3,7 @@ from toontown.toonbase import ToontownGlobals
 from direct.fsm import StateData
 from toontown.book.PurchaseManagerConstants import *
 from direct.gui.DirectGui import *
-from pandac.PandaModules import *
+from panda3d.core import *
 from direct.task import Task
 from direct.fsm import State
 from direct.fsm import ClassicFSM, State
@@ -22,7 +22,7 @@ class PurchaseBase(StateData.StateData):
     def load(self, purchaseModels = None):
         if purchaseModels == None:
             purchaseModels = loader.loadModel('phase_4/models/gui/purchase_gui')
-        self.music = base.loadMusic('phase_4/audio/bgm/FF_safezone.ogg')
+        self.music = base.loader.loadMusic('phase_4/audio/bgm/FF_safezone.ogg')
         self.jarImage = purchaseModels.find('**/Jar')
         self.jarImage.reparentTo(hidden)
         self.frame = DirectFrame(relief=None)

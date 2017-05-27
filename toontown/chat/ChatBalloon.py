@@ -1,5 +1,5 @@
 # Embedded file name: lib\toontown\toon\ChatBalloon.py
-from pandac.PandaModules import *
+from panda3d.core import *
 
 class ChatBalloon:
     TEXT_SHIFT = (0.225, -0.05, 1.2)
