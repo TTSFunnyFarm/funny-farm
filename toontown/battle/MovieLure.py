@@ -315,13 +315,19 @@ def __createSuitDamageTrack(battle, suit, hp, lure, trapProp):
             trapProp.setY(trapProp.getY() + rakeOffset)
         else:
             parent = render
+    if base.cr.playGame.getActiveZone().battle.battleCalc.damageBoostActive:
+        showDamage = Func(suit.showHpTextBoost, -hp, 1)
+    elif base.cr.playGame.getActiveZone().battle.battleCalc.suitDefenseBoostActive:
+        showDamage = Func(suit.showHpTextBoost, -hp, 2)
+    else:
+        showDamage = Func(suit.showHpText, -hp, openEnded=0)
     if trapName == 'banana':
         slidePos = trapProp.getPos(parent)
         slidePos.setY(slidePos.getY() - 5.1)
         moveTrack = Sequence(Wait(0.1), LerpPosInterval(trapProp, 0.1, slidePos, other=battle))
         animTrack = Sequence(ActorInterval(trapProp, 'banana', startTime=3.1), Wait(1.1), LerpScaleInterval(trapProp, 1, Point3(0.01, 0.01, 0.01)))
         suitTrack = ActorInterval(suit, 'slip-backward')
-        damageTrack = Sequence(Wait(0.5), Func(suit.showHpText, -hp, openEnded=0), Func(suit.updateHealthBar, hp))
+        damageTrack = Sequence(Wait(0.5), showDamage, Func(suit.updateHealthBar, hp))
         soundTrack = Sequence(SoundInterval(globalBattleSoundCache.getSound('AA_pie_throw_only.ogg'), duration=0.55, node=suit), SoundInterval(globalBattleSoundCache.getSound('Toon_bodyfall_synergy.ogg'), node=suit))
         result.append(Parallel(moveTrack, animTrack, suitTrack, damageTrack, soundTrack))
     elif trapName == 'rake' or trapName == 'rake-react':
@@ -332,7 +338,7 @@ def __createSuitDamageTrack(battle, suit, hp, lure, trapProp):
         rakeTrack = Sequence(Wait(0.5), LerpHprInterval(trapProp, 0.1, upHpr, startHpr=hpr), Wait(0.7), LerpHprInterval(trapProp, 0.4, hpr, startHpr=upHpr), LerpHprInterval(trapProp, 0.15, bounce1Hpr, startHpr=hpr), LerpHprInterval(trapProp, 0.05, hpr, startHpr=bounce1Hpr), LerpHprInterval(trapProp, 0.15, bounce2Hpr, startHpr=hpr), LerpHprInterval(trapProp, 0.05, hpr, startHpr=bounce2Hpr), Wait(0.2), LerpScaleInterval(trapProp, 0.2, Point3(0.01, 0.01, 0.01)))
         rakeAnimDuration = 3.125
         suitTrack = ActorInterval(suit, 'rake-react', duration=rakeAnimDuration)
-        damageTrack = Sequence(Wait(0.5), Func(suit.showHpText, -hp, openEnded=0), Func(suit.updateHealthBar, hp))
+        damageTrack = Sequence(Wait(0.5), showDamage, Func(suit.updateHealthBar, hp))
         soundTrack = getSoundTrack('TL_step_on_rake.ogg', delay=0.6, node=suit)
         result.append(Parallel(rakeTrack, suitTrack, damageTrack, soundTrack))
     elif trapName == 'marbles':
@@ -341,7 +347,7 @@ def __createSuitDamageTrack(battle, suit, hp, lure, trapProp):
         moveTrack = Sequence(Wait(0.1), LerpPosInterval(trapProp, 0.8, slidePos, other=battle), Wait(1.1), LerpScaleInterval(trapProp, 1, Point3(0.01, 0.01, 0.01)))
         animTrack = ActorInterval(trapProp, 'marbles', startTime=3.1)
         suitTrack = ActorInterval(suit, 'slip-backward')
-        damageTrack = Sequence(Wait(0.5), Func(suit.showHpText, -hp, openEnded=0), Func(suit.updateHealthBar, hp))
+        damageTrack = Sequence(Wait(0.5), showDamage, Func(suit.updateHealthBar, hp))
         soundTrack = Sequence(SoundInterval(globalBattleSoundCache.getSound('AA_pie_throw_only.ogg'), duration=0.55, node=suit), SoundInterval(globalBattleSoundCache.getSound('Toon_bodyfall_synergy.ogg'), node=suit))
         result.append(Parallel(moveTrack, animTrack, suitTrack, damageTrack, soundTrack))
     elif trapName == 'quicksand':
@@ -359,7 +365,7 @@ def __createSuitDamageTrack(battle, suit, hp, lure, trapProp):
         trapTrack = Sequence(Wait(2.4), LerpScaleInterval(trapProp, 0.8, Point3(0.01, 0.01, 0.01)))
         moveTrack = Sequence(Wait(0.9), LerpPosInterval(suit, 0.9, sinkPos1, other=battle), LerpPosInterval(suit, 0.4, sinkPos2, other=battle), Func(suit.setPos, battle, dropPos), Func(suit.wrtReparentTo, hidden), Wait(1.1), Func(suit.wrtReparentTo, battle), LerpPosInterval(suit, 0.3, landPos, other=battle))
         animTrack = Sequence(ActorInterval(suit, 'flail'), ActorInterval(suit, 'flail', startTime=1.1), Wait(0.7), ActorInterval(suit, 'slip-forward', duration=2.1))
-        damageTrack = Sequence(Wait(3.5), Func(suit.showHpText, -hp, openEnded=0), Func(suit.updateHealthBar, hp))
+        damageTrack = Sequence(Wait(3.5), showDamage, Func(suit.updateHealthBar, hp))
         soundTrack = Sequence(Wait(0.7), SoundInterval(globalBattleSoundCache.getSound('TL_quicksand.ogg'), node=suit), Wait(0.1), SoundInterval(globalBattleSoundCache.getSound('Toon_bodyfall_synergy.ogg'), node=suit))
         result.append(Parallel(trapTrack, moveTrack, animTrack, damageTrack, soundTrack))
     elif trapName == 'trapdoor':
@@ -371,14 +377,14 @@ def __createSuitDamageTrack(battle, suit, hp, lure, trapProp):
         trapTrack = Sequence(Wait(2.4), LerpScaleInterval(trapProp, 0.8, Point3(0.01, 0.01, 0.01)))
         moveTrack = Sequence(Wait(2.2), LerpPosInterval(suit, 0.4, sinkPos, other=battle), Func(suit.setPos, battle, dropPos), Func(suit.wrtReparentTo, hidden), Wait(1.6), Func(suit.wrtReparentTo, battle), LerpPosInterval(suit, 0.3, landPos, other=battle))
         animTrack = Sequence(getSplicedLerpAnimsTrack(suit, 'flail', 0.7, 0.25), Func(trapProp.setColor, Vec4(0, 0, 0, 1)), ActorInterval(suit, 'flail', startTime=0.7, endTime=0), ActorInterval(suit, 'neutral', duration=0.5), ActorInterval(suit, 'flail', startTime=1.1), Wait(1.1), ActorInterval(suit, 'slip-forward', duration=2.1))
-        damageTrack = Sequence(Wait(3.5), Func(suit.showHpText, -hp, openEnded=0), Func(suit.updateHealthBar, hp))
+        damageTrack = Sequence(Wait(3.5), showDamage, Func(suit.updateHealthBar, hp))
         soundTrack = Sequence(Wait(0.8), SoundInterval(globalBattleSoundCache.getSound('TL_trap_door.ogg'), node=suit), Wait(0.8), SoundInterval(globalBattleSoundCache.getSound('Toon_bodyfall_synergy.ogg'), node=suit))
         result.append(Parallel(trapTrack, moveTrack, animTrack, damageTrack, soundTrack))
     elif trapName == 'tnt':
         tntTrack = ActorInterval(trapProp, 'tnt')
         explosionTrack = Sequence(Wait(2.3), createTNTExplosionTrack(battle, trapProp=trapProp, relativeTo=parent))
         suitTrack = Sequence(ActorInterval(suit, 'flail', duration=0.7), ActorInterval(suit, 'flail', startTime=0.7, endTime=0.0), ActorInterval(suit, 'neutral', duration=0.4), ActorInterval(suit, 'flail', startTime=0.6, endTime=0.7), Wait(0.4), ActorInterval(suit, 'slip-forward', startTime=2.48, duration=0.1), Func(battle.movie.needRestoreColor), Func(suit.setColorScale, Vec4(0.2, 0.2, 0.2, 1)), Func(trapProp.reparentTo, hidden), ActorInterval(suit, 'slip-forward', startTime=2.58), Func(suit.clearColorScale), Func(trapProp.sparksEffect.cleanup), Func(battle.movie.clearRestoreColor))
-        damageTrack = Sequence(Wait(2.3), Func(suit.showHpText, -hp, openEnded=0), Func(suit.updateHealthBar, hp))
+        damageTrack = Sequence(Wait(2.3), showDamage, Func(suit.updateHealthBar, hp))
         explosionSound = base.loader.loadSfx('phase_3.5/audio/sfx/ENC_cogfall_apart.ogg')
         soundTrack = Sequence(SoundInterval(globalBattleSoundCache.getSound('TL_dynamite.ogg'), duration=2.0, node=suit), SoundInterval(explosionSound, duration=0.6, node=suit))
         result.append(Parallel(tntTrack, suitTrack, damageTrack, explosionTrack, soundTrack))
@@ -468,7 +474,12 @@ def createSuitReactionToTrain(battle, suit, hp, lure, trapProp):
     distance = suitPos.getX() - TRAIN_STARTING_X
     timeToGetHit = distance / TRAIN_SPEED
     suitTrack = Sequence()
-    showDamage = Func(suit.showHpText, -hp, openEnded=0)
+    if base.cr.playGame.getActiveZone().battle.battleCalc.damageBoostActive:
+        showDamage = Func(suit.showHpTextBoost, -hp, 1)
+    elif base.cr.playGame.getActiveZone().battle.battleCalc.suitDefenseBoostActive:
+        showDamage = Func(suit.showHpTextBoost, -hp, 2)
+    else:
+        showDamage = Func(suit.showHpText, -hp, openEnded=0)
     updateHealthBar = Func(suit.updateHealthBar, hp)
     anim = 'flatten'
     suitReact = ActorInterval(suit, anim)

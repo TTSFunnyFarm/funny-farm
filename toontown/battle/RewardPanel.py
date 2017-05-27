@@ -73,6 +73,11 @@ class RewardPanel(DirectFrame):
              1), text='0/0 ' + TTLocalizer.RewardPanelMeritBarLabels[i], text_scale=TTLocalizer.RPmeritBarLabels, text_fg=(0, 0, 0, 1), text_align=TextNode.ALeft, text_pos=(-0.96, -0.05), pos=(TTLocalizer.RPmeritBarsPosX, 0, -0.09 * i - 0.125)))
 
         for i in xrange(len(ToontownBattleGlobals.Tracks)):
+            if i == 0:
+                self.trackLabels.append(None)
+                self.trackIncLabels.append(None)
+                self.trackBars.append(None)
+                continue
             trackName = TextEncoder.upper(ToontownBattleGlobals.Tracks[i])
             self.trackLabels.append(DirectLabel(parent=self.gagExpFrame, relief=None, text=trackName, text_scale=TTLocalizer.RPtrackLabels, text_align=TextNode.ARight, pos=(0.13, 0, -0.09 * i), text_pos=(0, -0.02)))
             self.trackIncLabels.append(DirectLabel(parent=self.gagExpFrame, relief=None, text='', text_scale=0.05, text_align=TextNode.ALeft, pos=(0.65, 0, -0.09 * i), text_pos=(0, -0.02)))
@@ -228,6 +233,8 @@ class RewardPanel(DirectFrame):
                 meritLabel.hide()
 
         for i in xrange(len(expList)):
+            if i == 0:
+                continue
             curExp = expList[i]
             trackBar = self.trackBars[i]
             trackLabel = self.trackLabels[i]

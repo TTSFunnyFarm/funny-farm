@@ -6,6 +6,7 @@ from direct.task.Task import Task
 from otp.nametag import NametagGlobals
 from otp.nametag.NametagConstants import *
 from toontown.toonbase import ToontownGlobals
+from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.suit import Suit
 from BattleCalculator import BattleCalculator
@@ -294,7 +295,10 @@ class Battle(DirectObject, NodePath, BattleBase):
             track = response['track']
             level = response['level']
             target = response['target']
-            targetId = self.activeSuits[target].doId
+            if track == HEAL_TRACK:
+                targetId = self.activeToons[target].doId
+            else:
+                targetId = self.activeSuits[target].doId
             self.requestAttack(track, level, targetId)
             base.localAvatar.inventory.useItem(track, level)
         elif mode == 'Run':
@@ -403,15 +407,11 @@ class Battle(DirectObject, NodePath, BattleBase):
             self.toonAttacks[toonId] = getToonAttack(toonId, track=FIRE, target=av)
         else:
             if toon.inventory.numItem(track, level) == 0:
-                self.notify.warning('requestAttack() - toon has no item track:                     %d level: %d' % (track, level))
+                self.notify.warning('requestAttack() - toon has no item track: %d level: %d' % (track, level))
                 self.toonAttacks[toonId] = getToonAttack(toonId)
                 return
             if track == HEAL:
-                if self.runningToons.count(av) == 1 or attackAffectsGroup(track, level) and len(self.activeToonIds) < 2:
-                    self.toonAttacks[toonId] = getToonAttack(toonId, track=UN_ATTACK)
-                    validResponse = 0
-                else:
-                    self.toonAttacks[toonId] = getToonAttack(toonId, track=track, level=level, target=av)
+                self.toonAttacks[toonId] = getToonAttack(toonId, track=track, level=level, target=av)
             else:
                 self.toonAttacks[toonId] = getToonAttack(toonId, track=track, level=level, target=av)
                 if av == -1 and not attackAffectsGroup(track, level):
@@ -429,15 +429,10 @@ class Battle(DirectObject, NodePath, BattleBase):
             self.removeSuit(suit)
         doneStatus = 'run'
         messenger.send(self.townBattle.doneEvent, [doneStatus])
-        if base.cr.playGame.hood:
-            base.cr.playGame.exitHood()
-        elif base.cr.playGame.street:
-            base.cr.playGame.exitStreet()
-        elif base.cr.playGame.place:
-            base.cr.playGame.exitPlace()
+        base.cr.playGame.exitActiveZone()
         base.localAvatar.enable()
-        zoneId = base.avatarData.setLastHood
-        base.cr.enterHood(zoneId)
+        zoneId = FunnyFarmGlobals.getHoodId(base.localAvatar.zoneId)
+        base.cr.playGame.enterHood(zoneId)
 
     def __requestMovie(self, timeout = 0):
         movieDelay = 0
@@ -492,13 +487,13 @@ class Battle(DirectObject, NodePath, BattleBase):
                 toon.setEarnedExperience(roundList)
         return
 
-    def setMovie(self, active, toons, suits, id0, tr0, le0, tg0, hp0, ac0, hpb0, kbb0, died0, revive0, id1, tr1, le1, tg1, hp1, ac1, hpb1, kbb1, died1, revive1, id2, tr2, le2, tg2, hp2, ac2, hpb2, kbb2, died2, revive2, id3, tr3, le3, tg3, hp3, ac3, hpb3, kbb3, died3, revive3, sid0, at0, stg0, dm0, sd0, sb0, st0, sid1, at1, stg1, dm1, sd1, sb1, st1, sid2, at2, stg2, dm2, sd2, sb2, st2, sid3, at3, stg3, dm3, sd3, sb3, st3):
+    def setMovie(self, active, toons, suits, id0, tr0, le0, tg0, hp0, ac0, hpb0, kbb0, died0, revive0, id1, tr1, le1, tg1, hp1, ac1, hpb1, kbb1, died1, revive1, id2, tr2, le2, tg2, hp2, ac2, hpb2, kbb2, died2, revive2, id3, tr3, le3, tg3, hp3, ac3, hpb3, kbb3, died3, revive3, sid0, at0, stg0, dm0, sd0, sb0, st0, hit0, sid1, at1, stg1, dm1, sd1, sb1, st1, hit1, sid2, at2, stg2, dm2, sd2, sb2, st2, hit2, sid3, at3, stg3, dm3, sd3, sb3, st3, hit3):
         if self.__battleCleanedUp:
             return
         self.notify.debug('setMovie()')
         if int(active) == 1:
             self.notify.debug('setMovie() - movie is active')
-            self.movie.genAttackDicts(toons, suits, id0, tr0, le0, tg0, hp0, ac0, hpb0, kbb0, died0, revive0, id1, tr1, le1, tg1, hp1, ac1, hpb1, kbb1, died1, revive1, id2, tr2, le2, tg2, hp2, ac2, hpb2, kbb2, died2, revive2, id3, tr3, le3, tg3, hp3, ac3, hpb3, kbb3, died3, revive3, sid0, at0, stg0, dm0, sd0, sb0, st0, sid1, at1, stg1, dm1, sd1, sb1, st1, sid2, at2, stg2, dm2, sd2, sb2, st2, sid3, at3, stg3, dm3, sd3, sb3, st3)
+            self.movie.genAttackDicts(toons, suits, id0, tr0, le0, tg0, hp0, ac0, hpb0, kbb0, died0, revive0, id1, tr1, le1, tg1, hp1, ac1, hpb1, kbb1, died1, revive1, id2, tr2, le2, tg2, hp2, ac2, hpb2, kbb2, died2, revive2, id3, tr3, le3, tg3, hp3, ac3, hpb3, kbb3, died3, revive3, sid0, at0, stg0, dm0, sd0, sb0, st0, hit0, sid1, at1, stg1, dm1, sd1, sb1, st1, hit1, sid2, at2, stg2, dm2, sd2, sb2, st2, hit2, sid3, at3, stg3, dm3, sd3, sb3, st3, hit3)
 
     def getMovie(self):
         suitIds = []
@@ -524,10 +519,7 @@ class Battle(DirectObject, NodePath, BattleBase):
                 elif track == SOS or track == NPCSOS or track == PETSOS:
                     target = ta[TOON_TGT_COL]
                 elif track == HEAL:
-                    if self.activeToonIds.count(ta[TOON_TGT_COL]) != 0:
-                        target = self.activeToonIds.index(ta[TOON_TGT_COL])
-                    else:
-                        target = -1
+                    target = t
                 elif suitIds.count(ta[TOON_TGT_COL]) != 0:
                     target = suitIds.index(ta[TOON_TGT_COL])
                 else:
@@ -732,6 +724,8 @@ class Battle(DirectObject, NodePath, BattleBase):
             self.activeSuits.remove(suit)
         suit.disable()
         suit.delete()
+        messenger.send('removeActiveSuit', [suit.doId])
+        messenger.send('upkeepPopulation-%d' % base.localAvatar.zoneId, [None])
 
     def isSuitLured(self, suit):
         if self.luredSuits.count(suit) != 0:

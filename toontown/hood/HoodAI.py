@@ -1,4 +1,5 @@
 from toontown.toonbase import FunnyFarmGlobals
+from toontown.suit.SuitPlannerAI import SuitPlannerAI
 
 class HoodAI:
     notify = directNotify.newCategory('HoodAI')
@@ -37,7 +38,10 @@ class HoodAI:
         pass
 
     def createSuitPlanners(self):
-        pass
+        for zoneId in FunnyFarmGlobals.HoodHierarchy.get(self.zoneId, []):
+            sp = SuitPlannerAI(zoneId)
+            self.air.suitPlanners[zoneId] = sp
+            sp.generate()
 
     def createBuildingManagers(self):
         pass

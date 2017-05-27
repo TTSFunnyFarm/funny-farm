@@ -81,7 +81,7 @@ class AvatarChooser:
         self.bg = DirectFrame(image=bgImage, relief=None)
         self.bg.hide()
         self.title = OnscreenText(TTLocalizer.AvatarChooserPickAToon, scale=TTLocalizer.ACtitle, parent=self.bg, font=ToontownGlobals.getSignFont(), fg=(1, 0.9, 0.1, 1), pos=(0.0, 0.82))
-
+        
         for i in xrange(0, MAX_AVATARS):
             button = DirectButton(parent=self.bg, image=btnImages[i], relief=None, pos=POSITIONS[i], scale=1.01, text=(TTLocalizer.AvatarChoiceMakeAToon,), text_scale=0.1, text_font=ToontownGlobals.getSignFont(), text_fg=(0, 1, 0.8, 0.5), text1_scale=TTLocalizer.ACmakeAToon, text1_font=ToontownGlobals.getSignFont(), text1_fg=(0, 1, 0.8, 1), text2_scale=TTLocalizer.ACmakeAToon, text2_font=ToontownGlobals.getSignFont(), text2_fg=(0.3, 1, 0.9, 1), command=self.__handleCreate, extraArgs=[i + 1])
             button.delete = DirectButton(parent=button, image=(trashcanGui.find('**/TrashCan_CLSD'), trashcanGui.find('**/TrashCan_OPEN'), trashcanGui.find('**/TrashCan_RLVR')), text=('', TTLocalizer.AvatarChoiceDelete, TTLocalizer.AvatarChoiceDelete), text_fg=(1, 1, 1, 1), text_shadow=(0, 0, 0, 1), text_scale=0.15, text_pos=(0, -0.1), text_font=ToontownGlobals.getInterfaceFont(), relief=None, pos=DELETE_POSITIONS[i], scale=0.45, command=self.__handleDelete, extraArgs=[i + 1])
@@ -140,10 +140,13 @@ class AvatarChooser:
         headModel.startBlink()
         headModel.startLookAround()
 
-        status = self.reviewName(data.setName)
-        if status == 0:
+        colorstring = TTLocalizer.NumToColor[dna.headColor]
+        animaltype = TTLocalizer.AnimalToSpecies[dna.getAnimal()]
+        tempname = colorstring + ' ' + animaltype
+        reviewedName = self.reviewName(data.setName, data.index)
+        if reviewedName == tempname:
            # oh no! this toon has a rejected name probably
-           data.setName = self.findTempName(data.index)
+           data.setName = reviewedName
            dataMgr.saveToonData(data)
            button.rename.show()
 
@@ -156,7 +159,7 @@ class AvatarChooser:
         button['text_fg'] = (1, 0.9, 0.1, 1)
         button.delete.show()
 
-    def reviewName(self, name):
+    def reviewName(self, name, index):
         blacklistFile = 'resources/phase_4/etc/tblacklist.dat'
         # We need two lists: one uppercase and one lowercase.
         # That means we have to open 2 blacklist files because whatever
@@ -166,19 +169,18 @@ class AvatarChooser:
         with open(blacklistFile) as blacklist:
             badWordsTitled = blacklist.read().title().split()
         
-        status = 1
         nameWords = re.sub('[^\w]', ' ',  name).split()
         for word in nameWords:
             if word in badWords or word in badWordsTitled:
-                status = 0
+                name = self.findTempName(name, index)
                 break
         if len(name) < 3 or len(nameWords) > 4:
-            status = 0
+            name = self.findTempName(name, index)
         if name.replace(' ', '').strip() == '':
-            status = 0
-        return status
+            name = self.findTempName(name, index)
+        return name
 
-    def findTempName(self, index):
+    def findTempName(self, name, index):
         data = dataMgr.loadToonData(index)
         dna = ToonDNA.ToonDNA()
         dna.newToonFromProperties(*data.setDNA)
@@ -221,9 +223,9 @@ class AvatarChooser:
     def __handleRenameOK(self, _, index):
         name = self.renameEntry.get()
         data = dataMgr.loadToonData(index)
-        status = self.reviewName(name)
-        print " NAME: {0}, REVIEW: {1}".format(name, status)
-        if status == 1:
+        reviewedName = self.reviewName(name, index)
+        print " NAME: {0}, REVIEW: {1}".format(name, reviewedName)
+        if name == reviewedName:
             self.renameFrame.hide()
             base.transitions.noTransitions()
             data.setName = name

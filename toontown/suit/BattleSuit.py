@@ -1,37 +1,29 @@
-import copy
+from panda3d.core import *
+from direct.showbase import PythonUtil
 from direct.controls.ControlManager import CollisionHandlerRayStart
-from direct.directnotify import DirectNotifyGlobal
-from direct.directtools.DirectGeometry import CLAMP
-from direct.distributed.ClockDelta import *
-from direct.fsm import ClassicFSM
-from direct.fsm import State
 from direct.interval.IntervalGlobal import *
 from direct.task import Task
-import math
-from panda3d.core import *
-import Suit
-import SuitBase
-import SuitDNA
-import SuitDialog
-import SuitTimings
-from otp.otpbase import OTPGlobals
-from toontown.battle import BattleProps
-from toontown.chat.ChatGlobals import *
-from otp.nametag.NametagGlobals import *
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.toonbase import ToontownGlobals
+from toontown.battle import BattleProps
+from otp.otpbase import OTPGlobals
+from otp.nametag.NametagConstants import *
+from SuitBase import SuitBase
+from Suit import Suit
+import SuitDialog
+import SuitTimings
+import math
 
-
-class BattleSuit(Suit.Suit, SuitBase.SuitBase):
-    notify = DirectNotifyGlobal.directNotify.newCategory('BattleSuit')
+class BattleSuit(Suit, SuitBase):
+    notify = directNotify.newCategory('BattleSuit')
     HpTextGenerator = TextNode('HpTextGenerator')
     HpTextEnabled = 1
 
     def __init__(self):
-        Suit.Suit.__init__(self)
-        SuitBase.SuitBase.__init__(self)
-        self.doId = id(self)
+        Suit.__init__(self)
+        SuitBase.__init__(self)
+        self.doId = 0
         self.activeShadow = 0
         self.virtual = 0
         self.battleDetectName = None
@@ -55,15 +47,37 @@ class BattleSuit(Suit.Suit, SuitBase.SuitBase):
         self.sillySurgeText = False
         self.interactivePropTrackBonus = -1
         self.hpText = None
+        self.strText = None
         self.hp = None
         self.maxHp = None
         return
+
+    def setDoId(self, doId):
+        self.doId = doId
 
     def getDoId(self):
         return self.doId
 
     def uniqueName(self, idString):
         return ('%s-%s' % (idString, self.doId))
+
+    def disable(self):
+        self.notify.debug('BattleSuit %d: disabling' % self.getDoId())
+        self.ignoreAll()
+        self.__removeCollisionData()
+        self.cleanupLoseActor()
+        self.stop()
+        taskMgr.remove(self.uniqueName('blink-task'))
+        if hasattr(self, 'mtrack'):
+            self.mtrack.pause()
+            del self.mtrack
+
+    def delete(self):
+        self.notify.debug('BattleSuit %d: deleting' % self.getDoId())
+        del self.dna
+        del self.sp
+        Suit.delete(self)
+        SuitBase.delete(self)
 
     def setVirtual(self, virtual):
         pass
@@ -78,12 +92,12 @@ class BattleSuit(Suit.Suit, SuitBase.SuitBase):
         if num > self.maxSkeleRevives:
             self.maxSkeleRevives = num
         if self.getSkeleRevives() > 0:
-            nameInfo = TTLocalizer.SuitBaseNameWithLevel % {'name': self._name,
+            nameInfo = TTLocalizer.SuitBaseNameWithLevel % {'name': self.name,
              'dept': self.getStyleDept(),
              'level': '%s%s' % (self.getActualLevel(), TTLocalizer.SkeleRevivePostFix)}
             self.setDisplayName(nameInfo)
         else:
-            nameInfo = TTLocalizer.SuitBaseNameWithLevel % {'name': self._name,
+            nameInfo = TTLocalizer.SuitBaseNameWithLevel % {'name': self.name,
              'dept': self.getStyleDept(),
              'level': self.getActualLevel()}
             self.setDisplayName(nameInfo)
@@ -107,26 +121,11 @@ class BattleSuit(Suit.Suit, SuitBase.SuitBase):
             self.reviveFlag = 0
         return returnValue
 
-    def disable(self):
-        self.notify.debug('BattleSuit %d: disabling' % self.getDoId())
-        self.ignoreAll()
-        self.__removeCollisionData()
-        self.cleanupLoseActor()
-        self.stop()
-        taskMgr.remove(self.uniqueName('blink-task'))
-
-    def delete(self):
-        self.notify.debug('BattleSuit %d: deleting' % self.getDoId())
-        del self.dna
-        del self.sp
-        Suit.Suit.delete(self)
-        SuitBase.SuitBase.delete(self)
-
     def setDNAString(self, dnaString):
-        Suit.Suit.setDNAString(self, dnaString)
+        Suit.setDNAString(self, dnaString)
 
     def setDNA(self, dna):
-        Suit.Suit.setDNA(self, dna)
+        Suit.setDNA(self, dna)
         self.dna = dna
 
     def getHP(self):
@@ -140,7 +139,7 @@ class BattleSuit(Suit.Suit, SuitBase.SuitBase):
         return None
 
     def getDialogueArray(self, *args):
-        return Suit.Suit.getDialogueArray(self, *args)
+        return Suit.getDialogueArray(self, *args)
 
     def __removeCollisionData(self):
         self.enableRaycast(0)
@@ -152,10 +151,10 @@ class BattleSuit(Suit.Suit, SuitBase.SuitBase):
         return
 
     def setHeight(self, height):
-        Suit.Suit.setHeight(self, height)
+        Suit.setHeight(self, height)
 
     def getRadius(self):
-        return Suit.Suit.getRadius(self)
+        return Suit.getRadius(self)
 
     def setLevelDist(self, level):
         if self.notify.getDebug():
@@ -223,8 +222,10 @@ class BattleSuit(Suit.Suit, SuitBase.SuitBase):
             else:
                 animTrack.append(Func(self.loop, 'neutral'))
             self.attachPropeller()
-            propTrack = Parallel(SoundInterval(self.propInSound, duration=waitTime + dur, node=self), Sequence(ActorInterval(self.prop, 'propeller', constrainedLoop=1, duration=waitTime + spinTime, startTime=0.0, endTime=spinTime), ActorInterval(self.prop, 'propeller', duration=propDur - openTime, startTime=openTime), Func(self.detachPropeller)))
-            return Parallel(lerpPosTrack, shadowTrack, fadeInTrack, animTrack, propTrack, name='trackName')
+            propTrack = Parallel(Sequence(ActorInterval(self.prop, 'propeller', constrainedLoop=1, duration=waitTime + spinTime, startTime=0.0, endTime=spinTime), ActorInterval(self.prop, 'propeller', duration=propDur - openTime, startTime=openTime), Func(self.detachPropeller)))
+            if not base.cr.playGame.getActiveZone().place:
+                propTrack.append(SoundInterval(self.propInSound, duration=waitTime + dur, node=self))
+            return Parallel(lerpPosTrack, shadowTrack, fadeInTrack, animTrack, propTrack, name=self.uniqueName('trackName'))
         else:
             lerpPosTrack = Sequence(Wait(impactLength), LerpPosInterval(self, timeTillLanding, skyPos, startPos=pos))
             shadowTrack = Sequence(Func(self.dropShadow.reparentTo, render), Func(self.dropShadow.setPos, pos), self.dropShadow.scaleInterval(timeTillLanding, Vec3(0.01, 0.01, 1.0), startScale=self.scale), Func(self.dropShadow.reparentTo, self.getShadowJoint()), Func(self.dropShadow.setPos, 0, 0, 0))
@@ -232,11 +233,14 @@ class BattleSuit(Suit.Suit, SuitBase.SuitBase):
             actInt = ActorInterval(self, 'landing', loop=0, startTime=dur, endTime=0.0)
             self.attachPropeller()
             self.prop.hide()
-            propTrack = Parallel(SoundInterval(self.propOutSound, duration=waitTime + dur, node=self), Sequence(Func(self.prop.show), ActorInterval(self.prop, 'propeller', endTime=openTime, startTime=propDur), ActorInterval(self.prop, 'propeller', constrainedLoop=1, duration=propDur - openTime, startTime=spinTime, endTime=0.0), Func(self.detachPropeller)))
-            return Parallel(ParallelEndTogether(lerpPosTrack, shadowTrack, fadeOutTrack), actInt, propTrack, name='trackName')
+            propTrack = Parallel(Sequence(Func(self.prop.show), ActorInterval(self.prop, 'propeller', endTime=openTime, startTime=propDur), ActorInterval(self.prop, 'propeller', constrainedLoop=1, duration=propDur - openTime, startTime=spinTime, endTime=0.0), Func(self.detachPropeller)))
+            if not base.cr.playGame.getActiveZone().place:
+                propTrack.append(SoundInterval(self.propOutSound, duration=waitTime + dur, node=self))
+            return Parallel(ParallelEndTogether(lerpPosTrack, shadowTrack, fadeOutTrack), actInt, propTrack, name=self.uniqueName('trackName'))
         return
 
     def enableBattleDetect(self, handler):
+        self.collNodePath.setName(self.uniqueName(self.collNodePath.getName()))
         self.accept('enter' + self.collNodePath.getName(), handler)
         return Task.done
 
@@ -255,18 +259,8 @@ class BattleSuit(Suit.Suit, SuitBase.SuitBase):
         elif self.notify.getDebug():
             self.notify.debug('disabling raycast')
 
-    def b_setBrushOff(self, index):
-        self.setBrushOff(index)
-        self.d_setBrushOff(index)
-
-    def d_setBrushOff(self, index):
-        self.sendUpdate('setBrushOff', [index])
-
-    def setBrushOff(self, index):
-        self.setChatAbsolute(SuitDialog.getBrushOffText(self.getStyleName(), index), CFSpeech | CFTimeout)
-
     def initializeBodyCollisions(self, collIdStr):
-        Suit.Suit.initializeBodyCollisions(self, collIdStr)
+        Suit.initializeBodyCollisions(self, collIdStr)
         if not self.ghostMode:
             self.collNode.setCollideMask(self.collNode.getIntoCollideMask() | ToontownGlobals.PieBitmask)
         self.cRay = CollisionRay(0.0, 0.0, CollisionHandlerRayStart, 0.0, 0.0, -1.0)
@@ -293,25 +287,6 @@ class BattleSuit(Suit.Suit, SuitBase.SuitBase):
         del self.cRay
         del self.lifter
 
-    def denyBattle(self):
-        self.notify.debug('denyBattle()')
-        place = self.cr.playGame.getPlace()
-        if place.fsm.getCurrentState().getName() == 'WaitForBattle':
-            place.setState('walk')
-        self.resumePath(self.pathState)
-
-    def makePathTrack(self, nodePath, posPoints, velocity, name):
-        track = Sequence(name=name)
-        nodePath.setPos(posPoints[0])
-        for pointIndex in xrange(len(posPoints) - 1):
-            startPoint = posPoints[pointIndex]
-            endPoint = posPoints[pointIndex + 1]
-            track.append(Func(nodePath.headsUp, endPoint[0], endPoint[1], endPoint[2]))
-            distance = Vec3(endPoint - startPoint).length()
-            duration = distance / velocity
-            track.append(LerpPosInterval(nodePath, duration=duration, pos=Point3(endPoint), startPos=Point3(startPoint)))
-        return track
-
     def setState(self, state):
         if self.fsm == None:
             return 0
@@ -319,21 +294,98 @@ class BattleSuit(Suit.Suit, SuitBase.SuitBase):
             return 0
         return self.fsm.request(state)
 
-    def subclassManagesParent(self):
-        return 0
+    def setBrushOff(self, index):
+        self.setChatAbsolute(SuitDialog.getBrushOffText(self.getStyleName(), index), CFSpeech | CFTimeout)
+
+    def __handleBrushOff(self, collEntry):
+        self.setBrushOff(SuitDialog.getBrushOffIndex(self.getStyleName()))
+
+    def __handleToonCollision(self, collEntry):
+        toonId = base.localAvatar.getDoId()
+        self.notify.debug('BattleSuit: requesting a Battle with toon: %d' % toonId)
+        self.exitWalk()
+        self.enterWaitForBattle()
+        messenger.send('requestBattle-%d' % base.localAvatar.zoneId, [self.doId, self.getPos()])
+
+    def calculateHeading(self, a, b):
+        xdelta = b[0] - a[0]
+        ydelta = b[1] - a[1]
+        if ydelta == 0:
+            if xdelta > 0:
+                h = -90
+            else:
+                h = 90
+        elif xdelta == 0:
+            if ydelta > 0:
+                h = 0
+            else:
+                h = 180
+        else:
+            angle = math.atan2(ydelta, xdelta)
+            h = rad2Deg(angle) - 90
+        return PythonUtil.fitDestAngle2Src(self.getH(), h)
+
+    def startUpdatePosition(self):
+        self.accept('updatePos-%d' % self.doId, self.updatePosition)
+
+    def updatePosition(self, posA, posB):
+        self.exitWalk()
+        self.enterWalk(posA, posB, 0)
+
+    def stopUpdatePosition(self):
+        self.ignore('updatePos-%d' % self.doId)
 
     def enterOff(self, *args):
         self.hideNametag3d()
         self.hideNametag2d()
-        if not self.subclassManagesParent():
-            self.setParent(ToontownGlobals.SPHidden)
+        self.wrtReparentTo(hidden)
 
     def exitOff(self):
-        if not self.subclassManagesParent():
-            self.setParent(ToontownGlobals.SPRender)
+        self.wrtReparentTo(render)
         self.showNametag3d()
         self.showNametag2d()
         self.loop('neutral', 0)
+
+    def enterFromSky(self, posA, posB):
+        self.enableBattleDetect(self.__handleBrushOff)
+        self.loop('neutral', 0)
+        h = self.calculateHeading(posA, posB)
+        self.setPosHprScale(posA[0], posA[1], posA[2], h, 0.0, 0.0, 1.0, 1.0, 1.0)
+        self.mtrack = self.beginSupaFlyMove(posA, 1, 'fromSky')
+        self.mtrack.start()
+
+    def exitFromSky(self):
+        self.disableBattleDetect()
+        self.mtrack.finish()
+        del self.mtrack
+        self.detachPropeller()
+
+    def enterWalk(self, posA, posB, time):
+        self.enableBattleDetect(self.__handleToonCollision)
+        self.loop('walk', 0)
+        h = self.calculateHeading(posA, posB)
+        pos = self.getPosAtTime(posA, posB, time)
+        self.setPos(pos[0], pos[1], pos[2])
+        self.hprInterval(0.2, (h, 0, 0)).start()
+        self.mtrack = Sequence(LerpPosInterval(self, self.getLegTime(posA, posB), posB, startPos=posA), name=self.uniqueName('bellicose'))
+        self.mtrack.start(time)
+
+    def exitWalk(self):
+        self.disableBattleDetect()
+        if hasattr(self, 'mtrack'):
+            self.mtrack.pause()
+            del self.mtrack
+
+    def enterToSky(self):
+        self.enableBattleDetect(self.__handleBrushOff)
+        self.mtrack = self.beginSupaFlyMove(self.getPos(), 0, 'toSky')
+        self.mtrack.start()
+
+    def exitToSky(self):
+        self.disableBattleDetect()
+        self.mtrack.finish()
+        del self.mtrack
+        self.detachPropeller()
 
     def enterBattle(self):
         self.loop('neutral', 0)
@@ -355,29 +407,42 @@ class BattleSuit(Suit.Suit, SuitBase.SuitBase):
     def exitWaitForBattle(self):
         pass
 
+    def getLegTime(self, posA, posB):
+        return (posA - posB).length() / ToontownGlobals.SuitWalkSpeed
+
+    def getPosAtTime(self, posA, posB, time):
+        fraction = time / self.getLegTime(posA, posB)
+        fraction = min(max(fraction, 0.0), 1.0)
+
+        delta = posB - posA
+        pos = posA + delta * (time / self.getLegTime(posA, posB))
+        
+        return pos
+
     def setSkelecog(self, flag):
-        SuitBase.SuitBase.setSkelecog(self, flag)
+        SuitBase.setSkelecog(self, flag)
         if flag:
-            Suit.Suit.makeSkeleton(self)
+            Suit.makeSkeleton(self)
 
     def setWaiter(self, flag):
-        SuitBase.SuitBase.setWaiter(self, flag)
+        SuitBase.setWaiter(self, flag)
         if flag:
-            Suit.Suit.makeWaiter(self)
+            Suit.makeWaiter(self)
 
     def setElite(self, flag):
-        SuitBase.SuitBase.setElite(self, flag)
+        SuitBase.setElite(self, flag)
         if flag:
-            Suit.Suit.makeElite(self)
-        nameInfo = TTLocalizer.SuitBaseNameWithLevel % {'name': self._name,
-         'dept': self.getStyleDept(),
-         'level': '%s %s' % (self.getActualLevel(), TTLocalizer.EliteCogName)}
-        self.setDisplayName(nameInfo)
-        self.maxHP = self.maxHP + int(round(self.maxHP * 0.25))
-        self.currHP = self.maxHP
+            Suit.makeElite(self)
+            nameInfo = TTLocalizer.SuitBaseNameWithLevel % {'name': self.name,
+             'dept': self.getStyleDept(),
+             'level': '%s %s' % (self.getActualLevel(), TTLocalizer.EliteCogName)}
+            self.setDisplayName(nameInfo)
+            self.maxHP = self.maxHP + int(round(self.maxHP * 0.25))
+            self.currHP = self.maxHP
 
     def showHpText(self, number, bonus = 0, scale = 1, attackTrack = -1):
         if self.HpTextEnabled and not self.ghostMode:
+            number = int(number)
             if number != 0:
                 if self.hpText:
                     self.hideHpText()
@@ -430,6 +495,66 @@ class BattleSuit(Suit.Suit, SuitBase.SuitBase):
                 seq = Sequence(self.hpText.posInterval(1.0, Point3(0, 0, self.height + 1.5), blendType='easeOut'), Wait(0.85), self.hpText.colorInterval(0.1, Vec4(r, g, b, 0), 0.1), Func(self.hideHpText))
                 seq.start()
 
+    def showHpTextBoost(self, number, boost):
+        if self.HpTextEnabled and not self.ghostMode:
+            if self.hpText:
+                self.hideHpText()
+            self.HpTextGenerator.setFont(OTPGlobals.getSignFont())
+            stringText = TextNode('stringText')
+            stringText.setFont(OTPGlobals.getSignFont())
+            if boost == 1:
+                stringText.setText('Boost')
+                if number <= 0:
+                    if number == 0:
+                        self.HpTextGenerator.setText('-%d' % number)
+                    else:
+                        self.HpTextGenerator.setText(str(number))
+                else:
+                    self.HpTextGenerator.setText('+%d' % number)
+            elif boost == 2:
+                stringText.setText('Resist')
+                if number <= 0:
+                    if number == 0:
+                        self.HpTextGenerator.setText('-%d' % number)
+                    else:
+                        self.HpTextGenerator.setText(str(number))
+                else:
+                    self.HpTextGenerator.setText('+%d' % number)
+            if number <= 0:
+                r = 0.9
+                g = 0
+                b = 0
+                a = 1
+            else:
+                r = 0
+                g = 0.9
+                b = 0
+                a = 1
+            self.HpTextGenerator.clearShadow()
+            self.HpTextGenerator.setAlign(TextNode.ACenter)
+            self.HpTextGenerator.setTextColor(r, g, b, a)
+            self.hpTextNode = self.HpTextGenerator.generate()
+            self.hpText = self.attachNewNode(self.hpTextNode)
+            self.hpText.setScale(1)
+            self.hpText.setBillboardPointEye()
+            self.hpText.setBin('fixed', 100)
+            
+            stringText.clearShadow()
+            stringText.setAlign(TextNode.ACenter)
+            stringText.setTextColor(r, g, b, a)
+            strTextNode = stringText.generate()
+            self.strText = self.attachNewNode(strTextNode)
+            self.strText.setScale(0.5)
+            self.strText.setBillboardPointEye()
+            self.strText.setBin('fixed', 100)
+            
+            self.nametag3d.setDepthTest(0)
+            self.nametag3d.setBin('fixed', 99)
+            self.hpText.setPos(0, 0, self.height / 2)
+            self.strText.setPos(0, 0, (self.height / 2) + 1.0)
+            seq = Sequence(Parallel(self.hpText.posInterval(1.0, Point3(0, 0, self.height + 1.5), blendType='easeOut'), self.strText.posInterval(1.0, Point3(0, 0, self.height + 2.5), blendType='easeOut')), Wait(0.85), Parallel(self.hpText.colorInterval(0.1, Vec4(r, g, b, 0), 0.1), self.strText.colorInterval(0.1, Vec4(r, g, b, 0), 0.1)), Func(self.hideHpText))
+            seq.start()
+
     def showHpString(self, text, duration = 0.85, scale = 0.7):
         if self.HpTextEnabled and not self.ghostMode:
             if text != '':
@@ -455,10 +580,12 @@ class BattleSuit(Suit.Suit, SuitBase.SuitBase):
             taskMgr.remove(self.uniqueName('hpText'))
             self.hpText.removeNode()
             self.hpText = None
-        if self.sillySurgeText:
-            self.nametag3d.clearDepthTest()
-            self.nametag3d.clearBin()
-            self.sillySurgeText = False
+        if self.strText:
+            self.strText.removeNode()
+            self.strText = None
+        self.nametag3d.clearDepthTest()
+        self.nametag3d.clearBin()
+        self.sillySurgeText = False
 
     def getAvIdName(self):
         try:

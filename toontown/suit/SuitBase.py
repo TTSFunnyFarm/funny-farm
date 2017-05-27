@@ -6,7 +6,7 @@ from panda3d.core import *
 from panda3d.core import Point3
 from toontown.battle import SuitBattleGlobals
 from toontown.toonbase import TTLocalizer
-
+from otp.avatar.Avatar import Avatar
 
 TIME_BUFFER_PER_WPT = 0.25
 TIME_DIVISOR = 100
@@ -48,10 +48,11 @@ class SuitBase:
 
     def setLevel(self, level):
         self.level = level
-        nameWLevel = TTLocalizer.SuitBaseNameWithLevel % {'name': self._name,
-         'dept': self.getStyleDept(),
-         'level': self.getActualLevel()}
-        self.setDisplayName(nameWLevel)
+        if isinstance(self, Avatar):
+            nameWLevel = TTLocalizer.SuitBaseNameWithLevel % {'name': self.name,
+             'dept': self.getStyleDept(),
+             'level': self.getActualLevel()}
+            self.setDisplayName(nameWLevel)
         attributes = SuitBattleGlobals.SuitAttributes[self.dna.name]
         self.maxHP = attributes['hp'][self.level]
         self.currHP = self.maxHP

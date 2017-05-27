@@ -394,7 +394,12 @@ def __createSuitTrack(drop, delay, level, alreadyDodged, alreadyTeased, target, 
     hpbonus = drop['hpbonus']
     if hp > 0:
         suitTrack = Sequence()
-        showDamage = Func(suit.showHpText, -hp, openEnded=0)
+        if base.cr.playGame.getActiveZone().battle.battleCalc.damageBoostActive:
+            showDamage = Func(suit.showHpTextBoost, -hp, 1)
+        elif base.cr.playGame.getActiveZone().battle.battleCalc.suitDefenseBoostActive:
+            showDamage = Func(suit.showHpTextBoost, -hp, 2)
+        else:
+            showDamage = Func(suit.showHpText, -hp, openEnded=0)
         updateHealthBar = Func(suit.updateHealthBar, hp)
         if majorObject:
             anim = 'flatten'
