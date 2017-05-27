@@ -7753,12 +7753,7 @@ NPCToonNames = {20000: 'Tutorial Tom',
  7006: 'Gimmy Ahand',
  7007: 'Dewin Tymme',
  7008: 'Ima Cagedtoon',
- 7009: 'Jimmy Thelock',
- 10001: 'Worker Thomas',
- 10002: 'Worker Gerald',
- 10003: 'Worker Zowie',
- 10004: 'Architect Aaron',
- 10005: 'Director Dudley'}
+ 7009: 'Jimmy Thelock'}
 zone2TitleDict = {2513: ('Toon Hall', ''),
  2514: ('Toontown Bank', ''),
  2516: ('Toontown School House', ''),

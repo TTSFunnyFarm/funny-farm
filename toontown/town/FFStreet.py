@@ -19,14 +19,12 @@ class FFStreet(Street):
     def enter(self, shop=None, tunnel=None):
         Street.enter(self, shop=shop, tunnel=tunnel)
         if self.zoneId == FunnyFarmGlobals.RicketyRoad:
-            self.train.unstash()
             self.trainSfx.play()
             self.audio3d.attachSoundToObject(self.trainSfx, self.train)
 
     def exit(self):
         Street.exit(self)
         if self.zoneId == FunnyFarmGlobals.RicketyRoad:
-            self.train.stash()
             self.audio3d.detachSound(self.trainSfx)
             self.trainSfx.stop()
 
@@ -53,7 +51,6 @@ class FFStreet(Street):
         self.trainSfx = self.audio3d.loadSfx('phase_14/audio/sfx/train_loop.ogg')
         self.trainSfx.setLoop(True)
         self.audio3d.setDropOffFactor(0.04)
-        self.train.stash()
 
     def unloadTrain(self):
         self.trainLoop.finish()
