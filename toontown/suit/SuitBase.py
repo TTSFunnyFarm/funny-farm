@@ -49,7 +49,7 @@ class SuitBase:
     def setLevel(self, level):
         self.level = level
         if isinstance(self, Avatar):
-            nameWLevel = TTLocalizer.SuitBaseNameWithLevel % {'name': self.name,
+            nameWLevel = TTLocalizer.SuitBaseNameWithLevel % {'name': self._name,
              'dept': self.getStyleDept(),
              'level': self.getActualLevel()}
             self.setDisplayName(nameWLevel)
