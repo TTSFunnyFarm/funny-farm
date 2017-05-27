@@ -929,7 +929,9 @@ class InventoryNew(InventoryBase.InventoryBase, DirectFrame):
                     if self.itemIsUsable(track, level):
                         unpaid = not base.cr.isPaid()
                         button.show()
-                        if self.numItem(track, level) <= 0 or track == HEAL_TRACK and not self.heal or track == TRAP_TRACK and not self.trap or track == LURE_TRACK and not self.lure:
+                        if self.numItem(track, level) <= 0 or track == TRAP_TRACK and not self.trap or track == LURE_TRACK and not self.lure:
+                            self.makeUnpressable(button, track, level)
+                        elif track == HEAL_TRACK and level == 0 and self.toon.hp >= self.toon.maxHp or track == HEAL_TRACK and level == 4 and self.toon.hp >= self.toon.maxHp:
                             self.makeUnpressable(button, track, level)
                         elif unpaid and gagIsVelvetRoped(track, level):
                             self.makeDisabledPressable(button, track, level)
@@ -939,7 +941,6 @@ class InventoryNew(InventoryBase.InventoryBase, DirectFrame):
                             self.makeNoncreditPressable(button, track, level)
                     else:
                         button.hide()
-
             else:
                 self.hideTrack(track)
 
