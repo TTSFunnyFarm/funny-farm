@@ -11,12 +11,15 @@ class BattleSuitAI(SuitBase):
 
     def __init__(self, suitPlanner):
         SuitBase.__init__(self)
-        self.doId = id(self)
+        self.doId = 0
         self.sp = suitPlanner
         self.name = ''
         self.zoneId = 0
         self.legList = None
         self.point = None
+
+    def setDoId(self, doId):
+        self.doId = doId
 
     def getDoId(self):
         return self.doId

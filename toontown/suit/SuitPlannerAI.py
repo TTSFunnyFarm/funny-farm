@@ -34,6 +34,7 @@ class SuitPlannerAI(DirectObject):
     SUIT_HOOD_INFO_LVL = 6
     SUIT_HOOD_INFO_HEIGHTS = 7
     MAX_SUIT_TYPES = 8
+    POP_UPKEEP_DELAY = 10
     POP_ADJUST_DELAY = 120
     for zoneId in SuitHoodInfo.keys():
         currHoodInfo = SuitHoodInfo[zoneId]
@@ -71,12 +72,13 @@ class SuitPlannerAI(DirectObject):
         # Currently just generates a random suit based on the hood info. 
         # We can add arguments to create specific suits later, if needed.
         newSuit = BattleSuitAI(self)
+        newSuit.setDoId(base.air.getNextSuitIndex())
         newSuit.setZoneId(self.zoneId)
         level, type, track = self.pickLevelTypeAndTrack()
         newSuit.setupSuitDNA(level, type, track)
         newSuit.generate()
         self.activeSuits[newSuit.doId] = newSuit
-        self.notify.info('creating suit in zone %d' % self.zoneId)
+        self.notify.info('creating suit %d in zone %d' % (newSuit.doId, self.zoneId))
 
     def removeSuit(self, doId):
         # Removes both AI and client
@@ -171,6 +173,25 @@ class SuitPlannerAI(DirectObject):
         if choice:
             self.createNewSuit()
         return Task.done
+
+    '''
+    def checkPopulation(self, task):
+        # Checks to make sure the activeSuits remain consistent between the AI and client
+        # (With all the AI and client madness happening on the same application, stuff screws up)
+        if not base.cr.playGame.street:
+            return Task.done
+        if not base.cr.playGame.street.zoneId == self.zoneId:
+            return Task.done
+        clientSuits = base.cr.playGame.street.sp.activeSuits
+        if len(clientSuits.keys()) != len(self.activeSuits.keys()):
+            # There's an imbalance somewhere. Let's figure out what it is.
+            for s in render.findAllMatches('**/suit-*'):
+                doId = s.getName()[5:]
+                print s.getName()
+                print doId + '/n'
+                if doId not in clientSuits:
+                    base.cr.playGame.street.sp.activeSuits[int(doId)]
+    '''
 
     def requestBattle(self, suitId, pos):
         if suitId not in self.activeSuits.keys():

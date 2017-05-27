@@ -17,6 +17,7 @@ class FFAIRepository(DirectObject):
         self.suitPlanners = {}
         self.buildingManagers = {}
         self.isLoaded = 0
+        self.currSuitIndex = 2000000
 
     def preloadAvatars(self):
         self.notify.info('Preloading avatars...')
@@ -38,3 +39,7 @@ class FFAIRepository(DirectObject):
         self.notify.info('Done.')
         self.isLoaded = 1
         messenger.send('ai-done')
+
+    def getNextSuitIndex(self):
+        self.currSuitIndex += 1
+        return self.currSuitIndex
