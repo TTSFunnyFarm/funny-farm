@@ -34,7 +34,7 @@ def __toonUp(powerUp):
     toon = powerUp['toon']
     level = powerUp['level']
     hp = powerUp['target']['hp']
-    sfx = base.loadSfx('phase_4/audio/sfx/MG_pairing_all_matched.ogg')
+    sfx = base.loader.loadSfx('phase_4/audio/sfx/MG_pairing_all_matched.ogg')
     tracks = Parallel()
     tracks.append(ActorInterval(toon, 'spit', startFrame=0, endFrame=67))
     glass = globalPropPool.getProp('glass-tu')
@@ -52,7 +52,7 @@ def __damageUp(powerUp):
     toon = powerUp['toon']
     level = powerUp['level']
     dmg = powerUp['target']['hp']
-    sfx = base.loadSfx('phase_4/audio/sfx/MG_pairing_all_matched.ogg')
+    sfx = base.loader.loadSfx('phase_4/audio/sfx/MG_pairing_all_matched.ogg')
     tracks = Parallel()
     tracks.append(ActorInterval(toon, 'spit', startFrame=0, endFrame=67))
     glass = globalPropPool.getProp('glass-dmg')

@@ -115,7 +115,7 @@ class SecretArea(ToonHood):
 
     def bearGiveSpeech(self):
             self.startSpeech = Sequence(
-                Func(musicMgr.playMusic, base.loadMusic('phase_14/audio/bgm/SKP_enctr_bg.ogg'), True),
+                Func(musicMgr.playMusic, base.loader.loadMusic('phase_14/audio/bgm/SKP_enctr_bg.ogg'), True),
                 Func(self.bear.setAnimState, 'neutral'),
                 Wait(1),
                 Func(self.bearChat, 0),

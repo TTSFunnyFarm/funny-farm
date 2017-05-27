@@ -47,7 +47,7 @@ class Street(ToonHood):
         ToonHood.load(self)
         self.sp.setZoneId(self.zoneId)
         self.sp.loadSuits()
-        self.battleMusic = base.loadMusic('phase_3.5/audio/bgm/encntr_general_bg.ogg')
+        self.battleMusic = base.loader.loadMusic('phase_3.5/audio/bgm/encntr_general_bg.ogg')
         self.townBattle = TownBattle(self.townBattleDoneEvent)
         self.townBattle.load()
 
