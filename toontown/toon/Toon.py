@@ -1840,7 +1840,7 @@ class Toon(Avatar.Avatar, ToonHead):
         pass
 
     def enterTeleportOut(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
-        name = self.name
+        name = self._name
         if hasattr(self, 'doId'):
             name += '-' + str(self.doId)
         self.notify.debug('enterTeleportOut %s' % name)
@@ -1865,7 +1865,7 @@ class Toon(Avatar.Avatar, ToonHead):
         self.setActiveShadow(0)
 
     def finishTeleportOut(self, callback = None, extraArgs = []):
-        name = self.name
+        name = self._name
         if hasattr(self, 'doId'):
             name += '-' + str(self.doId)
         self.notify.debug('finishTeleportOut %s' % name)
@@ -1881,7 +1881,7 @@ class Toon(Avatar.Avatar, ToonHead):
         return
 
     def exitTeleportOut(self):
-        name = self.name
+        name = self._name
         if hasattr(self, 'doId'):
             name += '-' + str(self.doId)
         self.notify.debug('exitTeleportOut %s' % name)
