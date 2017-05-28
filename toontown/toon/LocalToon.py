@@ -1310,30 +1310,3 @@ class LocalToon(Toon.Toon, WalkControls):
         locStr = "X: {0}\nY: {1}\nZ: {2}\nH: {3}\nZone: {4}\nVersion: {5}".format(round(self.getX(), 3), round(self.getY(), 3), round(self.getZ(), 3), round(self.getH(), 3),
             self.zoneId, config.GetString('game-version', 'no_version_set'))
         self.setChatAbsolute(locStr, CFThought)
-
-    def startWalking(self):
-        self.startBlink()
-        self.attachCamera()
-        shouldPush = 1
-        if len(self.cameraPositions) > 0:
-            shouldPush = not self.cameraPositions[self.cameraIndex][4]
-        self.startUpdateSmartCamera(shouldPush)
-        self.showName()
-        self.collisionsOn()
-        self.enableAvatarControls()
-
-    def stopWalking(self):
-        self.disableAvatarControls()
-        self.stopUpdateSmartCamera()
-        self.stopBlink()
-        self.detachCamera()
-        self.collisionsOff()
-        self.controlManager.placeOnFloor()
-
-    def attachCamera(self):
-        camera.reparentTo(self)
-        base.enableMouse()
-        base.setMouseOnNode(self.node())
-
-    def detachCamera(self):
-        base.disableMouse()

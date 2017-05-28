@@ -98,12 +98,12 @@ class FishingSpot(DirectObject):
             return None
 
         if base.localAvatar.hp >= 0:
-            self.notify.warning("Touched fishing dock")
+            self.notify.debug("Touched fishing dock")
             self.requestEnter()
             self.setOccupied(True)
 
     def requestEnter(self):
-        self.notify.warning("Entering fishing dock")
+        self.notify.debug("Entering fishing dock")
         self.setOccupied(True)
         self.setMovie(FishingCodes.EnterMovie, 0, 0, 0)
         taskMgr.remove('cancelAnimation%d' % id(self))
@@ -114,11 +114,11 @@ class FishingSpot(DirectObject):
         self.cast = False
 
     def requestExit(self):
-        self.notify.warning("Exited fishing dock")
+        self.notify.debug("Exited fishing dock")
         self.removeFromPierWithAnim()
 
     def doCast(self):
-        self.notify.warning("Cast line")
+        self.notify.debug("Cast line")
         taskMgr.remove('timeOut%d' % id(self))
         taskMgr.doMethodLater(45, self.removeFromPierWithAnim, 'timeOut%d' % id(self))
         base.localAvatar.takeMoney(1, False)
@@ -135,7 +135,7 @@ class FishingSpot(DirectObject):
         return # todo?
 
     def doReel(self, speed, netTime, netDistance):
-        self.notify.warning("Reeling")
+        self.notify.debug("Reeling")
         taskMgr.remove('timeOut%d' % id(self))
         taskMgr.doMethodLater(45, self.removeFromPierWithAnim, 'timeOut%d' % id(self))
         if self.currentFish == None:
@@ -161,7 +161,7 @@ class FishingSpot(DirectObject):
         self.nodePath.setPosHpr(x, y, z, h, p, r)
 
     def setOccupied(self, isOccupied):
-        self.notify.warning("Setting occupied to {0}".format(isOccupied))
+        self.notify.debug("Setting occupied to {0}".format(isOccupied))
         if self.isOccupied == isOccupied:
             return # already occupied/deoccupied!
         if self.track != None:
@@ -182,7 +182,7 @@ class FishingSpot(DirectObject):
             self.placedAvatar = 0
             self.collSphere.setTangible(0)
             self.protNodePath.detachNode()
-            base.localAvatar.startWalking()
+            base.localAvatar.enable()
         else:
             self.collSphere.setTangible(1)
             self.protNodePath.reparentTo(self.nodePath)
@@ -200,7 +200,7 @@ class FishingSpot(DirectObject):
                 base.bottomCells[1],
                 base.bottomCells[2]], 1
             )
-            base.localAvatar.stopWalking()
+            base.localAvatar.disable()
         return
 
     def __avatarGone(self):
@@ -215,14 +215,14 @@ class FishingSpot(DirectObject):
         base.localAvatar.setControlEffect('cast', 0.8)
 
     def setTargetSpeed(self, speed):
-        self.notify.warning("Got target speed: {0}".format(speed))
+        self.notify.debug("Got target speed: {0}".format(speed))
         self.targetSpeed = speed
         if self.isOccupied:
             self.speedGauge.show()
             self.__updateSpeedGauge()
 
     def setMovie(self, mode, code, item, speed):
-        self.notify.warning("setMovie {0} {1} {2} {3}".format(mode, code, item, speed))
+        self.notify.debug("setMovie {0} {1} {2} {3}".format(mode, code, item, speed))
         if self.track != None:
             if self.track.isPlaying():
                 self.track.finish()
@@ -466,7 +466,7 @@ class FishingSpot(DirectObject):
             self.__showBroke()
 
     def __showCastGui(self):
-        self.notify.warning("Showing cast buttons")
+        self.notify.debug("Showing cast buttons")
         self.__hideGui()
         self.__makeGui()
         self.castButton.show()
@@ -480,7 +480,7 @@ class FishingSpot(DirectObject):
         self.exitButton.hide()
 
     def __showReelGui(self):
-        self.notify.warning("Showing reel")
+        self.notify.debug("Showing reel")
         self.__hideGui()
         self.__makeGui()
         self.reelGui.reparentTo(aspect2d)
@@ -626,7 +626,7 @@ class FishingSpot(DirectObject):
             self.brokeGui.detachNode()
 
     def __makeGui(self):
-        self.notify.warning("Making fishing gui")
+        self.notify.debug("Making fishing gui")
         if self.madeGui:
             return None
 
@@ -717,7 +717,7 @@ class FishingSpot(DirectObject):
         rayNodePath.removeNode()
         cqueue.sortEntries()
         if cqueue.getNumEntries() == 0:
-            self.notify.warning("Couldn't find bob spot for %d" % id(self))
+            self.notify.debug("Couldn't find bob spot for %d" % id(self))
             self.bobSpot = Point3(startSpot[0], startSpot[1], 0)
         else:
             entry = cqueue.getEntry(0)
@@ -732,7 +732,7 @@ class FishingSpot(DirectObject):
         self.__showCastGui()
 
     def cancelAnimation(self, task = None):
-        self.notify.warning("Cancelling animation")
+        self.notify.debug("Cancelling animation")
         self.setMovie(FishingCodes.NoMovie, 0, 0, 0)
 
     def removeFromPierWithAnim(self, task = None):
@@ -750,7 +750,7 @@ class FishingSpot(DirectObject):
         numFish = len(TTLocalizer.ClassicFishNames)
         self.currentFish = random.randrange(0, numFish)
         self.setTargetSpeed(round(random.uniform(1.0, 3.0), 3))
-        self.notify.warning('A {0} with speed {1} bit our line.'.format(TTLocalizer.ClassicFishNames[self.currentFish][0], self.targetSpeed))
+        self.notify.debug('A {0} with speed {1} bit our line.'.format(TTLocalizer.ClassicFishNames[self.currentFish][0], self.targetSpeed))
         self.setMovie(FishingCodes.NibbleMovie, 0, 0, 0)
         taskMgr.doMethodLater(FishingCodes.NibbleTime, self.nibbleDone, 'nibbleDone%d' % id(self))
         return Task.done
@@ -764,7 +764,7 @@ class FishingSpot(DirectObject):
             self.setMovie(FishingCodes.PullInMovie, FishingCodes.TooLate, 0, 0)
             return Task.done
         pctDiff = 100.0 * (avgSpeed - self.targetSpeed) / self.targetSpeed
-        self.notify.warning('pctDiff: {0}, avgSpeed: {1}'.format(pctDiff, avgSpeed))
+        self.notify.debug('pctDiff: {0}, avgSpeed: {1}'.format(pctDiff, avgSpeed))
         if pctDiff >= FishingCodes.ManualReelMatch:
             self.setMovie(FishingCodes.PullInMovie, FishingCodes.TooFast, 0, 0)
         elif pctDiff <= -(FishingCodes.ManualReelMatch):
