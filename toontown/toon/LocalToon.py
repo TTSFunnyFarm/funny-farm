@@ -361,6 +361,29 @@ class LocalToon(Toon.Toon, WalkControls):
     def getMoney(self):
         return self.money
 
+    def addMoney(self, deltaMoney):
+        money = deltaMoney + self.money
+        pocketMoney = min(money, self.maxMoney)
+        self.setMoney(pocketMoney)
+        overflowMoney = money - self.maxMoney
+        if overflowMoney > 0:
+            bankMoney = self.bankMoney + overflowMoney
+            self.setBankMoney(bankMoney)
+
+    def takeMoney(self, deltaMoney, bUseBank = True):
+        totalMoney = self.money
+        if bUseBank:
+            totalMoney += self.bankMoney
+        if deltaMoney > totalMoney:
+            self.notify.warning('Not enough money! AvId: %s Has:%s Charged:%s' % (self.doId, totalMoney, deltaMoney))
+            return False
+        if bUseBank and deltaMoney > self.money:
+            self.setBankMoney(self.bankMoney - (deltaMoney - self.money))
+            self.setMoney(0)
+        else:
+            self.setMoney(self.money - deltaMoney)
+        return True
+
     def setMaxMoney(self, maxMoney):
         self.maxMoney = maxMoney
         base.avatarData.setMaxMoney = self.maxMoney

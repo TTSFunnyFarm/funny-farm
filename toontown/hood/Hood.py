@@ -229,13 +229,12 @@ class Hood(DirectObject):
             self.startSky()
 
     def createFishingSpots(self):
-        for posSpot in self.geom.findAllMatches('**/fishing_spot_*'):
+        for posSpot in self.geom.findAllMatches('**/FishingPier'):
             spot = FishingSpot.FishingSpot()
             x, y, z = posSpot.getPos()
             h, p, r = posSpot.getHpr()
             spot.generate()
             spot.setPosHpr(x, y, z, h, p, r)
-            spot.collNodePath.show()
             self.fishingSpots.append(spot)
 
     def removeFishingSpots(self):
