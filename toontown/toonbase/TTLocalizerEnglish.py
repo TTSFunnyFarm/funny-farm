@@ -5248,6 +5248,24 @@ TrolleyHopOff = 'Hop off'
 TrolleyDialog = 'Would you like to board the trolley?'
 FishingExit = 'Exit'
 FishingCast = 'Cast'
+ClassicFishNames = (
+    ('Leopard Fish', 'Leopard Fishes'),
+    ('Rainbow Trout', 'Rainbow Trouts'),
+    ('Carr Tuna', 'Carr Tuna'),
+    ('Whole Emackerel', 'Whole Emackerels'),
+    ('One-Eyed Amberjack', 'One-Eyed Amberjacks'),
+    ('Fred Snapper', 'Fred Snappers'),
+    ('Rock Grouper', 'Rock Groupers'),
+    ('Seasick Bass', 'Seasick Bass'),
+    ('Front Perch', 'Front Perches'),
+    ('Mullet Head', 'Mullet Heads'),
+    ('Out-of-the Bluefish', 'Out-of-the Bluefishes'),
+    ('Forsale Fish', 'Forsale Fishes'),
+    ('Would-be Kingfish', 'Would-be Kingfishes'),
+    ('Doggone Catfish', 'Doggone Catfishes'),
+    ('TransAtlantic Cod', 'TransAtlantic Cod'),
+    ('Old Shoe', 'Old Shoes'),
+    ('Old Tire', 'Old Tires'))
 FishingAutoReel = 'Auto Reel'
 FishingItemFound = 'You caught:'
 FishingCrankTooSlow = 'Too\nslow'
@@ -5259,7 +5277,8 @@ FishingFailureAutoReel = "The auto-reel didn't work this time.  Turn the crank b
 FishingFailureTooSlow = 'You turned the crank too slowly.  Some fish are faster than others.  Try to keep the speed bar centered!'
 FishingFailureTooFast = 'You turned the crank too quickly.  Some fish are slower than others.  Try to keep the speed bar centered!'
 FishingOverTankLimit = 'Your fish bucket is full. Go sell your fish to the Pet Shop Clerk and come back.'
-FishingBroke = 'You do not have any more jellybeans for bait! Ride the trolley or sell fish to the Pet Shop Clerks to earn more jellybeans.'
+FishingBrokeHeader = "You're out of jellybeans!"
+FishingBroke = "You don't have anything to put on your hook!  Go ride on the trolley or sell your fish."
 FishingHowToFirstTime = 'Click and drag down from the Cast button. The farther down you drag, the stronger your cast will be. Adjust your angle to hit the fish targets.\n\nTry it now!'
 FishingHowToFailed = 'Click and drag down from the Cast button. The farther down you drag, the stronger your cast will be. Adjust your angle to hit the fish targets.\n\nTry it again now!'
 FishingBootItem = 'An old boot'

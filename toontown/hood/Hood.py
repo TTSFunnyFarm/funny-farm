@@ -2,10 +2,11 @@ from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
 from direct.interval.IntervalGlobal import *
 from direct.gui.DirectGui import *
+from toontown.building import Door
+from toontown.fishing import FishingSpot
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
-from toontown.building import Door
 import ZoneUtil
 
 class Hood(DirectObject):
@@ -24,6 +25,7 @@ class Hood(DirectObject):
         self.place = None
         self.battle = None
         self.battleCell = None
+        self.fishingSpots = []
 
     def enter(self, shop=None, tunnel=None, init=0):
         if tunnel:
@@ -72,6 +74,7 @@ class Hood(DirectObject):
             self.sky.setFogOff()
             self.startSky()
         self.sky.flattenMedium()
+        self.createFishingSpots()
         self.geom.reparentTo(render)
         self.geom.flattenMedium()
         gsg = base.win.getGsg()
@@ -80,6 +83,7 @@ class Hood(DirectObject):
 
     def unload(self):
         self.stopSky()
+        self.removeFishingSpots()
         self.geom.removeNode()
         self.sky.removeNode()
         del self.geom
@@ -223,3 +227,19 @@ class Hood(DirectObject):
             self.sky.setTag('sky', 'Regular')
             self.sky.setScale(1.0)
             self.startSky()
+
+    def createFishingSpots(self):
+        for posSpot in self.geom.findAllMatches('**/fishing_spot_*'):
+            spot = FishingSpot.FishingSpot()
+            x, y, z = posSpot.getPos()
+            h, p, r = posSpot.getHpr()
+            spot.generate()
+            spot.setPosHpr(x, y, z, h, p, r)
+            spot.collNodePath.show()
+            self.fishingSpots.append(spot)
+
+    def removeFishingSpots(self):
+        for spot in self.fishingSpots:
+            spot.disable()
+            del spot
+        del self.fishingSpots
