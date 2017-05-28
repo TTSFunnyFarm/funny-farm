@@ -25,11 +25,12 @@ class FFClientRepository(DirectObject):
 
     def begin(self):
         if not base.air.isLoaded:
+            base.transitions.fadeIn(1.0)
             # We usually won't get here, but just in case the AI is taking extra long, we'll have them wait.
             # In the future, as we build up our AI more and more, there's a better chance we'll get here.
             self.waitDialog = TTDialog.TTDialog(parent=aspect2dp, style=TTDialog.NoButtons, text=OTPLocalizer.AIPleaseWait)
             self.waitDialog.show()
-            self.accept('ai-done', self.enterChooseAvatar)
+            self.accept('ai-done', self.enterChooseAvatar, [True])
             taskMgr.doMethodLater(self.AI_TIMEOUT, self.aiTimeout, 'aiTimeout')
         else:
             self.enterChooseAvatar()
@@ -40,13 +41,16 @@ class FFClientRepository(DirectObject):
         base.handleGameError('AI services either took too long or could not be started.')
         return task.done
 
-    def enterChooseAvatar(self):
+    def enterChooseAvatar(self, fade = False):
         if self.waitDialog:
             self.waitDialog.destroy()
             self.waitDialog = None
             self.ignore('ai-done')
             taskMgr.remove('aiTimeout')
-        base.transitions.fadeScreen(1.0)
+        if fade:
+            base.transitions.fadeOut(1.0)
+        else:
+            base.transitions.fadeScreen(1.0)
         self.avChoice = AvatarChooser.AvatarChooser()
         self.avChoice.load()
         self.avChoice.enter()
