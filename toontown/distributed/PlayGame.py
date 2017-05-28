@@ -69,6 +69,12 @@ class PlayGame(DirectObject):
     def enterStreet(self, zoneId, tunnel=None):
         hoodId = ZoneUtil.getCanonicalHoodId(zoneId)
         if hoodId not in self.Street2ClassDict.keys():
+            self.notify.warning('No streets available in zone %d.' % hoodId)
+            self.enterHood(hoodId, tunnel=str(zoneId))
+            return
+        if zoneId not in FunnyFarmGlobals.StreetNames.keys():
+            self.notify.warning('Street %d is currently unavailable.' % zoneId)
+            self.enterHood(hoodId, tunnel=str(zoneId))
             return
         name = FunnyFarmGlobals.StreetNames[zoneId]
         count = FunnyFarmGlobals.townCountMap[hoodId]
