@@ -52,7 +52,8 @@ class FishingSpot(DirectObject):
         self.line = None
         self.lineSphere = None
         self.pendingFish = 0
-        self.crankTime = None
+        self.crankTime = -1
+        self.crankDelta = 0
         self.cast = False
         self.currentFish = None
         self.crankedBefore = False
@@ -292,8 +293,8 @@ class FishingSpot(DirectObject):
             else:
                 base.localAvatar.loop('cast', restart = 0, fromFrame = 57, toFrame = 65)
                 self.pole.loop('cast', restart = 0, fromFrame = 88, toFrame = 126)
-            base.localAvatar.setPlayRate(speed, 'cast')
-            self.pole.setPlayRate(speed, 'cast')
+            base.localAvatar.setPlayRate(speed/2, 'cast')
+            self.pole.setPlayRate(speed/2, 'cast')
         elif mode == FishingCodes.PullInMovie:
             base.localAvatar.startLookAround()
             self.__placeAvatar()
@@ -550,7 +551,7 @@ class FishingSpot(DirectObject):
 
     def __updateSpeedGauge(self):
         now = globalClock.getFrameTime()
-        if self.crankTime == None:
+        if self.crankTime == -1:
             self.crankTime = now
         elapsed = now - self.crankTime
         if elapsed > 0:
