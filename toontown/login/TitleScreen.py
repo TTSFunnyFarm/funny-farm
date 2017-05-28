@@ -17,6 +17,7 @@ class TitleScreen(DirectObject):
         base.setBackgroundColor(FunnyFarmGlobals.DefaultBackgroundColor)
         base.camLens.setMinFov(FunnyFarmGlobals.DefaultCameraFov/(4./3.))
         camera.setPosHpr(0, 0, 0, 0, -45, 0)
+        self.titleText = None
         self.load()
 
     def load(self):
@@ -56,7 +57,7 @@ class TitleScreen(DirectObject):
         self.sky.removeNode()
         self.fireworkShow.disable()
         del self.logo
-        del self.titleText
+        self.titleText = None
         del self.versionText
         del self.ground
         del self.sky
