@@ -32,6 +32,7 @@ class NPCToonBase(Toon.Toon):
             self.reparentTo(render)
             self.startLookAround()
             self.npcId = 0
+            self.busy = 0
 
     def disable(self):
         self.ignore('enter' + self.cSphereNode.getName())
@@ -95,6 +96,7 @@ class NPCToonBase(Toon.Toon):
 
     def setupAvatars(self, av):
         self.ignoreAvatars()
+        av.disable()
         av.headsUp(self, 0, 0, 0)
         self.headsUp(av, 0, 0, 0)
         av.stopLookAround()
@@ -103,8 +105,7 @@ class NPCToonBase(Toon.Toon):
         self.lerpLookAt(Point3(av.getPos(self)), time=0.5)
 
     def freeAvatar(self):
-        base.localAvatar.posCamera(0, 0)
-        base.cr.playGame.hood.place.setState('walk')
+        base.localAvatar.enable()
 
     def setPositionIndex(self, posIndex):
         self.posIndex = posIndex
@@ -121,9 +122,11 @@ class NPCToonBase(Toon.Toon):
     def chooseQuestDialogReject(self):
         return random.choice(TTLocalizer.QuestsDefaultReject)
 
-
     def chooseQuestDialogTierNotDone(self):
         return random.choice(TTLocalizer.QuestsDefaultTierNotDone)
+
+    def isBusy(self):
+        return self.busy > 0
 
     def fillInQuestNames(self, text, avName = None, fromNpcId = None, toNpcId = None):
         ToonTailor = 999
