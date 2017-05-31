@@ -85,6 +85,7 @@ def createNpcsInZone(zoneId):
 def createLocalNPC(npcId, functional = False):
     import Toon
     import NPCToon
+    import NPCClerk
     import NPCScientist
     import NPCFlippy
     if npcId not in NPCToonDict:
@@ -95,6 +96,8 @@ def createLocalNPC(npcId, functional = False):
         npc = Toon.Toon()
         # if type == NPC_FLIPPY:
             # npc.setScale(1.25) # TODO: Reposition tutorial camera and elements to account for this
+    elif type == NPC_CLERK:
+        npc = NPCClerk.NPCClerk()
     elif type == NPC_SCIENTIST:
         npc = NPCScientist.NPCScientist()
     elif type == NPC_FLIPPY:

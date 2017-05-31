@@ -414,8 +414,11 @@ class LocalToon(Toon.Toon, WalkControls):
     def getPinkSlips(self):
         return 0
 
-    def setInventory(self, inventory):
-        self.inventory = InventoryNew.InventoryNew(self, invStr=inventory)
+    def setInventory(self, inventoryNetString):
+        if not self.inventory:
+            self.inventory = InventoryNew.InventoryNew(self, inventoryNetString)
+        else:
+            self.inventory.updateInvString(inventoryNetString)
         self.inventory.updateGUI()
         self.inventory.saveInventory()
 
