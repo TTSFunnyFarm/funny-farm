@@ -59,6 +59,7 @@ class FishingSpot(DirectObject):
         self.crankedBefore = False
         self.totalDistance = 0
         self.totalTime = 0
+        self.parentNodePath = render
 
     def disable(self):
         self.ignore(self.uniqueName('enterFishingSpotSphere'))
@@ -154,8 +155,11 @@ class FishingSpot(DirectObject):
     def getSphereRadius(self):
         return 1.5
 
+    def setParentNodePath(self, np):
+        self.parentNodePath = np
+
     def getParentNodePath(self):
-        return render
+        return self.parentNodePath
 
     def setPosHpr(self, x, y, z, h, p, r):
         self.nodePath.setPosHpr(x, y, z, h, p, r)

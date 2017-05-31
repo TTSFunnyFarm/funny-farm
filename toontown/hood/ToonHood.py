@@ -13,6 +13,7 @@ from toontown.building import MinnieInterior
 from toontown.building import ToonInterior
 from toontown.building import Door
 from toontown.trolley.Trolley import Trolley
+from toontown.fishing import FishingSpot
 from Hood import Hood
 
 class ToonHood(Hood):
@@ -33,7 +34,8 @@ class ToonHood(Hood):
         self.trolley = None
         self.telescope = None
         self.animSeq = None
-        self.buildings = None
+        self.buildings = []
+        self.fishingSpots = []
 
     def enter(self, shop=None, tunnel=None, init=0):
         base.localAvatar.setZoneId(self.zoneId)
@@ -51,8 +53,7 @@ class ToonHood(Hood):
 
     def exit(self):
         Hood.exit(self)
-        if self.buildings:
-            self.destroyLandmarkBuildings()
+        self.destroyLandmarkBuildings()
 
     def load(self):
         Hood.load(self)
@@ -64,6 +65,7 @@ class ToonHood(Hood):
         if not self.geom.find('**/*trolley_station*').isEmpty():
             self.trolley = Trolley()
             self.trolley.setup()
+        self.createFishingSpots()
 
     def unload(self):
         Hood.unload(self)
@@ -76,27 +78,12 @@ class ToonHood(Hood):
             self.trolley.removeActive()
             self.trolley.delete()
             del self.trolley
+        self.removeFishingSpots()
 
     def startActive(self):
         Hood.startActive(self)
         if self.trolley:
             self.trolley.addActive()
-
-    def setupLandmarkBuildings(self):
-        self.buildings = []
-        for building in self.geom.findAllMatches('**/tb*toon_landmark*'):
-            zoneStr = building.getName().split(':')
-            block = int(zoneStr[0][2:])
-            zoneId = self.zoneId + 500 + block
-            self.buildings.append(Building(zoneId))
-        for building in self.buildings:
-            building.load()
-
-    def destroyLandmarkBuildings(self):
-        for building in self.buildings:
-            building.unload()
-            del building
-        self.buildings = None
 
     def handleDoorTrigger(self, collEntry):
         building = collEntry.getIntoNodePath().getParent()
@@ -143,3 +130,33 @@ class ToonHood(Hood):
         self.place = None
         self.geom.unstash()
         self.geom.reparentTo(render)
+
+    def setupLandmarkBuildings(self):
+        for building in self.geom.findAllMatches('**/tb*toon_landmark*'):
+            zoneStr = building.getName().split(':')
+            block = int(zoneStr[0][2:])
+            zoneId = self.zoneId + 500 + block
+            bldg = Building(zoneId)
+            self.buildings.append(bldg)
+        for building in self.buildings:
+            building.load()
+
+    def destroyLandmarkBuildings(self):
+        for building in self.buildings:
+            building.unload()
+            del building
+        self.buildings = []
+
+    def createFishingSpots(self):
+        for posSpot in self.geom.findAllMatches('**/FishingPier'):
+            origin = posSpot.find('**/fishing_spot_origin')
+            spot = FishingSpot.FishingSpot()
+            spot.setParentNodePath(origin)
+            spot.generate()
+            self.fishingSpots.append(spot)
+
+    def removeFishingSpots(self):
+        for spot in self.fishingSpots:
+            spot.disable()
+            del spot
+        del self.fishingSpots
