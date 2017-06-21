@@ -161,6 +161,7 @@ class BattleCalculator:
             elif treebonus or propBonus:
                 self.notify.debug('using oragnic OR prop bonus lure accuracy')
                 propAcc = AvLureBonusAccuracy[atkLevel]
+        '''
         attackAcc = propAcc + trackExp + tgtDef
         currAtk = self.toonAtkOrder.index(attackIndex)
         if currAtk > 0 and atkTrack != HEAL:
@@ -182,6 +183,9 @@ class BattleCalculator:
         if debug:
             self.notify.debug('setting atkAccResult to %d' % atkAccResult)
         acc = attackAcc + self.__calcToonAccBonus(attackIndex)
+        '''
+        atkAccResult = propAcc
+        acc = atkAccResult
         if atkTrack != LURE and atkTrack != HEAL:
             if atkTrack != DROP:
                 if numLured == len(atkTargets):
@@ -189,26 +193,27 @@ class BattleCalculator:
                         self.notify.debug('all targets are lured, attack hits')
                     attack[TOON_ACCBONUS_COL] = 0
                     return (1, 100)
+                elif self.__suitIsLured(attack[TOON_TGT_COL]):
+                    if debug:
+                        self.notify.debug('current target is lured, attack hits')
+                    attack[TOON_ACCBONUS_COL] = 0
+                    return (1, 100)
                 else:
-                    luredRatio = float(numLured) / float(len(atkTargets))
-                    accAdjust = 100 * luredRatio
-                    if accAdjust > 0 and debug:
-                        self.notify.debug(str(numLured) + ' out of ' + str(len(atkTargets)) + ' targets are lured, so adding ' + str(accAdjust) + ' to attack accuracy')
-                    acc += accAdjust
+                    pass
             elif numLured == len(atkTargets):
                 if debug:
                     self.notify.debug('all targets are lured, attack misses')
                 attack[TOON_ACCBONUS_COL] = 0
                 return (0, 0)
-        if acc > MaxToonAcc:
-            acc = MaxToonAcc
+        #if acc > MaxToonAcc:
+            #acc = MaxToonAcc
         if randChoice < acc:
             if debug:
-                self.notify.debug('HIT: Toon attack rolled' + str(randChoice) + 'to hit with an accuracy of' + str(acc))
+                self.notify.debug('HIT: Toon attack rolled ' + str(randChoice) + ' to hit with an accuracy of ' + str(acc))
             attack[TOON_ACCBONUS_COL] = 0
         else:
             if debug:
-                self.notify.debug('MISS: Toon attack rolled' + str(randChoice) + 'to hit with an accuracy of' + str(acc))
+                self.notify.debug('MISS: Toon attack rolled ' + str(randChoice) + ' to hit with an accuracy of ' + str(acc))
             attack[TOON_ACCBONUS_COL] = 1
         return (not attack[TOON_ACCBONUS_COL], atkAccResult)
 

@@ -307,17 +307,17 @@ class InventoryNew(InventoryBase.InventoryBase, DirectFrame):
                 damageBonus += getDamageBonus(damage)
             if damageBonus:
                 damageBonusStr = TTLocalizer.InventoryDamageBonus % damageBonus
-        accString = AvTrackAccStrings[track]
+        accString = AvTrackAccStrings[track][level]
         if (organicBonus or propBonus) and track == LURE_TRACK:
             accString = TTLocalizer.BattleGlobalLureAccMedium
         if track == HEAL_TRACK:
             effectStr = PowerupEffects[level]
             self.detailDataLabel.configure(text=TTLocalizer.InventoryPowerupDetail % effectStr)
         else:
-            self.detailDataLabel.configure(text=TTLocalizer.InventoryDetailData % {'accuracy': accString,
-             'damageString': self.getToonupDmgStr(track, level),
+            self.detailDataLabel.configure(text=TTLocalizer.InventoryDetailData % {'damageString': self.getToonupDmgStr(track, level),
              'damage': damage,
              'bonus': damageBonusStr,
+             'accuracy': accString,
              'singleOrGroup': self.getSingleGroupStr(track, level)})
         if self.itemIsCredit(track, level):
             mult = self.__battleCreditMultiplier
