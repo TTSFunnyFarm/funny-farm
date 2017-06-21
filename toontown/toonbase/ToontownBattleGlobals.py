@@ -270,18 +270,18 @@ AvPropStringsPlural = TTLocalizer.BattleGlobalAvPropStringsPlural
 AvPropAccuracy = (
   (0, 0, 0, 0, 0, 0, 0),
   (0, 0, 0, 0, 0, 0, 0),
-  (50, 50, 60, 60, 70, 70, 90),
-  (95, 95, 95, 95, 95, 95, 95),
-  (75, 75, 75, 75, 75, 75, 75),
-  (95, 95, 95, 95, 95, 95, 95),
-  (50, 50, 50, 50, 50, 50, 50)
+  (60, 60, 70, 70, 80, 80, 90),
+  (90, 90, 90, 90, 90, 90, 90),
+  (80, 80, 80, 80, 80, 80, 80),
+  (90, 90, 90, 90, 90, 90, 90),
+  (70, 70, 70, 70, 70, 70, 70)
 )
-AvLureBonusAccuracy = (60,
- 60,
- 70,
+AvLureBonusAccuracy = (70,
  70,
  80,
  80,
+ 90,
+ 90,
  100)
 AvTrackAccStrings = TTLocalizer.BattleGlobalAvTrackAccStrings
 AvPropDamage = (

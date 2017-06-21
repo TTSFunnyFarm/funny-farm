@@ -145,11 +145,9 @@ GolfZone = ('to', 'in', lGolfZone)
 PartyHood = ('to the', 'in the', lPartyHood)
 Tutorial = 'the Toon-torial'
 FunnyFarm = 'Funny Farm'
-FunnyFarmCentral = 'Funny Farm Central'
 SillySprings = 'Silly Springs'
 ChillyVillage = 'Chilly Village'
 MoonlitMeadow = 'Moonlit Meadow'
-SecretArea = '???'
 Factory = 'Factory'
 Headquarters = 'Headquarters'
 SellbotFrontEntrance = 'Front Entrance'
@@ -5013,7 +5011,7 @@ InventoryDeleteHelp = 'Click on a gag to DELETE it.'
 InventorySkillCredit = 'Skill credit: %s'
 InventorySkillCreditNone = 'Skill credit: None'
 InventoryDetailAmount = '%(numItems)s / %(maxItems)s'
-InventoryDetailData = 'Accuracy: %(accuracy)s\n%(damageString)s: %(damage)d%(bonus)s\n%(singleOrGroup)s'
+InventoryDetailData = '%(damageString)s: %(damage)d%(bonus)s\nAccuracy: %(accuracy)s\n%(singleOrGroup)s'
 InventoryPowerupDetail = 'Effect: %s'
 InventoryTrackExp = '%(curExp)s / %(nextExp)s'
 InventoryUberTrackExp = '%(nextExp)s to Go!'
@@ -5104,13 +5102,13 @@ BattleGlobalAvPropStrings = (('Toon-up Soda',
   'Safe',
   'Grand Piano',
   'Toontanic'))
-BattleGlobalAvPropStringsSingular = (('a Feather',
-  'a Megaphone',
-  'a Lipstick',
-  'a Bamboo Cane',
-  'a Pixie Dust',
-  'a set of Juggling Balls',
-  'a High Dive'),
+BattleGlobalAvPropStringsSingular = (('a Toon-up Soda',
+  'a Damage Punch',
+  'a Defense Cola',
+  'an Accuracy Aid',
+  'a Toon-up Smoothie',
+  'a Damage Shake',
+  'a Defense Daiquiri'),
  ('a Banana Peel',
   'a Rake',
   'a set of Marbles',
@@ -5153,13 +5151,13 @@ BattleGlobalAvPropStringsSingular = (('a Feather',
   'a Safe',
   'a Grand Piano',
   'the Toontanic'))
-BattleGlobalAvPropStringsPlural = (('Feathers',
-  'Megaphones',
-  'Lipsticks',
-  'Bamboo Canes',
-  'Pixie Dusts',
-  'sets of Juggling Balls',
-  'High Dives'),
+BattleGlobalAvPropStringsPlural = (('Toon-up Sodas',
+  'Damage Punches',
+  'Defense Colas',
+  'Accuracy Aids',
+  'Toon-up Smoothies',
+  'Damage Shakes',
+  'Defense Daiquiris'),
  ('Banana Peels',
   'Rakes',
   'sets of Marbles',
@@ -5202,13 +5200,55 @@ BattleGlobalAvPropStringsPlural = (('Feathers',
   'Safes',
   'Grand Pianos',
   'Oceanliners'))
-BattleGlobalAvTrackAccStrings = ('Perfect',
- 'Perfect',
- 'Low',
- 'High',
- 'Medium',
- 'High',
- 'Low')
+BattleGlobalAvTrackAccStrings = (('100%',
+  '100%',
+  '100%',
+  '100%',
+  '100%',
+  '100%',
+  '100%'),
+ ('100%',
+  '100%',
+  '100%',
+  '100%',
+  '100%',
+  '100%',
+  '100%'),
+ ('60%',
+  '60%',
+  '70%',
+  '70%',
+  '80%',
+  '80%',
+  '90%'),
+ ('90%',
+  '90%',
+  '90%',
+  '90%',
+  '90%',
+  '90%',
+  '90%'),
+ ('80%',
+  '80%',
+  '80%',
+  '80%',
+  '80%',
+  '80%',
+  '80%'),
+ ('90%',
+  '90%',
+  '90%',
+  '90%',
+  '90%',
+  '90%',
+  '90%'),
+ ('70%',
+  '70%',
+  '70%',
+  '70%',
+  '70%',
+  '70%',
+  '70%'))
 BattleGlobalLureAccLow = 'Low'
 BattleGlobalLureAccMedium = 'Medium'
 AttackMissed = 'MISSED'
@@ -9860,8 +9900,3 @@ InteractivePropTrackBonusTerms = {0: 'Super Toon-Up!',
  6: ''}
 PlayingCardUnknown = 'Card Name is unknown'
 GameError = 'It looks like the game has encountered an issue.\n\nDetails:\n%s'
-SecretAreaHacked = ['Uhh... hey there.',
-                    "Hate to tell you this, but I'm afraid you just broke the game.",
-                    "Yeah, you really weren't supposed to be able to defeat that level 12 Cog. We had nothing planned!",
-                    "Though I guess I shouldn't be too sorry for you...",
-                    '...you dirty hacker.']
