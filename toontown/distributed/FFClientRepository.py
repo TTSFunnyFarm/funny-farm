@@ -109,15 +109,7 @@ class FFClientRepository(DirectObject):
                 base.localAvatar.enterTeleportIn(callback=self.playGame.hood.handleEntered)
         else:
             self.playGame.exitActiveZone()
-            if base.secretAreaFlag:
-                secretAreaFlag = random.randint(0, 9)
-                if not secretAreaFlag:
-                    base.secretAreaFlag = 0
-                    self.playGame.enterSecretArea()
-                else:
-                    self.playGame.enterHood(zoneId)
-            else:
-                self.playGame.enterHood(zoneId)
+            self.playGame.enterHood(zoneId)
 
     def enterTheTooniverse(self, zoneId):
         base.transitions.noTransitions()

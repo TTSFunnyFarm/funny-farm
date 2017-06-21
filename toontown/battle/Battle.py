@@ -27,7 +27,7 @@ class Battle(DirectObject, NodePath, BattleBase):
     camFOFov = ToontownBattleGlobals.BattleCamFaceOffFov
     camFOPos = ToontownBattleGlobals.BattleCamFaceOffPos
 
-    def __init__(self, townBattle, toons=[], suits=[], bldg=0, tutorialFlag=0, secretArea=0):
+    def __init__(self, townBattle, toons=[], suits=[], bldg=0, tutorialFlag=0):
         self.doId = id(self)
         NodePath.__init__(self, 'Battle-%d' % self.doId)
         BattleBase.__init__(self)
@@ -36,7 +36,6 @@ class Battle(DirectObject, NodePath, BattleBase):
         self.suits = suits
         self.bldg = bldg
         self.tutorialFlag = tutorialFlag
-        self.secretArea = secretArea
         self.movie = Movie.Movie(self)
         self.timerCountdownTaskName = 'timer-countdown'
         self.timer = Timer()
@@ -194,11 +193,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         suitTrack.append(Func(suit.loop, 'neutral'))
         suitTrack.append(Func(suit.headsUp, toon))
         taunt = getFaceoffTaunt(suit.getStyleName(), suit.doId)
-        # temporary for the easter egg; will be removed after 1.3.1
-        if self.secretArea:
-            suitTrack.append(Func(suit.setChatMuted, '...', CFSpeech | CFTimeout))
-        else:
-            suitTrack.append(Func(suit.setChatAbsolute, taunt, CFSpeech | CFTimeout))
+        suitTrack.append(Func(suit.setChatAbsolute, taunt, CFSpeech | CFTimeout))
         toonTrack.append(Func(toon.loop, 'neutral'))
         toonTrack.append(Func(toon.headsUp, suit))
         suitHeight = suit.getHeight()

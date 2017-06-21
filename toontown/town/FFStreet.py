@@ -66,6 +66,7 @@ class FFStreet(Street):
         Street.startActive(self)
         if self.zoneId == FunnyFarmGlobals.RicketyRoad:
             self.accept('entertrain_collision', self.__handleTrainCollision)
+            self.ignore('entertunnel_trigger_ss_2100') # temporary
 
     def __handleTrainCollision(self, entry):
         base.localAvatar.disable()

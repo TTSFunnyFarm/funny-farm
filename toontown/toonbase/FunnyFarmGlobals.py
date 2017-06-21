@@ -12,37 +12,34 @@ def getVar(var):
 
 Tutorial = 500
 FunnyFarm = 1000
-FunnyFarmCentral = 2000
-SillySprings = 3000
-ChillyVillage = 4000
-MoonlitMeadow = 5000
-SecretArea = 6000
+SillySprings = 2000
+ChillyVillage = 3000
+MoonlitMeadow = 4000
 RicketyRoad = 1100
-UnknownStreet = 3100
-WintryWay = 4100
-BreezyBend = 5100
+BarnyardBoulevard = 1200
+TulipTerrace = 2100
+BlossomBoulevard = 2200
+WintryWay = 3100
+BreezyBend = 4100
 HoodHierarchy = {
     FunnyFarm: (RicketyRoad,),
-    FunnyFarmCentral: (),
-    SillySprings: (UnknownStreet,),
+    SillySprings: (TulipTerrace, BlossomBoulevard),
     ChillyVillage: (WintryWay,),
     MoonlitMeadow: (BreezyBend,)
 }
 hoodNameMap = {
     Tutorial: TTLocalizer.Tutorial,
     FunnyFarm: TTLocalizer.FunnyFarm,
-    FunnyFarmCentral: TTLocalizer.FunnyFarmCentral,
     SillySprings: TTLocalizer.SillySprings,
     ChillyVillage: TTLocalizer.ChillyVillage,
     MoonlitMeadow: TTLocalizer.MoonlitMeadow,
-    SecretArea: TTLocalizer.SecretArea
 }
 StreetNames = {
     FunnyFarm: 'Playground',
     RicketyRoad: 'Rickety Road',
-    FunnyFarmCentral: 'Playground',
+    BarnyardBoulevard: 'Barnyard Boulevard',
     SillySprings: 'Playground',
-    UnknownStreet: 'Unknown Street',
+    TulipTerrace: 'Tulip Terrace',
     ChillyVillage: 'Playground',
     WintryWay: 'Wintry Way',
     MoonlitMeadow: 'Playground',
@@ -50,14 +47,12 @@ StreetNames = {
 }
 HoodName2Id = {
     'ff': FunnyFarm,
-    'fc': FunnyFarmCentral,
     'ss': SillySprings,
     'cv': ChillyVillage,
     'mm': MoonlitMeadow
 }
 HoodId2Name = {
     FunnyFarm: 'ff',
-    FunnyFarmCentral: 'fc',
     SillySprings: 'ss',
     ChillyVillage: 'cv',
     MoonlitMeadow: 'mm',
@@ -83,14 +78,11 @@ def getHoodId(zoneId):
 
 phaseMap = {
     FunnyFarm: 'phase_14/models/neighborhoods/funny_farm',
-    FunnyFarmCentral: 'phase_14/models/neighborhoods/funny_farm_central',
     SillySprings: 'phase_14/models/neighborhoods/silly_springs',
     RicketyRoad: 'phase_14/models/streets/funny_farm_1100'
 }
 safeZoneCountMap = {
     FunnyFarm: 6,
-    FunnyFarmCentral: 6,
-    SecretArea: 10,
     SillySprings: 6
 }
 townCountMap = {
@@ -105,16 +97,6 @@ SpawnPoints = {
         (Point3(0, -60, 0), Vec3(0, 0, 0)),
         (Point3(0, 60, 0), Vec3(180, 0, 0)),
         (Point3(-65, 60, 0), Vec3(225, 0, 0))
-    ],
-    FunnyFarmCentral: [
-        (Point3(0, 0, 0), Vec3(0, 0, 0)),
-        (Point3(60, -50, 0), Vec3(45, 0, 0)),
-        (Point3(-60, -50, 0), Vec3(315, 0, 0)),
-        (Point3(-55, 55, 0), Vec3(225, 0, 0)),
-        (Point3(55, 55, 0), Vec3(135, 0, 0))
-    ],
-    SecretArea: [
-        (Point3(0, -20, 0), Vec3(0, 0, 0))
     ]
 }
 nametagFonts = []

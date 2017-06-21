@@ -4,9 +4,7 @@ from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.hood import ZoneUtil
 from toontown.hood import FFHood
-from toontown.hood import FCHood
 from toontown.hood import SSHood
-from toontown.hood import SecretArea
 from toontown.town import FFStreet
 from toontown.tutorial import Tutorial
 from toontown.minigame import Purchase
@@ -23,7 +21,6 @@ class PlayGame(DirectObject):
     notify = directNotify.newCategory('PlayGame')
     Hood2ClassDict = {
         FunnyFarmGlobals.FunnyFarm: FFHood.FFHood,
-        FunnyFarmGlobals.FunnyFarmCentral: FCHood.FCHood,
         FunnyFarmGlobals.SillySprings: SSHood.SSHood
     }
     Street2ClassDict = {
@@ -70,7 +67,6 @@ class PlayGame(DirectObject):
         hoodId = ZoneUtil.getCanonicalHoodId(zoneId)
         if hoodId not in self.Street2ClassDict.keys():
             self.notify.warning('No streets available in zone %d.' % hoodId)
-            self.enterHood(hoodId, tunnel=str(zoneId))
             return
         if zoneId not in FunnyFarmGlobals.StreetNames.keys():
             self.notify.warning('Street %d is currently unavailable.' % zoneId)
@@ -110,15 +106,6 @@ class PlayGame(DirectObject):
         count = FunnyFarmGlobals.townCountMap[FunnyFarmGlobals.Tutorial]
         loader.beginBulkLoad('hood', TTLocalizer.HeadingToHood % name, count, TTLocalizer.TIP_GENERAL)
         self.hood = Tutorial.Tutorial()
-        self.hood.load()
-        loader.endBulkLoad('hood')
-        self.hood.enter()
-
-    def enterSecretArea(self):
-        name = TTLocalizer.SecretArea
-        count = FunnyFarmGlobals.safeZoneCountMap[FunnyFarmGlobals.SecretArea]
-        loader.beginBulkLoad('hood', name, count, TTLocalizer.TIP_GENERAL)
-        self.hood = SecretArea.SecretArea()
         self.hood.load()
         loader.endBulkLoad('hood')
         self.hood.enter()

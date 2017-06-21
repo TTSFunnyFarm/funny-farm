@@ -117,5 +117,6 @@ class FunnyFarmStart:
         return task.done
 
 __builtin__.start = FunnyFarmStart()
+Injector.openInjector()
 
 base.run()

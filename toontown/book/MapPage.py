@@ -63,8 +63,6 @@ class MapPage(ShtikerPage.ShtikerPage):
         if base.cr.playGame.hood:
             if base.cr.playGame.hood.place:
                 self.safeZoneButton.show()
-            elif base.cr.playGame.hood.zoneId == FunnyFarmGlobals.SecretArea:
-                self.safeZoneButton.show()
             else:
                 self.safeZoneButton.hide()
         else:
