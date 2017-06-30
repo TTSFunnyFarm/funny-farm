@@ -18,12 +18,12 @@ MoonlitMeadow = 4000
 RicketyRoad = 1100
 BarnyardBoulevard = 1200
 TulipTerrace = 2100
-BlossomBoulevard = 2200
+PetalPathway = 2200
 WintryWay = 3100
 BreezyBend = 4100
 HoodHierarchy = {
     FunnyFarm: (RicketyRoad,),
-    SillySprings: (TulipTerrace, BlossomBoulevard),
+    SillySprings: (TulipTerrace,),
     ChillyVillage: (WintryWay,),
     MoonlitMeadow: (BreezyBend,)
 }
@@ -40,6 +40,7 @@ StreetNames = {
     BarnyardBoulevard: 'Barnyard Boulevard',
     SillySprings: 'Playground',
     TulipTerrace: 'Tulip Terrace',
+    PetalPathway: 'Petal Pathway',
     ChillyVillage: 'Playground',
     WintryWay: 'Wintry Way',
     MoonlitMeadow: 'Playground',
@@ -178,17 +179,49 @@ PetShopBearSwimPoints = [
     Point3(-5, 30, 3),
     Point3(0, 35, 3)
 ]
-# Maximum experience for each Toon level; we're only defining the first 10
-# because level 10 will be the cap in 1.4.0.
 LevelExperience = [
+    # FF
     50,
     100,
     200,
-    350,
-    500,
-    700,
-    900,
-    1150,
-    1400,
-    1700
+    300,
+    450,
+    600,
+    800,
+    1000,
+    1250,
+    1500,
+    # SS
+    1800,
+    2100,
+    2450,
+    2800,
+    3200,
+    3600,
+    4050,
+    4500,
+    5000,
+    5500,
+    # CV
+    6050,
+    6600,
+    7200,
+    7800,
+    8450,
+    9100,
+    9800,
+    10500,
+    11250,
+    12000,
+    # MM
+    12800,
+    13600,
+    14450,
+    15300,
+    16200,
+    17100,
+    18050,
+    19000,
+    20000,
+    21000
 ]

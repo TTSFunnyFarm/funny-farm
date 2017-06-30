@@ -123,6 +123,7 @@ class ToonPage(ShtikerPage.ShtikerPage):
             DirectLabel(parent=self.defenseIcons.find('**/%s' % x.getName()), relief=None,
              text=str(base.localAvatar.defense[self.suitIcons.index(x)]), scale=0.73, pos=(0, 0, -1.25))
         self.level['text'] = TTLocalizer.ToonPageLevel % base.localAvatar.getLevel()
+        self.levelExp['text'] = TTLocalizer.ToonPageExperience % (base.localAvatar.getLevelExp(), base.localAvatar.getMaxLevelExp())
         return
 
     def cleanupToonStats(self):
