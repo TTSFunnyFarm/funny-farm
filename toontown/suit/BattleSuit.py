@@ -92,12 +92,12 @@ class BattleSuit(Suit, SuitBase):
         if num > self.maxSkeleRevives:
             self.maxSkeleRevives = num
         if self.getSkeleRevives() > 0:
-            nameInfo = TTLocalizer.SuitBaseNameWithLevel % {'name': self.name,
+            nameInfo = TTLocalizer.SuitBaseNameWithLevel % {'name': self._name,
              'dept': self.getStyleDept(),
              'level': '%s%s' % (self.getActualLevel(), TTLocalizer.SkeleRevivePostFix)}
             self.setDisplayName(nameInfo)
         else:
-            nameInfo = TTLocalizer.SuitBaseNameWithLevel % {'name': self.name,
+            nameInfo = TTLocalizer.SuitBaseNameWithLevel % {'name': self._name,
              'dept': self.getStyleDept(),
              'level': self.getActualLevel()}
             self.setDisplayName(nameInfo)
@@ -433,7 +433,7 @@ class BattleSuit(Suit, SuitBase):
         SuitBase.setElite(self, flag)
         if flag:
             Suit.makeElite(self)
-            nameInfo = TTLocalizer.SuitBaseNameWithLevel % {'name': self.name,
+            nameInfo = TTLocalizer.SuitBaseNameWithLevel % {'name': self._name,
              'dept': self.getStyleDept(),
              'level': '%s %s' % (self.getActualLevel(), TTLocalizer.EliteCogName)}
             self.setDisplayName(nameInfo)

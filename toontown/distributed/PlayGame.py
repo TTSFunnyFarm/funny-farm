@@ -68,7 +68,7 @@ class PlayGame(DirectObject):
         if hoodId not in self.Street2ClassDict.keys():
             self.notify.warning('No streets available in zone %d.' % hoodId)
             return
-        if zoneId not in FunnyFarmGlobals.StreetNames.keys():
+        if zoneId not in FunnyFarmGlobals.HoodHierarchy[hoodId]:
             self.notify.warning('Street %d is currently unavailable.' % zoneId)
             self.enterHood(hoodId, tunnel=str(zoneId))
             return
