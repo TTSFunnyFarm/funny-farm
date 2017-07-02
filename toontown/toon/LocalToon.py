@@ -23,6 +23,7 @@ from otp.otpbase import OTPGlobals
 from otp.nametag.NametagConstants import *
 import InventoryNew
 import Experience
+import ExperienceBar
 import random
 
 class LocalToon(Toon.Toon, WalkControls):
@@ -102,6 +103,7 @@ class LocalToon(Toon.Toon, WalkControls):
          0,
          0]
         self.quests = []
+        self.experienceBar = None
 
     def delete(self):
         try:
@@ -118,6 +120,7 @@ class LocalToon(Toon.Toon, WalkControls):
             if self.inventory:
                 self.inventory.unload()
             self.book.unload()
+            self.experienceBar.destroy()
             del self.laffMeter
             del self.optionsPage
             del self.mapPage
@@ -126,6 +129,7 @@ class LocalToon(Toon.Toon, WalkControls):
             del self.chatMgr
             del self.inventory
             del self.book
+            del self.experienceBar
 
     def isLocal(self):
         return True
@@ -232,6 +236,9 @@ class LocalToon(Toon.Toon, WalkControls):
         else:
             self.laffMeter.setPos(0.133, 0.0, 0.13)
         self.laffMeter.stop()
+        self.experienceBar = ExperienceBar.ExperienceBar(self)
+        self.experienceBar.reparentTo(base.a2dBottomCenter)
+        self.experienceBar.hide()
         self.accept('time-insert', self.__beginTossPie)
         self.accept('time-insert-up', self.__endTossPie)
         self.accept('time-delete', self.__beginTossPie)
@@ -461,6 +468,8 @@ class LocalToon(Toon.Toon, WalkControls):
 
     def setLevelExp(self, levelExp):
         self.levelExp = levelExp
+        if self.experienceBar:
+            self.experienceBar.setExperience(self.levelExp, self.getMaxLevelExp())
         base.avatarData.setLevelExp = self.levelExp
         dataMgr.saveToonData(base.avatarData)
 
@@ -469,6 +478,30 @@ class LocalToon(Toon.Toon, WalkControls):
 
     def getMaxLevelExp(self):
         return FunnyFarmGlobals.LevelExperience[self.level - 1]
+
+    def levelUp(self):
+        if (self.level + 1) > FunnyFarmGlobals.ToonLevelCap:
+            return False
+        self.setLevel(self.level + 1)
+        if self.level == 10:
+            self.setHealth(self.maxHp + 4, self.maxHp + 4, showText=1)
+        elif self.level > 30:
+            self.setHealth(self.maxHp + 4, self.maxHp + 4, showText=1)
+        else:
+            self.setHealth(self.maxHp + 2, self.maxHp + 2, showText=1)
+        # todo level up animation
+        return True
+
+    def addLevelExp(self, exp):
+        totalExp = self.levelExp + exp
+        if totalExp >= self.getMaxLevelExp():
+            leftover = totalExp - self.getMaxLevelExp()
+            if self.levelUp():
+                self.setLevelExp(leftover)
+            else:
+                self.setLevelExp(self.getMaxLevelExp())
+        else:
+            self.setLevelExp(totalExp)
 
     def setDamage(self, damageArray):
         self.damage = damageArray

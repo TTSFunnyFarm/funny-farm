@@ -156,6 +156,7 @@ class Trolley(DirectObject):
         if base.localAvatar.getPos(render).getZ() < self.trolleyCar.getPos(render).getZ():
             return
         base.localAvatar.disable()
+        base.localAvatar.experienceBar.hide()
         base.localAvatar.setAnimState('neutral')
         self.dialog = TTDialog.TTDialog(text=TTLocalizer.TrolleyDialog, style=TTDialog.YesNo, command=self.handleEnterTrolley)
         self.dialog.show()
@@ -168,6 +169,7 @@ class Trolley(DirectObject):
             base.playMusic(self.trolleySong)
         else:
             base.localAvatar.enable()
+            base.localAvatar.experienceBar.show()
 
     def fillSlot(self, index):
         camera.wrtReparentTo(self.trolleyCar)
@@ -199,6 +201,7 @@ class Trolley(DirectObject):
         self.trolleySong.stop()
         musicMgr.playCurrentZoneMusic()
         base.localAvatar.enable()
+        base.localAvatar.experienceBar.show()
 
     def enterWaitCountdown(self, ts):
         self.clockNode = TextNode('trolleyClock')

@@ -48,6 +48,7 @@ class Tutorial(ToonHood):
             self.chat['command'] = self.toon.chatMgr.openChatInput
             self.chat['extraArgs'] = ['']
             self.toon.chatMgr.enableKeyboardShortcuts()
+            self.toon.experienceBar.show()
 
     def __handleEntered(self):
         self.toon.exitTeleportIn()

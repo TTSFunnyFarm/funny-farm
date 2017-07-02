@@ -82,6 +82,7 @@ class Street(ToonHood):
 
     def enterBattle(self, suitId, pos):
         base.localAvatar.disable()
+        base.localAvatar.experienceBar.hide()
         suit = self.sp.activeSuits[suitId]
         self.sp.removeActiveSuit(suitId)
         self.battleCell = NodePath('battleCell')
@@ -100,6 +101,7 @@ class Street(ToonHood):
         self.battleMusic.stop()
         musicMgr.playCurrentZoneMusic()
         base.localAvatar.enable()
+        base.localAvatar.experienceBar.show()
         self.battle.cleanupBattle()
         self.battle.delete()
         self.battle = None

@@ -15,7 +15,7 @@ class TitleScreen(DirectObject):
         self.track = None
         base.disableMouse()
         base.setBackgroundColor(FunnyFarmGlobals.DefaultBackgroundColor)
-        base.camLens.setMinFov(FunnyFarmGlobals.DefaultCameraFov/(4./3.))
+        base.camLens.setMinFov(52.0/(4./3.))
         camera.setPosHpr(0, 0, 0, 0, -45, 0)
         self.load()
 

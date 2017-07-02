@@ -1,5 +1,4 @@
 ToonTasks:
-  - Create experience bar GUI / create level experience system
   - Create basic framework for toontasks and figure out how it'll work in the database
 
 Miscellaneous:

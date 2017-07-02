@@ -179,6 +179,7 @@ PetShopBearSwimPoints = [
     Point3(-5, 30, 3),
     Point3(0, 35, 3)
 ]
+ToonLevelCap = 10
 LevelExperience = [
     # FF
     50,
