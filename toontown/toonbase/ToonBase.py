@@ -282,11 +282,11 @@ class ToonBase(OTPBase.OTPBase):
 
         # Order: Left to right
         self.bottomCells = [
-            mm.addGridCell(-0.87, 0.2 + padding, base.a2dBottomCenter), # To the right of the laff meter
-            mm.addGridCell(-0.43, 0.2 + padding, base.a2dBottomCenter), # 1
-            mm.addGridCell(0.01, 0.2 + padding, base.a2dBottomCenter),  # 2
-            mm.addGridCell(0.45, 0.2 + padding, base.a2dBottomCenter),  # 3
-            mm.addGridCell(0.89, 0.2 + padding, base.a2dBottomCenter)   # To the left of the shtiker book
+            mm.addGridCell(-1.05, 0.2 + padding, base.a2dBottomCenter), # To the right of the laff meter
+            mm.addGridCell(-0.61, 0.2 + padding, base.a2dBottomCenter), # 1
+            #mm.addGridCell(0.01, 0.2 + padding, base.a2dBottomCenter), # 2
+            mm.addGridCell(0.61, 0.2 + padding, base.a2dBottomCenter),  # 3
+            mm.addGridCell(1.05, 0.2 + padding, base.a2dBottomCenter)   # To the left of the shtiker book
         ]
 
         # Order: Bottom to top

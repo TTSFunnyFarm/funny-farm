@@ -88,6 +88,7 @@ class FFClientRepository(DirectObject):
         if not tutorialFlag:
             base.localAvatar.book.showButton()
             base.localAvatar.laffMeter.start()
+            base.localAvatar.experienceBar.show()
             base.localAvatar.startChat()
         base.localAvatar.disable()
 
