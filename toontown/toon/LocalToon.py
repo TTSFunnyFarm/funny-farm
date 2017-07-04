@@ -33,6 +33,11 @@ class LocalToon(Toon.Toon, WalkControls):
     HpTextGenerator = TextNode('HpTextGenerator')
     HpTextEnabled = 1
 
+    LevelTextNode = TextNode('LevelText')
+    HpTextNode = TextNode('HpText')
+    ExpTextNode = TextNode('ExpText')
+    TokenTextNode = TextNode('TokenText')
+
     def __init__(self):
         Toon.Toon.__init__(self)
         WalkControls.__init__(self)
@@ -40,6 +45,7 @@ class LocalToon(Toon.Toon, WalkControls):
         self.soundWhisper = base.loader.loadSfx('phase_3.5/audio/sfx/GUI_whisper_3.ogg')
         self.soundPhoneRing = base.loader.loadSfx('phase_3.5/audio/sfx/telephone_ring.ogg')
         self.soundSystemMessage = base.loader.loadSfx('phase_3/audio/sfx/clock03.ogg')
+        self.levelUpSfx = base.loader.loadSfx('phase_4/audio/sfx/MG_sfx_travel_game_bonus.ogg')
         self.zoneId = None
         self.hasGM = False
         self.accessLevel = 0
@@ -479,29 +485,107 @@ class LocalToon(Toon.Toon, WalkControls):
     def getMaxLevelExp(self):
         return FunnyFarmGlobals.LevelExperience[self.level - 1]
 
-    def levelUp(self):
-        if (self.level + 1) > FunnyFarmGlobals.ToonLevelCap:
-            return False
-        self.setLevel(self.level + 1)
-        if self.level == 10:
-            self.setHealth(self.maxHp + 4, self.maxHp + 4, showText=1)
-        elif self.level > 30:
-            self.setHealth(self.maxHp + 4, self.maxHp + 4, showText=1)
-        else:
-            self.setHealth(self.maxHp + 2, self.maxHp + 2, showText=1)
-        # todo level up animation
-        return True
-
     def addLevelExp(self, exp):
         totalExp = self.levelExp + exp
         if totalExp >= self.getMaxLevelExp():
             leftover = totalExp - self.getMaxLevelExp()
-            if self.levelUp():
+            if self.levelUp(exp):
                 self.setLevelExp(leftover)
             else:
                 self.setLevelExp(self.getMaxLevelExp())
+                self.showHpString('%d XP' % exp, color=Vec4(1.0, 0.5, 1.0, 1.0))
         else:
             self.setLevelExp(totalExp)
+            self.showHpString('%d XP' % exp, color=Vec4(1.0, 0.5, 1.0, 1.0))
+
+    def levelUp(self, exp):
+        if (self.level + 1) > FunnyFarmGlobals.ToonLevelCap:
+            return False
+        self.setLevel(self.level + 1)
+        if self.level == 10 or self.level > 30:
+            hpGain = 4
+        else:
+            hpGain = 2
+        self.setHealth(self.hp + hpGain, self.maxHp + hpGain)
+        if self.level > 5 and (self.level % 2) == 0:
+            self.showLevelUpText(hpGain, exp, token=1)
+        else:
+            self.showLevelUpText(hpGain, exp)
+        self.setAnimState('jump')
+        base.playSfx(self.levelUpSfx, volume=0.5)
+        return True
+
+    def showLevelUpText(self, hp, exp, token = 0):
+        for node in (self.LevelTextNode, self.HpTextNode, self.ExpTextNode, self.TokenTextNode):
+            node.setFont(OTPGlobals.getSignFont())
+            node.clearShadow()
+            node.setAlign(TextNode.ACenter)
+        self.LevelTextNode.setText('Level Up!')
+        self.LevelTextNode.setTextColor(0.5, 0.8, 1.0, 1.0)
+        self.HpTextNode.setText('+%d' % hp)
+        self.HpTextNode.setTextColor(0, 1.0, 0, 1.0)
+        self.ExpTextNode.setText('%d XP' % exp)
+        self.ExpTextNode.setTextColor(1.0, 0.5, 1.0, 1.0)
+        if token:
+            self.TokenTextNode.setText('+1 Token')
+            self.TokenTextNode.setTextColor(1.0, 1.0, 0, 1.0)
+        else:
+            self.TokenTextNode.setText('')
+        levelText = self.attachNewNode(self.LevelTextNode.generate())
+        hpText = self.attachNewNode(self.HpTextNode.generate())
+        expText = self.attachNewNode(self.ExpTextNode.generate())
+        tokenText = self.attachNewNode(self.TokenTextNode.generate())
+        textOffset = -0.7
+
+        def cleanupText():
+            levelText.removeNode()
+            hpText.removeNode()
+            expText.removeNode()
+            tokenText.removeNode()
+
+        if token:
+            for text in (expText, tokenText, hpText, levelText):
+                textOffset += 0.7
+                text.setScale(0.7)
+                text.setBillboardAxis()
+                text.setPos(0, 0, (self.height / 2) + textOffset)
+            seq = Sequence(
+                Parallel(
+                    levelText.posInterval(1.5, Point3(0, 0, self.height + 3.4), blendType='easeOut'),
+                    hpText.posInterval(1.5, Point3(0, 0, self.height + 2.7), blendType='easeOut'),
+                    tokenText.posInterval(1.5, Point3(0, 0, self.height + 2.0), blendType='easeOut'),
+                    expText.posInterval(1.5, Point3(0, 0, self.height + 1.3), blendType='easeOut')
+                ),
+                Wait(2.0),
+                Parallel(
+                    levelText.colorScaleInterval(1.0, Vec4(1.0, 1.0, 1.0, 0)),
+                    hpText.colorScaleInterval(1.0, Vec4(1.0, 1.0, 1.0, 0)),
+                    tokenText.colorScaleInterval(1.0, Vec4(1.0, 1.0, 1.0, 0)),
+                    expText.colorScaleInterval(1.0, Vec4(1.0, 1.0, 1.0, 0))
+                ),
+                Func(cleanupText)
+            )
+        else:
+            for text in (expText, hpText, levelText):
+                textOffset += 0.7
+                text.setScale(0.7)
+                text.setBillboardAxis()
+                text.setPos(0, 0, (self.height / 2) + textOffset)
+            seq = Sequence(
+                Parallel(
+                    levelText.posInterval(1.5, Point3(0, 0, self.height + 2.7), blendType='easeOut'),
+                    hpText.posInterval(1.5, Point3(0, 0, self.height + 2.0), blendType='easeOut'),
+                    expText.posInterval(1.5, Point3(0, 0, self.height + 1.3), blendType='easeOut')
+                ),
+                Wait(2.0),
+                Parallel(
+                    levelText.colorScaleInterval(1.0, Vec4(1.0, 1.0, 1.0, 0)),
+                    hpText.colorScaleInterval(1.0, Vec4(1.0, 1.0, 1.0, 0)),
+                    expText.colorScaleInterval(1.0, Vec4(1.0, 1.0, 1.0, 0))
+                ),
+                Func(cleanupText)
+            )
+        seq.start()
 
     def setDamage(self, damageArray):
         self.damage = damageArray
@@ -573,6 +657,8 @@ class LocalToon(Toon.Toon, WalkControls):
         self.setMaxMoney(250)
         self.setMoney(250)
         self.setBankMoney(12000)
+        self.setLevel(40)
+        self.setLevelExp(21000)
 
     def resetToon(self):
         self.setHealth(20, 20, showText=1)
@@ -589,6 +675,8 @@ class LocalToon(Toon.Toon, WalkControls):
         self.setMaxMoney(40)
         self.setMoney(0)
         self.setBankMoney(0)
+        self.setLevel(1)
+        self.setLevelExp(0)
 
     def setRandomSpawn(self, zoneId):
         if zoneId not in FunnyFarmGlobals.SpawnPoints.keys():
@@ -1298,7 +1386,7 @@ class LocalToon(Toon.Toon, WalkControls):
             seq = Sequence(Parallel(self.hpText.posInterval(1.0, Point3(0, 0, self.height + 1.5), blendType='easeOut'), self.strText.posInterval(1.0, Point3(0, 0, self.height + 2.5), blendType='easeOut')), Wait(0.85), Parallel(self.hpText.colorInterval(0.1, Vec4(r, g, b, 0), 0.1), self.strText.colorInterval(0.1, Vec4(r, g, b, 0), 0.1)), Func(self.hideHpText))
             seq.start()
 
-    def showHpString(self, text, duration = 0.85, scale = 0.7):
+    def showHpString(self, text, duration = 0.85, scale = 0.7, color = Vec4(1, 0, 0, 1)):
         if self.HpTextEnabled and not self.ghostMode:
             if text != '':
                 if self.hpText:
@@ -1307,15 +1395,13 @@ class LocalToon(Toon.Toon, WalkControls):
                 self.HpTextGenerator.setText(text)
                 self.HpTextGenerator.clearShadow()
                 self.HpTextGenerator.setAlign(TextNode.ACenter)
-                r = a = 1.0
-                g = b = 0.0
-                self.HpTextGenerator.setTextColor(r, g, b, a)
+                self.HpTextGenerator.setTextColor(color)
                 self.hpTextNode = self.HpTextGenerator.generate()
                 self.hpText = self.attachNewNode(self.hpTextNode)
                 self.hpText.setScale(scale)
                 self.hpText.setBillboardAxis()
                 self.hpText.setPos(0, 0, self.height / 2)
-                seq = Sequence(self.hpText.posInterval(1.0, Point3(0, 0, self.height + 1.5), blendType='easeOut'), Wait(duration), self.hpText.colorInterval(0.1, Vec4(r, g, b, 0)), Func(self.hideHpText))
+                seq = Sequence(self.hpText.posInterval(1.0, Point3(0, 0, self.height + 1.3), blendType='easeOut'), Wait(duration), self.hpText.colorScaleInterval(1.0, Vec4(1.0, 1.0, 1.0, 0)), Func(self.hideHpText))
                 seq.start()
 
     def hideHpText(self):
