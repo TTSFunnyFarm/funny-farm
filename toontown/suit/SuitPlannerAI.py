@@ -16,7 +16,7 @@ class SuitPlannerAI(DirectObject):
             8,
             0,
             3,
-            1,
+            2,
             (10,
             10,
             40,
@@ -149,6 +149,7 @@ class SuitPlannerAI(DirectObject):
     def __init__(self, zoneId):
         self.zoneId = zoneId
         self.activeSuits = {}
+        self.setBattlesJoinable()
 
     def generate(self):
         self.createSuits()
@@ -157,10 +158,15 @@ class SuitPlannerAI(DirectObject):
         self.accept('upkeepPopulation-%d' % self.zoneId, self.upkeepPopulation)
         self.accept('requestBattle-%d' % self.zoneId, self.requestBattle)
 
+    def setBattlesJoinable(self):
+        self.battlesJoinable = 0
+        if self.SuitHoodInfo[self.zoneId][self.SUIT_HOOD_INFO_SMAX] > 1:
+            self.battlesJoinable = 1
+
     def createSuits(self):
         hoodInfo = self.SuitHoodInfo[self.zoneId]
-        suitMin = hoodInfo[0]
-        suitMax = hoodInfo[1]
+        suitMin = hoodInfo[self.SUIT_HOOD_INFO_MIN]
+        suitMax = hoodInfo[self.SUIT_HOOD_INFO_MAX]
         for i in xrange(0, random.randint(suitMin, suitMax)):
             self.createNewSuit()
 

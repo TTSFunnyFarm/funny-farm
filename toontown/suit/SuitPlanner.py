@@ -108,10 +108,18 @@ class SuitPlanner(DirectObject):
             dist = (suit.getPos() - cell.getPos()).length()
             if dist <= 12:
                 ai = base.air.suitPlanners[self.zoneId]
-                ai.removeSuit(doId)
-                # Make inactive right away so we don't check him again
-                self.removeActiveSuit(doId)
-                suit.removeActive()
-                taskMgr.doMethodLater(SuitTimings.toSky, ai.upkeepPopulation, suit.uniqueName('upkeepDelay'))
+                battle = base.cr.playGame.street.battle
+                if battle.suitRequestJoin(suit):
+                    # Yay, the suit can join!
+                    suit.exitWalk()
+                    self.removeActiveSuit(doId)
+                    ai.removeSuitAI(doId)
+                else:
+                    # Gotta blast!
+                    ai.removeSuit(doId)
+                    # Make inactive right away so we don't check him again
+                    self.removeActiveSuit(doId)
+                    suit.removeActive()
+                    taskMgr.doMethodLater(SuitTimings.toSky, ai.upkeepPopulation, suit.uniqueName('upkeepDelay'))
                 return task.cont
         return task.cont

@@ -381,15 +381,7 @@ class TownBattle(StateData.StateData):
             self.track = doneStatus['track']
             self.level = doneStatus['level']
             self.toonPanels[self.localNum].setValues(self.localNum, self.track, self.level)
-            if self.track == HEAL_TRACK:
-                self.fsm.request('AttackWait')
-                response = {}
-                response['mode'] = 'Attack'
-                response['track'] = self.track
-                response['level'] = self.level
-                response['target'] = 0
-                messenger.send(self.battleEvent, [response])
-            elif self.__isCogChoiceNecessary():
+            if self.__isCogChoiceNecessary():
                 self.notify.debug('choice needed')
                 self.fsm.request('ChooseCog')
                 response = {}
@@ -397,7 +389,6 @@ class TownBattle(StateData.StateData):
                 response['track'] = self.track
                 response['level'] = self.level
                 response['target'] = -1
-                messenger.send(self.battleEvent, [response])
             else:
                 self.notify.debug('no choice needed')
                 self.fsm.request('AttackWait')
@@ -471,8 +462,12 @@ class TownBattle(StateData.StateData):
         currStateName = self.fsm.getCurrentState().getName()
         if resetActivateMode:
             self.__enterPanels(self.numToons, self.localNum)
-            for i in xrange(len(toons)):
+            self.__cogPanels(self.numCogs)
+            for i in range(len(toons)):
                 self.toonPanels[i].setLaffMeter(toons[i])
+
+            for i in range(len(cogs)):
+                self.cogPanels[i].setCogInformation(cogs[i])
 
             if currStateName == 'ChooseCog':
                 self.chooseCogPanel.adjustCogs(self.numCogs, self.luredIndices, self.trappedIndices, self.track)

@@ -293,7 +293,8 @@ class BattleCalculator:
 
     def __suitTrapDamage(self, suitId):
         if self.traps.has_key(suitId):
-            return self.traps[suitId][2]
+            damage = self.__calcDamageStatBonus(TRAP, self.traps[suitId][2])
+            return damage
         else:
             return 0
 
@@ -893,7 +894,7 @@ class BattleCalculator:
                         if atkTrack == TRAP:
                             if self.traps.has_key(currTgt.doId):
                                 trapInfo = self.traps[currTgt.doId]
-                                currTgt.battleTrap = trapInfo[0]
+                                #currTgt.battleTrap = trapInfo[0]
                         targetDead = 0
                         if currTgt.getHP() > 0:
                             allTargetsDead = 0
@@ -951,7 +952,7 @@ class BattleCalculator:
             for suit in self.battle.activeSuits:
                 suitId = suit.doId
                 self.__removeSuitTrap(suitId)
-                suit.battleTrap = NO_TRAP
+                #suit.battleTrap = NO_TRAP
                 self.notify.debug('train trap triggered, removing trap from %d' % suitId)
 
         if self.notify.getDebug():

@@ -114,7 +114,7 @@ class InventoryNew(InventoryBase.InventoryBase, DirectFrame):
             self.clickSuperGags = enableSG
         for buttonList in self.buttons:
             for buttonIndex in xrange(LAST_REGULAR_GAG_LEVEL + 1, MAX_LEVEL_INDEX + 1):
-                if self.clickSuperGags:
+                if self.clickSuperGags or self.buttons.index(buttonList) == HEAL_TRACK:
                     pass
                 else:
                     self.makeUnpressable(buttonList[buttonIndex], self.buttons.index(buttonList), buttonIndex)
@@ -551,7 +551,7 @@ class InventoryNew(InventoryBase.InventoryBase, DirectFrame):
                     button = self.buttons[track][level]
                     if self.itemIsUsable(track, level):
                         button.show()
-                        if self.numItem(track, level) <= 0 or level >= UBER_GAG_LEVEL_INDEX:
+                        if self.numItem(track, level) <= 0 or level >= UBER_GAG_LEVEL_INDEX and track != HEAL_TRACK:
                             self.makeUnpressable(button, track, level)
                         else:
                             self.makeDeletePressable(button, track, level)
@@ -574,7 +574,7 @@ class InventoryNew(InventoryBase.InventoryBase, DirectFrame):
                     button = self.buttons[track][level]
                     if self.itemIsUsable(track, level):
                         button.show()
-                        if self.numItem(track, level) <= 0 or level >= UBER_GAG_LEVEL_INDEX:
+                        if self.numItem(track, level) <= 0 or level >= UBER_GAG_LEVEL_INDEX and track != HEAL_TRACK:
                             self.makeUnpressable(button, track, level)
                         else:
                             self.makeDeletePressable(button, track, level)
@@ -611,7 +611,7 @@ class InventoryNew(InventoryBase.InventoryBase, DirectFrame):
                     button = self.buttons[track][level]
                     if self.itemIsUsable(track, level):
                         button.show()
-                        if self.numItem(track, level) <= 0 or level >= UBER_GAG_LEVEL_INDEX:
+                        if self.numItem(track, level) <= 0 or level >= UBER_GAG_LEVEL_INDEX and track != HEAL_TRACK:
                             self.makeUnpressable(button, track, level)
                         else:
                             self.makeDeletePressable(button, track, level)
@@ -729,10 +729,12 @@ class InventoryNew(InventoryBase.InventoryBase, DirectFrame):
                     if self.itemIsUsable(track, level):
                         button.show()
                         unpaid = not base.cr.isPaid()
-                        if self.numItem(track, level) >= self.getMax(track, level) or totalProps == maxProps or unpaid and gagIsPaidOnly(track, level) or level > LAST_REGULAR_GAG_LEVEL:
-                            if gagIsPaidOnly(track, level):
+                        if self.numItem(track, level) >= self.getMax(track, level) or totalProps == maxProps or unpaid and gagIsPaidOnly(track, level) or level > LAST_REGULAR_GAG_LEVEL and track != HEAL_TRACK:
+                            if gagIsPaidOnly(track, level) and level < UBER_GAG_LEVEL_INDEX:
                                 self.makeDisabledPressable(button, track, level)
                             elif unpaid and gagIsVelvetRoped(track, level):
+                                self.makeDisabledPressable(button, track, level)
+                            elif level >= UBER_GAG_LEVEL_INDEX and self.numItem(track, level) >= self.getMax(track, level):
                                 self.makeDisabledPressable(button, track, level)
                             else:
                                 self.makeUnpressable(button, track, level)
@@ -782,10 +784,12 @@ class InventoryNew(InventoryBase.InventoryBase, DirectFrame):
                     if self.itemIsUsable(track, level):
                         button.show()
                         unpaid = not base.cr.isPaid()
-                        if self.numItem(track, level) >= self.getMax(track, level) or totalProps == maxProps or unpaid and gagIsPaidOnly(track, level) or level > LAST_REGULAR_GAG_LEVEL:
-                            if gagIsPaidOnly(track, level):
+                        if self.numItem(track, level) >= self.getMax(track, level) or totalProps == maxProps or unpaid and gagIsPaidOnly(track, level) or level > LAST_REGULAR_GAG_LEVEL and track != HEAL_TRACK:
+                            if gagIsPaidOnly(track, level) and level < UBER_GAG_LEVEL_INDEX:
                                 self.makeDisabledPressable(button, track, level)
                             elif unpaid and gagIsVelvetRoped(track, level):
+                                self.makeDisabledPressable(button, track, level)
+                            elif level >= UBER_GAG_LEVEL_INDEX and self.numItem(track, level) >= self.getMax(track, level):
                                 self.makeDisabledPressable(button, track, level)
                             else:
                                 self.makeUnpressable(button, track, level)

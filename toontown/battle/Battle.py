@@ -1,10 +1,12 @@
 from panda3d.core import *
+from direct.actor import Actor
 from direct.interval.IntervalGlobal import *
 from direct.distributed.ClockDelta import *
 from direct.showbase.DirectObject import DirectObject
 from direct.task.Task import Task
 from otp.nametag import NametagGlobals
 from otp.nametag.NametagConstants import *
+from otp.avatar import Emote
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import ToontownBattleGlobals
@@ -13,7 +15,10 @@ from BattleCalculator import BattleCalculator
 from BattleBase import *
 from SuitBattleGlobals import *
 import BattleExperienceAI
+import BattleProps
+import BattleParticles
 import Movie
+import MovieUtil
 import random
 
 class Battle(DirectObject, NodePath, BattleBase):
@@ -27,13 +32,14 @@ class Battle(DirectObject, NodePath, BattleBase):
     camFOFov = ToontownBattleGlobals.BattleCamFaceOffFov
     camFOPos = ToontownBattleGlobals.BattleCamFaceOffPos
 
-    def __init__(self, townBattle, toons=[], suits=[], bldg=0, tutorialFlag=0):
+    def __init__(self, townBattle, toons = [], suits = [], maxSuits = 2, bldg = 0, tutorialFlag = 0):
         self.doId = id(self)
         NodePath.__init__(self, 'Battle-%d' % self.doId)
         BattleBase.__init__(self)
         self.townBattle = townBattle
         self.toons = toons
         self.suits = suits
+        self.maxSuits = maxSuits
         self.bldg = bldg
         self.tutorialFlag = tutorialFlag
         self.movie = Movie.Movie(self)
@@ -41,8 +47,14 @@ class Battle(DirectObject, NodePath, BattleBase):
         self.timer = Timer()
         self.battleCalc = BattleCalculator(self, tutorialFlag)
         self.localToonBattleEvent = 'battleEvent-%d' % self.doId
+        self.adjustName = 'battle-%d-adjust' % self.doId
+        self.suitTraps = ''
         self.luredSuits = []
         self.__battleCleanedUp = 0
+        self.activeIntervals = {}
+        self.needAdjust = 0
+        self.adjusting = 0
+        self.needAdjustTownBattle = 0
         self.movieHasBeenMade = 0
         self.movieHasPlayed = 0
         self.rewardHasPlayed = 0
@@ -54,17 +66,27 @@ class Battle(DirectObject, NodePath, BattleBase):
         self.toonMerits = {}
         self.toonParts = {}
         self.suitsKilled = []
+        self.joinable = 1
 
     def enter(self):
         self.enterFaceOff()
         self.townBattle.enter(self.localToonBattleEvent, bldg=self.bldg, tutorialFlag=self.tutorialFlag)
-        self.activeToons = self.toons
-        self.activeSuits = self.suits
+        self.activeToons = []
+        self.activeSuits = []
         self.activeToonIds = [] # for AI functions
+        for toon in self.toons:
+            self.activeToons.append(toon)
+
+        for toon in self.activeToons:
+            self.activeToonIds.append(toon.doId)
+
+        for suit in self.suits:
+            self.activeSuits.append(suit)
+
         for suit in self.activeSuits:
             suit.enterBattle()
-        for t in self.activeToons:
-            self.activeToonIds.append(t.doId)
+            suit.battleTrap = NO_TRAP
+
         avId = base.localAvatar.doId
         toon = self.getToon(avId)
         if avId not in self.toonExp:
@@ -88,16 +110,18 @@ class Battle(DirectObject, NodePath, BattleBase):
             self.toonOrigQuests[avId] = flattenedQuests
         if avId not in self.toonItems:
             self.toonItems[avId] = ([], [])
+        self.needAdjustTownBattle = 1
 
     def cleanupBattle(self):
         if self.__battleCleanedUp:
             return
         self.notify.debug('cleanupBattle(%s)' % self.doId)
         self.__battleCleanedUp = 1
+        self.__cleanupIntervals()
         base.camLens.setMinFov(ToontownGlobals.DefaultCameraFov/(4./3.))
         NametagGlobals.setMasterArrowsOn(1)
         self.ignoreAll()
-        for suit in self.activeSuits:
+        for suit in self.suits:
             self.removeSuit(suit)
         self.suits = []
         self.pendingSuits = []
@@ -124,50 +148,33 @@ class Battle(DirectObject, NodePath, BattleBase):
         self.timer = None
         return
 
-    def findSuit(self, id):
-        for s in self.suits:
-            if s.doId == id:
-                return s
+    def storeInterval(self, interval, name):
+        if name in self.activeIntervals:
+            ival = self.activeIntervals[name]
+            self.clearInterval(name, finish=1)
+        self.activeIntervals[name] = interval
 
-        return None
+    def __cleanupIntervals(self):
+        for interval in self.activeIntervals.values():
+            interval.finish()
 
-    def findToon(self, id):
-        toon = self.getToon(id)
-        if toon == None:
-            return
-        for t in self.toons:
-            if t == toon:
-                return t
+        self.activeIntervals = {}
 
-        return
-
-    def getToon(self, toonId):
-        return base.localAvatar
-
-    def pause(self):
-        self.timer.stop()
-
-    def unpause(self):
-        self.timer.resume()
-
-    def startTimer(self, ts = 0):
-        self.notify.debug('startTimer()')
-        self.timer.startCallback(CLIENT_INPUT_TIMEOUT - ts, self.__timedOut)
-        timeTask = Task.loop(Task(self.__countdown), Task.pause(0.2))
-        taskMgr.add(timeTask, self.timerCountdownTaskName)
-
-    def __stopTimer(self):
-        self.notify.debug('__stopTimer()')
-        self.timer.stop()
-        taskMgr.remove(self.timerCountdownTaskName)
-
-    def __countdown(self, task):
-        if hasattr(self.townBattle, 'timer'):
-            self.townBattle.updateTimer(int(self.timer.getT()))
+    def clearInterval(self, name, finish = 0):
+        if name in self.activeIntervals.keys():
+            ival = self.activeIntervals[name]
+            if finish:
+                ival.finish()
+            else:
+                ival.pause()
+            del self.activeIntervals[name]
         else:
-            self.notify.warning('__countdown has tried to update a timer that has been deleted. Stopping timer')
-            self.__stopTimer()
-        return Task.done
+            self.notify.debug('interval: %s already cleared' % name)
+
+    def finishInterval(self, name):
+        if self.activeIntervals.has_key(name):
+            interval = self.activeIntervals[name]
+            interval.finish()
 
     def __faceOff(self, name, callback):
         if len(self.suits) == 0:
@@ -244,6 +251,7 @@ class Battle(DirectObject, NodePath, BattleBase):
 
     def enterFaceOff(self):
         self.notify.debug('enterFaceOff()')
+        
         self.__faceOff('faceoff-%d' % self.doId, self.startCamTrack)
 
     def startCamTrack(self):
@@ -255,22 +263,92 @@ class Battle(DirectObject, NodePath, BattleBase):
         track = Sequence(camTrack, menuTrack)
         track.start()
 
+    def loadTrap(self, suit, trapid):
+        self.notify.debug('loadTrap() trap: %d suit: %d' % (trapid, suit.doId))
+        trapName = AvProps[TRAP][trapid]
+        trap = BattleProps.globalPropPool.getProp(trapName)
+        suit.battleTrap = trapid
+        suit.battleTrapIsFresh = 0
+        suit.battleTrapProp = trap
+        self.notify.debug('suit.battleTrapProp = trap %s' % trap)
+        if trap.getName() == 'traintrack':
+            pass
+        else:
+            trap.wrtReparentTo(suit)
+        distance = MovieUtil.SUIT_TRAP_DISTANCE
+        if trapName == 'rake':
+            distance = MovieUtil.SUIT_TRAP_RAKE_DISTANCE
+            distance += MovieUtil.getSuitRakeOffset(suit)
+            trap.setH(180)
+            trap.setScale(0.7)
+        elif trapName == 'trapdoor' or trapName == 'quicksand':
+            trap.setScale(1.7)
+        elif trapName == 'marbles':
+            distance = MovieUtil.SUIT_TRAP_MARBLES_DISTANCE
+            trap.setH(94)
+        elif trapName == 'tnt':
+            trap.setP(90)
+            tip = trap.find('**/joint_attachEmitter')
+            sparks = BattleParticles.createParticleEffect(file='tnt')
+            trap.sparksEffect = sparks
+            sparks.start(tip)
+        trap.setPos(0, distance, 0)
+        if isinstance(trap, Actor.Actor):
+            frame = trap.getNumFrames(trapName) - 1
+            trap.pose(trapName, frame)
+
+    def removeTrap(self, suit, removeTrainTrack = False):
+        self.notify.debug('removeTrap() from suit: %d, removeTrainTrack=%s' % (suit.doId, removeTrainTrack))
+        if suit.battleTrapProp == None:
+            self.notify.debug('suit.battleTrapProp == None, suit.battleTrap=%s setting to NO_TRAP, returning' % suit.battleTrap)
+            suit.battleTrap = NO_TRAP
+            return
+        if suit.battleTrap == UBER_GAG_LEVEL_INDEX:
+            if removeTrainTrack:
+                self.notify.debug('doing removeProp on traintrack')
+                MovieUtil.removeProp(suit.battleTrapProp)
+                for otherSuit in self.suits:
+                    if not otherSuit == suit:
+                        otherSuit.battleTrapProp = None
+                        self.notify.debug('351 otherSuit=%d otherSuit.battleTrapProp = None' % otherSuit.doId)
+                        otherSuit.battleTrap = NO_TRAP
+                        otherSuit.battleTrapIsFresh = 0
+
+            else:
+                self.notify.debug('deliberately not doing removeProp on traintrack')
+        else:
+            self.notify.debug('suit.battleTrap != UBER_GAG_LEVEL_INDEX')
+            MovieUtil.removeProp(suit.battleTrapProp)
+        suit.battleTrapProp = None
+        self.notify.debug('360 suit.battleTrapProp = None')
+        suit.battleTrap = NO_TRAP
+        suit.battleTrapIsFresh = 0
+        return
+
     def enterWaitForInput(self):
         self.clearAttacks()
+        self.movieHasBeenMade = 0
+        self.movieHasPlayed = 0
+        self.rewardHasPlayed = 0
+        self.movieRequested = 0
+        
         camera.setPosHpr(self.camPos, self.camHpr)
         base.camLens.setMinFov(self.camMenuFov/(4./3.))
         NametagGlobals.setMasterArrowsOn(0)
         self.townBattle.exitOff()
         self.townBattle.setState('Attack')
-
         for toon in self.activeToons:
             self.townBattle.updateLaffMeter(self.activeToons.index(toon), toon.hp)
         for i in range(len(self.activeSuits)):
             self.townBattle.cogPanels[i].setCogInformation(self.activeSuits[i])
-
-        self.accept(self.localToonBattleEvent, self.__handleLocalToonBattleEvent)
+        
         if not self.tutorialFlag:
             self.startTimer()
+        if self.needAdjust:
+            self.__requestAdjust()
+        if self.needAdjustTownBattle:
+            self.__adjustTownBattle()
+        self.accept(self.localToonBattleEvent, self.__handleLocalToonBattleEvent)
 
     def exitWaitForInput(self):
         self.notify.debug('exitWaitForInput()')
@@ -290,10 +368,44 @@ class Battle(DirectObject, NodePath, BattleBase):
             track = response['track']
             level = response['level']
             target = response['target']
+            targetId = target
             if track == HEAL_TRACK:
                 targetId = self.activeToons[target].doId
-            else:
-                targetId = self.activeSuits[target].doId
+            elif not attackAffectsGroup(track, level):
+                if target >= 0 and target < len(self.activeSuits):
+                    targetId = self.activeSuits[target].doId
+                else:
+                    target = -1
+            elif attackAffectsGroup(track, level):
+                target = -1
+                targetId = -1
+            if len(self.luredSuits) > 0:
+                if track == TRAP or track == LURE and not levelAffectsGroup(LURE, level):
+                    if target != -1:
+                        suit = self.findSuit(targetId)
+                        if self.luredSuits.count(suit) != 0:
+                            self.notify.warning('Suit: %d was lured!' % targetId)
+                            track = -1
+                            level = -1
+                            targetId = -1
+                elif track == LURE:
+                    if levelAffectsGroup(LURE, level) and len(self.activeSuits) == len(self.luredSuits):
+                        self.notify.warning('All suits are lured!')
+                        track = -1
+                        level = -1
+                        targetId = -1
+            if track == TRAP:
+                self.needAdjustTownBattle = 1
+                if target != -1:
+                    if attackAffectsGroup(track, level):
+                        pass
+                    else:
+                        suit = self.findSuit(targetId)
+                        if suit.battleTrap != NO_TRAP:
+                            self.notify.warning('Suit: %d was already trapped!' % targetId)
+                            track = -1
+                            level = -1
+                            targetId = -1
             self.requestAttack(track, level, targetId)
             base.localAvatar.inventory.useItem(track, level)
         elif mode == 'Run':
@@ -420,7 +532,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         base.localAvatar.enterTeleportOut(callback=self.__runDone)
 
     def __runDone(self):
-        for suit in self.activeSuits:
+        for suit in self.suits:
             self.removeSuit(suit)
         doneStatus = 'run'
         messenger.send(self.townBattle.doneEvent, [doneStatus])
@@ -623,7 +735,7 @@ class Battle(DirectObject, NodePath, BattleBase):
          levels,
          targetIndices)
         if self.localToonActive() and localToonInList == 1:
-            if unAttack == 1 and self.fsm.getCurrentState().getName() == 'WaitForInput':
+            if unAttack == 1 and self.townBattle.fsm.getCurrentState().getName() != 'Off':
                 if self.townBattle.fsm.getCurrentState().getName() != 'Attack':
                     self.townBattle.setState('Attack')
             self.townBattle.updateChosenAttacks(self.townBattleAttacks[0], self.townBattleAttacks[1], self.townBattleAttacks[2], self.townBattleAttacks[3])
@@ -635,7 +747,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         levels = []
         targets = []
         for t in self.activeToonIds:
-            if self.toonAttacks.has_key(t):
+            if t in self.toonAttacks.keys():
                 ta = self.toonAttacks[t]
             else:
                 ta = getToonAttack(t)
@@ -668,12 +780,13 @@ class Battle(DirectObject, NodePath, BattleBase):
     def movieDone(self):
         self.exitPlayMovie()
         self.movieHasBeenMade = 0
-        self.movieHasPlayed = 0
+        self.movieHasPlayed = 1
         self.rewardHasPlayed = 0
         self.movieRequested = 0
         allSuitsDied = 0
         toonDied = 0
-        for suit in self.activeSuits:
+        suitsToRemove = []
+        for suit in self.suits:
             if suit.getHP() <= 0:
                 encounter = {'type': suit.dna.name,
                  'level': suit.getActualLevel(),
@@ -687,23 +800,34 @@ class Battle(DirectObject, NodePath, BattleBase):
                  'hasRevives': suit.getMaxSkeleRevives(),
                  'activeToons': self.activeToons[:]}
                 self.suitsKilled.append(encounter)
-                self.removeSuit(suit)
-        if len(self.activeSuits) == 0:
+                suitsToRemove.append(suit)
+                self.needAdjust = 1
+                self.needAdjustTownBattle = 1
+        for suit in suitsToRemove:
+            self.removeSuit(suit)
+        if len(self.suits) == 0:
             allSuitsDied = 1
-        for t in self.activeToons:
-            if t.hp <= 0:
-                self.activeToons.remove(t)
+        for toon in self.activeToons:
+            if toon.hp <= 0:
+                self.activeToons.remove(toon)
         if len(self.activeToons) == 0:
             toonDied = 1
         if toonDied:
-            for suit in self.activeSuits:
+            for suit in self.suits:
                 self.removeSuit(suit)
             doneStatus = 'defeat'
             messenger.send(self.townBattle.doneEvent, [doneStatus])
             return
         if not allSuitsDied:
-            self.startCamTrack()
+            if self.needAdjust:
+                if len(self.joiningSuits) == 0:
+                    self.__requestAdjust()
+                # If a suit joined at the last minute, it'll wait for him
+                self.acceptOnce('battle-%d-adjustDone' % self.doId, self.startCamTrack)
+            else:
+                self.startCamTrack()
         else:
+            self.setJoinable(0)
             self.setBattleExperience(*self.getBattleExperience())
             self.assignRewards()
             if self.tutorialFlag:
@@ -715,12 +839,429 @@ class Battle(DirectObject, NodePath, BattleBase):
         return
 
     def removeSuit(self, suit):
-        if suit in self.activeSuits:
+        if self.suits.count(suit) != 0:
+            self.suits.remove(suit)
+        if self.joiningSuits.count(suit) != 0:
+            self.joiningSuits.remove(suit)
+        if self.pendingSuits.count(suit) != 0:
+            self.pendingSuits.remove(suit)
+        if self.activeSuits.count(suit) != 0:
             self.activeSuits.remove(suit)
+        self.suitGone = 1
         suit.disable()
         suit.delete()
         messenger.send('removeActiveSuit', [suit.doId])
         messenger.send('upkeepPopulation-%d' % base.localAvatar.zoneId, [None])
+
+    def setMembers(self, suits, suitsJoining, suitsPending, suitsActive, suitsLured, suitTraps):
+        if self.__battleCleanedUp:
+            return
+        self.notify.debug('setMembers() - suits: %s suitsJoining: %s suitsPending: %s suitsActive: %s suitsLured: %s suitTraps: %s' % (suits,
+         suitsJoining,
+         suitsPending,
+         suitsActive,
+         suitsLured,
+         suitTraps))
+        oldsuits = self.suits
+        self.suits = []
+        suitGone = 0
+        for s in suits:
+            suit = s
+            self.suits.append(suit)
+            try:
+                suit.battleTrap
+            except:
+                suit.battleTrap = NO_TRAP
+                suit.battleTrapProp = None
+                self.notify.debug('496 suit.battleTrapProp = None')
+                suit.battleTrapIsFresh = 0
+
+        numSuitsThatDied = 0
+        for s in oldsuits:
+            if self.suits.count(s) == 0:
+                self.removeSuit(s)
+                numSuitsThatDied += 1
+                self.notify.debug('suit %d dies, numSuitsThatDied=%d' % (s.doId, numSuitsThatDied))
+
+        if numSuitsThatDied == 4:
+            trainTrap = self.find('**/traintrack')
+            if not trainTrap.isEmpty():
+                self.notify.debug('removing old train trap when 4 suits died')
+                trainTrap.removeNode()
+        for s in suitsJoining:
+            suit = self.suits[int(s)]
+            if suit != None:
+                self.makeSuitJoin(suit)
+
+        for s in suitsPending:
+            suit = self.suits[int(s)]
+            if suit != None:
+                self.__makeSuitPending(suit)
+
+        oldLuredSuits = self.luredSuits
+        self.luredSuits = []
+        for s in suitsLured:
+            suit = self.suits[int(s)]
+            if suit != None:
+                self.luredSuits.append(suit)
+                if oldLuredSuits.count(suit) == 0:
+                    self.needAdjustTownBattle = 1
+
+        if self.needAdjustTownBattle == 0:
+            for s in oldLuredSuits:
+                if self.luredSuits.count(s) == 0:
+                    self.needAdjustTownBattle = 1
+
+        index = 0
+        oldSuitTraps = self.suitTraps
+        self.suitTraps = suitTraps
+        for s in suitTraps:
+            trapid = int(s)
+            if trapid == 9:
+                trapid = -1
+            suit = self.suits[index]
+            index += 1
+            if suit != None:
+                #if (trapid == NO_TRAP or trapid != suit.battleTrap) and suit.battleTrapProp != None:
+                    #self.notify.debug('569 calling self.removeTrap, suit=%d' % suit.doId)
+                    #self.removeTrap(suit)
+                if trapid != NO_TRAP and suit.battleTrapProp == None:
+                    if self.townBattle.fsm.getCurrentState().getName() != 'Off':
+                        self.loadTrap(suit, trapid)
+
+        if len(oldSuitTraps) != len(self.suitTraps):
+            self.needAdjustTownBattle = 1
+        else:
+            for i in range(len(oldSuitTraps)):
+                if oldSuitTraps[i] == '9' and self.suitTraps[i] != '9' or oldSuitTraps[i] != '9' and self.suitTraps[i] == '9':
+                    self.needAdjustTownBattle = 1
+                    break
+        if suitGone:
+            validSuits = []
+            for s in self.suits:
+                if s != None:
+                    validSuits.append(s)
+
+            self.suits = validSuits
+            self.needAdjustTownBattle = 1
+        self.__requestAdjustTownBattle()
+        return
+
+    def getMembers(self):
+        suits = []
+        for s in self.suits:
+            suits.append(s)
+
+        joiningSuits = ''
+        for s in self.joiningSuits:
+            joiningSuits += str(suits.index(s))
+
+        pendingSuits = ''
+        for s in self.pendingSuits:
+            pendingSuits += str(suits.index(s))
+
+        activeSuits = ''
+        for s in self.activeSuits:
+            activeSuits += str(suits.index(s))
+
+        luredSuits = ''
+        for s in self.luredSuits:
+            luredSuits += str(suits.index(s))
+
+        suitTraps = ''
+        for s in self.suits:
+            if s.battleTrap == NO_TRAP:
+                suitTraps += '9'
+            elif s.battleTrap == BattleCalculator.TRAP_CONFLICT:
+                suitTraps += '9'
+            else:
+                suitTraps += str(s.battleTrap)
+
+        self.notify.debug('getMembers() - suits: %s joiningSuits: %s pendingSuits: %s activeSuits: %s luredSuits: %s suitTraps: %s' % (suits,
+         joiningSuits,
+         pendingSuits,
+         activeSuits,
+         luredSuits,
+         suitTraps))
+        return [suits,
+         joiningSuits,
+         pendingSuits,
+         activeSuits,
+         luredSuits,
+         suitTraps]
+
+    def suitRequestJoin(self, suit):
+        self.notify.debug('suitRequestJoin(%d)' % suit.getDoId())
+        if self.suitCanJoin():
+            self.addSuit(suit)
+            self.__joinSuit(suit)
+            self.setMembers(*self.getMembers())
+            return 1
+        else:
+            self.notify.warning('suitRequestJoin() - not joinable - joinable state: %s max suits: %d' % (self.isJoinable(), self.maxSuits))
+            return 0
+
+    def addSuit(self, suit):
+        self.notify.debug('addSuit(%d)' % suit.doId)
+        self.suits.append(suit)
+        suit.battleTrap = NO_TRAP
+        if len(self.suits) == self.maxSuits:
+            # We've hit the max; no more suits can join this battle, ever.
+            self.setJoinable(0)
+
+    def __joinSuit(self, suit):
+        self.joiningSuits.append(suit)
+
+    def __createJoinInterval(self, av, destPos, destHpr, name, callback, toon = 0):
+        joinTrack = Sequence()
+        joinTrack.append(Func(Emote.globalEmote.disableAll, av, 'dbattlebase, createJoinInterval'))
+        avPos = av.getPos(self)
+        avPos = Point3(avPos[0], avPos[1], 0.0)
+        av.setShadowHeight(0)
+        plist = self.buildJoinPointList(avPos, destPos, toon)
+        if len(plist) == 0:
+            joinTrack.append(Func(av.headsUp, self, destPos))
+            if toon == 0:
+                timeToDest = self.calcSuitMoveTime(avPos, destPos)
+                joinTrack.append(Func(av.loop, 'walk'))
+            else:
+                timeToDest = self.calcToonMoveTime(avPos, destPos)
+                joinTrack.append(Func(av.loop, 'run'))
+            if timeToDest > BATTLE_SMALL_VALUE:
+                joinTrack.append(LerpPosInterval(av, timeToDest, destPos, other=self))
+                totalTime = timeToDest
+            else:
+                totalTime = 0
+        else:
+            timeToPerimeter = 0
+            if toon == 0:
+                timeToPerimeter = self.calcSuitMoveTime(plist[0], avPos)
+                timePerSegment = 10.0 / BattleBase.suitSpeed
+                timeToDest = self.calcSuitMoveTime(BattleBase.posA, destPos)
+            else:
+                timeToPerimeter = self.calcToonMoveTime(plist[0], avPos)
+                timePerSegment = 10.0 / BattleBase.toonSpeed
+                timeToDest = self.calcToonMoveTime(BattleBase.posE, destPos)
+            totalTime = timeToPerimeter + (len(plist) - 1) * timePerSegment + timeToDest
+            if totalTime > MAX_JOIN_T:
+                self.notify.warning('__createJoinInterval() - time: %f' % totalTime)
+            joinTrack.append(Func(av.headsUp, self, plist[0]))
+            if toon == 0:
+                joinTrack.append(Func(av.loop, 'walk'))
+            else:
+                joinTrack.append(Func(av.loop, 'run'))
+            joinTrack.append(LerpPosInterval(av, timeToPerimeter, plist[0], other=self))
+            for p in plist[1:]:
+                joinTrack.append(Func(av.headsUp, self, p))
+                joinTrack.append(LerpPosInterval(av, timePerSegment, p, other=self))
+
+            joinTrack.append(Func(av.headsUp, self, destPos))
+            joinTrack.append(LerpPosInterval(av, timeToDest, destPos, other=self))
+        joinTrack.append(Func(av.loop, 'neutral'))
+        joinTrack.append(Func(av.headsUp, self, Point3(0, 0, 0)))
+        tval = totalTime
+        joinTrack.append(Func(Emote.globalEmote.releaseAll, av, 'dbattlebase, createJoinInterval'))
+        joinTrack.append(Func(callback, av))
+        if av == base.localAvatar:
+            camTrack = Sequence()
+
+            def setCamFov(fov):
+                base.camLens.setMinFov(fov/(4./3.))
+
+            camTrack.append(Func(setCamFov, self.camFov))
+            camTrack.append(Func(camera.wrtReparentTo, self))
+            camTrack.append(Func(camera.setPos, self.camJoinPos))
+            camTrack.append(Func(camera.setHpr, self.camJoinHpr))
+            return Parallel(joinTrack, camTrack, name=name)
+        else:
+            return Sequence(joinTrack, name=name)
+
+    def makeSuitJoin(self, suit):
+        self.notify.debug('makeSuitJoin(%d)' % suit.doId)
+        spotIndex = len(self.pendingSuits) + len(self.joiningSuits)
+        #self.joiningSuits.append(suit)
+        suit.enterBattle()
+        openSpot = self.suitPendingPoints[spotIndex]
+        pos = openSpot[0]
+        hpr = VBase3(openSpot[1], 0.0, 0.0)
+        trackName = 'to-pending-suit-%d' % suit.doId
+        track = self.__createJoinInterval(suit, pos, hpr, trackName, self.__handleSuitJoinDone)
+        track.start()
+        self.storeInterval(track, trackName)
+        if ToontownBattleGlobals.SkipMovie:
+            track.finish()
+
+    def __handleSuitJoinDone(self, suit):
+        self.notify.debug('suit: %d is now pending' % suit.doId)
+        if not suit.isEmpty():
+            self.joiningSuits.remove(suit)
+            self.pendingSuits.append(suit)
+        self.setMembers(*self.getMembers())
+        self.needAdjust = 1
+        self.__requestAdjust()
+
+    def __makeSuitPending(self, suit):
+        self.notify.debug('__makeSuitPending(%d)' % suit.doId)
+        self.clearInterval('to-pending-suit-%d' % suit.doId, finish=1)
+        if self.joiningSuits.count(suit):
+            self.joiningSuits.remove(suit)
+
+    def __requestAdjust(self):
+        cstate = self.townBattle.fsm.getCurrentState().getName()
+        if self.movieHasPlayed == 1 or cstate != 'Off':
+            if not self.adjusting:
+                if self.needAdjust == 1:
+                    self.adjustingSuits = []
+                    for s in self.pendingSuits:
+                        self.adjustingSuits.append(s)
+                    self.enterAdjusting()
+                else:
+                    self.notify.debug('requestAdjust() - dont need to')
+            else:
+                self.notify.debug('requestAdjust() - already adjusting')
+        else:
+            self.notify.debug('requestAdjust() - in state: %s' % cstate)
+
+    def enterAdjusting(self):
+        self.notify.debug('enterAdjusting()')
+        self.adjusting = 1
+        if self.localToonActive():
+            self.__stopTimer()
+        self.__adjust()
+        return None
+
+    def exitAdjusting(self):
+        self.notify.debug('exitAdjusting()')
+        self.adjusting = 0
+        self.finishInterval(self.adjustName)
+        currStateName = self.townBattle.fsm.getCurrentState().getName()
+        if currStateName != 'Off':
+            self.startTimer()
+        return None
+
+    def __adjust(self):
+        self.notify.debug('__adjust()')
+        adjustTrack = Parallel()
+        if len(self.pendingSuits) > 0 or self.suitGone == 1:
+            self.suitGone = 0
+            numSuits = len(self.pendingSuits) + len(self.activeSuits) - 1
+            index = 0
+            for suit in self.activeSuits:
+                point = self.suitPoints[numSuits][index]
+                pos = suit.getPos(self)
+                destPos = point[0]
+                if self.isSuitLured(suit) == 1:
+                    destPos = Point3(destPos[0], destPos[1] - MovieUtil.SUIT_LURE_DISTANCE, destPos[2])
+                if pos != destPos:
+                    destHpr = VBase3(point[1], 0.0, 0.0)
+                    adjustTrack.append(self.createAdjustInterval(suit, destPos, destHpr))
+                index += 1
+
+            for suit in self.pendingSuits:
+                point = self.suitPoints[numSuits][index]
+                destPos = point[0]
+                destHpr = VBase3(point[1], 0.0, 0.0)
+                adjustTrack.append(self.createAdjustInterval(suit, destPos, destHpr))
+                index += 1
+
+        if len(adjustTrack) > 0:
+            self.notify.debug('creating adjust multitrack')
+            e = Func(self.__handleAdjustDone)
+            track = Sequence(adjustTrack, e, name=self.adjustName)
+            self.storeInterval(track, self.adjustName)
+            track.start()
+            if ToontownBattleGlobals.SkipMovie:
+                track.finish()
+        else:
+            self.notify.warning('adjust() - nobody needed adjusting')
+            self.__adjustDone()
+
+    def createAdjustInterval(self, av, destPos, destHpr, toon = 0, run = 0):
+        if run == 1:
+            adjustTime = self.calcToonMoveTime(destPos, av.getPos(self))
+        else:
+            adjustTime = self.calcSuitMoveTime(destPos, av.getPos(self))
+        self.notify.debug('creating adjust interval for: %d' % av.doId)
+        adjustTrack = Sequence()
+        if run == 1:
+            adjustTrack.append(Func(av.loop, 'run'))
+        else:
+            adjustTrack.append(Func(av.loop, 'walk'))
+        adjustTrack.append(Func(av.headsUp, self, destPos))
+        adjustTrack.append(LerpPosInterval(av, adjustTime, destPos, other=self))
+        adjustTrack.append(Func(av.setHpr, self, destHpr))
+        adjustTrack.append(Func(av.loop, 'neutral'))
+        return adjustTrack
+
+    def __handleAdjustDone(self):
+        self.notify.debug('__handleAdjustDone() - client adjust finished')
+        self.clearInterval(self.adjustName)
+        self.__adjustDone()
+
+    def __addTrainTrapForNewSuits(self):
+        hasTrainTrap = False
+        trapInfo = None
+        for otherSuit in self.activeSuits:
+            if otherSuit.battleTrap == UBER_GAG_LEVEL_INDEX:
+                hasTrainTrap = True
+
+        if hasTrainTrap:
+            for curSuit in self.activeSuits:
+                if not curSuit.battleTrap == UBER_GAG_LEVEL_INDEX:
+                    oldBattleTrap = curSuit.battleTrap
+                    curSuit.battleTrap = UBER_GAG_LEVEL_INDEX
+                    self.battleCalc.addTrainTrapForJoiningSuit(curSuit.doId)
+                    self.notify.debug('setting traintrack trap for joining suit %d oldTrap=%s' % (curSuit.doId, oldBattleTrap))
+        return
+
+    def __adjustDone(self):
+        self.notify.debug('__adjustDone()')
+        self.exitAdjusting()
+        for s in self.adjustingSuits:
+            self.pendingSuits.remove(s)
+            self.activeSuits.append(s)
+        self.adjustingSuits = []
+        self.adjustingToons = []
+        self.__addTrainTrapForNewSuits()
+        self.setMembers(*self.getMembers())
+        self.needAdjust = 0
+        if len(self.pendingSuits) > 0:
+            self.notify.debug('__adjustDone() - need to adjust again')
+            self.needAdjust = 1
+            self.__requestAdjust()
+            return
+        messenger.send('battle-%d-adjustDone' % self.doId)
+
+    def __stopAdjusting(self):
+        self.notify.debug('__stopAdjusting()')
+        self.clearInterval(self.adjustName)
+
+    def __requestAdjustTownBattle(self):
+        self.notify.debug('__requestAdjustTownBattle() curstate = %s' % self.townBattle.fsm.getCurrentState().getName())
+        if self.townBattle.fsm.getCurrentState().getName() != 'Off':
+            self.__adjustTownBattle()
+        else:
+            self.needAdjustTownBattle = 1
+
+    def __adjustTownBattle(self):
+        self.notify.debug('__adjustTownBattle()')
+        if self.localToonActive() and len(self.activeSuits) > 0:
+            self.notify.debug('__adjustTownBattle() - adjusting town battle')
+            luredSuits = []
+            for suit in self.luredSuits:
+                if suit not in self.activeSuits:
+                    self.notify.error('lured suit not in self.activeSuits')
+                luredSuits.append(self.activeSuits.index(suit))
+
+            trappedSuits = []
+            for suit in self.activeSuits:
+                if suit.battleTrap != NO_TRAP:
+                    trappedSuits.append(self.activeSuits.index(suit))
+
+            self.townBattle.adjustCogsAndToons(self.activeSuits, luredSuits, trappedSuits, self.activeToons)
+            if hasattr(self, 'townBattleAttacks'):
+                self.townBattle.updateChosenAttacks(self.townBattleAttacks[0], self.townBattleAttacks[1], self.townBattleAttacks[2], self.townBattleAttacks[3])
+        self.needAdjustTownBattle = 0
 
     def isSuitLured(self, suit):
         if self.luredSuits.count(suit) != 0:
@@ -762,6 +1303,59 @@ class Battle(DirectObject, NodePath, BattleBase):
                 return (Point3(point[0]), VBase3(point[1], 0.0, 0.0))
             else:
                 self.notify.warning('getActorPosHpr() - toon not active')
+
+    def findSuit(self, id):
+        for s in self.suits:
+            if s.doId == id:
+                return s
+        return None
+
+    def findToon(self, id):
+        toon = self.getToon(id)
+        if toon == None:
+            return
+        for t in self.toons:
+            if t == toon:
+                return t
+        return None
+
+    def getToon(self, toonId):
+        return base.localAvatar
+
+    def setJoinable(self, flag):
+        self.joinable = flag
+
+    def isJoinable(self):
+        streetJoinable = base.air.suitPlanners[base.localAvatar.zoneId].battlesJoinable
+        return streetJoinable and self.joinable
+
+    def suitCanJoin(self):
+        return len(self.suits) < self.maxSuits and self.isJoinable()
+
+    def pause(self):
+        self.timer.stop()
+
+    def unpause(self):
+        self.timer.resume()
+
+    def startTimer(self, ts = 0):
+        self.notify.debug('startTimer()')
+        self.timer.startCallback(CLIENT_INPUT_TIMEOUT - ts, self.__timedOut)
+        timeTask = Task.loop(Task(self.__countdown), Task.pause(0.2))
+        taskMgr.add(timeTask, self.timerCountdownTaskName)
+
+    def __stopTimer(self):
+        self.notify.debug('__stopTimer()')
+        self.timer.stop()
+        taskMgr.remove(self.timerCountdownTaskName)
+
+    def __countdown(self, task):
+        if hasattr(self.townBattle, 'timer'):
+            self.townBattle.updateTimer(int(self.timer.getT()))
+        else:
+            self.notify.warning('__countdown has tried to update a timer that has been deleted. Stopping timer')
+            self.__stopTimer()
+        return Task.done
 
     def localToonPendingOrActive(self):
         return 1

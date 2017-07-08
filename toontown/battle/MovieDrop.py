@@ -407,12 +407,14 @@ def __createSuitTrack(drop, delay, level, alreadyDodged, alreadyTeased, target, 
             anim = 'drop-react'
         suitReact = ActorInterval(suit, anim)
         suitTrack.append(Wait(delay + tObjectAppears))
-        suitTrack.append(showDamage)
+        if level != UBER_GAG_LEVEL_INDEX:
+            suitTrack.append(showDamage)
         suitTrack.append(updateHealthBar)
         suitGettingHit = Parallel(suitReact)
         if level == UBER_GAG_LEVEL_INDEX:
             gotHitSound = globalBattleSoundCache.getSound('AA_drop_boat_cog.ogg')
             suitGettingHit.append(SoundInterval(gotHitSound, node=toon))
+            suitGettingHit.append(Sequence(Wait(2.7), showDamage))
         suitTrack.append(suitGettingHit)
         bonusTrack = None
         if hpbonus > 0:
