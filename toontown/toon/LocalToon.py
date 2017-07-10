@@ -488,7 +488,10 @@ class LocalToon(Toon.Toon, WalkControls):
             self.showLevelUpText(hpGain, exp, token=1)
         else:
             self.showLevelUpText(hpGain, exp)
-        self.setAnimState('jump')
+        if self.animFSM.getCurrentState().getName() == 'victory':
+            pass
+        else:
+            self.setAnimState('jump')
         base.playSfx(self.levelUpSfx, volume=0.5)
         return True
 

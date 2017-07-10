@@ -180,5 +180,10 @@ def assignRewards(activeToons, toonSkillPtsGained, suitsKilled, zoneId, helpfulT
         toon.setExperience(toon.experience.makeNetString())
         toon.setInventory(toon.inventory.makeNetString())
         toon.setAnimState('victory', 1)
-
+        levelExp = 0
+        for suitDict in suitsKilled:
+            level = suitDict['level']
+            levelExp += level
+        if base.localAvatar.tutorialAck:
+            base.localAvatar.addLevelExp(levelExp)
     return
