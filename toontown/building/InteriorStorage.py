@@ -41,7 +41,7 @@ TextureDict = {
     'TI_molding': ['molding_wood1', 'molding_wood2'],
     'TI_couch': ['couch', 'couch2', 'couch3']
 }
-# So, rather than using Disney's weird ass pseudorandom number generator thing
+# So rather than using Disney's weird ass pseudorandom number generator thing
 # we're just going to manually put in all the right numbers for colors/textures
 # because otherwise we'd have to use the EXACT same zoneIds as Toontown (zoneIds are the seeds)
 # So for instance we'd have to use 2519 for FF's gag shop to get the same style as
@@ -57,12 +57,6 @@ ZoneStyles = {
         'TI_door': 1
     },
     1514: {
-        'TI_door': 1
-    },
-    1515: {
-        'TI_door': 1
-    },
-    1516: {
         'TI_door': 1
     },
     1610: {
