@@ -483,7 +483,7 @@ class LocalToon(Toon.Toon, WalkControls):
             hpGain = 4
         else:
             hpGain = 2
-        self.setHealth(self.hp + hpGain, self.maxHp + hpGain)
+        self.setHealth(self.maxHp + hpGain, self.maxHp + hpGain)
         if self.level > 5 and (self.level % 2) == 0:
             self.showLevelUpText(hpGain, exp, token=1)
         else:
