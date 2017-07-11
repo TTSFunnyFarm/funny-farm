@@ -40,7 +40,8 @@ class Interior(DirectObject):
 
     def startActive(self):
         for door in self.interior.findAllMatches('**/door_double_*_ur'):
-            self.accept('enter%s' % door.find('**/*_trigger').getName(), self.handleDoorTrigger)
+            if not door.find('**/*_trigger').isEmpty():
+                self.accept('enter%s' % door.find('**/*_trigger').getName(), self.handleDoorTrigger)
 
     def handleDoorTrigger(self, collEntry):
         # goddamn toon HQs

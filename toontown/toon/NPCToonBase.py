@@ -63,6 +63,7 @@ class NPCToonBase(Toon.Toon):
         self.legsParts = []
         self.__bookActors = []
         self.__holeActors = []
+        self.setBlend(frameBlend=True)
 
     def wantsSmoothing(self):
         return 0
