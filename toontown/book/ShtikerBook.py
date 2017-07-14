@@ -278,6 +278,10 @@ class ShtikerBook(DirectFrame):
         self.esc = esc
         base.localAvatar.disableAvatarControls()
         base.localAvatar.endAllowPies()
+        base.localAvatar.invPage.ignoreOnscreenHooks()
+        base.localAvatar.invPage.hideInventoryOnscreen()
+        base.localAvatar.questPage.ignoreOnscreenHooks()
+        base.localAvatar.questPage.hideQuestsOnscreen()
         base.localAvatar.enterOpenBook()
         Sequence(Wait(base.localAvatar.track.getDuration() - 0.1), Func(self.enter)).start()
 
@@ -301,3 +305,5 @@ class ShtikerBook(DirectFrame):
         base.localAvatar.exitCloseBook()
         base.localAvatar.enableAvatarControls()
         base.localAvatar.beginAllowPies()
+        base.localAvatar.invPage.acceptOnscreenHooks()
+        base.localAvatar.questPage.acceptOnscreenHooks()

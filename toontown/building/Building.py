@@ -42,7 +42,7 @@ class Building(DirectObject):
             self.nametag.setActive(0)
             self.nametag.setAvatar(self.getBuildingNodePath().find('**/*door_origin*'))
             self.nametag.setObjectCode(self.block)
-            name = TTLocalizer.FFZone2TitleDict.get(self.zoneId, '')
+            name = TTLocalizer.zone2TitleDict.get(self.zoneId, '')
             self.nametag.setName(name)
             self.nametag.manage(base.marginManager)
         return

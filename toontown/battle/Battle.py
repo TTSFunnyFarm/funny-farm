@@ -798,7 +798,7 @@ class Battle(DirectObject, NodePath, BattleBase):
                  'isSupervisor': suit.isSupervisor(),
                  'isVirtual': suit.isVirtual(),
                  'hasRevives': suit.getMaxSkeleRevives(),
-                 'activeToons': self.activeToons[:]}
+                 'activeToons': self.activeToonIds[:]}
                 self.suitsKilled.append(encounter)
                 suitsToRemove.append(suit)
                 self.needAdjust = 1

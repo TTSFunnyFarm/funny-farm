@@ -29,10 +29,10 @@ HoodHierarchy = {
 }
 hoodNameMap = {
     Tutorial: TTLocalizer.Tutorial,
-    FunnyFarm: TTLocalizer.FunnyFarm,
-    SillySprings: TTLocalizer.SillySprings,
-    ChillyVillage: TTLocalizer.ChillyVillage,
-    MoonlitMeadow: TTLocalizer.MoonlitMeadow,
+    FunnyFarm: TTLocalizer.lFunnyFarm,
+    SillySprings: TTLocalizer.lSillySprings,
+    ChillyVillage: TTLocalizer.lChillyVillage,
+    MoonlitMeadow: TTLocalizer.lMoonlitMeadow,
 }
 StreetNames = {
     FunnyFarm: 'Playground',

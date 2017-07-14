@@ -1,8 +1,12 @@
 ToonTasks:
-  - Create basic framework for toontasks and figure out how it'll work in the database
+  - Implement QuestManager to handle giving out & turning in quests
+  - Make Loony Labs interior
+  - Design new information bubbles to pop up at the bottom of your screen
 
 Miscellaneous:
   - Playground treasures
+  - Cog gallery page
+  - Track training page
 
 Jobs for people besides Patrick:
   - Come up with shop names for Funny Farm streets and/or Silly Springs streets; write them down

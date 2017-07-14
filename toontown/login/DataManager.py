@@ -57,7 +57,7 @@ class DataManager:
         return ToonData(index, dna, name, 20, 20, 0, 40, 0, 12000, 20, None, None, [0, 0, 0, 0, 1, 1, 0], 
                         [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000, 1, 0, 
                         [0, 0, 0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [], [], [], [], [], [], 
-                        {}, [], 1, 1000, 0, [], [], 0, [], [], 0)
+                        [], [], 1, 1000, [-1, -1], [], [], 0, [], [], 0)
 
     def saveToonData(self, data):
         if self.corrupted:
@@ -124,6 +124,14 @@ class DataManager:
         base.localAvatar.setTrackAccess(data.setTrackAccess)
         base.localAvatar.setExperience(data.setExperience)
         base.localAvatar.setInventory(data.setInventory)
+        base.localAvatar.setQuestCarryLimit(data.setQuestCarryLimit)
+        for questDesc in data.setQuests:
+            base.localAvatar.addQuest(questDesc[0])
+            base.localAvatar.setQuestProgress(questDesc[0], questDesc[1])
+        if data.setTrackProgress == 0:
+            base.localAvatar.setTrackProgress(-1, -1)
+        else:
+            base.localAvatar.setTrackProgress(*data.setTrackProgress)
         base.localAvatar.setNametagFont(FunnyFarmGlobals.getVar(data.setNametagStyle))
         base.localAvatar.setCheesyEffect(data.setCheesyEffect)
         base.localAvatar.setHat(*data.setHat)

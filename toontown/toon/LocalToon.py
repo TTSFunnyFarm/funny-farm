@@ -19,6 +19,7 @@ from toontown.book import OptionsPage
 from toontown.book import MapPage
 from toontown.book import ToonPage
 from toontown.book import InventoryPage
+from toontown.book import QuestPage
 from otp.otpbase import OTPGlobals
 from otp.nametag.NametagConstants import *
 import InventoryNew
@@ -108,6 +109,8 @@ class LocalToon(Toon.Toon, WalkControls):
          0,
          0,
          0]
+        self.questCarryLimit = 0
+        self.questingZone = 0
         self.quests = []
         self.experienceBar = None
 
@@ -156,6 +159,7 @@ class LocalToon(Toon.Toon, WalkControls):
         self.book.showButton()
         self.beginAllowPies()
         self.invPage.acceptOnscreenHooks()
+        self.questPage.acceptOnscreenHooks()
         self.setAnimState('neutral')
 
     def disable(self):
@@ -167,6 +171,8 @@ class LocalToon(Toon.Toon, WalkControls):
         self.endAllowPies()
         self.invPage.ignoreOnscreenHooks()
         self.invPage.hideInventoryOnscreen()
+        self.questPage.ignoreOnscreenHooks()
+        self.questPage.hideQuestsOnscreen()
         self.stopLookAround()
 
     def setZoneId(self, zoneId):
@@ -233,6 +239,10 @@ class LocalToon(Toon.Toon, WalkControls):
         self.invPage.load()
         self.book.addPage(self.invPage, pageName=TTLocalizer.InventoryPageTitle)
         self.invPage.acceptOnscreenHooks()
+        self.questPage = QuestPage.QuestPage()
+        self.questPage.load()
+        self.book.addPage(self.questPage, pageName=TTLocalizer.QuestPageToonTasks)
+        self.questPage.acceptOnscreenHooks()
         self.laffMeter = LaffMeter(self.style, self.hp, self.maxHp)
         self.laffMeter.setAvatar(self)
         self.laffMeter.setScale(0.075)
@@ -440,6 +450,50 @@ class LocalToon(Toon.Toon, WalkControls):
         if self.inventory:
             self.inventory.updateGUI()
         self.experience.saveExp()
+
+    def setQuestCarryLimit(self, limit):
+        self.questCarryLimit = limit
+        base.avatarData.setQuestCarryLimit = limit
+        dataMgr.saveToonData(base.avatarData)
+
+    def getQuestCarryLimit(self):
+        return self.questCarryLimit
+
+    def addQuest(self, questId):
+        if len(self.quests) >= self.questCarryLimit:
+            self.notify.warning('Cannot add quest %d; maximum quests reached' % questId)
+            return
+        self.quests.append([questId, 0])
+        messenger.send('questsChanged')
+        base.avatarData.setQuests = self.quests
+        dataMgr.saveToonData(base.avatarData)
+
+    def setQuestProgress(self, questId, progress):
+        for questDesc in self.quests:
+            if questId == questDesc[0]:
+                questDesc[1] = progress
+                break
+        messenger.send('questsChanged')
+        base.avatarData.setQuests = self.quests
+        dataMgr.saveToonData(base.avatarData)
+
+    def removeQuest(self, questId):
+        for questDesc in self.quests:
+            if questId == questDesc[0]:
+                self.quests.remove(questDesc)
+                break
+        messenger.send('questsChanged')
+        base.avatarData.setQuests = self.quests
+        dataMgr.saveToonData(base.avatarData)
+
+    def setTrackProgress(self, trackId, progress):
+        self.trackProgressId = trackId
+        self.trackProgress = progress
+        if hasattr(self, 'trackPage'):
+            self.trackPage.updatePage()
+
+    def getTrackProgress(self):
+        return [self.trackProgressId, self.trackProgress]
 
     def setLevel(self, level):
         self.level = level

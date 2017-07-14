@@ -572,11 +572,11 @@ def getNPCZone(npcId):
 
 
 def getBuildingArticle(zoneId):
-    return TTLocalizer.zone2TitleDict.get(zoneId, 'Toon Building')[1]
+    return TTLocalizer.zone2TitleDict.get(zoneId, 'Toon Building')
 
 
 def getBuildingTitle(zoneId):
-    return TTLocalizer.zone2TitleDict.get(zoneId, 'Toon Building')[0]
+    return TTLocalizer.zone2TitleDict.get(zoneId, 'Toon Building')
 
 # Regular NPC SOS Toons (The good ones)
 HQnpcFriends = {

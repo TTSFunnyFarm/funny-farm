@@ -9,7 +9,7 @@ import random
 import Fanfare
 from otp.otpbase import OTPGlobals
 from toontown.coghq import CogDisguiseGlobals
-#from toontown.quest import Quests
+from toontown.quest import Quests
 from toontown.suit import SuitDNA
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownBattleGlobals
@@ -168,14 +168,16 @@ class RewardPanel(DirectFrame):
 
         for i in xrange(len(avQuests)):
             questDesc = avQuests[i]
-            questId, npcId, toNpcId, rewardId, toonProgress = questDesc
+            questId, toonProgress = questDesc
             quest = Quests.getQuest(questId)
+            quest.setQuestProgress(toonProgress)
+            toNpcId = quest.toNpc
             if quest:
                 questString = quest.getString()
-                progressString = quest.getProgressString(toon, questDesc)
+                progressString = quest.getProgressString()
                 rewardString = quest.getRewardString(progressString)
                 rewardString = Quests.fillInQuestNames(rewardString, toNpcId=toNpcId)
-                completed = quest.getCompletionStatus(toon, questDesc) == Quests.COMPLETE
+                completed = quest.getCompletionStatus() == Quests.COMPLETE
                 questLabel = self.questLabelList[i]
                 questLabel.show()
                 if base.localAvatar.tutorialAck:
@@ -619,26 +621,27 @@ class RewardPanel(DirectFrame):
              'activeToons': activeToonIds})
 
         try:
-            zoneId = base.cr.playGame.getPlace().getTaskZoneId()
+            zoneId = base.cr.playGame.getActiveZone().zoneId
         except:
             zoneId = 0
 
         avQuests = []
-        for i in xrange(0, len(origQuestsList), 5):
-            avQuests.append(origQuestsList[i:i + 5])
+        for i in xrange(0, len(origQuestsList), 2):
+            avQuests.append(origQuestsList[i:i + 2])
 
         for i in xrange(len(avQuests)):
             questDesc = avQuests[i]
-            questId, npcId, toNpcId, rewardId, toonProgress = questDesc
+            questId, toonProgress = questDesc
             quest = Quests.getQuest(questId)
+            quest.setQuestProgress(toonProgress)
             if quest and i < len(self.questLabelList):
                 questString = quest.getString()
-                progressString = quest.getProgressString(toon, questDesc)
+                progressString = quest.getProgressString()
                 questLabel = self.questLabelList[i]
                 earned = 0
-                orig = questDesc[4] & pow(2, 16) - 1
+                orig = questDesc[1] & pow(2, 16) - 1
                 num = 0
-                if quest.getType() == Quests.RecoverItemQuest:
+                if quest.getType() == Quests.QuestTypeRecover:
                     questItem = quest.getItem()
                     if questItem in itemList:
                         earned = itemList.count(questItem)
@@ -651,27 +654,23 @@ class RewardPanel(DirectFrame):
                         else:
                             num = quest.doesCogCount(avId, cogDict, zoneId, toonShortList)
                         if num:
-                            if base.config.GetBool('battle-passing-no-credit', True):
-                                if avId in helpfulToonsList:
-                                    earned += num
-                                else:
-                                    self.notify.debug('avId=%d not getting %d kill cog quest credit' % (avId, num))
-                            else:
-                                earned += num
+                            earned += num
 
                 if base.localAvatar.tutorialAck:
                     if earned > 0:
-                        earned = min(earned, quest.getNumQuestItems() - questDesc[4])
+                        earned = min(earned, quest.getNumQuestItems() - questDesc[1])
                 if earned > 0 or base.localAvatar.tutorialAck == 0 and num == 1:
                     barTime = 0.5
                     numTicks = int(math.ceil(barTime / tickDelay))
                     for i in xrange(numTicks):
                         t = (i + 1) / float(numTicks)
                         newValue = int(orig + t * earned + 0.5)
-                        questDesc[4] = newValue
-                        progressString = quest.getProgressString(toon, questDesc)
+                        questDesc[1] = newValue
+                        quest.setQuestProgress(newValue)
+                        base.localAvatar.setQuestProgress(questId, newValue)
+                        progressString = quest.getProgressString()
                         str = '%s : %s' % (questString, progressString)
-                        if quest.getCompletionStatus(toon, questDesc) == Quests.COMPLETE:
+                        if quest.getCompletionStatus() == Quests.COMPLETE:
                             intervalList.append(Func(questLabel.setProp, 'text_fg', (0, 0.3, 0, 1)))
                         intervalList.append(Func(questLabel.setProp, 'text', str))
                         intervalList.append(Wait(tickDelay))
@@ -755,8 +754,8 @@ class RewardPanel(DirectFrame):
         questList = self.getQuestIntervalList(toon, deathList, toonList, origQuestsList, itemList, helpfulToonsList)
         if questList:
             avQuests = []
-            for i in xrange(0, len(origQuestsList), 5):
-                avQuests.append(origQuestsList[i:i + 5])
+            for i in xrange(0, len(origQuestsList), 2):
+                avQuests.append(origQuestsList[i:i + 2])
 
             track.append(Func(self.initQuestFrame, toon, copy.deepcopy(avQuests)))
             track.append(Wait(0.25))
