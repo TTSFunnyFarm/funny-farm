@@ -1,5 +1,6 @@
 from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
+from toontown.estate import EstateHood
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.hood import ZoneUtil
@@ -21,7 +22,8 @@ class PlayGame(DirectObject):
     notify = directNotify.newCategory('PlayGame')
     Hood2ClassDict = {
         FunnyFarmGlobals.FunnyFarm: FFHood.FFHood,
-        FunnyFarmGlobals.SillySprings: SSHood.SSHood
+        FunnyFarmGlobals.SillySprings: SSHood.SSHood,
+        FunnyFarmGlobals.Estate: EstateHood.EstateHood
     }
     Street2ClassDict = {
         FunnyFarmGlobals.FunnyFarm: FFStreet.FFStreet

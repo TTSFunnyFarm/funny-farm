@@ -15,7 +15,7 @@ class Door(DirectObject):
         self.doorX = 1.5
         self.doorTrack = None
         self.doorExitTrack = None
-        if 'int' in self.code:
+        if 'int' in self.code or self.code == 'estate':
             self.rightDoor = self.door.find('**/' + self.door.getName() + '_right')
             self.leftDoor = self.door.find('**/' + self.door.getName() + '_left')
         else:
@@ -36,6 +36,8 @@ class Door(DirectObject):
         elif self.code == 'door_1':
             building = base.cr.playGame.getActiveZone().geom.find('**/*toon_landmark_hq*')
             otherNP = building.find('**/door_origin_1')
+        elif self.code == 'estate':
+            otherNP = self.door
         else:
             building = self.door
             otherNP = building.find('**/*door_origin*')

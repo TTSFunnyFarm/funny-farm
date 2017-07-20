@@ -36,11 +36,12 @@ class MapPage(ShtikerPage.ShtikerPage):
                 relief=None,
                 image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')),
                 image_scale=(0.66, 1.1, 1.1),
-                pos=(0.15, 0, -.74),
+                pos=(0.075, 0, -.74),
                 text=TTLocalizer.MapPageGoHome,
                 text_scale=TTLocalizer.MPgoHomeButton,
                 text_pos=(0, -0.02),
-                textMayChange=0)
+                textMayChange=0,
+                command=self.goHome)
         self.goHomeButton.hide()
         guiButton.removeNode()
         self.hoodLabel = DirectLabel(
@@ -63,10 +64,16 @@ class MapPage(ShtikerPage.ShtikerPage):
         if base.cr.playGame.hood:
             if base.cr.playGame.hood.place:
                 self.safeZoneButton.show()
+                self.goHomeButton.show()
+            elif base.cr.playGame.hood.zoneId == FunnyFarmGlobals.Estate:
+                self.safeZoneButton.show()
+                self.goHomeButton.hide()
             else:
                 self.safeZoneButton.hide()
+                self.goHomeButton.show()
         else:
             self.safeZoneButton.show()
+            self.goHomeButton.show()
         zoneId = base.localAvatar.getZoneId()
         hoodName = FunnyFarmGlobals.hoodNameMap.get(FunnyFarmGlobals.getHoodId(zoneId), '')
         streetName = FunnyFarmGlobals.StreetNames.get(zoneId, '')
@@ -80,4 +87,11 @@ class MapPage(ShtikerPage.ShtikerPage):
     def backToSafeZone(self):
         zoneId = base.localAvatar.getZoneId()
         hoodId = FunnyFarmGlobals.getHoodId(zoneId)
+        if hoodId == FunnyFarmGlobals.Estate: # That's not it...
+            hoodId = base.avatarData.setLastHood # Go to the last hood they were in.
+            if hoodId == FunnyFarmGlobals.Estate: # Huh?
+                hoodId = FunnyFarmGlobals.FunnyFarm
         messenger.send('safeZoneTeleport', [hoodId])
+
+    def goHome(self):
+        messenger.send('safeZoneTeleport', [FunnyFarmGlobals.Estate])

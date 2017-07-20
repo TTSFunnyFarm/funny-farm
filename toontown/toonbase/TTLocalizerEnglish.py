@@ -146,11 +146,12 @@ MyEstate = ('to', 'in', 'your house')
 WelcomeValley = ('to', 'in', 'Welcome Valley')
 GolfZone = ('to', 'in', lGolfZone)
 PartyHood = ('to the', 'in the', lPartyHood)
-Tutorial = 'the Toon-torial'
+Tutorial = 'the Toon-torial' # TODO: Separate localizer?
 lFunnyFarm = 'Funny Farm'
 lSillySprings = 'Silly Springs'
 lChillyVillage = 'Chilly Village'
 lMoonlitMeadow = 'Moonlit Meadow'
+lEstate = 'Estate'
 QuestStreetNames = {1000: 'In ' + lFunnyFarm,
  1100: 'On Rickety Road',
  1200: 'On Barnyard Boulevard',
@@ -160,7 +161,9 @@ QuestStreetNames = {1000: 'In ' + lFunnyFarm,
  3000: 'In ' + lChillyVillage,
  3100: 'On Wintry Way',
  4000: 'In ' + lMoonlitMeadow,
- 4100: 'On Breezy Bend'}
+ 4100: 'On Breezy Bend',
+ 5000: 'At your estate',
+}
 Factory = 'Factory'
 Headquarters = 'Headquarters'
 SellbotFrontEntrance = 'Front Entrance'

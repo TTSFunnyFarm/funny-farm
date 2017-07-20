@@ -106,6 +106,7 @@ class FunnyFarmStart:
         __builtin__.dataMgr = DataManager()
 
         self.notify.info('Initializing Client Repository...')
+        Injector.openInjector()
         cr = FFClientRepository()
         base.initNametagGlobals()
         base.startShow(cr)

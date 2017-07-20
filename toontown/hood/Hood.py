@@ -24,6 +24,7 @@ class Hood(DirectObject):
         self.place = None
         self.battle = None
         self.battleCell = None
+        self.overwriteLastHood = True
 
     def enter(self, shop=None, tunnel=None, init=0):
         if tunnel:
@@ -43,8 +44,9 @@ class Hood(DirectObject):
                     base.localAvatar.setSystemMessage(0, TTLocalizer.WinterHolidayMessage)
             else:
                 base.localAvatar.enterTeleportIn(callback=self.handleEntered)
-        base.avatarData.setLastHood = self.zoneId
-        dataMgr.saveToonData(base.avatarData)
+        if self.overwriteLastHood:
+            base.avatarData.setLastHood = self.zoneId
+            dataMgr.saveToonData(base.avatarData)
         self.spawnTitleText()
         self.startActive()
 

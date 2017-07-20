@@ -10,6 +10,7 @@ from toontown.building import HQInterior
 from toontown.building import ToonHallInterior
 from toontown.building import ToonInterior
 from toontown.building import Door
+from toontown.estate import EstateInterior
 from toontown.trolley.Trolley import Trolley
 from Hood import Hood
 
@@ -20,6 +21,7 @@ class ToonHood(Hood):
         'door_0': HQInterior.HQInterior,
         'door_1': HQInterior.HQInterior,
         'toonhall': ToonHallInterior.ToonHallInterior,
+        'estate': EstateInterior.EstateInterior,
         'default': ToonInterior.ToonInterior
     }
 

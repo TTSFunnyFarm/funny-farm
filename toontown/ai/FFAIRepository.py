@@ -1,4 +1,5 @@
 from direct.showbase.DirectObject import DirectObject
+from toontown.estate import EstateHoodAI
 from toontown.toon import Toon, ToonHead
 from toontown.toon import NPCToons
 from toontown.hood import FFHoodAI
@@ -34,6 +35,7 @@ class FFAIRepository(DirectObject):
     def createSafeZones(self):
         self.notify.info('Creating safe zones...')
         self.hoods.append(FFHoodAI.FFHoodAI(self))
+        self.hoods.append(EstateHoodAI.EstateHoodAI(self))
         self.notify.info('Done.')
         self.isLoaded = 1
         messenger.send('ai-done')

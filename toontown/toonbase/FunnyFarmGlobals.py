@@ -21,11 +21,13 @@ TulipTerrace = 2100
 PetalPathway = 2200
 WintryWay = 3100
 BreezyBend = 4100
+Estate = 5000 # Should be fine as one zone considering this is singleplayer
 HoodHierarchy = {
     FunnyFarm: (RicketyRoad,),
     SillySprings: (TulipTerrace,),
     ChillyVillage: (WintryWay,),
-    MoonlitMeadow: (BreezyBend,)
+    MoonlitMeadow: (BreezyBend,),
+    Estate: (),
 }
 hoodNameMap = {
     Tutorial: TTLocalizer.Tutorial,
@@ -33,8 +35,9 @@ hoodNameMap = {
     SillySprings: TTLocalizer.lSillySprings,
     ChillyVillage: TTLocalizer.lChillyVillage,
     MoonlitMeadow: TTLocalizer.lMoonlitMeadow,
+    Estate: TTLocalizer.lEstate,
 }
-StreetNames = {
+StreetNames = { # TODO: split out into localizer...
     FunnyFarm: 'Playground',
     RicketyRoad: 'Rickety Road',
     BarnyardBoulevard: 'Barnyard Boulevard',
@@ -44,19 +47,22 @@ StreetNames = {
     ChillyVillage: 'Playground',
     WintryWay: 'Wintry Way',
     MoonlitMeadow: 'Playground',
-    BreezyBend: 'Breezy Bend'
+    BreezyBend: 'Breezy Bend',
+    Estate: '' # Hood title will take care of it...
 }
 HoodName2Id = {
     'ff': FunnyFarm,
     'ss': SillySprings,
     'cv': ChillyVillage,
-    'mm': MoonlitMeadow
+    'mm': MoonlitMeadow,
+    'e': Estate
 }
 HoodId2Name = {
     FunnyFarm: 'ff',
     SillySprings: 'ss',
     ChillyVillage: 'cv',
     MoonlitMeadow: 'mm',
+    Estate: 'e'
 }
 
 def getIdFromName(hoodName):
@@ -80,11 +86,13 @@ def getHoodId(zoneId):
 phaseMap = {
     FunnyFarm: 'phase_14/models/neighborhoods/funny_farm',
     SillySprings: 'phase_14/models/neighborhoods/silly_springs',
-    RicketyRoad: 'phase_14/models/streets/funny_farm_1100'
+    RicketyRoad: 'phase_14/models/streets/funny_farm_1100',
+    Estate: 'phase_14/models/neighborhoods/estate_1'
 }
 safeZoneCountMap = {
     FunnyFarm: 6,
-    SillySprings: 6
+    SillySprings: 6,
+    Estate: 6,
 }
 townCountMap = {
     Tutorial: 40,
