@@ -229,3 +229,4 @@ LevelExperience = [
     20000,
     21000
 ]
+MaxAvatars = 6

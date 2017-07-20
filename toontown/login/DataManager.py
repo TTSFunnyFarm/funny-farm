@@ -14,6 +14,8 @@ import os
 
 # NOTE: The encrypt() and decrypt() functions should only be called in THIS FILE to avoid confusion and repitition.
 
+BASE_DB_ID = 1000001
+
 class DataManager:
     notify = directNotify.newCategory('DataManager')
     notify.setInfo(1)
@@ -23,14 +25,9 @@ class DataManager:
         self.oldDir = Filename.getUserAppdataDirectory() + '/FunnyFarm/db/'
         self.newDir = Filename.getUserAppdataDirectory() + '/FunnyFarm' + '/database/'
         self.corrupted = 0
-        self.toons = [
-            '1000001',
-            '1000002',
-            '1000003',
-            '1000004',
-            '1000005',
-            '1000006'
-        ]
+        self.toons = []
+        for toonNum in xrange(FunnyFarmGlobals.MaxAvatars):
+            self.toons.append(str(BASE_DB_ID + toonNum))
         self.removeOldData()
         return
 
