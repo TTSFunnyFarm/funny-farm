@@ -44,6 +44,7 @@ class EstateHood(ToonHood):
     def load(self):
         ToonHood.load(self)
         self.geom.setTransparency(TransparencyAttrib.MBinary, 1)
+        self.geom.find('**/water').setTransparency(TransparencyAttrib.MAlpha, 1)
         self.geom.find('**/water').setColorScale(1, 1, 1, 0.75)
         for housePosIdx in xrange(len(HOUSE_POSITIONS)):
             zoneId = self.zoneId + 500 + housePosIdx + 1
