@@ -19,7 +19,7 @@ import Motion
 from toontown.hood import ZoneUtil
 from toontown.battle import SuitBattleGlobals
 from otp.otpbase import OTPGlobals
-from toontown.effects import DustCloud
+from toontown.effects import DustCloud, Splash
 from direct.showbase.PythonUtil import Functor
 from toontown.distributed import DelayDelete
 from otp.nametag.NametagConstants import *
@@ -507,6 +507,7 @@ class Toon(Avatar.Avatar, ToonHead):
         self.setSpeechFont(ToontownGlobals.getToonFont())
         self.soundChatBubble = base.loader.loadSfx('phase_3/audio/sfx/GUI_balloon_popup.ogg')
         self.doId = id(self)
+        self.splash = None
         self.animFSM = ClassicFSM('Toon', [State('off', self.enterOff, self.exitOff),
          State('neutral', self.enterNeutral, self.exitNeutral),
          State('victory', self.enterVictory, self.exitVictory),
@@ -1700,7 +1701,10 @@ class Toon(Avatar.Avatar, ToonHead):
             swimBob.finish()
         self.getGeomNode().setZ(4.0)
         self.nametag3d.setZ(5.0)
-        self.swimBob = Sequence(self.getGeomNode().posInterval(1, (0, -3, 3), blendType='easeInOut'), self.getGeomNode().posInterval(1, (0, -3, 4), blendType='easeInOut'))
+        self.swimBob = Sequence(
+            self.getGeomNode().posInterval(1, Point3(0, -3, 3), startPos=Point3(0, -3, 4), blendType='easeInOut'),
+            self.getGeomNode().posInterval(1, Point3(0, -3, 4), startPos=Point3(0, -3, 3), blendType='easeInOut')
+        )
         self.swimBob.loop()
 
     def stopBobSwimTask(self):
@@ -3148,3 +3152,11 @@ class Toon(Avatar.Avatar, ToonHead):
 
     def uniqueName(self, idString):
         return ("%s-%s" % (idString, self.doId))
+
+    def playSplashEffect(self, x, y, z):
+        if self.splash == None:
+            self.splash = Splash.Splash(render)
+        self.splash.setPos(x, y, z)
+        self.splash.setScale(2)
+        self.splash.play()
+        return

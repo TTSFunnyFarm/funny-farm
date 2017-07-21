@@ -15,7 +15,7 @@ class Walk(StateData.StateData):
          State.State('swimming', self.enterSwimming, self.exitSwimming, ['walking', 'slowWalking']),
          State.State('slowWalking', self.enterSlowWalking, self.exitSlowWalking, ['walking', 'swimming'])], 'off', 'off')
         self.fsm.enterInitialState()
-        self.IsSwimSoundAudible = 0
+        self.isSwimSoundAudible = 0
         self.swimSoundPlaying = 0
 
     def load(self):
@@ -57,17 +57,16 @@ class Walk(StateData.StateData):
 
     def enterWalking(self):
         if base.localAvatar.hp > 0:
-            base.localAvatar.startTrackAnimToSpeed()
             base.localAvatar.setWalkSpeedNormal()
         else:
             self.fsm.request('slowWalking')
 
     def exitWalking(self):
-        base.localAvatar.stopTrackAnimToSpeed()
+        pass
 
-    def setSwimSoundAudible(self, IsSwimSoundAudible):
-        self.IsSwimSoundAudible = IsSwimSoundAudible
-        if IsSwimSoundAudible == 0 and self.swimSoundPlaying:
+    def setSwimSoundAudible(self, isSwimSoundAudible):
+        self.isSwimSoundAudible = isSwimSoundAudible
+        if isSwimSoundAudible == 0 and self.swimSoundPlaying:
             self.swimSound.stop()
             self.swimSoundPlaying = 0
 
@@ -75,8 +74,7 @@ class Walk(StateData.StateData):
         base.localAvatar.setWalkSpeedNormal()
         self.swimSound = swimSound
         self.swimSoundPlaying = 0
-        base.localAvatar.b_setAnimState('swim', base.localAvatar.animMultiplier)
-        base.localAvatar.startSleepSwimTest()
+        base.localAvatar.setAnimState('swim', 1.0)
         taskMgr.add(self.__swim, 'localToonSwimming')
 
     def exitSwimming(self):
@@ -84,14 +82,18 @@ class Walk(StateData.StateData):
         self.swimSound.stop()
         del self.swimSound
         self.swimSoundPlaying = 0
-        base.localAvatar.stopSleepSwimTest()
+        speed = base.localAvatar.controlManager.get('swim').vel
+        if speed > 0:
+            base.localAvatar.setAnimState('run', 1.0)
+        if speed < 0:
+            base.localAvatar.setAnimState('walk', -1.0)
 
     def __swim(self, task):
-        speed = base.mouseInterfaceNode.getSpeed()
+        speed = base.localAvatar.controlManager.get('swim').vel
         if speed == 0 and self.swimSoundPlaying:
             self.swimSoundPlaying = 0
             self.swimSound.stop()
-        elif speed > 0 and self.swimSoundPlaying == 0 and self.IsSwimSoundAudible:
+        elif not self.swimSoundPlaying and self.isSwimSoundAudible:
             self.swimSoundPlaying = 1
             base.playSfx(self.swimSound, looping=1)
         return Task.cont

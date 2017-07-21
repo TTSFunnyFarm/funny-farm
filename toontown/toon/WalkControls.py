@@ -48,6 +48,8 @@ class WalkControls(DirectObject):
 
     def useSwimControls(self):
         self.controlManager.use('swim', self)
+        self.soundRun.stop()
+        self.soundWalk.stop()
 
     def useGhostControls(self):
         self.controlManager.use('ghost', self)
