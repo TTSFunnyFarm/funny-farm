@@ -1,6 +1,6 @@
 from panda3d.core import *
 from toontown.building import Door
-from toontown.hood import SkyUtil, Hood
+from toontown.hood import SkyUtil, Hood, SubmergeManager
 from toontown.hood.ToonHood import ToonHood
 from toontown.toonbase import ToontownGlobals, FunnyFarmGlobals
 import House
@@ -52,8 +52,19 @@ class EstateHood(ToonHood):
             house.model.reparentTo(self.geom)
             house.model.setPosHpr(*HOUSE_POSITIONS[housePosIdx])
             self.houses.append(house)
+        self.submergeMgr = SubmergeManager.SubmergeManager(self.sky, ToontownGlobals.EstateWakeWaterHeight)
+
+    def startActive(self):
+        ToonHood.startActive(self)
+        self.submergeMgr.start()
+
+    def enterPlace(self, shopId, zoneId):
+        ToonHood.enterPlace(self, shopId, zoneId)
+        self.submergeMgr.stop()
 
     def unload(self):
+        self.submergeMgr.cleanup()
+        self.submergeMgr = None
         ToonHood.unload(self)
         for house in self.houses:
             house.unload()
