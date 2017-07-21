@@ -97,7 +97,7 @@ class NPCToon(NPCToonBase):
         if isLocalToon:
             self.freeAvatar()
             taskMgr.remove(self.uniqueName('clearMovie'))
-            self.clearMovie(None)
+            self.sendClearMovie(None)
             self.nametag3d.clearDepthTest()
             self.nametag3d.clearBin()
 
@@ -112,8 +112,7 @@ class NPCToon(NPCToonBase):
             quat.setHpr((-150, -2, 0))
             camera.posQuatInterval(1, Point3(-5, 9, self.getHeight() - 0.5), quat, other=self, blendType='easeOut').start()
 
-    def setMovie(self, mode, npcId, avId, quests, timestamp):
-        timeStamp = ClockDelta.globalClockDelta.localElapsedTime(timestamp)
+    def setMovie(self, mode, npcId, avId, quests):
         isLocalToon = avId == base.localAvatar.doId
         if mode == NPCToons.QUEST_MOVIE_CLEAR:
             self.cleanupMovie()
@@ -188,15 +187,6 @@ class NPCToon(NPCToonBase):
                 fullString += '\x07' + leavingString
         elif mode == NPCToons.QUEST_MOVIE_ASSIGN:
             questId, rewardId, toNpcId = quests
-            scriptId = 'quest_assign_' + str(questId)
-            if QuestParser.questDefined(scriptId):
-                if self.curQuestMovie:
-                    self.curQuestMovie.timeout()
-                    self.curQuestMovie.cleanup()
-                    self.curQuestMovie = None
-                self.curQuestMovie = QuestParser.NPCMoviePlayer(scriptId, av, self)
-                self.curQuestMovie.play()
-                return
             if isLocalToon:
                 self.setupCamera(mode)
             fullString += Quests.chooseQuestDialog(questId, Quests.QUEST)
@@ -243,20 +233,114 @@ class NPCToon(NPCToonBase):
         self.sendUpdate('chooseTrack', [trackId])
         return
 
-    def rejectAvatar(self):
-        self.busy = base.localAvatar.doId
-        self.setMovie(NPCToons.QUEST_MOVIE_REJECT, self.npcId, base.localAvatar.doId, [], ClockDelta.globalClockDelta.getRealNetworkTime())
-        taskMgr.doMethodLater(5.5, self.clearMovie, self.uniqueName('clearMovie'))
+    def avatarEnter(self):
+        # TODO: This should be routed to questManager.requestInteract. For now, tell them to fuck off.
+        self.rejectAvatar(base.localAvatar.doId)
 
-    def clearMovie(self, task):
+    def sendTimeoutMovie(self, task):
+        self.pendingAvId = None
+        self.pendingQuests = None
+        self.pendingTracks = None
+        self.pendingTrackQuest = None
+        self.setMovie(NPCToons.QUEST_MOVIE_TIMEOUT,
+         self.npcId,
+         self.busy,
+         [])
+        self.sendClearMovie(None)
+        self.busy = 0
+        return Task.done
+
+    def sendClearMovie(self, task):
         self.pendingAvId = None
         self.pendingQuests = None
         self.pendingTracks = None
         self.pendingTrackQuest = None
         self.busy = 0
-        self.setMovie(NPCToons.QUEST_MOVIE_CLEAR, self.npcId, 0, [], ClockDelta.globalClockDelta.getRealNetworkTime())
+        self.setMovie(NPCToons.QUEST_MOVIE_CLEAR,
+         self.npcId,
+         0,
+         [])
         return Task.done
 
-    def avatarEnter(self):
-        # TODO: This should be routed to questManager.requestInteract. For now, tell them to fuck off.
-        self.rejectAvatar()
+    def rejectAvatar(self, avId):
+        self.busy = avId
+        self.setMovie(NPCToons.QUEST_MOVIE_REJECT,
+         self.npcId,
+         avId,
+         [])
+        taskMgr.doMethodLater(5.5, self.sendClearMovie, self.uniqueName('clearMovie'))
+
+    def rejectAvatarTierNotDone(self, avId):
+        self.busy = avId
+        self.setMovie(NPCToons.QUEST_MOVIE_TIER_NOT_DONE,
+         self.npcId,
+         avId,
+         [])
+        taskMgr.doMethodLater(5.5, self.sendClearMovie, self.uniqueName('clearMovie'))
+
+    def completeQuest(self, avId, questId):
+        self.busy = avId
+        self.setMovie(NPCToons.QUEST_MOVIE_COMPLETE,
+         self.npcId,
+         avId,
+         [questId, 0])
+        taskMgr.doMethodLater(60.0, self.sendTimeoutMovie, self.uniqueName('clearMovie'))
+
+    def incompleteQuest(self, avId, questId, completeStatus, toNpcId):
+        self.busy = avId
+        self.setMovie(NPCToons.QUEST_MOVIE_INCOMPLETE,
+         self.npcId,
+         avId,
+         [questId, completeStatus, toNpcId])
+        taskMgr.doMethodLater(60.0, self.sendTimeoutMovie, self.uniqueName('clearMovie'))
+
+    def assignQuest(self, avId, questId, rewardId, toNpcId):
+        self.busy = avId
+        if self.questCallback:
+            self.questCallback()
+        self.setMovie(NPCToons.QUEST_MOVIE_ASSIGN,
+         self.npcId,
+         avId,
+         [questId, rewardId, toNpcId])
+        taskMgr.doMethodLater(60.0, self.sendTimeoutMovie, self.uniqueName('clearMovie'))
+
+    def presentQuestChoice(self, avId, quests):
+        self.busy = avId
+        self.pendingAvId = avId
+        self.pendingQuests = quests
+        flatQuests = []
+        for quest in quests:
+            flatQuests.extend(quest)
+
+        self.setMovie(NPCToons.QUEST_MOVIE_QUEST_CHOICE,
+         self.npcId,
+         avId,
+         flatQuests)
+        taskMgr.doMethodLater(60.0, self.sendTimeoutMovie, self.uniqueName('clearMovie'))
+
+    def presentTrackChoice(self, avId, questId, tracks):
+        self.busy = avId
+        self.pendingAvId = avId
+        self.pendingTracks = tracks
+        self.pendingTrackQuest = questId
+        self.setMovie(NPCToons.QUEST_MOVIE_TRACK_CHOICE,
+         self.npcId,
+         avId,
+         tracks)
+        taskMgr.doMethodLater(60.0, self.sendTimeoutMovie, self.uniqueName('clearMovie'))
+
+    def cancelChoseQuest(self, avId):
+        self.busy = avId
+        self.setMovie(NPCToons.QUEST_MOVIE_QUEST_CHOICE_CANCEL,
+         self.npcId,
+         avId,
+         [])
+        taskMgr.doMethodLater(60.0, self.sendTimeoutMovie, self.uniqueName('clearMovie'))
+
+    def cancelChoseTrack(self, avId):
+        self.busy = avId
+        self.setMovie(NPCToons.QUEST_MOVIE_TRACK_CHOICE_CANCEL,
+         self.npcId,
+         avId,
+         [])
+        taskMgr.doMethodLater(60.0, self.sendTimeoutMovie, self.uniqueName('clearMovie'))

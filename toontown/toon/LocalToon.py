@@ -408,6 +408,15 @@ class LocalToon(Toon.Toon, WalkControls):
     def getMaxBankMoney(self):
         return self.maxBankMoney
 
+    def addMoney(self, money):
+        newMoney = self.money + money
+        if newMoney > self.maxMoney:
+            self.setMoney(self.maxMoney)
+            leftover = newMoney - self.maxMoney
+            self.setBankMoney(self.bankMoney + leftover)
+        else:
+            self.setMoney(newMoney)
+
     def setTrackAccess(self, trackArray):
         self.trackArray = trackArray
         if self.inventory:
@@ -516,7 +525,7 @@ class LocalToon(Toon.Toon, WalkControls):
     def getMaxLevelExp(self):
         return FunnyFarmGlobals.LevelExperience[self.level - 1]
 
-    def addLevelExp(self, exp):
+    def addLevelExp(self, exp, trackFrame = 0, carryIndex = 0, carryAmount = 0):
         totalExp = self.levelExp + exp
         if totalExp >= self.getMaxLevelExp():
             leftover = totalExp - self.getMaxLevelExp()
@@ -524,10 +533,10 @@ class LocalToon(Toon.Toon, WalkControls):
                 self.setLevelExp(leftover)
             else:
                 self.setLevelExp(self.getMaxLevelExp())
-                self.showHpString('%d XP' % exp, color=Vec4(1.0, 0.5, 1.0, 1.0))
+                self.showHpString('%d XP' % exp, duration=1.0, color=Vec4(1.0, 0.5, 1.0, 1.0), trackFrame=trackFrame, carryIndex=carryIndex, carryAmount=carryAmount)
         else:
             self.setLevelExp(totalExp)
-            self.showHpString('%d XP' % exp, color=Vec4(1.0, 0.5, 1.0, 1.0))
+            self.showHpString('%d XP' % exp, duration=1.0, color=Vec4(1.0, 0.5, 1.0, 1.0), trackFrame=trackFrame, carryIndex=carryIndex, carryAmount=carryAmount)
 
     def levelUp(self, exp):
         if (self.level + 1) > FunnyFarmGlobals.ToonLevelCap:
@@ -1420,7 +1429,7 @@ class LocalToon(Toon.Toon, WalkControls):
             seq = Sequence(Parallel(self.hpText.posInterval(1.0, Point3(0, 0, self.height + 1.5), blendType='easeOut'), self.strText.posInterval(1.0, Point3(0, 0, self.height + 2.5), blendType='easeOut')), Wait(0.85), Parallel(self.hpText.colorInterval(0.1, Vec4(r, g, b, 0), 0.1), self.strText.colorInterval(0.1, Vec4(r, g, b, 0), 0.1)), Func(self.hideHpText))
             seq.start()
 
-    def showHpString(self, text, duration = 0.85, scale = 0.7, color = Vec4(1, 0, 0, 1)):
+    def showHpString(self, text, duration = 0.85, scale = 0.7, color = Vec4(1, 0, 0, 1), trackFrame = 0, carryIndex = 0, carryAmount = 0):
         if self.HpTextEnabled and not self.ghostMode:
             if text != '':
                 if self.hpText:
@@ -1434,8 +1443,42 @@ class LocalToon(Toon.Toon, WalkControls):
                 self.hpText = self.attachNewNode(self.hpTextNode)
                 self.hpText.setScale(scale)
                 self.hpText.setBillboardAxis()
-                self.hpText.setPos(0, 0, self.height / 2)
-                seq = Sequence(self.hpText.posInterval(1.0, Point3(0, 0, self.height + 1.3), blendType='easeOut'), Wait(duration), self.hpText.colorScaleInterval(1.0, Vec4(1.0, 1.0, 1.0, 0)), Func(self.hideHpText))
+                offset = 0
+                if carryIndex:
+                    if carryIndex == 5:
+                        self.HpTextGenerator.setText(TTLocalizer.RewardCarryToonTasksText % carryAmount)
+                    elif carryIndex == 6:
+                        self.HpTextGenerator.setText(TTLocalizer.RewardCarryJellybeansText % carryAmount)
+                    elif carryIndex == 7:
+                        self.HpTextGenerator.setText(TTLocalizer.RewardCarryGagsText % carryAmount)
+                    self.HpTextGenerator.setTextColor(Vec4(1, 0.5, 0, 1))
+                    self.auxText = self.attachNewNode(self.HpTextGenerator.generate())
+                    self.auxText.setScale(scale)
+                    self.auxText.setBillboardAxis()
+                    self.auxText.setPos(0, 0, self.height / 2)
+                    offset += 1
+                elif trackFrame:
+                    self.HpTextGenerator.setText(TTLocalizer.RewardTrackFrameText % {'trackName': BattleGlobalTracks[self.trackProgressId], 'frameNum': trackFrame})
+                    self.HpTextGenerator.setTextColor(Vec4(0.7, 0.7, 0.7, 1))
+                    self.auxText = self.attachNewNode(self.HpTextGenerator.generate())
+                    self.auxText.setScale(scale)
+                    self.auxText.setBillboardAxis()
+                    self.auxText.setPos(0, 0, self.height / 2)
+                    offset += 1
+                self.hpText.setPos(0, 0, (self.height / 2) + offset)
+                if self.auxText:
+                    seq = Sequence(
+                        Parallel(
+                            self.hpText.posInterval(1.0, Point3(0, 0, (self.height + 1.3) + offset), blendType='easeOut'),
+                            self.auxText.posInterval(1.0, Point3(0, 0, self.height + 1.3), blendType='easeOut')
+                        ),
+                        Wait(duration),
+                        self.hpText.colorScaleInterval(1.0, Vec4(1.0, 1.0, 1.0, 0)),
+                        self.auxText.colorScaleInterval(1.0, Vec4(1.0, 1.0, 1.0, 0)),
+                        Func(self.hideHpText)
+                    )
+                else:
+                    seq = Sequence(self.hpText.posInterval(1.0, Point3(0, 0, self.height + 1.3), blendType='easeOut'), Wait(duration), self.hpText.colorScaleInterval(1.0, Vec4(1.0, 1.0, 1.0, 0)), Func(self.hideHpText))
                 seq.start()
 
     def hideHpText(self):
@@ -1446,6 +1489,9 @@ class LocalToon(Toon.Toon, WalkControls):
         if self.strText:
             self.strText.removeNode()
             self.strText = None
+        if hasattr(self, 'auxText'):
+            self.auxText.removeNode()
+            del self.auxText
         self.nametag3d.clearDepthTest()
         self.nametag3d.clearBin()
         self.sillySurgeText = False

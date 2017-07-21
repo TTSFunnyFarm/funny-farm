@@ -458,6 +458,9 @@ class Quest:
 def getQuest(questId):
     return Quest(questId)
 
+def getReward(questId):
+    return QuestDict[questId][7]
+
 QuestDict = {
  # These first few quests are kind of weird because I'm
  # trying to plan out how cutscenes will fit in and stuff
