@@ -85,8 +85,10 @@ class Walk(StateData.StateData):
         speed = base.localAvatar.controlManager.get('swim').vel
         if speed > 0:
             base.localAvatar.setAnimState('run', 1.0)
-        if speed < 0:
+        elif speed < 0:
             base.localAvatar.setAnimState('walk', -1.0)
+        else:
+            base.localAvatar.setAnimState('neutral', 1.0)
 
     def __swim(self, task):
         speed = base.localAvatar.controlManager.get('swim').vel
