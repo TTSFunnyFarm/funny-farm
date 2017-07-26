@@ -46,6 +46,7 @@ class LocalToon(Toon.Toon, WalkControls):
         self.soundWhisper = base.loader.loadSfx('phase_3.5/audio/sfx/GUI_whisper_3.ogg')
         self.soundPhoneRing = base.loader.loadSfx('phase_3.5/audio/sfx/telephone_ring.ogg')
         self.soundSystemMessage = base.loader.loadSfx('phase_3/audio/sfx/clock03.ogg')
+        self.rewardSfx = base.loader.loadSfx('phase_3.5/audio/sfx/tt_s_gui_sbk_cdrSuccess.ogg')
         self.levelUpSfx = base.loader.loadSfx('phase_4/audio/sfx/MG_sfx_travel_game_bonus.ogg')
         self.zoneId = None
         self.hasGM = False
@@ -1451,30 +1452,32 @@ class LocalToon(Toon.Toon, WalkControls):
                         self.HpTextGenerator.setText(TTLocalizer.RewardCarryJellybeansText % carryAmount)
                     elif carryIndex == 7:
                         self.HpTextGenerator.setText(TTLocalizer.RewardCarryGagsText % carryAmount)
-                    self.HpTextGenerator.setTextColor(Vec4(1, 0.5, 0, 1))
+                    self.HpTextGenerator.setTextColor(Vec4(0.9, 0.6, 0, 1))
                     self.auxText = self.attachNewNode(self.HpTextGenerator.generate())
-                    self.auxText.setScale(scale)
+                    self.auxText.setScale(scale * 0.7)
                     self.auxText.setBillboardAxis()
                     self.auxText.setPos(0, 0, self.height / 2)
-                    offset += 1
+                    offset += 0.7
                 elif trackFrame:
-                    self.HpTextGenerator.setText(TTLocalizer.RewardTrackFrameText % {'trackName': BattleGlobalTracks[self.trackProgressId], 'frameNum': trackFrame})
-                    self.HpTextGenerator.setTextColor(Vec4(0.7, 0.7, 0.7, 1))
+                    self.HpTextGenerator.setText(TTLocalizer.RewardTrackFrameText % {'trackName': TTLocalizer.BattleGlobalTracks[self.trackProgressId], 'frameNum': trackFrame})
+                    self.HpTextGenerator.setTextColor(Vec4(0.5, 0.5, 0.5, 1))
                     self.auxText = self.attachNewNode(self.HpTextGenerator.generate())
-                    self.auxText.setScale(scale)
+                    self.auxText.setScale(scale * 0.7)
                     self.auxText.setBillboardAxis()
                     self.auxText.setPos(0, 0, self.height / 2)
-                    offset += 1
+                    offset += 0.7
                 self.hpText.setPos(0, 0, (self.height / 2) + offset)
-                if self.auxText:
+                if hasattr(self, 'auxText'):
                     seq = Sequence(
                         Parallel(
                             self.hpText.posInterval(1.0, Point3(0, 0, (self.height + 1.3) + offset), blendType='easeOut'),
                             self.auxText.posInterval(1.0, Point3(0, 0, self.height + 1.3), blendType='easeOut')
                         ),
                         Wait(duration),
-                        self.hpText.colorScaleInterval(1.0, Vec4(1.0, 1.0, 1.0, 0)),
-                        self.auxText.colorScaleInterval(1.0, Vec4(1.0, 1.0, 1.0, 0)),
+                        Parallel(
+                            self.hpText.colorScaleInterval(1.0, Vec4(1.0, 1.0, 1.0, 0)),
+                            self.auxText.colorScaleInterval(1.0, Vec4(1.0, 1.0, 1.0, 0))
+                        ),
                         Func(self.hideHpText)
                     )
                 else:
