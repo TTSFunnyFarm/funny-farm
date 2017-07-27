@@ -4522,43 +4522,21 @@ QuestScript150_2 = 'To make friends, find another player, and use the New Friend
 QuestScript150_3 = 'Once you have made a friend, come back here.'
 QuestScript150_4 = 'Some tasks are too difficult to do alone!'
 TutorialGreeting = 'Hello! Come over here using the arrow keys.'
-TutorialIntro = [
-    'Welcome to Funny Farm.',
-    'Many many years ago, Toontown was invaded by evil business robots called Cogs.',
-    'The Cogs despise all silliness, and they can\'t take a joke!',
-    'For 10 long years the Toons fought Cogs with silly jokes and gags...',
-    '...until one day, they became too strong for us.',
-    'We left Toontown and came to Funny Farm, a faraway land that we abandoned long ago.',
-    'But I\'ll tell you more on that later. Let\'s get you some gags.'
-]
-TutorialGags = [
-    'Throw and Squirt are the two most basic gag tracks, so I\'ll give you these to start.',
-    'As you progress, you will gain lots of new gags, including special sugary drinks to boost your stats!'
-]
-TutorialLaffMeter = [
-    'Oh! You also need a Laff meter!',
-    'If your Laff meter gets too low, you\'ll be sad!',
-    'A happy Toon is a healthy Toon!'
-]
-TutorialBook = [
-    'Here is your Shticker Book...',
-    'You\'ll find all sorts of neat-o stuff in there.'
-]
-TutorialChat = [
-    'And finally, here is your chat button.',
-    'You can use that button to say things! It\'ll come in handy every once in a while.'
-]
-TutorialTraining = [
-    'Now let\'s try out those new gags I gave you.',
-    'Practice throwing some pies at the targets ahead.',
-    'Nicely done! You\'re a natural!'
-]
-TutorialCog = [
-    'Uh oh...',
-    'It\'s happening already.',
-    'Quick! Go defeat that Cog!'
-]
-TutorialOutro = 'This can\'t be happening... I have to go and investigate!'
+TutorialIntro = 'Welcome to Funny Farm.\x07Many many years ago, Toontown was invaded by evil business robots called Cogs.\x07The Cogs despise all silliness, and they can\'t take a joke!\x07For 10 long years the Toons fought Cogs with silly jokes and gags...\x07...until one day, they became too strong for us.\x07We left Toontown and built a new settlement here, called Funny Farm.\x07But now it\'s only a matter of time before the Cogs find us again.\x07With that said, we need to get you prepared with some gags!'
+TutorialGags_0 = 'Throw and Squirt are the two most basic gag tracks, so I\'ll give you these to start.'
+TutorialGags_1 = 'As you progress, you will gain lots of new gags...\x07...including some new inventions being worked on by our Loony Labs scientists right now!'
+TutorialLaffMeter_0 = 'Oh! You also need a Laff meter!\x07If your Laff meter gets too low, you\'ll be sad!'
+TutorialLaffMeter_1 = 'A happy Toon is a healthy Toon!'
+TutorialBook_0 = 'Here is your Shticker Book...'
+TutorialBook_1 = 'You can keep track of your location, Gags, ToonTasks, and all of your other progress in that book.\x07It will be very useful to you.'
+TutorialChat_0 = 'Also, here is your chat button.'
+TutorialChat_1 = 'You can use that button to say things!\x07It might come in handy sometimes.\x07Can\'t always keep your thoughts to yourself!'
+TutorialTraining_0 = 'Now let\'s try out those new gags I gave you.'
+TutorialTraining_1 = 'Practice throwing some pies at the targets ahead.'
+TutorialTraining_2 = 'Nicely done! You\'re a natural!'
+TutorialCog_0 = 'Uh oh...'
+TutorialCog_1 = 'It\'s happening already.\x07Quick! Go defeat that Cog!'
+TutorialOutro = 'This is not good... I have to go and investigate!'
 MissingKeySanityCheck = 'Ignore me'
 SellbotBossName = 'Senior V. P.'
 CashbotBossName = 'C. F. O.'

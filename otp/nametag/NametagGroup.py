@@ -120,6 +120,9 @@ class NametagGroup:
             # unless the game says otherwise.
             if not self.chatFlags & CFNoQuitButton:
                 return NametagGlobals.quitButtons
+            # It's very much possible to have a page button at the end of a chat, TTR.
+            elif self.chatFlags & CFPageButton:
+                return NametagGlobals.pageButtons
             else:
                 return None
         else:

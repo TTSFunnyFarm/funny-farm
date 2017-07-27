@@ -276,6 +276,7 @@ class ShtikerBook(DirectFrame):
 
     def open(self, esc=False):
         self.esc = esc
+        base.localAvatar.enabled = 0
         base.localAvatar.disableAvatarControls()
         base.localAvatar.endAllowPies()
         base.localAvatar.invPage.ignoreOnscreenHooks()
@@ -302,6 +303,7 @@ class ShtikerBook(DirectFrame):
 
     def __handleClose(self):
         self.showButton()
+        base.localAvatar.enabled = 1
         base.localAvatar.exitCloseBook()
         base.localAvatar.enableAvatarControls()
         base.localAvatar.beginAllowPies()
