@@ -1,15 +1,16 @@
 from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
 from direct.interval.IntervalGlobal import *
-from toontown.login import AvatarChooser
-from toontown.makeatoon import MakeAToon
-from toontown.toontowngui import TTDialog
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
+from toontown.login.AvatarChooser import AvatarChooser
+from toontown.makeatoon.MakeAToon import MakeAToon
+from toontown.toontowngui.TTDialog import TTDialog
+from toontown.quest.QuestManager import QuestManager
 from otp.otpbase import OTPLocalizer
 from otp.nametag import NametagGlobals
+from PlayGame import PlayGame
 import random
-import PlayGame
 
 class FFClientRepository(DirectObject):
     notify = directNotify.newCategory('ClientRepository')
@@ -19,7 +20,8 @@ class FFClientRepository(DirectObject):
     def __init__(self):
         self.avChoice = None
         self.avCreate = None
-        self.playGame = PlayGame.PlayGame()
+        self.playGame = PlayGame()
+        self.questManager = QuestManager()
         self.playingGame = 0
         self.waitDialog = None
 
@@ -28,7 +30,7 @@ class FFClientRepository(DirectObject):
             base.transitions.fadeIn(1.0)
             # We usually won't get here, but just in case the AI is taking extra long, we'll have them wait.
             # In the future, as we build up our AI more and more, there's a better chance we'll get here.
-            self.waitDialog = TTDialog.TTDialog(parent=aspect2dp, style=TTDialog.NoButtons, text=OTPLocalizer.AIPleaseWait)
+            self.waitDialog = TTDialog(parent=aspect2dp, style=TTDialog.NoButtons, text=OTPLocalizer.AIPleaseWait)
             self.waitDialog.show()
             self.accept('ai-done', self.enterChooseAvatar, [True])
             taskMgr.doMethodLater(self.AI_TIMEOUT, self.aiTimeout, 'aiTimeout')
@@ -51,7 +53,7 @@ class FFClientRepository(DirectObject):
             base.transitions.fadeOut(1.0)
         else:
             base.transitions.fadeScreen(1.0)
-        self.avChoice = AvatarChooser.AvatarChooser()
+        self.avChoice = AvatarChooser()
         self.avChoice.load()
         self.avChoice.enter()
 
@@ -63,7 +65,7 @@ class FFClientRepository(DirectObject):
     def enterCreateAvatar(self, index):
         if self.avChoice:
             self.exitChooseAvatar()
-        self.avCreate = MakeAToon.MakeAToon('MakeAToon-done', index, 1)
+        self.avCreate = MakeAToon('MakeAToon-done', index, 1)
         self.avCreate.load()
         self.avCreate.enter()
 
@@ -81,7 +83,8 @@ class FFClientRepository(DirectObject):
     def setupLocalAvatar(self, tutorialFlag=0):
         base.localAvatar.reparentTo(render)
         base.localAvatar.setupControls()
-        base.localAvatar.setupSmartCamera()
+        base.localAvatar.initializeSmartCamera()
+        base.localAvatar.startUpdateSmartCamera()
         base.localAvatar.initInterface()
         base.localAvatar.useLOD(1000)
         base.localAvatar.startBlink()

@@ -154,27 +154,34 @@ class LocalToon(Toon.Toon, WalkControls):
         return ('%s-%s' % (idString, str(self.doId)))
 
     def enable(self):
-        self.collisionsOn()
-        self.enableAvatarControls()
-        self.setupSmartCamera()
-        self.book.showButton()
-        self.beginAllowPies()
-        self.invPage.acceptOnscreenHooks()
-        self.questPage.acceptOnscreenHooks()
-        self.setAnimState('neutral')
+        try:
+            assert self.enabled == 1
+        except:
+            self.enabled = 1
+            self.collisionsOn()
+            self.enableAvatarControls()
+            self.startUpdateSmartCamera()
+            self.book.showButton()
+            self.beginAllowPies()
+            self.invPage.acceptOnscreenHooks()
+            self.questPage.acceptOnscreenHooks()
+            self.setAnimState('neutral')
 
     def disable(self):
-        self.stopUpdateSmartCamera()
-        self.shutdownSmartCamera()
-        self.disableAvatarControls()
-        self.collisionsOff()
-        self.book.hideButton()
-        self.endAllowPies()
-        self.invPage.ignoreOnscreenHooks()
-        self.invPage.hideInventoryOnscreen()
-        self.questPage.ignoreOnscreenHooks()
-        self.questPage.hideQuestsOnscreen()
-        self.stopLookAround()
+        try:
+            assert self.enabled == 0
+        except:
+            self.enabled = 0
+            self.stopUpdateSmartCamera()
+            self.disableAvatarControls()
+            self.collisionsOff()
+            self.book.hideButton()
+            self.endAllowPies()
+            self.invPage.ignoreOnscreenHooks()
+            self.invPage.hideInventoryOnscreen()
+            self.questPage.ignoreOnscreenHooks()
+            self.questPage.hideQuestsOnscreen()
+            self.stopLookAround()
 
     def setZoneId(self, zoneId):
         self.zoneId = zoneId
@@ -280,6 +287,8 @@ class LocalToon(Toon.Toon, WalkControls):
         self.maxHp = maxHp
         if self.hp >= self.maxHp:
             self.hp = self.maxHp
+        if self.hp - oldHp == 0:
+            return
         if self.laffMeter:
             self.laffMeter.adjustFace(self.hp, self.maxHp)
         if showText:
@@ -501,6 +510,8 @@ class LocalToon(Toon.Toon, WalkControls):
         self.trackProgress = progress
         if hasattr(self, 'trackPage'):
             self.trackPage.updatePage()
+        base.avatarData.setTrackProgress = self.getTrackProgress()
+        dataMgr.saveToonData(base.avatarData)
 
     def getTrackProgress(self):
         return [self.trackProgressId, self.trackProgress]

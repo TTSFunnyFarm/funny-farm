@@ -270,7 +270,7 @@ class NametagGroup:
         for nametag in self.nametags:
             nametag.tick()
             if (NametagGlobals.masterNametagsActive and self.active) or self.hasButton():
-                nametag.setClickRegionEvent('Nametag-nextChat')
+                nametag.setClickRegionEvent(self.getUniqueId())
             else:
                 nametag.setClickRegionEvent(None)
 

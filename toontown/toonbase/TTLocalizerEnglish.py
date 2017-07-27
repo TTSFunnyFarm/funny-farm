@@ -588,7 +588,7 @@ QuestsTailorQuestSCString = 'I need to see a Tailor.'
 QuestMovieQuestChoiceCancel = 'Come back later if you need a ToonTask! Bye!'
 QuestMovieTrackChoiceCancel = 'Come back when you are ready to decide! Bye!'
 QuestMovieQuestChoice = 'Choose a ToonTask.'
-QuestMovieTrackChoice = 'Ready to decide? Choose a track, or feel free to come back later.'
+QuestMovieTrackChoice = 'Ready to decide?'
 GREETING = 0
 QUEST = 1
 INCOMPLETE = 2
@@ -597,17 +597,23 @@ INCOMPLETE_WRONG_NPC = 4
 COMPLETE = 5
 LEAVING = 6
 QuestDialogDict = {
- 1001: {QUEST: '',
+ 1001: {GREETING: '',
+        QUEST: '',
         COMPLETE: 'Boy, that was scary. This is not good...\x07I\'m going to need your help figuring out this problem.',
         LEAVING: ''},
- 1004: {QUEST: 'Before we can get started, you should begin learning another gag track.\x07Learning how to use other gags is a very important part of being able to defeat the Cogs.\x07To start, you can choose between Sound and Lure.\x07Come back to me when you are ready to decide.',
-        INCOMPLETE_PROGRESS: 'Ready to choose?',
-        COMPLETE: 'Ah, excellent choice.\x07To start learning these gags, you will need to collect film strips.\x07You can earn film strips from ToonTasks in addition to your normal experience.\x07There are 15 film strips, which form an animation to show you how to use your new gags.\x07When you collect all 15, you can start buying those gags from the Gag Shop!\x07You can check your progress in the Shticker Book.',
+ 1003: {GREETING: '',
+        QUEST: '',
+        COMPLETE: 'The Silly Meter is broken!\x07Things in Funny Farm definitely aren\'t funny anymore...\x07The only way we can restore silliness to our town is to drive the Cogs out of here!',
         LEAVING: ''},
- 1005: {QUEST: 'Now, let\'s get to business.\x07First we need to check the status of the streets.\x07Could you head out to Rickety Road and see what\'s going on?',
-        LEAVING: '',
+ 1004: {GREETING: '',
+        QUEST: 'Before we get started, you should begin learning another gag track.\x07Learning how to use different types of gags is a very important part of being able to defeat the Cogs.\x07To start, you can choose between Sound and Lure.\x07Come back to me when you are ready to decide.',
+        COMPLETE: 'Ah, excellent choice.\x07To start learning these gags, you will need to collect film strips.\x07You can earn film strips from ToonTasks in addition to your normal experience points.\x07There are 15 film strips, which form an animation to show you how to use your new gags.\x07When you collect all 15, you can start buying those gags from the Gag Shop!\x07You can check your progress in the Shticker Book.',
+        LEAVING: ''},
+ 1005: {GREETING: '',
+        QUEST: 'Now, let\'s get to business.\x07First we need to check the status of the streets.\x07Could you head out to Rickety Road and see what\'s going on out there?',
+        INCOMPLETE_PROGRESS: 'Could you please go and check the status of Rickety Road?',
         COMPLETE: 'The Cogs are already invading the streets?\x07This might be worse than I thought!\x07Thanks for your help.',
-        INCOMPLETE_PROGRESS: 'Could you please go and check the status of Rickety Road?'}
+        LEAVING: ''}
 }
 ChatGarblerDog = ['woof', 'arf', 'rruff']
 ChatGarblerCat = ['meow', 'mew']

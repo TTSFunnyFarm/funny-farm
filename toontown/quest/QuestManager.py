@@ -1,3 +1,4 @@
+from direct.task.Task import Task
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.toonbase import FunnyFarmGlobals
 import Quests
@@ -5,28 +6,103 @@ import Quests
 class QuestManager:
     notify = directNotify.newCategory('QuestManager')
 
-    def giveQuest(self, questId):
+    def npcGiveQuest(self, npc, questId):
+        toNpcId = Quests.getToNpcId(questId)
+        npc.assignQuest(base.localAvatar.doId, questId, toNpcId)
         base.localAvatar.addQuest(questId)
 
-    def completeQuest(self, questId):
-        levelUp = self.giveRewards(questId)
+    def completeQuest(self, npc, questId):
         base.localAvatar.removeQuest(questId)
+        levelUp = 0
+        if Quests.getQuestFinished(questId):
+            # It's the last quest in the progression, give them their reward.
+            levelUp = self.giveReward(questId)
         if not levelUp:
-            base.localAvatar.setHealth(base.localAvatar.maxHp, base.localAvatar.maxHp, 1)
+            base.localAvatar.setHealth(base.localAvatar.maxHp, base.localAvatar.maxHp)
+        nextQuest = Quests.getNextQuest(questId)
+        if nextQuest == Quests.NA:
+            return
+        if Quests.getQuestFinished(questId):
+            taskMgr.doMethodLater(1.5, self.__handleCompleteQuest, 'completeQuest', [npc, nextQuest])
+        else:
+            self.__handleCompleteQuest(npc, nextQuest)
+
+    def __handleCompleteQuest(self, npc, nextQuest):
+        # TODO: determine if the next quest has a cutscene instead of regular dialogue
+        try:
+            self.npcGiveQuest(npc, nextQuest)
+        except:
+            pass
+        return Task.done
 
     def requestInteract(self, npc):
         toon = base.localAvatar
+        # First check if they need to turn in any quests.
         for questDesc in toon.quests:
             questId, progress = questDesc
             quest = Quests.getQuest(questId)
-            quest.setProgress(progress)
-            complete = quest.getCompletionStatus() is Quests.COMPLETE
-            if complete and quest.toNpc == npc.npcId:
-                npc.completeQuest(toon.doId, questId)
+            quest.setQuestProgress(progress)
+            toNpcId = quest.toNpc
+            completeStatus = quest.getCompletionStatus()
 
-    def giveRewards(self, questId, choice = None):
+            if completeStatus != Quests.COMPLETE and quest.getType() not in [Quests.QuestTypeGoTo, Quests.QuestTypeChoose, Quests.QuestTypeDeliver]:
+                # Quest isn't complete, skip to the next one.
+                continue
+            if toNpcId == npc.getNpcId() or toNpcId == Quests.Any or toNpcId == Quests.ToonHQ and npc.getHq():
+                # They made it to the right NPC!
+                if quest.getType() == Quests.QuestTypeChoose:
+                    npc.presentTrackChoice(toon.doId, questId, quest.getChoices())
+                else:
+                    npc.completeQuest(toon.doId, questId)
+                return
+            else:
+                # Wrong NPC, not much we can do here.
+                continue
+
+        # Ok they can't turn in any quests, let's see if we can offer them any new ones.
+        if len(toon.quests) >= toon.getQuestCarryLimit():
+            # Their quests are full, we should say something to them.
+            for questDesc in toon.quests:
+                questId, progress = questDesc
+                quest = Quests.getQuest(questId)
+                quest.setQuestProgress(progress)
+                toNpcId = quest.toNpc
+                completeStatus = quest.getCompletionStatus()
+                if completeStatus == Quests.COMPLETE:
+                    # If they still have a quest that's complete, we must be at the wrong NPC.
+                    npc.incompleteQuest(toon.doId, questId, Quests.INCOMPLETE_WRONG_NPC, toNpcId)
+                else:
+                    if toNpcId == npc.getNpcId() or toNpcId == Quests.Any or toNpcId == Quests.ToonHQ and npc.getHq():
+                        # They came to the right place, but they still gotta finish!
+                        npc.incompleteQuest(toon.doId, questId, Quests.INCOMPLETE_PROGRESS, toNpcId)
+                    else:
+                        # Keep working on that task, _avName_!
+                        npc.incompleteQuest(toon.doId, questId, Quests.INCOMPLETE, toNpcId)
+                return # Yes, the NPC's response is only based on the player's first quest.
+        
+        # todo: quest tier upgrades
+        # todo: present quest choices
+        # for now, keep telling them to fuck off, we dont have any quests for them yet
+        npc.rejectAvatar(toon.doId)
+
+    def avatarChoseQuest(self, npc, questId):
         toon = base.localAvatar
-        quest = Quests.getQuest(questId)
+        if not toon:
+            return
+        self.npcGiveQuest(npc, questId)
+
+    def avatarChoseTrack(self, npc, questId, trackId):
+        toon = base.localAvatar
+        if not toon:
+            return
+        if trackId in [ToontownBattleGlobals.THROW_TRACK, ToontownBattleGlobals.SQUIRT_TRACK]:
+            self.notify.warning("toonId %s attempted to select trackId %d, which is a default track!" % (toon.doId, trackId))
+            return
+        npc.completeQuest(toon.doId, questId)
+        toon.setTrackProgress(trackId, 0)
+
+    def giveReward(self, questId):
+        toon = base.localAvatar
         reward = Quests.getReward(questId)
         expGained = 0
         trackFrame = 0
@@ -58,17 +134,12 @@ class QuestManager:
         else:
             if reward[0] == Quests.QuestRewardXP:
                 expGained = reward[1]
-            elif reward[0] == Quests.QuestRewardGagTraining:
-                if choice == None:
-                    self.notify.error('Cannot reward gag training, no choice given')
             elif reward[0] == Quests.QuestRewardJellybeans:
                 jellybeans = reward[1]
             elif reward[0] == Quests.QuestRewardCheesyEffect:
                 cheesyEffect = reward[1]
         if trackFrame > 0:
             toon.setTrackProgress(toon.trackProgressId, toon.trackProgress + 1)
-        if choice != None:
-            toon.setTrackProgress(choice, toon.trackProgress)
         if gagTrack != -1 and gagLevel != -1:
             trackArray = toon.getTrackAccess()
             trackArray[gagTrack] = 1
@@ -84,7 +155,7 @@ class QuestManager:
             toon.addMoney(jellybeans)
         if cheesyEffect > 0:
             toon.setCheesyEffect(cheesyEffect)
-        levelUp = (toon.levelExp + expGained) >= toon.maxLevelExp and (toon.level + 1) <= FunnyFarmGlobals.ToonLevelCap
+        levelUp = (toon.levelExp + expGained) >= toon.getMaxLevelExp() and (toon.level + 1) <= FunnyFarmGlobals.ToonLevelCap
         if expGained > 0:
             if carryToonTasks:
                 toon.addLevelExp(expGained, trackFrame=trackFrame, carryIndex=Quests.QuestRewardCarryToonTasks, carryAmount=carryToonTasks)
@@ -94,4 +165,6 @@ class QuestManager:
                 toon.addLevelExp(expGained, trackFrame=trackFrame, carryIndex=Quests.QuestRewardCarryGags, carryAmount=carryGags)
             else:
                 toon.addLevelExp(expGained, trackFrame=trackFrame)
+        if not levelUp:
+            base.playSfx(base.localAvatar.rewardSfx)
         return levelUp

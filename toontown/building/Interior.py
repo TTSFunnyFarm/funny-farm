@@ -34,9 +34,13 @@ class Interior(DirectObject):
         self.npcs = NPCToons.createNpcsInZone(self.zoneId)
         for i in xrange(len(self.npcs)):
             origin = self.interior.find('**/npc_origin_%d' % i)
-            self.npcs[i].reparentTo(render)
-            self.npcs[i].setPosHpr(origin.getPos(), origin.getHpr())
-            self.npcs[i].addActive()
+            if not origin.isEmpty():
+                self.npcs[i].reparentTo(render)
+                self.npcs[i].setPosHpr(origin, 0, 0, 0, 0, 0, 0)
+                self.npcs[i].origin = origin
+                self.npcs[i].addActive()
+            else:
+                self.notify.warning('generateNPCs(): Could not find npc_origin_%d' % i)
 
     def startActive(self):
         for door in self.interior.findAllMatches('**/door_double_*_ur'):

@@ -1,19 +1,19 @@
 from panda3d.core import *
 from direct.task.Task import Task
 from NPCToonBase import *
-# from toontown.quest import QuestParser
-# from toontown.quest import QuestChoiceGui
-# from toontown.quest import TrackChoiceGui
+from toontown.quest import Quests
+# from toontown.quest.QuestChoiceGui import QuestChoiceGui
+from toontown.quest.TrackChoiceGui import TrackChoiceGui
 from toontown.toonbase import TTLocalizer
 from toontown.hood import ZoneUtil
-from toontown.toontowngui import TeaserPanel
 from otp.nametag.NametagConstants import *
 ChoiceTimeout = 20
 
 class NPCToon(NPCToonBase):
 
-    def __init__(self):
+    def __init__(self, hq = 0):
         NPCToonBase.__init__(self)
+        self.hq = hq
         self.curQuestMovie = None
         self.questChoiceGui = None
         self.trackChoiceGui = None
@@ -24,14 +24,8 @@ class NPCToon(NPCToonBase):
         self.busy = 0
         return
 
-    def delayDelete(self):
-        NPCToonBase.delayDelete(self)
-        if self.curQuestMovie:
-            curQuestMovie = self.curQuestMovie
-            self.curQuestMovie = None
-            curQuestMovie.timeout(fFinish=1)
-            curQuestMovie.cleanup()
-        return
+    def getHq(self):
+        return self.hq
 
     def disable(self):
         self.cleanupMovie()
@@ -51,21 +45,15 @@ class NPCToon(NPCToonBase):
         if self.trackChoiceGui:
             self.trackChoiceGui.destroy()
             self.trackChoiceGui = None
+        self.nametag3d.clearDepthTest()
+        self.nametag3d.clearBin()
         return
 
+    def avatarEnter(self):
+        base.cr.questManager.requestInteract(self)
+
     def allowedToTalk(self):
-        if base.cr.isPaid():
-            return True
-        place = base.cr.playGame.hood.place
-        myHoodId = ZoneUtil.getCanonicalHoodId(place.zoneId)
-        if hasattr(place, 'id'):
-            myHoodId = place.id
-        if myHoodId in (ToontownGlobals.ToontownCentral,
-         ToontownGlobals.MyEstate,
-         ToontownGlobals.GoofySpeedway,
-         ToontownGlobals.Tutorial):
-            return True
-        return False
+        return True
 
     def handleCollisionSphereEnter(self, collEntry):
         if self.allowedToTalk():
@@ -75,33 +63,30 @@ class NPCToon(NPCToonBase):
             self.lookAt(base.localAvatar) # Look at the avatar...
             self.setP(0) # But only change our heading
             self.setR(0)
-        else:
-            place = base.cr.playGame.hood.place
-            if place:
-                place.fsm.request('stopped')
-            self.dialog = TeaserPanel.TeaserPanel(pageName='quests', doneFunc=self.handleOkTeaser)
 
-    def handleOkTeaser(self):
-        self.dialog.destroy()
-        del self.dialog
-        place = base.cr.playGame.hood.place
-        if place:
-            place.fsm.request('walk')
-
-    def finishMovie(self, av, isLocalToon, elapsedTime):
+    def finishMovie(self, av, mode, quests, elapsedTime):
         self.cleanupMovie()
         av.startLookAround()
         self.startLookAround()
         self.detectAvatars()
-        self.initPos()
-        if isLocalToon:
+        if hasattr(self, 'origin'):
+            self.setPosHpr(self.origin, 0, 0, 0, 0, 0, 0)
+        if len(quests) > 0:
+            questId = quests[0]
+            if questId == 1003:
+                pass
+            else:
+                self.freeAvatar()
+        else:
             self.freeAvatar()
-            taskMgr.remove(self.uniqueName('clearMovie'))
-            self.sendClearMovie(None)
-            self.nametag3d.clearDepthTest()
-            self.nametag3d.clearBin()
+        taskMgr.remove(self.uniqueName('clearMovie'))
+        if mode == NPCToons.QUEST_MOVIE_COMPLETE:
+            questId, toNpcId = quests
+            base.cr.questManager.completeQuest(self, questId)
 
     def setupCamera(self, mode):
+        if camera.getParent() == render:
+            return
         camera.wrtReparentTo(render)
         if mode == NPCToons.QUEST_MOVIE_QUEST_CHOICE or mode == NPCToons.QUEST_MOVIE_TRACK_CHOICE:
             quat = Quat()
@@ -131,33 +116,26 @@ class NPCToon(NPCToonBase):
             self.notify.warning('Avatar %d not found in doId' % avId)
             return
         if mode == NPCToons.QUEST_MOVIE_REJECT:
-            rejectString = self.chooseQuestDialogReject()
-            rejectString = self.fillInQuestNames(rejectString, avName=base.avatarData.setName)
+            rejectString = Quests.chooseQuestDialogReject()
+            rejectString = Quests.fillInQuestNames(rejectString, avName=base.avatarData.setName)
             self.setChatAbsolute(rejectString, CFSpeech | CFTimeout)
             return
         if mode == NPCToons.QUEST_MOVIE_TIER_NOT_DONE:
-            rejectString = self.chooseQuestDialogTierNotDone()
-            rejectString = self.fillInQuestNames(rejectString, avName=av.name)
+            rejectString = Quests.chooseQuestDialogTierNotDone()
+            rejectString = Quests.fillInQuestNames(rejectString, avName=av.getName())
             self.setChatAbsolute(rejectString, CFSpeech | CFTimeout)
             return
         self.setupAvatars(av)
         fullString = ''
         toNpcId = None
         if mode == NPCToons.QUEST_MOVIE_COMPLETE:
-            questId, rewardId, toNpcId = quests
-            scriptId = 'quest_complete_' + str(questId)
-            if QuestParser.questDefined(scriptId):
-                self.curQuestMovie = QuestParser.NPCMoviePlayer(scriptId, av, self)
-                self.curQuestMovie.play()
-                return
+            questId, toNpcId = quests
             if isLocalToon:
                 self.setupCamera(mode)
             greetingString = Quests.chooseQuestDialog(questId, Quests.GREETING)
             if greetingString:
                 fullString += greetingString + '\x07'
-            fullString += Quests.chooseQuestDialog(questId, Quests.COMPLETE) + '\x07'
-            if rewardId:
-                fullString += Quests.getReward(rewardId).getString()
+            fullString += Quests.chooseQuestDialog(questId, Quests.COMPLETE)
             leavingString = Quests.chooseQuestDialog(questId, Quests.LEAVING)
             if leavingString:
                 fullString += '\x07' + leavingString
@@ -167,15 +145,6 @@ class NPCToon(NPCToonBase):
             fullString = TTLocalizer.QuestMovieTrackChoiceCancel
         elif mode == NPCToons.QUEST_MOVIE_INCOMPLETE:
             questId, completeStatus, toNpcId = quests
-            scriptId = 'quest_incomplete_' + str(questId)
-            if QuestParser.questDefined(scriptId):
-                if self.curQuestMovie:
-                    self.curQuestMovie.timeout()
-                    self.curQuestMovie.cleanup()
-                    self.curQuestMovie = None
-                self.curQuestMovie = QuestParser.NPCMoviePlayer(scriptId, av, self)
-                self.curQuestMovie.play()
-                return
             if isLocalToon:
                 self.setupCamera(mode)
             greetingString = Quests.chooseQuestDialog(questId, Quests.GREETING)
@@ -186,7 +155,7 @@ class NPCToon(NPCToonBase):
             if leavingString:
                 fullString += '\x07' + leavingString
         elif mode == NPCToons.QUEST_MOVIE_ASSIGN:
-            questId, rewardId, toNpcId = quests
+            questId, toNpcId = quests
             if isLocalToon:
                 self.setupCamera(mode)
             fullString += Quests.chooseQuestDialog(questId, Quests.QUEST)
@@ -199,7 +168,7 @@ class NPCToon(NPCToonBase):
             self.setChatAbsolute(TTLocalizer.QuestMovieQuestChoice, CFSpeech)
             if isLocalToon:
                 self.acceptOnce('chooseQuest', self.sendChooseQuest)
-                self.questChoiceGui = QuestChoiceGui.QuestChoiceGui()
+                self.questChoiceGui = QuestChoiceGui()
                 self.questChoiceGui.setQuests(quests, npcId, ChoiceTimeout)
             return
         elif mode == NPCToons.QUEST_MOVIE_TRACK_CHOICE:
@@ -209,33 +178,66 @@ class NPCToon(NPCToonBase):
             self.setChatAbsolute(TTLocalizer.QuestMovieTrackChoice, CFSpeech)
             if isLocalToon:
                 self.acceptOnce('chooseTrack', self.sendChooseTrack)
-                self.trackChoiceGui = TrackChoiceGui.TrackChoiceGui(tracks, ChoiceTimeout)
+                self.trackChoiceGui = TrackChoiceGui(tracks, ChoiceTimeout)
             return
-        fullString = Quests.fillInQuestNames(fullString, avName=av.name, fromNpcId=npcId, toNpcId=toNpcId)
-        self.acceptOnce(self.uniqueName('doneChatPage'), self.finishMovie, extraArgs=[av, isLocalToon])
+        fullString = Quests.fillInQuestNames(fullString, avName=av.getName(), fromNpcId=npcId, toNpcId=toNpcId)
+        self.acceptOnce(self.uniqueName('doneChatPage'), self.finishMovie, extraArgs=[av, mode, quests])
         self.clearChat()
-        self.setPageChat(avId, 0, fullString, 1)
+        self.setLocalPageChat(fullString, 1)
         return
 
     def sendChooseQuest(self, questId):
-        # QUEST TODO: Update this to not use sendUpdate.
         if self.questChoiceGui:
             self.questChoiceGui.destroy()
             self.questChoiceGui = None
-        self.sendUpdate('chooseQuest', [questId])
+        self.chooseQuest(questId)
         return
 
     def sendChooseTrack(self, trackId):
-        # QUEST TODO: Update this to not use sendUpdate.
         if self.trackChoiceGui:
             self.trackChoiceGui.destroy()
             self.trackChoiceGui = None
-        self.sendUpdate('chooseTrack', [trackId])
+        self.chooseTrack(trackId)
         return
 
-    def avatarEnter(self):
-        # TODO: This should be routed to questManager.requestInteract. For now, tell them to fuck off.
-        self.rejectAvatar(base.localAvatar.doId)
+    def chooseQuest(self, questId):
+        avId = base.localAvatar.doId
+        if questId == 0:
+            self.pendingAvId = None
+            self.pendingQuests = None
+            self.cancelChoseQuest(avId)
+            return
+        for quest in self.pendingQuests:
+            if questId == quest[0]:
+                self.pendingAvId = None
+                self.pendingQuests = None
+                base.cr.questManager.avatarChoseQuest(self, questId)
+                return
+        self.notify.warning('chooseQuest: avatar: %s chose a quest not offered: %s' % (avId, questId))
+        self.pendingAvId = None
+        self.pendingQuests = None
+        return
+
+    def chooseTrack(self, trackId):
+        avId = base.localAvatar.doId
+        if trackId == -1:
+            self.pendingAvId = None
+            self.pendingTracks = None
+            self.pendingTrackQuest = None
+            self.cancelChoseTrack(avId)
+            return
+        for track in self.pendingTracks:
+            if trackId == track:
+                base.cr.questManager.avatarChoseTrack(self, self.pendingTrackQuest, trackId)
+                self.pendingAvId = None
+                self.pendingTracks = None
+                self.pendingTrackQuest = None
+                return
+        self.notify.warning('chooseTrack: avatar: %s chose a track not offered: %s' % (avId, trackId))
+        self.pendingAvId = None
+        self.pendingTracks = None
+        self.pendingTrackQuest = None
+        return
 
     def sendTimeoutMovie(self, task):
         self.pendingAvId = None
@@ -294,14 +296,14 @@ class NPCToon(NPCToonBase):
          [questId, completeStatus, toNpcId])
         taskMgr.doMethodLater(60.0, self.sendTimeoutMovie, self.uniqueName('clearMovie'))
 
-    def assignQuest(self, avId, questId, rewardId, toNpcId):
+    def assignQuest(self, avId, questId, toNpcId):
         self.busy = avId
-        if self.questCallback:
-            self.questCallback()
+        # if self.questCallback:
+        #     self.questCallback()
         self.setMovie(NPCToons.QUEST_MOVIE_ASSIGN,
          self.npcId,
          avId,
-         [questId, rewardId, toNpcId])
+         [questId, toNpcId])
         taskMgr.doMethodLater(60.0, self.sendTimeoutMovie, self.uniqueName('clearMovie'))
 
     def presentQuestChoice(self, avId, quests):

@@ -88,7 +88,7 @@ class ToonData(yaml.YAMLObject):
         self.setQuestHistory = binascii.hexlify(str(self.setQuestHistory))
         self.setQuestCarryLimit = bin(self.setQuestCarryLimit)
         self.setQuestingZone = bin(self.setQuestingZone)
-        self.setTrackProgress = bin(self.setTrackProgress)
+        self.setTrackProgress = binascii.hexlify(str(self.setTrackProgress))
         self.setHoodsVisited = binascii.hexlify(str(self.setHoodsVisited))
         self.setTeleportAccess = binascii.hexlify(str(self.setTeleportAccess))
         self.setFishingRod = bin(self.setFishingRod)
@@ -137,7 +137,10 @@ class ToonData(yaml.YAMLObject):
         self.setQuestHistory = ast.literal_eval(binascii.unhexlify(self.setQuestHistory))
         self.setQuestCarryLimit = int(self.setQuestCarryLimit, 0)
         self.setQuestingZone = int(self.setQuestingZone, 0)
-        self.setTrackProgress = int(self.setTrackProgress, 0)
+        if len(str(self.setTrackProgress)) == 3:
+            self.setTrackProgress = int(self.setTrackProgress, 0)
+        else:
+            self.setTrackProgress = ast.literal_eval(binascii.unhexlify(self.setTrackProgress))
         self.setHoodsVisited = ast.literal_eval(binascii.unhexlify(self.setHoodsVisited))
         self.setTeleportAccess = ast.literal_eval(binascii.unhexlify(self.setTeleportAccess))
         self.setFishingRod = int(self.setFishingRod, 0)
