@@ -1287,8 +1287,8 @@ class LocalToon(Toon.Toon, WalkControls):
         if self.hp == None or hpLost < 0:
             return
         oldHp = self.hp
-        self.hp = max(self.hp - hpLost, 0)
-        hpLost = oldHp - self.hp
+        newHp = max(self.hp - hpLost, 0)
+        hpLost = oldHp - newHp
         if hpLost >= 0:
             # a little hacky but whatever
             if base.cr.playGame.getActiveZone().battle:
@@ -1298,7 +1298,7 @@ class LocalToon(Toon.Toon, WalkControls):
                     self.showHpText(-hpLost, bonus)
             else:
                 self.showHpText(-hpLost, bonus)
-            self.setHealth(self.hp, self.maxHp)
+            self.setHealth(newHp, self.maxHp)
             if self.hp <= 0 and oldHp > 0:
                 self.setupCamera()
                 camera.wrtReparentTo(render)
@@ -1516,10 +1516,7 @@ class LocalToon(Toon.Toon, WalkControls):
         self.setupCamera()
         self.enable()
         zoneId = self.getZoneId()
-        if zoneId == FunnyFarmGlobals.SecretArea:
-            hoodId = FunnyFarmGlobals.FunnyFarmCentral
-        else:
-            hoodId = FunnyFarmGlobals.getHoodId(zoneId)
+        hoodId = FunnyFarmGlobals.getHoodId(zoneId)
         base.cr.playGame.enterHood(hoodId)
 
     def sayLocation(self):
