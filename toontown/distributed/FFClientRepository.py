@@ -5,7 +5,7 @@ from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.login.AvatarChooser import AvatarChooser
 from toontown.makeatoon.MakeAToon import MakeAToon
-from toontown.toontowngui.TTDialog import TTDialog
+from toontown.toontowngui import TTDialog
 from toontown.quest.QuestManager import QuestManager
 from otp.otpbase import OTPLocalizer
 from otp.nametag import NametagGlobals
@@ -30,7 +30,7 @@ class FFClientRepository(DirectObject):
             base.transitions.fadeIn(1.0)
             # We usually won't get here, but just in case the AI is taking extra long, we'll have them wait.
             # In the future, as we build up our AI more and more, there's a better chance we'll get here.
-            self.waitDialog = TTDialog(parent=aspect2dp, style=TTDialog.NoButtons, text=OTPLocalizer.AIPleaseWait)
+            self.waitDialog = TTDialog.TTDialog(parent=aspect2dp, style=TTDialog.NoButtons, text=OTPLocalizer.AIPleaseWait)
             self.waitDialog.show()
             self.accept('ai-done', self.enterChooseAvatar, [True])
             taskMgr.doMethodLater(self.AI_TIMEOUT, self.aiTimeout, 'aiTimeout')
