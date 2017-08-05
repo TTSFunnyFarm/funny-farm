@@ -12,3 +12,4 @@ preferences.json
 
 # Misc. files
 reindent.py
+*.swatch
