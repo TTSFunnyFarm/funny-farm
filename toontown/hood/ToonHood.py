@@ -8,6 +8,7 @@ from toontown.building import GagShopInterior
 from toontown.building import PetShopInterior
 from toontown.building import HQInterior
 from toontown.building import ToonHallInterior
+from toontown.building import LoonyLabsInterior
 from toontown.building import ToonInterior
 from toontown.building import Door
 from toontown.trolley.Trolley import Trolley
@@ -20,6 +21,7 @@ class ToonHood(Hood):
         'door_0': HQInterior.HQInterior,
         'door_1': HQInterior.HQInterior,
         'toonhall': ToonHallInterior.ToonHallInterior,
+        'loonylabs': LoonyLabsInterior.LoonyLabsInterior,
         'default': ToonInterior.ToonInterior
     }
 

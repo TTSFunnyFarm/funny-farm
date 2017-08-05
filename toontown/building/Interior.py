@@ -11,13 +11,11 @@ class Interior(DirectObject):
         self.zoneId = zoneId
         self.shopId = shopId
         self.interiorFile = None
-        self.musicOk = 1
 
     def load(self):
         self.interior = loader.loadModel(self.interiorFile)
         self.interior.reparentTo(render)
-        if self.musicOk:
-            musicMgr.playCurrentZoneMusic()
+        musicMgr.playCurrentZoneMusic()
         self.generateNPCs()
 
     def unload(self):
@@ -25,10 +23,11 @@ class Interior(DirectObject):
         self.ignoreAll()
         self.interior.removeNode()
         del self.interior
-        for npc in self.npcs:
-            npc.removeActive()
-            npc.delete()
-            del npc
+        if hasattr(self, 'npcs'):
+            for npc in self.npcs:
+                npc.removeActive()
+                npc.delete()
+                del npc
 
     def generateNPCs(self):
         self.npcs = NPCToons.createNpcsInZone(self.zoneId)
