@@ -48,6 +48,7 @@ class LocalToon(Toon.Toon, WalkControls):
         self.soundSystemMessage = base.loader.loadSfx('phase_3/audio/sfx/clock03.ogg')
         self.rewardSfx = base.loader.loadSfx('phase_3.5/audio/sfx/tt_s_gui_sbk_cdrSuccess.ogg')
         self.levelUpSfx = base.loader.loadSfx('phase_4/audio/sfx/MG_sfx_travel_game_bonus.ogg')
+        self.enabled = 1
         self.zoneId = None
         self.hasGM = False
         self.accessLevel = 0
@@ -154,9 +155,9 @@ class LocalToon(Toon.Toon, WalkControls):
         return ('%s-%s' % (idString, str(self.doId)))
 
     def enable(self):
-        try:
-            assert self.enabled == 1
-        except:
+        if self.enabled == 1:
+            return
+        else:
             self.enabled = 1
             self.collisionsOn()
             self.enableAvatarControls()
@@ -168,9 +169,9 @@ class LocalToon(Toon.Toon, WalkControls):
             self.setAnimState('neutral')
 
     def disable(self):
-        try:
-            assert self.enabled == 0
-        except:
+        if self.enabled == 0:
+            return
+        else:
             self.enabled = 0
             self.stopUpdateSmartCamera()
             self.disableAvatarControls()
