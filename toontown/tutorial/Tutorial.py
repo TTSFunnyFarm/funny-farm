@@ -575,18 +575,31 @@ class Tutorial(ToonHood):
         self.inventory.addItems(track, level, number)
         self.inventory.updateGUI(track, level)
 
+    # Alternate versions of LocalToon's enable() and disable() functions,
+    # so that we don't show their shtickerbook, laff meter, or chat button.
     def enableToon(self):
         self.toon.enabled = 1
+        self.toon.startBlink()
+        self.toon.attachCamera()
+        shouldPush = 1
+        if len(self.toon.cameraPositions) > 0:
+            shouldPush = not self.toon.cameraPositions[self.toon.cameraIndex][4]
+        self.toon.startUpdateSmartCamera(shouldPush)
+        self.toon.showName()
         self.toon.collisionsOn()
         self.toon.enableAvatarControls()
-        self.toon.startUpdateSmartCamera()
         self.toon.beginAllowPies()
+        self.toon.walkStateData.fsm.request('walking')
 
     def disableToon(self):
         self.toon.enabled = 0
-        self.toon.stopUpdateSmartCamera()
+        self.toon.walkStateData.fsm.request('off')
         self.toon.disableAvatarControls()
+        self.toon.stopUpdateSmartCamera()
+        self.toon.stopBlink()
+        self.toon.detachCamera()
         self.toon.collisionsOff()
+        self.toon.controlManager.placeOnFloor()
         self.toon.endAllowPies()
 
     def skyTrack(self, task):

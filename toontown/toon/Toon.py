@@ -1441,7 +1441,6 @@ class Toon(Avatar.Avatar, ToonHead):
     def enterOff(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
         self.setActiveShadow(0)
         self.playingAnim = None
-        self.stop()
         return
 
     def exitOff(self):
@@ -1497,8 +1496,8 @@ class Toon(Avatar.Avatar, ToonHead):
         self.setSpeed(0, 0)
         Emote.globalEmote.disableBody(self, 'toon, enterSad')
         self.setActiveShadow(1)
-        self.controlManager.disableAvatarJump()
-        self.setWalkSpeedSlow()
+        if self.isLocal():
+            self.controlManager.disableAvatarJump()
         return
 
     def exitSad(self):
@@ -1506,8 +1505,8 @@ class Toon(Avatar.Avatar, ToonHead):
         self.stop()
         self.motion.exit()
         Emote.globalEmote.releaseBody(self, 'toon, exitSad')
-        self.controlManager.enableAvatarJump()
-        self.setWalkSpeedNormal()
+        if self.isLocal():
+            self.controlManager.enableAvatarJump()
         return
 
     def enterCatching(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
@@ -1567,13 +1566,11 @@ class Toon(Avatar.Avatar, ToonHead):
             self.playingAnim = anim
             self.setPlayRate(animMultiplier, anim)
             self.play(anim)
-            Sequence(Wait(self.getDuration(anim)), Func(self.exitJump)).start()
         self.setActiveShadow(1)
 
     def exitJump(self):
         self.stop()
         self.playingAnim = 'neutral'
-        self.loop('neutral')
 
     def enterJumpSquat(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
         if not self.isDisguised:
@@ -1639,8 +1636,8 @@ class Toon(Avatar.Avatar, ToonHead):
         self.setPlayRate(animMultiplier, 'swim')
         self.getGeomNode().setP(-89.0)
         self.dropShadow.hide()
-        taskMgr.remove('AnimationHandler')
-        self.useSwimControls()
+        if self.isLocal():
+            self.useSwimControls()
         self.nametag3d.setPos(0, -2, 1)
         self.startBobSwimTask()
         self.setActiveShadow(0)
@@ -1690,8 +1687,8 @@ class Toon(Avatar.Avatar, ToonHead):
         self.stopBobSwimTask()
         self.getGeomNode().setPosHpr(0, 0, 0, 0, 0, 0)
         self.dropShadow.show()
-        self.useWalkControls()
-        taskMgr.add(self.handleAnimation, 'AnimationHandler')
+        if self.isLocal():
+            self.useWalkControls()
         self.nametag3d.setPos(0, 0, self.height + 0.5)
         Emote.globalEmote.releaseAll(self, 'exitSwim')
 
@@ -1795,7 +1792,6 @@ class Toon(Avatar.Avatar, ToonHead):
             DelayDelete.cleanupDelayDeletes(self.track)
             self.track = None
         Emote.globalEmote.releaseAll(self, 'exitCloseBook')
-        self.animFSM.request('neutral')
         return
 
     def getSoundTeleport(self):
@@ -2076,7 +2072,6 @@ class Toon(Avatar.Avatar, ToonHead):
             self.nametag3d.show()
         self.dropShadow.show()
         Emote.globalEmote.releaseAll(self, 'exitTeleportIn')
-        self.loop('neutral')
         return
 
     def enterSitStart(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
@@ -2764,9 +2759,9 @@ class Toon(Avatar.Avatar, ToonHead):
         elif effect == ToontownGlobals.CEVirtual:
             return self.__doVirtual()
         elif effect == ToontownGlobals.CEGhost:
-            alpha = 0.25
-            if base.localAvatar.getAdminAccess() < self.adminAccess:
-                alpha = 0
+            alpha = 0
+            if localAvatar.seeGhosts:
+                alpha = 0.2
             return Sequence(self.__doToonGhostColorScale(VBase4(1, 1, 1, alpha), lerpTime, keepDefault=1), Func(self.nametag3d.hide))
         return Sequence()
 
@@ -3116,8 +3111,6 @@ class Toon(Avatar.Avatar, ToonHead):
         self.loop('scientistJealous')
         if hasattr(self, 'showScientistProp'):
             self.showScientistProp()
-        if self.style.getTorsoSize() == 'short' and self.style.getAnimal() == 'duck':
-            self.setH(135)
 
     def exitScientistJealous(self):
         self.stop()
@@ -3144,14 +3137,12 @@ class Toon(Avatar.Avatar, ToonHead):
         self.loop('scientistGame')
         if hasattr(self, 'scientistPlay'):
             self.scientistPlay()
-        if self.style.getTorsoSize() == 'short' and self.style.getAnimal() == 'duck':
-            self.setH(90)
 
     def exitScientistPlay(self):
         self.stop()
 
     def uniqueName(self, idString):
-        return ("%s-%s" % (idString, self.doId))
+        return ('%s-%s' % (idString, self.doId))
 
     def playSplashEffect(self, x, y, z):
         if self.splash == None:

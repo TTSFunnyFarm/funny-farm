@@ -1,10 +1,9 @@
 from panda3d.core import *
+from direct.gui.DirectGui import *
 from direct.showbase.PythonUtil import *
-from direct.distributed.ClockDelta import *
 from direct.interval.IntervalGlobal import *
-from direct.showbase.DirectObject import DirectObject
-from direct.task import Task
 from direct.showbase.InputStateGlobal import inputState
+from direct.showbase.DirectObject import DirectObject
 from direct.controls.GhostWalker import GhostWalker
 from direct.controls.GravityWalker import GravityWalker
 from direct.controls.ObserverWalker import ObserverWalker
@@ -12,44 +11,61 @@ from direct.controls.PhysicsWalker import PhysicsWalker
 from direct.controls.SwimWalker import SwimWalker
 from direct.controls.TwoDWalker import TwoDWalker
 from direct.controls import ControlManager
+from direct.task import Task
 from otp.otpbase import OTPGlobals
+from otp.otpbase import OTPLocalizer
+from otp.nametag.Nametag import Nametag
+from toontown.toonbase import ToontownGlobals
 import math
+import string
+import random
 
-class WalkControls(DirectObject):
-    notify = directNotify.newCategory('WalkControls')
-    wantDevCameraPositions = 0
-    movingNeutral, movingForward = (False, False)
-    movingRotation, movingBackward = (False, False)
-    movingJumping = False
+class LocalAvatar(DirectObject):
+    notify = directNotify.newCategory('LocalAvatar')
+    wantDevCameraPositions = config.GetBool('want-dev-camera-positions', 0)
+    wantMouse = config.GetBool('want-mouse', 0)
+    sleepTimeout = config.GetInt('sleep-timeout', 120)
+    swimTimeout = config.GetInt('afk-timeout', 600)
 
     def __init__(self):
-        self.isPageUp = 0
-        self.isPageDown = 0
-        self.fov = OTPGlobals.DefaultCameraFov
+        try:
+            self.LocalAvatar_initialized
+            return
+        except:
+            pass
+        self.LocalAvatar_initialized = 1
         self.cTrav = CollisionTraverser('base.cTrav')
         base.pushCTrav(self.cTrav)
         self.cTrav.setRespectPrevTransform(1)
         self.avatarControlsEnabled = 0
-        self.controlManager = ControlManager.ControlManager(True, False)
-        self.soundWalk = base.loader.loadSfx('phase_3.5/audio/sfx/AV_footstep_walkloop.ogg')
-        self.soundRun = base.loader.loadSfx('phase_3.5/audio/sfx/AV_footstep_runloop.ogg')
-
-    def delete(self):
-        self.ignoreAll()
-        base.popCTrav()
-        self.stopUpdateSmartCamera()
-        self.shutdownSmartCamera()
-        self.disableAvatarControls()
-        self.controlManager.delete()
-        self.physControls = None
-        del self.controlManager
-        del self.soundRun
-        del self.soundWalk
+        self.controlManager = ControlManager.ControlManager(True, True)
+        self.initializeCollisions()
+        self.initializeSmartCamera()
+        self.cameraPositions = []
+        self.animMultiplier = 1.0
+        self.runTimeout = 2.5
+        self.customMessages = []
+        self.lockedDown = 0
+        self.isPageUp = 0
+        self.isPageDown = 0
+        self.soundRun = None
+        self.soundWalk = None
+        self.sleepFlag = 0
+        self.isDisguised = 0
+        self.movingFlag = 0
+        self.swimmingFlag = 0
+        self.lastNeedH = None
+        self.sleepCallback = None
+        self.jumpLandAnimFixTask = None
+        self.fov = OTPGlobals.DefaultCameraFov
+        self.accept('avatarMoving', self.clearPageUpDown)
+        self.nametag2dNormalContents = Nametag.CSpeech
+        self.showNametag2d()
+        self.setPickable(0)
+        return
 
     def useSwimControls(self):
         self.controlManager.use('swim', self)
-        self.soundRun.stop()
-        self.soundWalk.stop()
 
     def useGhostControls(self):
         self.controlManager.use('ghost', self)
@@ -60,19 +76,54 @@ class WalkControls(DirectObject):
     def useTwoDControls(self):
         self.controlManager.use('twoD', self)
 
+    def isLockedDown(self):
+        return self.lockedDown
+
+    def lock(self):
+        if self.lockedDown == 1:
+            self.notify.debug('lock() - already locked!')
+        self.lockedDown = 1
+
+    def unlock(self):
+        if self.lockedDown == 0:
+            self.notify.debug('unlock() - already unlocked!')
+        self.lockedDown = 0
+
+    def isInWater(self):
+        return self.getZ(render) <= 0.0
+
+    def delete(self):
+        try:
+            self.LocalAvatar_deleted
+            return
+        except:
+            self.LocalAvatar_deleted = 1
+
+        self.ignoreAll()
+        self.stopJumpLandTask()
+        taskMgr.remove('shadowReach')
+        base.popCTrav()
+        taskMgr.remove('posCamera')
+        self.disableAvatarControls()
+        self.stopTrackAnimToSpeed()
+        self.stopUpdateSmartCamera()
+        self.shutdownSmartCamera()
+        self.deleteCollisions()
+        self.controlManager.delete()
+        self.physControls = None
+        del self.controlManager
+        taskMgr.remove(self.uniqueName('walkReturnTask'))
+        del self.soundRun
+        del self.soundWalk
+        return
+
+    def shadowReach(self, state):
+        if base.localAvatar.shadowPlacer:
+            base.localAvatar.shadowPlacer.lifter.setReach(base.localAvatar.getAirborneHeight() + 4.0)
+        return Task.cont
+
     def wantLegacyLifter(self):
         return False
-
-    def setupCamera(self):
-        base.disableMouse()
-        camera.reparentTo(self)
-        camera.setPos(0, -6.5 - max(self.height, 3.0), (self.height * (1.0/3.0)) + 2.2)
-        camera.setHpr(0, 0, 0)
-        base.camLens.setMinFov(OTPGlobals.DefaultCameraFov/(4./3.))
-
-    def setupSmartCamera(self):
-        self.initializeSmartCamera()
-        self.startUpdateSmartCamera()
 
     def setupControls(self, avatarRadius = 1.4, floorOffset = OTPGlobals.FloorOffset, reach = 4.0, wallBitmask = OTPGlobals.WallBitmask, floorBitmask = OTPGlobals.FloorBitmask, ghostBitmask = OTPGlobals.GhostBitmask):
         walkControls = GravityWalker(legacyLifter=self.wantLegacyLifter())
@@ -107,28 +158,18 @@ class WalkControls(DirectObject):
         observerControls.setAirborneHeightFunc(self.getAirborneHeight)
         self.controlManager.add(observerControls, 'observer')
         self.controlManager.use('walk', self)
-        self.setWalkSpeedNormal()
-        self.enableAvatarControls()
-        # We're not initializing the smart camera right away anymore because it creates bugs with the tutorial.
-
-    def enableAvatarControls(self):
-        if self.avatarControlsEnabled:
-            return
-        self.avatarControlsEnabled = 1
-        self.controlManager.enable()
-        base.taskMgr.add(self.handleAnimation, 'AnimationHandler')
-        self.setupCamera()
-
-    def disableAvatarControls(self):
-        if not self.avatarControlsEnabled:
-            return
-        self.avatarControlsEnabled = 0
         self.controlManager.disable()
-        base.taskMgr.remove('AnimationHandler')
-        self.stopSound()
+
+    def initializeCollisions(self):
+        self.setupControls()
+
+    def deleteCollisions(self):
+        self.controlManager.deleteCollisions()
+        self.ignore('entero157')
+        del self.cTrav
 
     def initializeSmartCameraCollisions(self):
-        self.ccTrav = CollisionTraverser('LocalToon.ccTrav')
+        self.ccTrav = CollisionTraverser('LocalAvatar.ccTrav')
         self.ccLine = CollisionSegment(0.0, 0.0, 0.0, 1.0, 0.0, 0.0)
         self.ccLineNode = CollisionNode('ccLineNode')
         self.ccLineNode.addSolid(self.ccLine)
@@ -141,22 +182,22 @@ class WalkControls(DirectObject):
         self.ccSphere = CollisionSphere(0, 0, 0, 1)
         self.ccSphereNode = CollisionNode('ccSphereNode')
         self.ccSphereNode.addSolid(self.ccSphere)
-        self.ccSphereNodePath = camera.attachNewNode(self.ccSphereNode)
+        self.ccSphereNodePath = base.camera.attachNewNode(self.ccSphereNode)
         self.ccSphereNode.setFromCollideMask(OTPGlobals.CameraBitmask)
         self.ccSphereNode.setIntoCollideMask(BitMask32.allOff())
         self.camPusher = CollisionHandlerPusher()
-        self.camPusher.addCollider(self.ccSphereNodePath, camera)
+        self.camPusher.addCollider(self.ccSphereNodePath, base.camera)
         self.camPusher.setCenter(self)
-        self.ccPusherTrav = CollisionTraverser('LocalToon.ccPusherTrav')
+        self.ccPusherTrav = CollisionTraverser('LocalAvatar.ccPusherTrav')
         self.ccSphere2 = self.ccSphere
         self.ccSphereNode2 = CollisionNode('ccSphereNode2')
         self.ccSphereNode2.addSolid(self.ccSphere2)
-        self.ccSphereNodePath2 = camera.attachNewNode(self.ccSphereNode2)
+        self.ccSphereNodePath2 = base.camera.attachNewNode(self.ccSphereNode2)
         self.ccSphereNode2.setFromCollideMask(OTPGlobals.CameraBitmask)
         self.ccSphereNode2.setIntoCollideMask(BitMask32.allOff())
         self.camPusher2 = CollisionHandlerPusher()
         self.ccPusherTrav.addCollider(self.ccSphereNodePath2, self.camPusher2)
-        self.camPusher2.addCollider(self.ccSphereNodePath2, camera)
+        self.camPusher2.addCollider(self.ccSphereNodePath2, base.camera)
         self.camPusher2.setCenter(self)
         self.camFloorRayNode = self.attachNewNode('camFloorRayNode')
         self.ccRay = CollisionRay(0.0, 0.0, 0.0, 0.0, 0.0, -1.0)
@@ -166,10 +207,10 @@ class WalkControls(DirectObject):
         self.ccRayBitMask = OTPGlobals.FloorBitmask
         self.ccRayNode.setFromCollideMask(self.ccRayBitMask)
         self.ccRayNode.setIntoCollideMask(BitMask32.allOff())
-        self.ccTravFloor = CollisionTraverser('LocalToon.ccTravFloor')
+        self.ccTravFloor = CollisionTraverser('LocalAvatar.ccTravFloor')
         self.camFloorCollisionQueue = CollisionHandlerQueue()
         self.ccTravFloor.addCollider(self.ccRayNodePath, self.camFloorCollisionQueue)
-        self.ccTravOnFloor = CollisionTraverser('LocalToon.ccTravOnFloor')
+        self.ccTravOnFloor = CollisionTraverser('LocalAvatar.ccTravOnFloor')
         self.ccRay2 = CollisionRay(0.0, 0.0, 0.0, 0.0, 0.0, -1.0)
         self.ccRay2Node = CollisionNode('ccRay2Node')
         self.ccRay2Node.addSolid(self.ccRay2)
@@ -216,162 +257,103 @@ class WalkControls(DirectObject):
         del self.ccSphereNodePath2
         del self.camPusher2
 
-    def setWalkSpeedNormal(self):
-        self.controlManager.setSpeeds(OTPGlobals.ToonForwardSpeed, OTPGlobals.ToonJumpForce, OTPGlobals.ToonReverseSpeed, OTPGlobals.ToonRotateSpeed)
-
-    def setWalkSpeedSlow(self):
-        self.controlManager.setSpeeds(OTPGlobals.ToonForwardSlowSpeed, OTPGlobals.ToonJumpSlowForce, OTPGlobals.ToonReverseSlowSpeed, OTPGlobals.ToonRotateSlowSpeed)
-
     def collisionsOff(self):
         self.controlManager.collisionsOff()
 
     def collisionsOn(self):
         self.controlManager.collisionsOn()
 
-    def runSound(self):
-        self.soundWalk.stop()
-        base.playSfx(self.soundRun, looping=1)
+    def recalcCameraSphere(self):
+        nearPlaneDist = base.camLens.getNear()
+        hFov = base.camLens.getHfov()
+        vFov = base.camLens.getVfov()
+        hOff = nearPlaneDist * math.tan(deg2Rad(hFov / 2.0))
+        vOff = nearPlaneDist * math.tan(deg2Rad(vFov / 2.0))
+        camPnts = [Point3(hOff, nearPlaneDist, vOff),
+         Point3(-hOff, nearPlaneDist, vOff),
+         Point3(hOff, nearPlaneDist, -vOff),
+         Point3(-hOff, nearPlaneDist, -vOff),
+         Point3(0.0, 0.0, 0.0)]
+        avgPnt = Point3(0.0, 0.0, 0.0)
+        for camPnt in camPnts:
+            avgPnt = avgPnt + camPnt
 
-    def walkSound(self):
-        self.soundRun.stop()
-        base.playSfx(self.soundWalk, looping=1)
+        avgPnt = avgPnt / len(camPnts)
+        sphereRadius = 0.0
+        for camPnt in camPnts:
+            dist = Vec3(camPnt - avgPnt).length()
+            if dist > sphereRadius:
+                sphereRadius = dist
 
-    def stopSound(self):
-        self.soundRun.stop()
-        self.soundWalk.stop()
+        avgPnt = Point3(avgPnt)
+        self.ccSphereNodePath.setPos(avgPnt)
+        self.ccSphereNodePath2.setPos(avgPnt)
+        self.ccSphere.setRadius(sphereRadius)
 
-    def setMovementAnimation(self, loopName, playRate=1.0):
-        if 'jump' in loopName:
-            self.movingJumping = True
-            self.movingForward = False
-            self.movingNeutral = False
-            self.movingRotation = False
-            self.movingBackward = False
-            self.stopSound()
-            self.stopLookAround()
-        elif loopName == 'run':
-            self.movingJumping = False
-            self.movingForward = True
-            self.movingNeutral = False
-            self.movingRotation = False
-            self.movingBackward = False
-            self.runSound()
-            self.stopLookAround()
-        elif loopName == 'walk':
-            self.movingJumping = False
-            self.movingForward = False
-            self.movingNeutral = False
-            if playRate == -1.0:
-                self.movingBackward = True
-                self.movingRotation = False
-            else:
-                self.movingBackward = False
-                self.movingRotation = True
-            self.walkSound()
-            self.stopLookAround()
-        elif loopName == 'neutral':
-            self.movingJumping = False
-            self.movingForward = False
-            self.movingNeutral = True
-            self.movingRotation = False
-            self.movingBackward = False
-            self.stopSound()
-            self.startLookAround()
+    def putCameraFloorRayOnAvatar(self):
+        self.camFloorRayNode.setPos(self, 0, 0, 5)
+
+    def putCameraFloorRayOnCamera(self):
+        self.camFloorRayNode.setPos(self.ccSphereNodePath, 0, 0, 0)
+
+    def attachCamera(self):
+        camera.reparentTo(self)
+        base.enableMouse()
+        base.setMouseOnNode(self.node())
+        self.ignoreMouse = not self.wantMouse
+        self.setWalkSpeedNormal()
+        self.setCameraFov(self.fov)
+
+    def detachCamera(self):
+        base.disableMouse()
+
+    def stopJumpLandTask(self):
+        if self.jumpLandAnimFixTask:
+            self.jumpLandAnimFixTask.remove()
+            self.jumpLandAnimFixTask = None
+        return
+
+    def jumpStart(self):
+        if not self.sleepFlag and self.hp > 0:
+            self.setAnimState('jumpAirborne', 1.0)
+            self.stopJumpLandTask()
+
+    def returnToWalk(self, task):
+        if self.sleepFlag:
+            state = 'Sleep'
+        elif self.hp > 0:
+            state = 'Happy'
         else:
-            self.movingJumping = False
-            self.movingForward = False
-            self.movingNeutral = False
-            self.movingRotation = False
-            self.movingBackward = False
-            self.stopSound()
-            self.stopLookAround()
-        if self.animFSM.hasStateNamed(loopName):
-            self.setAnimState(loopName, playRate)
-        else:
-            if self.getCurrentAnim() == loopName and self.getPlayRate(loopName) == playRate:
-                return
-            self.setPlayRate(playRate, loopName)
-            self.loop(loopName)
+            state = 'Sad'
+        self.setAnimState(state, 1.0)
+        return Task.done
 
-    def handleAnimation(self, task):
-        forward = KeyboardButton.up()
-        backward = KeyboardButton.down()
-        left = KeyboardButton.left()
-        right = KeyboardButton.right()
-        control = KeyboardButton.control()
-        keyPressed = base.mouseWatcherNode.is_button_down
-        if not self.standWalkRunReverse:
-            self.standWalkRunReverse = (('neutral', 1.0),
-             ('walk', 1.0),
-             ('run', 1.0),
-             ('walk', -1.0))
+    if 1:
+        def jumpLandAnimFix(self, jumpTime):
+            if self.playingAnim != 'run' and self.playingAnim != 'walk':
+                return taskMgr.doMethodLater(jumpTime, self.returnToWalk, self.uniqueName('walkReturnTask'))
 
-        if keyPressed(control):
-            if self.isPageUp or self.isPageDown:
-                self.clearPageUpDown()
-            if keyPressed(forward) or keyPressed(backward) or keyPressed(left) or keyPressed(right):
-                if self.movingJumping == False:
-                    if self.physControls.isAirborne:
-                        if not self.controlManager.forceAvJumpToken:
-                            self.playingAnim = None
-                            self.setMovementAnimation('jumpAirborne')
-                    else:
-                        if keyPressed(forward):
-                            if self.movingForward == False:
-                                self.setMovementAnimation(self.standWalkRunReverse[2][0], playRate=self.standWalkRunReverse[2][1])
-                        elif keyPressed(backward):
-                            if self.movingBackward == False:
-                                self.setMovementAnimation(self.standWalkRunReverse[3][0], playRate=self.standWalkRunReverse[3][1])
-                        elif keyPressed(left) or keyPressed(right):
-                            if self.movingRotation == False:
-                                self.setMovementAnimation(self.standWalkRunReverse[1][0], playRate=self.standWalkRunReverse[1][1])
-                else:
-                    if not self.physControls.isAirborne:
-                        if keyPressed(forward):
-                            if self.movingForward == False:
-                                self.setMovementAnimation(self.standWalkRunReverse[2][0], playRate=self.standWalkRunReverse[2][1])
-                        elif keyPressed(backward):
-                            if self.movingBackward == False:
-                                self.setMovementAnimation(self.standWalkRunReverse[3][0], playRate=self.standWalkRunReverse[3][1])
-                        elif keyPressed(left) or keyPressed(right):
-                            if self.movingRotation == False:
-                                self.setMovementAnimation(self.standWalkRunReverse[1][0], playRate=self.standWalkRunReverse[1][1])
-            else:
-                if self.movingJumping == False:
-                    if self.physControls.isAirborne:
-                        if not self.controlManager.forceAvJumpToken:
-                            self.playingAnim = 'neutral'
-                            self.setMovementAnimation('jumpAirborne')
-                    else:
-                        if self.movingNeutral == False:
-                            self.setMovementAnimation(self.standWalkRunReverse[0][0], playRate=self.standWalkRunReverse[0][1])
-                else:
-                    if not self.physControls.isAirborne:
-                        if self.movingNeutral == False:
-                            self.setMovementAnimation(self.standWalkRunReverse[0][0], playRate=self.standWalkRunReverse[0][1])
-        elif keyPressed(forward) == 1:
-            if self.isPageUp or self.isPageDown:
-                self.clearPageUpDown()
-            if self.movingForward == False:
-                if not self.physControls.isAirborne:
-                    self.setMovementAnimation(self.standWalkRunReverse[2][0], playRate=self.standWalkRunReverse[2][1])
-        elif keyPressed(backward) == 1:
-            if self.isPageUp or self.isPageDown:
-                self.clearPageUpDown()
-            if self.movingBackward == False:
-                if not self.physControls.isAirborne:
-                    self.setMovementAnimation(self.standWalkRunReverse[3][0], playRate=self.standWalkRunReverse[3][1])
-        elif keyPressed(left) or keyPressed(right):
-            if self.isPageUp or self.isPageDown:
-                self.clearPageUpDown()
-            if self.movingRotation == False:
-                if not self.physControls.isAirborne:
-                    self.setMovementAnimation(self.standWalkRunReverse[1][0], playRate=self.standWalkRunReverse[1][1])
-        else:
-            if not self.physControls.isAirborne:
-                if self.movingNeutral == False:
-                    self.setMovementAnimation(self.standWalkRunReverse[0][0], playRate=self.standWalkRunReverse[0][1])
-        return Task.cont
+        def jumpHardLand(self):
+            if self.allowHardLand():
+                self.setAnimState('jumpLand', 1.0)
+                self.stopJumpLandTask()
+                self.jumpLandAnimFixTask = self.jumpLandAnimFix(1.0)
+
+        def jumpLand(self):
+            self.jumpLandAnimFixTask = self.jumpLandAnimFix(0.01)
+
+    def setupAnimationEvents(self):
+        self.accept('jumpStart', self.jumpStart, [])
+        self.accept('jumpHardLand', self.jumpHardLand, [])
+        self.accept('jumpLand', self.jumpLand, [])
+
+    def ignoreAnimationEvents(self):
+        self.ignore('jumpStart')
+        self.ignore('jumpHardLand')
+        self.ignore('jumpLand')
+
+    def allowHardLand(self):
+        return not self.sleepFlag and self.hp > 0
 
     def enableSmartCameraViews(self):
         self.accept('tab', self.nextCameraPos, [1])
@@ -386,10 +368,30 @@ class WalkControls(DirectObject):
         self.ignore('page_down')
         self.ignore('page_down-up')
 
+    def enableAvatarControls(self):
+        if self.avatarControlsEnabled:
+            return
+        self.avatarControlsEnabled = 1
+        self.setupAnimationEvents()
+        self.controlManager.enable()
+
+    def disableAvatarControls(self):
+        if not self.avatarControlsEnabled:
+            return
+        self.avatarControlsEnabled = 0
+        self.ignoreAnimationEvents()
+        self.controlManager.disable()
+        self.clearPageUpDown()
+
+    def setWalkSpeedNormal(self):
+        self.controlManager.setSpeeds(OTPGlobals.ToonForwardSpeed, OTPGlobals.ToonJumpForce, OTPGlobals.ToonReverseSpeed, OTPGlobals.ToonRotateSpeed)
+
+    def setWalkSpeedSlow(self):
+        self.controlManager.setSpeeds(OTPGlobals.ToonForwardSlowSpeed, OTPGlobals.ToonJumpSlowForce, OTPGlobals.ToonReverseSlowSpeed, OTPGlobals.ToonRotateSlowSpeed)
+
     def pageUp(self):
         if not self.avatarControlsEnabled:
             return
-        # self.wakeUp()
         if not self.isPageUp:
             self.isPageDown = 0
             self.isPageUp = 1
@@ -401,7 +403,6 @@ class WalkControls(DirectObject):
     def pageDown(self):
         if not self.avatarControlsEnabled:
             return
-        # self.wakeUp()
         if not self.isPageDown:
             self.isPageUp = 0
             self.isPageDown = 1
@@ -420,7 +421,6 @@ class WalkControls(DirectObject):
     def nextCameraPos(self, forward):
         if not self.avatarControlsEnabled:
             return
-        # self.wakeUp()
         self.__cameraHasBeenMoved = 1
         if forward:
             self.cameraIndex += 1
@@ -510,61 +510,51 @@ class WalkControls(DirectObject):
               defLookAt + Point3(0, 5, 0),
               1)]
 
-    def lerpCameraFov(self, fov, time):
-        taskMgr.remove('cam-fov-lerp-play')
-        oldFov = base.camLens.getHfov()
-        if abs(fov - oldFov) > 0.1:
+    def addCameraPosition(self, camPos = None):
+        if camPos == None:
+            lookAtNP = self.attachNewNode('lookAt')
+            lookAtNP.setPos(base.cam, 0, 1, 0)
+            lookAtPos = lookAtNP.getPos()
+            camHeight = self.getClampedAvatarHeight()
+            camPos = (base.cam.getPos(self),
+             lookAtPos,
+             Point3(0.0, 1.5, camHeight * 4.0),
+             Point3(0.0, 1.5, camHeight * -1.0),
+             1)
+            lookAtNP.removeNode()
+        self.auxCameraPositions.append(camPos)
+        self.cameraPositions.append(camPos)
+        return
 
-            def setCamFov(fov):
-                base.camLens.setMinFov(fov/(4./3.))
+    def resetCameraPosition(self):
+        self.cameraIndex = 0
+        self.setCameraPositionByIndex(self.cameraIndex)
 
-            self.camLerpInterval = LerpFunctionInterval(setCamFov, fromData=oldFov, toData=fov, duration=time, name='cam-fov-lerp')
-            self.camLerpInterval.start()
+    def removeCameraPosition(self):
+        if len(self.cameraPositions) > 1:
+            camPos = self.cameraPositions[self.cameraIndex]
+            if camPos in self.auxCameraPositions:
+                self.auxCameraPositions.remove(camPos)
+            if camPos in self.cameraPositions:
+                self.cameraPositions.remove(camPos)
+            self.nextCameraPos(1)
 
-    def recalcCameraSphere(self):
-        nearPlaneDist = base.camLens.getNear()
-        hFov = base.camLens.getHfov()
-        vFov = base.camLens.getVfov()
-        hOff = nearPlaneDist * math.tan(deg2Rad(hFov / 2.0))
-        vOff = nearPlaneDist * math.tan(deg2Rad(vFov / 2.0))
-        camPnts = [Point3(hOff, nearPlaneDist, vOff),
-         Point3(-hOff, nearPlaneDist, vOff),
-         Point3(hOff, nearPlaneDist, -vOff),
-         Point3(-hOff, nearPlaneDist, -vOff),
-         Point3(0.0, 0.0, 0.0)]
-        avgPnt = Point3(0.0, 0.0, 0.0)
-        for camPnt in camPnts:
-            avgPnt = avgPnt + camPnt
+    def printCameraPositions(self):
+        print '['
+        for i in range(len(self.cameraPositions)):
+            self.printCameraPosition(i)
+            print ','
 
-        avgPnt = avgPnt / len(camPnts)
-        sphereRadius = 0.0
-        for camPnt in camPnts:
-            dist = Vec3(camPnt - avgPnt).length()
-            if dist > sphereRadius:
-                sphereRadius = dist
+        print ']'
 
-        avgPnt = Point3(avgPnt)
-        self.ccSphereNodePath.setPos(avgPnt)
-        self.ccSphereNodePath2.setPos(avgPnt)
-        self.ccSphere.setRadius(sphereRadius)
-
-    def putCameraFloorRayOnAvatar(self):
-        self.camFloorRayNode.setPos(self, 0, 0, 5)
-
-    def putCameraFloorRayOnCamera(self):
-        self.camFloorRayNode.setPos(self.ccSphereNodePath, 0, 0, 0)
-
-    def setLookAtPoint(self, la):
-        self.__curLookAt = Point3(la)
-
-    def getLookAtPoint(self):
-        return Point3(self.__curLookAt)
-
-    def getClampedAvatarHeight(self):
-        return max(self.getHeight(), 3.0)
-
-    def getVisibilityPoint(self):
-        return Point3(0.0, 0.0, self.getHeight())
+    def printCameraPosition(self, index):
+        cp = self.cameraPositions[index]
+        print '(Point3(%0.2f, %0.2f, %0.2f),' % (cp[0][0], cp[0][1], cp[0][2])
+        print 'Point3(%0.2f, %0.2f, %0.2f),' % (cp[1][0], cp[1][1], cp[1][2])
+        print 'Point3(%0.2f, %0.2f, %0.2f),' % (cp[2][0], cp[2][1], cp[2][2])
+        print 'Point3(%0.2f, %0.2f, %0.2f),' % (cp[3][0], cp[3][1], cp[3][2])
+        print '%d,' % cp[4]
+        print ')',
 
     def posCamera(self, lerp, time):
         if not lerp:
@@ -586,14 +576,17 @@ class WalkControls(DirectObject):
             taskMgr.remove('posCamera')
             camera.lerpPosHpr(x, y, z, h, p, r, time, task='posCamera')
 
-    def positionCameraWithPusher(self, pos, lookAt):
-        camera.setPos(pos)
-        self.ccPusherTrav.traverse(self.__geom)
-        camera.lookAt(lookAt)
+    def getClampedAvatarHeight(self):
+        return max(self.getHeight(), 3.0)
 
-    def setCameraPositionByIndex(self, index):
-        self.notify.debug('switching to camera position %s' % index)
-        self.setCameraSettings(self.cameraPositions[index])
+    def getVisibilityPoint(self):
+        return Point3(0.0, 0.0, self.getHeight())
+
+    def setLookAtPoint(self, la):
+        self.__curLookAt = Point3(la)
+
+    def getLookAtPoint(self):
+        return Point3(self.__curLookAt)
 
     def setIdealCameraPos(self, pos):
         self.__idealCameraPos = Point3(pos)
@@ -601,6 +594,22 @@ class WalkControls(DirectObject):
 
     def getIdealCameraPos(self):
         return Point3(self.__idealCameraPos)
+
+    def setCameraPositionByIndex(self, index):
+        self.notify.debug('switching to camera position %s' % index)
+        self.setCameraSettings(self.cameraPositions[index])
+
+    def setCameraPosForPetInteraction(self):
+        height = self.getClampedAvatarHeight()
+        point = Point3(height * (7 / 3.0), height * (-7 / 3.0), height)
+        self.prevIdealPos = self.getIdealCameraPos()
+        self.setIdealCameraPos(point)
+        self.posCamera(1, 0.7)
+
+    def unsetCameraPosForPetInteraction(self):
+        self.setIdealCameraPos(self.prevIdealPos)
+        del self.prevIdealPos
+        self.posCamera(1, 0.7)
 
     def setCameraSettings(self, camSettings):
         self.setIdealCameraPos(camSettings[0])
@@ -670,7 +679,7 @@ class WalkControls(DirectObject):
 
     def startUpdateSmartCamera(self, push = 1):
         if self._smartCamEnabled:
-            self.notify.warning('redundant call to startUpdateSmartCamera')
+            LocalAvatar.notify.warning('redundant call to startUpdateSmartCamera')
             return
         self._smartCamEnabled = True
         self.__floorDetected = 0
@@ -688,21 +697,22 @@ class WalkControls(DirectObject):
             self.__disableSmartCam = 1
         self.__lastPosWrtRender = camera.getPos(render)
         self.__lastHprWrtRender = camera.getHpr(render)
-        taskName = 'updateSmartCamera'
+        taskName = self.uniqueName('updateSmartCamera')
         taskMgr.remove(taskName)
         taskMgr.add(self.updateSmartCamera, taskName, priority=47)
         self.enableSmartCameraViews()
 
     def stopUpdateSmartCamera(self):
         if not self._smartCamEnabled:
-            self.notify.warning('redundant call to stopUpdateSmartCamera')
+            LocalAvatar.notify.warning('redundant call to stopUpdateSmartCamera')
             return
         self.disableSmartCameraViews()
         self.cTrav.removeCollider(self.ccSphereNodePath)
         self.ccTravOnFloor.removeCollider(self.ccRay2NodePath)
         if not base.localAvatar.isEmpty():
             self.putCameraFloorRayOnAvatar()
-        taskMgr.remove('updateSmartCamera')
+        taskName = self.uniqueName('updateSmartCamera')
+        taskMgr.remove(taskName)
         self._smartCamEnabled = False
 
     def updateSmartCamera(self, task):
@@ -728,6 +738,11 @@ class WalkControls(DirectObject):
             self.putCameraFloorRayOnCamera()
         self.ccTravOnFloor.traverse(self.__geom)
         return Task.cont
+
+    def positionCameraWithPusher(self, pos, lookAt):
+        camera.setPos(pos)
+        self.ccPusherTrav.traverse(self.__geom)
+        camera.lookAt(lookAt)
 
     def nudgeCamera(self):
         CLOSE_ENOUGH = 0.1
@@ -790,3 +805,286 @@ class WalkControls(DirectObject):
         if self.__floorDetected == 0:
             self.__floorDetected = 1
             self.popCameraToDest()
+
+    def lerpCameraFov(self, fov, time):
+        taskMgr.remove('cam-fov-lerp-play')
+        oldFov = base.camLens.getHfov()
+        if abs(fov - oldFov) > 0.1:
+
+            def setCamFov(fov):
+                base.camLens.setMinFov(fov/(4./3.))
+
+            self.camLerpInterval = LerpFunctionInterval(setCamFov, fromData=oldFov, toData=fov, duration=time, name='cam-fov-lerp')
+            self.camLerpInterval.start()
+
+    def setCameraFov(self, fov):
+        self.fov = fov
+        if not (self.isPageDown or self.isPageUp):
+            base.camLens.setMinFov(self.fov/(4./3.))
+
+    def gotoNode(self, node, eyeHeight = 3):
+        possiblePoints = (Point3(3, 6, 0),
+         Point3(-3, 6, 0),
+         Point3(6, 6, 0),
+         Point3(-6, 6, 0),
+         Point3(3, 9, 0),
+         Point3(-3, 9, 0),
+         Point3(6, 9, 0),
+         Point3(-6, 9, 0),
+         Point3(9, 9, 0),
+         Point3(-9, 9, 0),
+         Point3(6, 0, 0),
+         Point3(-6, 0, 0),
+         Point3(6, 3, 0),
+         Point3(-6, 3, 0),
+         Point3(9, 9, 0),
+         Point3(-9, 9, 0),
+         Point3(0, 12, 0),
+         Point3(3, 12, 0),
+         Point3(-3, 12, 0),
+         Point3(6, 12, 0),
+         Point3(-6, 12, 0),
+         Point3(9, 12, 0),
+         Point3(-9, 12, 0),
+         Point3(0, -6, 0),
+         Point3(-3, -6, 0),
+         Point3(0, -9, 0),
+         Point3(-6, -9, 0))
+        for point in possiblePoints:
+            pos = self.positionExaminer.consider(node, point, eyeHeight)
+            if pos:
+                self.setPos(node, pos)
+                self.lookAt(node)
+                self.setHpr(self.getH() + random.choice((-10, 10)), 0, 0)
+                return
+
+        self.setPos(node, 0, 0, 0)
+
+    def displayWhisper(self, fromId, chatString, whisperType):
+        sender = None
+        sfx = self.soundWhisper
+        if whisperType == WhisperPopup.WTNormal or whisperType == WhisperPopup.WTQuickTalker:
+            if sender == None:
+                return
+            chatString = sender.getName() + ': ' + chatString
+        whisper = WhisperPopup(chatString, OTPGlobals.getInterfaceFont(), whisperType)
+        if sender != None:
+            whisper.setClickable(sender.getName(), fromId)
+        whisper.manage(base.marginManager)
+        base.playSfx(sfx)
+        return
+
+    def setAnimMultiplier(self, value):
+        self.animMultiplier = value
+
+    def getAnimMultiplier(self):
+        return self.animMultiplier
+
+    def enableRun(self):
+        self.accept('arrow_up', self.startRunWatch)
+        self.accept('arrow_up-up', self.stopRunWatch)
+        self.accept('control-arrow_up', self.startRunWatch)
+        self.accept('control-arrow_up-up', self.stopRunWatch)
+        self.accept('alt-arrow_up', self.startRunWatch)
+        self.accept('alt-arrow_up-up', self.stopRunWatch)
+        self.accept('shift-arrow_up', self.startRunWatch)
+        self.accept('shift-arrow_up-up', self.stopRunWatch)
+
+    def disableRun(self):
+        self.ignore('arrow_up')
+        self.ignore('arrow_up-up')
+        self.ignore('control-arrow_up')
+        self.ignore('control-arrow_up-up')
+        self.ignore('alt-arrow_up')
+        self.ignore('alt-arrow_up-up')
+        self.ignore('shift-arrow_up')
+        self.ignore('shift-arrow_up-up')
+
+    def startRunWatch(self):
+
+        def setRun(ignored):
+            messenger.send('running-on')
+
+        taskMgr.doMethodLater(self.runTimeout, setRun, self.uniqueName('runWatch'))
+        return Task.cont
+
+    def stopRunWatch(self):
+        taskMgr.remove(self.uniqueName('runWatch'))
+        messenger.send('running-off')
+        return Task.cont
+
+    def runSound(self):
+        self.soundWalk.stop()
+        base.playSfx(self.soundRun, looping=1)
+
+    def walkSound(self):
+        self.soundRun.stop()
+        base.playSfx(self.soundWalk, looping=1)
+
+    def stopSound(self):
+        self.soundRun.stop()
+        self.soundWalk.stop()
+
+    def disableSleeping(self):
+        self.neverSleep = True
+
+    def enableSleeping(self):
+        self.neverSleep = False
+
+    def wakeUp(self):
+        if self.neverSleep:
+            return
+        if self.sleepCallback != None:
+            taskMgr.remove(self.uniqueName('sleepwatch'))
+            self.startSleepWatch(self.sleepCallback)
+        self.lastMoved = globalClock.getFrameTime()
+        if self.sleepFlag:
+            self.sleepFlag = 0
+        return
+
+    def gotoSleep(self):
+        if self.neverSleep:
+            return
+        if not self.sleepFlag:
+            self.setAnimState('Sleep', self.animMultiplier)
+            self.sleepFlag = 1
+
+    def forceGotoSleep(self):
+        if self.hp > 0:
+            self.sleepFlag = 0
+            self.gotoSleep()
+
+    def startSleepWatch(self, callback):
+        self.sleepCallback = callback
+        taskMgr.doMethodLater(self.sleepTimeout, callback, self.uniqueName('sleepwatch'))
+
+    def stopSleepWatch(self):
+        taskMgr.remove(self.uniqueName('sleepwatch'))
+        self.sleepCallback = None
+        return
+
+    def startSleepSwimTest(self):
+        taskName = self.uniqueName('sleepSwimTest')
+        taskMgr.remove(taskName)
+        task = Task.Task(self.sleepSwimTest)
+        self.lastMoved = globalClock.getFrameTime()
+        self.lastState = None
+        self.lastAction = None
+        self.sleepSwimTest(task)
+        taskMgr.add(self.sleepSwimTest, taskName, 35)
+        return
+
+    def stopSleepSwimTest(self):
+        taskName = self.uniqueName('sleepSwimTest')
+        taskMgr.remove(taskName)
+        self.stopSound()
+
+    def sleepSwimTest(self, task):
+        now = globalClock.getFrameTime()
+        speed, rotSpeed, slideSpeed = self.controlManager.getSpeeds()
+        if speed != 0.0 or rotSpeed != 0.0 or inputState.isSet('jump'):
+            if not self.swimmingFlag:
+                self.swimmingFlag = 1
+        elif self.swimmingFlag:
+            self.swimmingFlag = 0
+        if self.swimmingFlag or self.hp <= 0:
+            self.wakeUp()
+        elif not self.sleepFlag:
+            now = globalClock.getFrameTime()
+            if now - self.lastMoved > self.swimTimeout:
+                self.swimTimeoutAction()
+                return Task.done
+        return Task.cont
+
+    def swimTimeoutAction(self):
+        pass
+
+    def trackAnimToSpeed(self, task):
+        speed, rotSpeed, slideSpeed = self.controlManager.getSpeeds()
+        if speed != 0.0 or rotSpeed != 0.0 or inputState.isSet('jump'):
+            if not self.movingFlag:
+                self.movingFlag = 1
+                self.stopLookAround()
+        elif self.movingFlag:
+            self.movingFlag = 0
+            self.startLookAround()
+        state = None
+        if self.sleepFlag:
+            state = 'Sleep'
+        elif self.hp > 0:
+            state = 'Happy'
+        else:
+            state = 'Sad'
+        if state != self.lastState:
+            self.lastState = state
+            self.setAnimState(state, self.animMultiplier)
+            if state == 'Sad':
+                self.setWalkSpeedSlow()
+            else:
+                self.setWalkSpeedNormal()
+        if self.cheesyEffect == OTPGlobals.CEFlatProfile or self.cheesyEffect == OTPGlobals.CEFlatPortrait:
+            needH = None
+            if rotSpeed > 0.0:
+                needH = -10
+            elif rotSpeed < 0.0:
+                needH = 10
+            elif speed != 0.0:
+                needH = 0
+            if needH != None and self.lastNeedH != needH:
+                node = self.getGeomNode().getChild(0)
+                lerp = Sequence(LerpHprInterval(node, 0.5, Vec3(needH, 0, 0), blendType='easeInOut'), name='cheesy-lerp-hpr', autoPause=1)
+                lerp.start()
+                self.lastNeedH = needH
+        else:
+            self.lastNeedH = None
+        action = self.setSpeed(speed, rotSpeed)
+        if action != self.lastAction:
+            self.lastAction = action
+            if self.emoteTrack:
+                self.emoteTrack.finish()
+                self.emoteTrack = None
+            if action == OTPGlobals.WALK_INDEX or action == OTPGlobals.REVERSE_INDEX:
+                self.walkSound()
+            elif action == OTPGlobals.RUN_INDEX:
+                self.runSound()
+            else:
+                self.stopSound()
+        return Task.cont
+
+    def hasTrackAnimToSpeed(self):
+        taskName = self.uniqueName('trackAnimToSpeed')
+        return taskMgr.hasTaskNamed(taskName)
+
+    def startTrackAnimToSpeed(self):
+        taskName = self.uniqueName('trackAnimToSpeed')
+        taskMgr.remove(taskName)
+        task = Task.Task(self.trackAnimToSpeed)
+        self.lastMoved = globalClock.getFrameTime()
+        self.lastState = None
+        self.lastAction = None
+        self.trackAnimToSpeed(task)
+        taskMgr.add(self.trackAnimToSpeed, taskName, 35)
+        return
+
+    def stopTrackAnimToSpeed(self):
+        taskName = self.uniqueName('trackAnimToSpeed')
+        taskMgr.remove(taskName)
+        self.stopSound()
+
+    def travCollisionsLOS(self, n = None):
+        if n == None:
+            n = self.__geom
+        self.ccTrav.traverse(n)
+        return
+
+    def travCollisionsFloor(self, n = None):
+        if n == None:
+            n = self.__geom
+        self.ccTravFloor.traverse(n)
+        return
+
+    def travCollisionsPusher(self, n = None):
+        if n == None:
+            n = self.__geom
+        self.ccPusherTrav.traverse(n)
+        return

@@ -82,17 +82,17 @@ class FFClientRepository(DirectObject):
 
     def setupLocalAvatar(self, tutorialFlag=0):
         base.localAvatar.reparentTo(render)
-        base.localAvatar.setupControls()
-        base.localAvatar.initializeSmartCamera()
-        base.localAvatar.startUpdateSmartCamera()
+        base.localAvatar.generate()
         base.localAvatar.initInterface()
         base.localAvatar.useLOD(1000)
-        base.localAvatar.startBlink()
         if not tutorialFlag:
             base.localAvatar.book.showButton()
             base.localAvatar.laffMeter.start()
             base.localAvatar.experienceBar.show()
             base.localAvatar.startChat()
+        # Enable the avatar for a moment so that it initializes the camera's position.
+        # Otherwise the camera would just be staring at render while the teleportIn animation plays.
+        base.localAvatar.enable()
         base.localAvatar.disable()
 
     def teleportTo(self, zoneId):
