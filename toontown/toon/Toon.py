@@ -1452,6 +1452,7 @@ class Toon(Avatar.Avatar, ToonHead):
         self.loop(anim, restart=0)
         self.setPlayRate(animMultiplier, anim)
         self.playingAnim = anim
+        self.playingRate = animMultiplier
         self.setActiveShadow(1)
 
     def exitNeutral(self):

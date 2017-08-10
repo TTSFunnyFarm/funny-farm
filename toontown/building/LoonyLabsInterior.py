@@ -44,16 +44,18 @@ class LoonyLabsInterior(Interior):
         doorOrigin.setScale(0.8, 0.8, 0.8)
         doorOrigin.setPos(doorOrigin, 0, -0.025, 0)
         self.door = self.setupDoor('door_double_round_ur', 'door_origin')
-        doorRef = self.makeReflection(self.door)
-        doorRef.setSx(-1)
-        doorRef.setAttrib(CullFaceAttrib.make(CullFaceAttrib.MNone))
+        self.doorRef = self.makeReflection(self.door)
+        self.doorRef.setSx(-1)
+        self.doorRef.setAttrib(CullFaceAttrib.make(CullFaceAttrib.MNone))
         self.door.find('**/door_double_round_ur_trigger').setName('door_trigger_14')
         self.door.find('**/door_trigger_14').setPos(doorOrigin, 0, -0.05, 0)
         doorColor = 0
         if self.zoneId in InteriorStorage.ZoneStyles:
             doorColor = InteriorStorage.ZoneStyles[self.zoneId].get('TI_door', 0)
         self.door.setColor(self.colors['TI_door'][doorColor])
-        doorRef.setColor(self.colors['TI_door'][doorColor])
+        self.doorRef.setColor(self.colors['TI_door'][doorColor])
+        base.localAvatar.makeReflection()
+        base.localAvatar.startUpdateReflection()
         del self.colors
         del self.randomGenerator
         self.interior.flattenMedium()
@@ -63,6 +65,8 @@ class LoonyLabsInterior(Interior):
 
     def unload(self):
         Interior.unload(self)
+        base.localAvatar.stopUpdateReflection()
+        base.localAvatar.deleteReflection()
         self.sillyFSM.requestFinalState()
 
     def generateNPCs(self):
@@ -76,6 +80,7 @@ class LoonyLabsInterior(Interior):
         building = collEntry.getIntoNodePath().getParent()
         door = Door.Door(building, self.shopId + '_int')
         door.avatarEnter(base.localAvatar)
+        Sequence(Wait(0.4), LerpHprInterval(self.doorRef.find('**/door_double_round_ur_right'), 0.6, VBase3(100, 0, 0), blendType='easeInOut')).start()
         self.acceptOnce('avatarEnterDone', self.enterZone)
 
     def enterZone(self):

@@ -1546,3 +1546,60 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
     def disableBodyCollisions(self):
         pass
 
+    # These functions are for reflections of the toon on the floor in places like Loony Labs.
+    # This is currently just an alpha test; it looks pretty awkward for a variety of reasons, 
+    # so I'm unsure if we're going to keep it or not.
+    def makeReflection(self):
+        self.reflection = Toon.Toon()
+        self.reflection.setDNA(self.getDNA())
+        self.reflection.setHat(*base.avatarData.setHat)
+        self.reflection.setGlasses(*base.avatarData.setGlasses)
+        self.reflection.setBackpack(*base.avatarData.setBackpack)
+        self.reflection.setShoes(*base.avatarData.setShoes)
+        self.reflection.applyCheesyEffect(base.avatarData.setCheesyEffect)
+        self.reflection.hideName()
+        self.reflection.hideShadow()
+        self.reflection.reparentTo(self)
+        self.reflection.setR(180)
+        self.reflection.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.MNone))
+        self.reflection.setBin('default', 0)
+        self.reflection.setSx(-1)
+        self.reflection.setAttrib(CullFaceAttrib.make(CullFaceAttrib.MNone))
+        self.reflection.setZ(-0.15)
+        self.reflection.setAnimState('neutral', 1.0)
+
+    def deleteReflection(self):
+        self.reflection.delete()
+        del self.reflection
+
+    def startUpdateReflection(self):
+        self.reflectionAnim = None
+        self.reflectionRate = None
+        taskMgr.add(self.updateReflection, 'ltUpdateReflection')
+
+    def stopUpdateReflection(self):
+        taskMgr.remove('ltUpdateReflection')
+        del self.reflectionAnim
+        del self.reflectionRate
+
+    def updateReflection(self, task):
+        reflectionAnim = self.reflectionAnim
+        reflectionRate = self.reflectionRate
+        playingAnim = self.playingAnim
+        playingRate = self.playingRate
+        if reflectionAnim != playingAnim or reflectionRate != playingRate:
+            self.reflectionAnim = playingAnim
+            self.reflectionRate = playingRate
+            if playingAnim == 'jump-idle' or playingAnim == 'running-jump-idle':
+                if playingAnim == 'running-jump-idle':
+                    self.reflection.playingAnim = None
+                self.reflection.setAnimState('jumpAirborne', 1.0)
+            elif playingAnim == 'jump-land' or playingAnim == 'running-jump-land':
+                self.reflection.setAnimState('jumpLand', 1.0)
+            else:
+                self.reflection.setAnimState(self.reflectionAnim, self.reflectionRate)
+        if playingAnim == 'jump-idle' or playingAnim == 'running-jump-idle':
+            self.reflection.setZ((-self.getZ() * 2) - 0.15)
+        else:
+            self.reflection.setZ(-0.15)
+        return Task.cont
