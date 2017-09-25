@@ -17,14 +17,15 @@ from toontown.book import ToonPage
 from toontown.book import InventoryPage
 from toontown.book import QuestPage
 from toontown.quest import Quests
+from toontown.quest.InfoBubble import InfoBubble
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
 from LaffMeter import LaffMeter
 from PublicWalk import PublicWalk
+from ExperienceBar import ExperienceBar
 import InventoryNew
 import Experience
-import ExperienceBar
 import Toon
 import random
 import math
@@ -149,6 +150,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
                 self.inventory.unload()
             self.book.unload()
             self.experienceBar.destroy()
+            self.infoBubble.unload()
             del self.laffMeter
             del self.optionsPage
             del self.mapPage
@@ -159,6 +161,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             del self.inventory
             del self.book
             del self.experienceBar
+            del self.infoBubble
 
     def isLocal(self):
         return 1
@@ -273,9 +276,12 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         else:
             self.laffMeter.setPos(0.133, 0.0, 0.13)
         self.laffMeter.stop()
-        self.experienceBar = ExperienceBar.ExperienceBar(self)
+        self.experienceBar = ExperienceBar(self)
         self.experienceBar.reparentTo(base.a2dBottomCenter)
         self.experienceBar.hide()
+        self.infoBubble = InfoBubble()
+        self.infoBubble.load()
+        self.infoBubble.hide()
         self.accept('time-insert', self.__beginTossPie)
         self.accept('time-insert-up', self.__endTossPie)
         self.accept('time-delete', self.__beginTossPie)
@@ -761,6 +767,20 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         spawn = random.choice(spawnPoints)
         self.setPos(spawn[0])
         self.setHpr(spawn[1])
+
+    def checkQuestCutscene(self):
+        currZone = base.cr.playGame.getActiveZone()
+        if currZone.place:
+            zoneId = currZone.place.zoneId
+        else:
+            zoneId = currZone.zoneId
+        for questDesc in self.quests:
+            if questDesc[0] in Quests.Cutscenes:
+                if zoneId == Quests.getToNpcLocation(questDesc[0]) and questDesc[1] == 0:
+                    base.cr.cutsceneMgr.enterCutscene(questDesc[0])
+
+    def showInfoBubble(self, index, doneEvent):
+        self.infoBubble.enter(index, doneEvent)
 
     def b_setTunnelIn(self, endX, tunnelOrigin):
         timestamp = globalClockDelta.getFrameNetworkTime()

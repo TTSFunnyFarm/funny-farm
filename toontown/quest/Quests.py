@@ -163,6 +163,8 @@ class Quest:
             self.fromNpc = None
         if self.toNpc == Same:
             self.toNpc = self.fromNpc
+        if self.toNpc == NA:
+            self.toNpc = None
         if self.toLocation == NA:
             self.toLocation = None
         self.questReward = questInfo[7]
@@ -479,7 +481,29 @@ DefaultDialog = {GREETING: DefaultGreeting,
 QuestDict = {
  # These first few quests are kind of weird because I'm
  # trying to plan out how cutscenes will fit in and stuff
- 1001: (FF_TIER,          # Quest tier
+ 1001: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeGoTo,),
+        NA,
+        1001,
+        1514,
+        (QuestRewardXP,
+         10),
+        1002,
+        None),
+ 1002: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeGoTo,),
+        NA,
+        1001,
+        1000,
+        (QuestRewardXP,
+         10),
+        1003,
+        None),
+ 1003: (FF_TIER,          # Quest tier
         MainQuest,        # Quest category
         Finish,           # Whether the quest is finished or continuing
         (QuestTypeGoTo,), # Quest type (& info)
@@ -488,9 +512,9 @@ QuestDict = {
         1514,             # To location
         (QuestRewardXP,   # Reward
          10),
-        NA,               # Next quest
-        TTLocalizer.QuestDialogDict[1001]), # Dialog dict
- 1002: (FF_TIER,
+        1004,               # Next quest
+        TTLocalizer.QuestDialogDict[1003]), # Dialog dict
+ 1004: (FF_TIER,
         MainQuest,
         Finish,
         (QuestTypeGoTo,),
@@ -498,9 +522,9 @@ QuestDict = {
         NA,
         1515,
         (QuestRewardNone,),
-        1003,
+        1005,
         None),
- 1003: (FF_TIER,
+ 1005: (FF_TIER,
         MainQuest,
         Cont,
         (QuestTypeGoTo,),
@@ -508,9 +532,9 @@ QuestDict = {
         1001,
         1514,
         (QuestRewardGagTraining,),
-        1004,
-        TTLocalizer.QuestDialogDict[1003]),
- 1004: (FF_TIER,
+        1006,
+        TTLocalizer.QuestDialogDict[1005]),
+ 1006: (FF_TIER,
         MainQuest,
         Finish,
         (QuestTypeChoose,),
@@ -518,9 +542,9 @@ QuestDict = {
         Same,
         1514,
         (QuestRewardGagTraining,),
-        1005,
-        TTLocalizer.QuestDialogDict[1004]),
- 1005: (FF_TIER,
+        1007,
+        TTLocalizer.QuestDialogDict[1006]),
+ 1007: (FF_TIER,
         MainQuest,
         Finish,
         (QuestTypeDefeatCog, # Quest type
@@ -537,8 +561,13 @@ QuestDict = {
          QuestRewardTrackFrame,
          1),
         NA,
-        TTLocalizer.QuestDialogDict[1005])
+        TTLocalizer.QuestDialogDict[1007])
 }
+
+Cutscenes = (1001,
+ 1002,
+ 1004,
+ 1005)
 
 def getQuest(id):
     return Quest(id)
@@ -551,6 +580,9 @@ def getToNpcId(id):
     if toNpcId is Same:
         toNpcId = QuestDict.get(id)[4]
     return toNpcId
+
+def getToNpcLocation(id):
+    return QuestDict.get(id)[6]
 
 def getReward(id):
     return QuestDict.get(id)[7]

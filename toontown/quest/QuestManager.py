@@ -21,18 +21,21 @@ class QuestManager:
             base.localAvatar.setHealth(base.localAvatar.maxHp, base.localAvatar.maxHp)
         nextQuest = Quests.getNextQuest(questId)
         if nextQuest == Quests.NA:
+            base.localAvatar.enable()
             return
         if Quests.getQuestFinished(questId):
+            base.localAvatar.enable()
+            base.localAvatar.disable()
             taskMgr.doMethodLater(1.5, self.__handleCompleteQuest, 'completeQuest', [npc, nextQuest])
         else:
             self.__handleCompleteQuest(npc, nextQuest)
 
     def __handleCompleteQuest(self, npc, nextQuest):
-        # TODO: determine if the next quest has a cutscene instead of regular dialogue
-        try:
+        if nextQuest in Quests.Cutscenes:
+            base.cr.cutsceneMgr.enterCutscene(nextQuest)
+            base.localAvatar.addQuest(nextQuest)
+        else:
             self.npcGiveQuest(npc, nextQuest)
-        except:
-            pass
         return Task.done
 
     def requestInteract(self, npc):
@@ -79,7 +82,7 @@ class QuestManager:
                         # Keep working on that task, _avName_!
                         npc.incompleteQuest(toon.doId, questId, Quests.INCOMPLETE, toNpcId)
                 return # Yes, the NPC's response is only based on the player's first quest.
-        
+
         # todo: quest tier upgrades
         # todo: present quest choices
         # for now, keep telling them to fuck off, we dont have any quests for them yet

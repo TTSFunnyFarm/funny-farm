@@ -7,6 +7,7 @@ from toontown.login.AvatarChooser import AvatarChooser
 from toontown.makeatoon.MakeAToon import MakeAToon
 from toontown.toontowngui import TTDialog
 from toontown.quest.QuestManager import QuestManager
+from toontown.quest.CutsceneManager import CutsceneManager
 from otp.otpbase import OTPLocalizer
 from otp.nametag import NametagGlobals
 from PlayGame import PlayGame
@@ -22,6 +23,7 @@ class FFClientRepository(DirectObject):
         self.avCreate = None
         self.playGame = PlayGame()
         self.questManager = QuestManager()
+        self.cutsceneMgr = CutsceneManager()
         self.playingGame = 0
         self.waitDialog = None
 

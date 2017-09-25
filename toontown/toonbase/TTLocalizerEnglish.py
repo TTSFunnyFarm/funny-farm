@@ -597,23 +597,26 @@ INCOMPLETE_WRONG_NPC = 4
 COMPLETE = 5
 LEAVING = 6
 QuestDialogDict = {
- 1001: {GREETING: '',
+ 1003: {GREETING: '',
         QUEST: '',
         COMPLETE: 'Boy, that was scary. This is not good...\x07I\'m going to need your help figuring out this problem.',
         LEAVING: ''},
- 1003: {GREETING: '',
+ 1005: {GREETING: '',
         QUEST: '',
         COMPLETE: 'The Silly Meter is broken!\x07Things in Funny Farm definitely aren\'t funny anymore...\x07The only way we can restore silliness to our town is to drive the Cogs out of here!',
         LEAVING: ''},
- 1004: {GREETING: '',
+ 1006: {GREETING: '',
         QUEST: 'Before we get started, you should begin learning another gag track.\x07Learning how to use different types of gags is a very important part of being able to defeat the Cogs.\x07To start, you can choose between Sound and Lure.\x07Come back to me when you are ready to decide.',
         COMPLETE: 'Ah, excellent choice.\x07To start learning these gags, you will need to collect film strips.\x07You can earn film strips from ToonTasks in addition to your normal experience points.\x07There are 15 film strips, which form an animation to show you how to use your new gags.\x07When you collect all 15, you can start buying those gags from the Gag Shop!\x07You can check your progress in the Shticker Book.',
         LEAVING: ''},
- 1005: {GREETING: '',
+ 1007: {GREETING: '',
         QUEST: 'Now, let\'s get to business.\x07First we need to check the status of the streets.\x07Could you head out to Rickety Road and see what\'s going on out there?',
         INCOMPLETE_PROGRESS: 'Could you please go and check the status of Rickety Road?',
         COMPLETE: 'The Cogs are already invading the streets?\x07This might be worse than I thought!\x07Thanks for your help.',
         LEAVING: ''}
+}
+CutsceneDialogDict = {
+ 1001: 'Hmm... It doesn\'t look like Flippy is in here.\x07Maybe you should check back outside.'
 }
 ChatGarblerDog = ['woof', 'arf', 'rruff']
 ChatGarblerCat = ['meow', 'mew']
@@ -4522,7 +4525,7 @@ QuestScript150_2 = 'To make friends, find another player, and use the New Friend
 QuestScript150_3 = 'Once you have made a friend, come back here.'
 QuestScript150_4 = 'Some tasks are too difficult to do alone!'
 TutorialGreeting = 'Hello! Come over here using the arrow keys.'
-TutorialIntro = 'Welcome to Funny Farm.\x07Many many years ago, Toontown was invaded by evil business robots called Cogs.\x07The Cogs despise all silliness, and they can\'t take a joke!\x07For 10 long years the Toons fought Cogs with silly jokes and gags...\x07...until one day, they became too strong for us.\x07We left Toontown and built a new settlement here, called Funny Farm.\x07But now it\'s only a matter of time before the Cogs find us again.\x07With that said, we need to get you prepared with some gags!'
+TutorialIntro = 'Welcome to Funny Farm.\x07Many many years ago, Toontown was invaded by evil business robots called Cogs.\x07The Cogs despise all silliness, and they can\'t take a joke!\x07For 10 long years the Toons fought Cogs with silly jokes and gags...\x07...until one day, they became too strong for us.\x07We left Toontown and built a new settlement here, called Funny Farm.\x07But it\'s only a matter of time before the Cogs find us again.\x07With that said, we need to get you prepared with some gags!'
 TutorialGags_0 = 'Throw and Squirt are the two most basic gag tracks, so I\'ll give you these to start.'
 TutorialGags_1 = 'As you progress, you will gain lots of new gags...\x07...including some new inventions being worked on by our Loony Labs scientists right now!'
 TutorialLaffMeter_0 = 'Oh! You also need a Laff meter!\x07If your Laff meter gets too low, you\'ll be sad!'
@@ -4530,7 +4533,7 @@ TutorialLaffMeter_1 = 'A happy Toon is a healthy Toon!'
 TutorialBook_0 = 'Here is your Shticker Book...'
 TutorialBook_1 = 'You can keep track of your location, Gags, ToonTasks, and all of your other progress in that book.\x07It will be very useful to you.'
 TutorialChat_0 = 'Also, here is your chat button.'
-TutorialChat_1 = 'You can use that button to say things!\x07It might come in handy sometimes.\x07Can\'t always keep your thoughts to yourself!'
+TutorialChat_1 = 'You can use that button to say things!\x07It might come in handy sometimes.'
 TutorialTraining_0 = 'Now let\'s try out those new gags I gave you.'
 TutorialTraining_1 = 'Practice throwing some pies at the targets ahead.'
 TutorialTraining_2 = 'Nicely done! You\'re a natural!'

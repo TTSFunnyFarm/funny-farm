@@ -35,6 +35,7 @@ class ToonHallInterior(Interior):
         del self.colors
         del self.randomGenerator
         self.interior.flattenMedium()
+        self.checkAvatarQuests()
         self.acceptOnce('avatarExitDone', self.startActive)
 
     def unload(self):
@@ -51,6 +52,7 @@ class ToonHallInterior(Interior):
         #self.npcs[3].setAnimState('ScientistEmcee')
 
     def startActive(self):
+        base.localAvatar.checkQuestCutscene()
         Interior.startActive(self)
         self.accept('enterdoor_trigger_15', self.handleLabDoorTrigger)
 
@@ -69,3 +71,10 @@ class ToonHallInterior(Interior):
         zone.place.load()
         door = Door.Door(zone.place.door, 'loonylabs_int')
         door.avatarExit(base.localAvatar)
+
+    def checkAvatarQuests(self):
+        # Checks for any instance-based changes we need to make
+        for questDesc in base.localAvatar.quests:
+            if questDesc[0] == 1001 or questDesc[0] == 1002:
+                self.npcs[0].stash()
+                self.npcs[0].removeActive()
