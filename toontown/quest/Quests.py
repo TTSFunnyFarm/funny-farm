@@ -512,7 +512,7 @@ QuestDict = {
         1514,             # To location
         (QuestRewardXP,   # Reward
          10),
-        1004,               # Next quest
+        NA,               # Next quest
         TTLocalizer.QuestDialogDict[1003]), # Dialog dict
  1004: (FF_TIER,
         MainQuest,

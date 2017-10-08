@@ -26,6 +26,7 @@ class QuestManager:
         if Quests.getQuestFinished(questId):
             base.localAvatar.enable()
             base.localAvatar.disable()
+            base.localAvatar.setAnimState('neutral')
             taskMgr.doMethodLater(1.5, self.__handleCompleteQuest, 'completeQuest', [npc, nextQuest])
         else:
             self.__handleCompleteQuest(npc, nextQuest)

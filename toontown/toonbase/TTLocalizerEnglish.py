@@ -616,7 +616,16 @@ QuestDialogDict = {
         LEAVING: ''}
 }
 CutsceneDialogDict = {
- 1001: 'Hmm... It doesn\'t look like Flippy is in here.\x07Maybe you should check back outside.'
+ 1001: 'Hmm... It doesn\'t look like Flippy is in here.\x07Maybe you should check back outside.',
+ 1002: (('This is a warning.\x07We ask that you cease your operations here and terminate any further lab experiments you may be conducting.',
+        'You can\'t stop us from doing anything.\x07We are not backing down this time.',
+        'The size of our corporation and the plans we have are beyond the stretch of your imagination.\x07You will face consequences if you do not oblige.',
+        'We are stronger than we\'ve ever been before.\x07I suggest YOU terminate your presence in our playground, or you\'ll taste my home-baked wrath!',
+        'Suit yourself.'),
+        '%s, it\'s good to see you!\x07Meet me back at the Toon Hall, so we can discuss some things.')
+}
+InfoBubbleDialog = {
+ 0: 'You\'ve just received a new ToonTask!\x07When completed, you will gain experience and other rewards for your Toon!\x07Now head through the tunnel to find Flippy.'
 }
 ChatGarblerDog = ['woof', 'arf', 'rruff']
 ChatGarblerCat = ['meow', 'mew']
@@ -4296,7 +4305,7 @@ ColorShopAll = 'Single Color'
 ClothesShopShorts = 'Shorts'
 ClothesShopShirt = 'Shirts'
 ClothesShopBottoms = 'Bottoms'
-PromptTutorial = "Congratulations!!\nYou are Funny Farm's newest citizen!\n\nWould you like to continue to the Toontorial (It\'s brand new!) or teleport directly to Funny Farm?"
+PromptTutorial = "Congratulations!!\nYou are Funny Farm's newest citizen!\n\nWould you like to continue to the Toontorial (recommended) or teleport directly to Funny Farm?"
 MakeAToonSkipTutorial = 'Skip Toontorial'
 MakeAToonEnterTutorial = 'Enter Toontorial'
 MakeAToonDone = 'Done'
@@ -4527,11 +4536,11 @@ QuestScript150_4 = 'Some tasks are too difficult to do alone!'
 TutorialGreeting = 'Hello! Come over here using the arrow keys.'
 TutorialIntro = 'Welcome to Funny Farm.\x07Many many years ago, Toontown was invaded by evil business robots called Cogs.\x07The Cogs despise all silliness, and they can\'t take a joke!\x07For 10 long years the Toons fought Cogs with silly jokes and gags...\x07...until one day, they became too strong for us.\x07We left Toontown and built a new settlement here, called Funny Farm.\x07But it\'s only a matter of time before the Cogs find us again.\x07With that said, we need to get you prepared with some gags!'
 TutorialGags_0 = 'Throw and Squirt are the two most basic gag tracks, so I\'ll give you these to start.'
-TutorialGags_1 = 'As you progress, you will gain lots of new gags...\x07...including some new inventions being worked on by our Loony Labs scientists right now!'
+TutorialGags_1 = 'As you progress, you will gain lots of new gags...\x07...including new inventions being worked on by our Loony Labs scientists!'
 TutorialLaffMeter_0 = 'Oh! You also need a Laff meter!\x07If your Laff meter gets too low, you\'ll be sad!'
 TutorialLaffMeter_1 = 'A happy Toon is a healthy Toon!'
 TutorialBook_0 = 'Here is your Shticker Book...'
-TutorialBook_1 = 'You can keep track of your location, Gags, ToonTasks, and all of your other progress in that book.\x07It will be very useful to you.'
+TutorialBook_1 = 'You can keep track of your location, Gags, ToonTasks, and other progress in that book.\x07It will be very useful to you.'
 TutorialChat_0 = 'Also, here is your chat button.'
 TutorialChat_1 = 'You can use that button to say things!\x07It might come in handy sometimes.'
 TutorialTraining_0 = 'Now let\'s try out those new gags I gave you.'

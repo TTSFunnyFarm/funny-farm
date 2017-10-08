@@ -35,7 +35,7 @@ class InfoBubble(DirectFrame):
          image_scale=(2.3, 2.3, 2.3), image1_scale=(2.4, 2.4, 2.4), image2_scale=(2.4, 2.4, 2.4), pos=(9.8, 0, 1.8), command=self.exit)
         self.okButton.hide()
         self.dialog = DirectLabel(parent=self.bubble, relief=None, text='', text_font=ToontownGlobals.getInterfaceFont(),
-         pos=(2.9, 0, 2.6), scale=0.4, text_align=TextNode.ALeft, text_wordwrap=16)
+         pos=(2.9, 0, 2.7), scale=0.4, text_align=TextNode.ALeft, text_wordwrap=16)
         bubbleGui.removeNode()
         buttonGui.removeNode()
         self.hide()
@@ -57,7 +57,11 @@ class InfoBubble(DirectFrame):
         self.icon.setPos(1.5, 0, 2.5)
         self.icon.setScale(1.5)
         gui.removeNode()
-        self.currText = TTLocalizer.CutsceneDialogDict[index]
+        if index > 1000:
+            dialog = TTLocalizer.CutsceneDialogDict[index]
+        else:
+            dialog = TTLocalizer.InfoBubbleDialog[index]
+        self.currText = dialog
         self.setPageNumber(0)
         self.bubble.setScale(0.01, 0.01, 0.01)
         self.show()

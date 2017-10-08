@@ -778,6 +778,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             if questDesc[0] in Quests.Cutscenes:
                 if zoneId == Quests.getToNpcLocation(questDesc[0]) and questDesc[1] == 0:
                     base.cr.cutsceneMgr.enterCutscene(questDesc[0])
+                    return
 
     def showInfoBubble(self, index, doneEvent):
         self.infoBubble.enter(index, doneEvent)

@@ -463,6 +463,7 @@ class Tutorial(ToonHood):
         flyInSeq = Sequence(
             Func(base.transitions.fadeOut, 1.0),
             Wait(1),
+            Func(aspect2d.hide),
             Func(camera.setPosHpr, -5, 95, 4, 270, 12, 0),
             Func(base.transitions.fadeIn, 1.0),
             Func(base.playMusic, self.spookyMusic, looping=1),
@@ -473,6 +474,7 @@ class Tutorial(ToonHood):
             Wait(2),
             Func(base.transitions.fadeOut, 1.0),
             Wait(1),
+            Func(aspect2d.show),
             Func(camera.wrtReparentTo, self.flippy),
             Func(camera.setPosHpr, 0, 9, 4, 180, 0, 0),
             Func(base.transitions.fadeIn, 1.0),
@@ -492,6 +494,7 @@ class Tutorial(ToonHood):
 
     def enterBattle(self, collEntry):
         self.disableToon()
+        self.toon.book.hideButton()
         self.stopSuitWalkInterval()
         self.battle = Battle(self.townBattle, toons=[self.toon], suits=[self.suit], tutorialFlag=1)
         # Never parent a battle directly to render, always use a battle cell 
@@ -504,14 +507,13 @@ class Tutorial(ToonHood):
 
     def exitBattle(self, doneStatus):
         self.enableToon()
+        self.toon.book.showButton()
         self.battleMusic.stop()
         base.playMusic(self.spookyMusic, looping=1)
         self.ignore(self.townBattle.doneEvent)
         self.battle.cleanupBattle()
         self.battle.delete()
         self.battle = None
-        # They've made it far enough to where we can say they finished the tutorial.
-        base.localAvatar.setTutorialAck(1)
         self.enterOutro()
 
     def startSuitWalkInterval(self):
@@ -555,7 +557,19 @@ class Tutorial(ToonHood):
 
     def exitOutro(self):
         self.enableToon()
+        self.disableToon()
+        self.toon.addQuest(1001)
+        self.toon.questPage.questFrames[0].setPosHpr(0, 0, 0, 0, 0, 0)
+        self.toon.questPage.showQuestsOnscreen()
+        self.toon.setTutorialAck(1)
+        self.acceptOnce('bubble-done', self.questDialogDone)
+        Sequence(Wait(0.5), Func(base.localAvatar.showInfoBubble, 0, 'bubble-done')).start()
+
+    def questDialogDone(self):
+        self.toon.questPage.hideQuestsOnscreen()
+        self.toon.questPage.questFrames[0].setPosHpr(-0.45, 0, 0.28, 0, 0, 0)
         self.startActive()
+        self.enableToon()
 
     def enterHood(self, zoneId):
         # For now we're just entering through the rickety road tunnel
