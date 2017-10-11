@@ -491,7 +491,7 @@ QuestDict = {
         (QuestRewardXP,
          10),
         1002,
-        None),
+        DefaultDialog),
  1002: (FF_TIER,
         MainQuest,
         Cont,
@@ -502,7 +502,7 @@ QuestDict = {
         (QuestRewardXP,
          10),
         1003,
-        None),
+        DefaultDialog),
  1003: (FF_TIER,          # Quest tier
         MainQuest,        # Quest category
         Finish,           # Whether the quest is finished or continuing
@@ -523,7 +523,7 @@ QuestDict = {
         1515,
         (QuestRewardNone,),
         1005,
-        None),
+        DefaultDialog),
  1005: (FF_TIER,
         MainQuest,
         Cont,

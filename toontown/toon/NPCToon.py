@@ -71,14 +71,7 @@ class NPCToon(NPCToonBase):
         self.detectAvatars()
         if hasattr(self, 'origin'):
             self.setPosHpr(self.origin, 0, 0, 0, 0, 0, 0)
-        if len(quests) > 0:
-            questId = quests[0]
-            if questId == 1003:
-                pass
-            else:
-                self.freeAvatar()
-        else:
-            self.freeAvatar()
+        self.freeAvatar()
         taskMgr.remove(self.uniqueName('clearMovie'))
         if mode == NPCToons.QUEST_MOVIE_COMPLETE:
             questId, toNpcId = quests
