@@ -23,22 +23,8 @@ def scene1001():
 
 def scene1002():
     bgm = base.loader.loadSfx('phase_12/audio/bgm/Bossbot_Entry_v1.ogg')
-    dna = SuitDNA()
-    dna.newSuit('tbc')
-    suit = BattleSuit()
-    suit.setDNA(dna)
-    suit.setLevel(4)
-    suit.setElite(1)
-    suit.initializeBodyCollisions('suit')
-    suit.reparentTo(base.cr.playGame.hood.geom)
-    suit.setPosHpr(-90, -20, 0, 270, 0, 0)
-    suit.addActive()
-    suit.loop('neutral')
-    flippy = NPCToons.createLocalNPC(1001)
-    flippy.reparentTo(base.cr.playGame.hood.geom)
-    flippy.setPosHpr(-70, -20, 0, 90, 0, 0)
-    flippy.useLOD(1000)
-    flippy.addActive()
+    suit = base.cr.playGame.hood.suit
+    flippy = base.cr.playGame.hood.flippy
     track = Sequence()
     track.append(Func(musicMgr.stopMusic))
     track.append(Func(base.playMusic, bgm, 1))
@@ -48,15 +34,17 @@ def scene1002():
 
     sceneDialog = TTLocalizer.CutsceneDialogDict[1002]
 
-    def cleanup(elapsedTime):
-        suit.delete()
-        flippy.delete()
+    def cleanup():
+        base.cr.playGame.hood.unloadQuestChanges()
         base.localAvatar.removeQuest(1002)
         base.localAvatar.addQuest(1003)
         bgm.stop()
         musicMgr.playCurrentZoneMusic()
         aspect2d.show()
         messenger.send('cutscene-done')
+
+    def handleDone(elapsedTime):
+        flippy.enterTeleportOut(callback=cleanup)
 
     def sceneDone(elapsedTime):
         mtrack = Sequence()
@@ -65,7 +53,7 @@ def scene1002():
         mtrack.append(Parallel(LerpPosHprInterval(camera, duration=1.5, pos=(-66, -35, 4), hpr=(15, 0, 0), blendType='easeInOut'), LerpHprInterval(flippy, duration=1.5, hpr=Vec3(195, 0, 0))))
         mtrack.append(Func(flippy.loop, 'neutral'))
         mtrack.append(Func(flippy.setLocalPageChat, sceneDialog[1] % base.localAvatar.getName(), 1))
-        mtrack.append(Func(flippy.acceptOnce, flippy.uniqueName('doneChatPage'), cleanup))
+        mtrack.append(Func(flippy.acceptOnce, flippy.uniqueName('doneChatPage'), handleDone))
         mtrack.start()
 
     def doDialog(index, elapsedTime):

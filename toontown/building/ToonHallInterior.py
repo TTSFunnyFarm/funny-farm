@@ -35,7 +35,7 @@ class ToonHallInterior(Interior):
         del self.colors
         del self.randomGenerator
         self.interior.flattenMedium()
-        self.checkAvatarQuests()
+        self.loadQuestChanges()
         self.acceptOnce('avatarExitDone', self.startActive)
 
     def unload(self):
@@ -72,7 +72,7 @@ class ToonHallInterior(Interior):
         door = Door.Door(zone.place.door, 'loonylabs_int')
         door.avatarExit(base.localAvatar)
 
-    def checkAvatarQuests(self):
+    def loadQuestChanges(self):
         # Checks for any instance-based changes we need to make
         for questDesc in base.localAvatar.quests:
             if questDesc[0] == 1001 or questDesc[0] == 1002:
