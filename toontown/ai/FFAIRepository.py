@@ -25,7 +25,6 @@ class FFAIRepository(DirectObject):
         Toon.compileGlobalAnimList()
         Toon.loadDialog()
         NPCToons.generateZone2NpcDict()
-        self.notify.info('Preloading Toon heads...')
         ToonHead.preloadToonHeads()
 
     def createManagers(self):

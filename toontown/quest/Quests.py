@@ -6,9 +6,20 @@ from toontown.toonbase.ToontownBattleGlobals import *
 from toontown.battle import SuitBattleGlobals
 from toontown.toon import NPCToons
 from toontown.hood import ZoneUtil
-import copy
+import copy, types, random
 
+ItemDict = TTLocalizer.QuestsItemDict
 CompleteString = TTLocalizer.QuestsCompleteString
+NotChosenString = TTLocalizer.QuestsNotChosenString
+DefaultGreeting = TTLocalizer.QuestsDefaultGreeting
+DefaultIncomplete = TTLocalizer.QuestsDefaultIncomplete
+DefaultIncompleteProgress = TTLocalizer.QuestsDefaultIncompleteProgress
+DefaultIncompleteWrongNPC = TTLocalizer.QuestsDefaultIncompleteWrongNPC
+DefaultComplete = TTLocalizer.QuestsDefaultComplete
+DefaultLeaving = TTLocalizer.QuestsDefaultLeaving
+DefaultReject = TTLocalizer.QuestsDefaultReject
+DefaultTierNotDone = TTLocalizer.QuestsDefaultTierNotDone
+DefaultQuest = TTLocalizer.QuestsDefaultQuest
 GREETING = 0
 QUEST = 1
 INCOMPLETE = 2
@@ -17,8 +28,8 @@ INCOMPLETE_WRONG_NPC = 4
 COMPLETE = 5
 LEAVING = 6
 Any = 1
-Start = 1
 Cont = 0
+Finish = 1
 Anywhere = 1
 NA = 2
 Same = 3
@@ -106,12 +117,14 @@ class Quest:
     def generateQuestInfo(self):
         questInfo = QuestDict[self.questId]
         self.questTier = questInfo[0]
-        self.questType = questInfo[2]
+        self.questCategory = questInfo[1]
+        self.finished = questInfo[2]
+        self.questType = questInfo[3]
         if self.questType[0] == QuestTypeChoose:
             trackAccess = base.localAvatar.getTrackAccess()
             if self.questTier == FF_TIER:
-                self.trackA = LURE_TRACK
-                self.trackB = SOUND_TRACK
+                self.trackA = SOUND_TRACK
+                self.trackB = LURE_TRACK
             elif self.questTier == SS_TIER:
                 if trackAccess[LURE_TRACK]:
                     self.trackA = SOUND_TRACK
@@ -143,30 +156,32 @@ class Quest:
             self.cogType = self.questType[4]
             self.cogLocation = self.questType[5]
         # todo finish quest types
-        self.fromNpc = questInfo[3]
-        self.toNpc = questInfo[4]
-        self.fromLocation = questInfo[5]
+        self.fromNpc = questInfo[4]
+        self.toNpc = questInfo[5]
         self.toLocation = questInfo[6]
         if self.fromNpc == NA:
             self.fromNpc = None
         if self.toNpc == Same:
             self.toNpc = self.fromNpc
-        if self.fromLocation == NA:
-            self.fromLocation = None
-        if self.toLocation == Same:
-            self.toLocation = self.fromLocation
+        if self.toNpc == NA:
+            self.toNpc = None
+        if self.toLocation == NA:
+            self.toLocation = None
         self.questReward = questInfo[7]
-        self.category = questInfo[8]
+        self.nextQuest = questInfo[8]
         self.questDialog = questInfo[9]
 
     def setQuestProgress(self, progress):
         self.questProgress = progress
 
-    def getQuestData(self):
+    def getQuestDesc(self):
         return [self.questId, self.questProgress]
 
     def getType(self):
         return self.questType[0]
+
+    def getNextQuest(self):
+        return self.nextQuest
 
     def getChoices(self):
         return (self.trackA, self.trackB)
@@ -224,7 +239,7 @@ class Quest:
         questComplete = self.questProgress >= self.getNumQuestItems()
         if questComplete:
             return COMPLETE
-        return INCOMPLETE
+        return INCOMPLETE_PROGRESS
 
     def getLocation(self):
         return self.questType[-1]
@@ -455,55 +470,83 @@ class Quest:
         else:
             return 0
 
-def getQuest(questId):
-    return Quest(questId)
+DefaultDialog = {GREETING: DefaultGreeting,
+ QUEST: DefaultQuest,
+ INCOMPLETE: DefaultIncomplete,
+ INCOMPLETE_PROGRESS: DefaultIncompleteProgress,
+ INCOMPLETE_WRONG_NPC: DefaultIncompleteWrongNPC,
+ COMPLETE: DefaultComplete,
+ LEAVING: DefaultLeaving}
 
 QuestDict = {
  # These first few quests are kind of weird because I'm
  # trying to plan out how cutscenes will fit in and stuff
- 1001: (FF_TIER,          # Quest tier
-        Start,            # Starts or continues
-        (QuestTypeGoTo,), # Quest type (& info)
-        NA,               # From npc
-        1001,             # To npc
-        1514,             # From location
-        Same,             # To location
-        (QuestRewardXP,   # Reward
-         20),
+ 1001: (FF_TIER,
         MainQuest,
-        TTLocalizer.QuestDialogDict[1001]), # Dialog dict
- 1002: (FF_TIER,
-        Start,
-        (QuestTypeGoTo,),
-        NA,
-        Same,
-        1514,
-        1515,
-        (QuestRewardNone,),
-        MainQuest,
-        None),
- 1003: (FF_TIER,
-        Start,
+        Cont,
         (QuestTypeGoTo,),
         NA,
         1001,
+        1514,
+        (QuestRewardXP,
+         10),
+        1002,
+        None),
+ 1002: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeGoTo,),
+        NA,
+        1001,
+        1000,
+        (QuestRewardXP,
+         10),
+        1003,
+        None),
+ 1003: (FF_TIER,          # Quest tier
+        MainQuest,        # Quest category
+        Finish,           # Whether the quest is finished or continuing
+        (QuestTypeGoTo,), # Quest type (& info)
+        NA,               # From npc id
+        1001,             # To npc id
+        1514,             # To location
+        (QuestRewardXP,   # Reward
+         10),
+        NA,               # Next quest
+        TTLocalizer.QuestDialogDict[1003]), # Dialog dict
+ 1004: (FF_TIER,
+        MainQuest,
+        Finish,
+        (QuestTypeGoTo,),
+        NA,
+        NA,
         1515,
+        (QuestRewardNone,),
+        1005,
+        None),
+ 1005: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeGoTo,),
+        NA,
+        1001,
         1514,
         (QuestRewardGagTraining,),
+        1006,
+        TTLocalizer.QuestDialogDict[1005]),
+ 1006: (FF_TIER,
         MainQuest,
-        None),
- 1004: (FF_TIER,
-        Cont,
+        Finish,
         (QuestTypeChoose,),
         1001,
         Same,
         1514,
-        Same,
         (QuestRewardGagTraining,),
+        1007,
+        TTLocalizer.QuestDialogDict[1006]),
+ 1007: (FF_TIER,
         MainQuest,
-        TTLocalizer.QuestDialogDict[1004]),
- 1005: (FF_TIER,
-        Cont,
+        Finish,
         (QuestTypeDefeatCog, # Quest type
          4,                  # Number of cogs
          Any,                # Level minimum
@@ -513,20 +556,71 @@ QuestDict = {
         1001,
         Same,
         1514,
-        Same,
         (QuestRewardXP,
-         30,
+         25,
          QuestRewardTrackFrame,
          1),
-        MainQuest,
-        TTLocalizer.QuestDialogDict[1005])
+        NA,
+        TTLocalizer.QuestDialogDict[1007])
 }
+
+Cutscenes = (1001,
+ 1002,
+ 1004,
+ 1005)
+
+def getQuest(id):
+    return Quest(id)
+
+def getQuestFinished(id):
+    return QuestDict.get(id)[2]
+
+def getToNpcId(id):
+    toNpcId = QuestDict.get(id)[5]
+    if toNpcId is Same:
+        toNpcId = QuestDict.get(id)[4]
+    return toNpcId
+
+def getToNpcLocation(id):
+    return QuestDict.get(id)[6]
+
+def getReward(id):
+    return QuestDict.get(id)[7]
+
+def getNextQuest(id):
+    return QuestDict.get(id)[8]
+
+def getQuestDialog(id):
+    return QuestDict.get(id)[9]
 
 def isQuestJustForFun(questId):
     questEntry = QuestDict.get(questId)
-    if questEntry[8] == JustForFun:
+    if questEntry[1] == JustForFun:
         return True
     return False
+
+def chooseQuestDialog(id, status):
+    questDialog = getQuestDialog(id)
+    if questDialog == None:
+        return None
+    questDialog = getQuestDialog(id).get(status)
+    if questDialog == None:
+        if status == QUEST:
+            quest = getQuest(id)
+            questDialog = quest.getRewardString()
+        else:
+            questDialog = DefaultDialog[status]
+    if type(questDialog) == type(()):
+        return random.choice(questDialog)
+    else:
+        return questDialog
+    return
+
+def chooseQuestDialogReject():
+    return random.choice(DefaultReject)
+
+def chooseQuestDialogTierNotDone():
+    return random.choice(DefaultTierNotDone)
 
 def getNpcInfo(npcId):
     npcName = NPCToons.getNPCName(npcId)

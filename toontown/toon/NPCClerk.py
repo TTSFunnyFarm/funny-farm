@@ -45,6 +45,7 @@ class NPCClerk(NPCToonBase):
 
     def handleCollisionSphereEnter(self, collEntry):
         if self.allowedToEnter():
+            base.localAvatar.disable()
             base.localAvatar.setAnimState('neutral', 1)
             self.avatarEnter()
         else:

@@ -281,7 +281,6 @@ class QuestPoster(DirectFrame):
         questType = quest.questType
         fromNpcId = quest.fromNpc
         toNpcId = quest.toNpc
-        fromNpcZone = quest.fromLocation
         toNpcZone = quest.toLocation
         reward = quest.questReward
         # note: Add >= 6 if we ever make tasks with 3 rewards

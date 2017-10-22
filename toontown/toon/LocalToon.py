@@ -1,36 +1,39 @@
 from panda3d.core import *
+from direct.interval.IntervalGlobal import *
+from direct.distributed.ClockDelta import *
 from direct.showbase import PythonUtil
 from direct.showbase.PythonUtil import *
-from direct.distributed.ClockDelta import *
-from direct.actor.Actor import Actor
 from direct.task import Task
-from direct.interval.IntervalGlobal import *
-from toontown.toonbase import FunnyFarmGlobals
-from toontown.toonbase import ToontownGlobals
-from toontown.toonbase import TTLocalizer
-from toontown.toon import Toon
-from toontown.toon.LaffMeter import LaffMeter
-from WalkControls import WalkControls
+from otp.avatar import LocalAvatar
+from otp.otpbase import OTPGlobals
+from otp.nametag.NametagConstants import *
+from otp.margins.WhisperPopup import *
 from toontown.chat.ChatManager import ChatManager
 from toontown.chat.ChatGlobals import *
-from otp.margins.WhisperPopup import *
 from toontown.book import ShtikerBook
 from toontown.book import OptionsPage
 from toontown.book import MapPage
 from toontown.book import ToonPage
 from toontown.book import InventoryPage
 from toontown.book import QuestPage
-from otp.otpbase import OTPGlobals
-from otp.nametag.NametagConstants import *
+from toontown.quest import Quests
+from toontown.quest.InfoBubble import InfoBubble
+from toontown.toonbase import FunnyFarmGlobals
+from toontown.toonbase import ToontownGlobals
+from toontown.toonbase import TTLocalizer
+from LaffMeter import LaffMeter
+from PublicWalk import PublicWalk
+from ExperienceBar import ExperienceBar
 import InventoryNew
 import Experience
-import ExperienceBar
+import Toon
 import random
+import math
 
-class LocalToon(Toon.Toon, WalkControls):
+class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
     notify = directNotify.newCategory('LocalToon')
-    piePowerSpeed = base.config.GetDouble('pie-power-speed', 0.2)
-    piePowerExponent = base.config.GetDouble('pie-power-exponent', 0.75)
+    piePowerSpeed = config.GetDouble('pie-power-speed', 0.2)
+    piePowerExponent = config.GetDouble('pie-power-exponent', 0.75)
     HpTextGenerator = TextNode('HpTextGenerator')
     HpTextEnabled = 1
 
@@ -40,79 +43,93 @@ class LocalToon(Toon.Toon, WalkControls):
     TokenTextNode = TextNode('TokenText')
 
     def __init__(self):
-        Toon.Toon.__init__(self)
-        WalkControls.__init__(self)
-        self.chatMgr = ChatManager()
-        self.soundWhisper = base.loader.loadSfx('phase_3.5/audio/sfx/GUI_whisper_3.ogg')
-        self.soundPhoneRing = base.loader.loadSfx('phase_3.5/audio/sfx/telephone_ring.ogg')
-        self.soundSystemMessage = base.loader.loadSfx('phase_3/audio/sfx/clock03.ogg')
-        self.levelUpSfx = base.loader.loadSfx('phase_4/audio/sfx/MG_sfx_travel_game_bonus.ogg')
-        self.zoneId = None
-        self.hasGM = False
-        self.accessLevel = 0
-        self.hp = 15
-        self.maxHp = 15
-        self.toonUpIncrement = 1
-        self.laffMeter = None
-        self.money = 0
-        self.maxMoney = 0
-        self.bankMoney = 0
-        self.maxBankMoney = 0
-        self.earnedExperience = None
-        self.level = 1
-        self.levelExp = 0
-        self.damage = [0, 0, 0, 0, 0, 0]
-        self.defense = [0, 0, 0, 0]
-        self.accuracy = [0, 0, 0, 0, 0, 0]
-        self.damageEffect = 0
-        self.defenseEffect = 0
-        self.accuracyEffect = 0
-        self.maxNPCFriends = 16
-        self.tossTrack = None
-        self.pieTracks = {}
-        self.splatTracks = {}
-        self.lastTossedPie = 0
-        self.__pieBubble = None
-        self.allowPies = 0
-        self.__pieButton = None
-        self.__piePowerMeter = None
-        self.__piePowerMeterSequence = None
-        self.__pieButtonType = None
-        self.__pieButtonCount = None
-        self.tossPieStart = None
-        self.__presentingPie = 0
-        self.__pieSequence = 0
-        self.tunnelTrack = None
-        self.tunnelPivotPos = [-14, -6, 0]
-        self.tunnelCenterOffset = 9.0
-        self.tunnelCenterInfluence = 0.6
-        self.pivotAngle = 90 + 45
-        self.tunnelX = 0.0
-        self.inventory = None
-        self.hpText = None
-        self.strText = None
-        self.sillySurgeText = False
-        self.interactivePropTrackBonus = -1
-        self.cogTypes = [0,
-         0,
-         0,
-         0]
-        self.cogLevels = [0,
-         0,
-         0,
-         0]
-        self.cogParts = [0,
-         0,
-         0,
-         0]
-        self.cogMerits = [0,
-         0,
-         0,
-         0]
-        self.questCarryLimit = 0
-        self.questingZone = 0
-        self.quests = []
-        self.experienceBar = None
+        try:
+            self.LocalToon_initialized
+        except:
+            self.LocalToon_initialized = 1
+            Toon.Toon.__init__(self)
+            LocalAvatar.LocalAvatar.__init__(self)
+            self.chatMgr = ChatManager()
+            self.soundRun = base.loader.loadSfx('phase_3.5/audio/sfx/AV_footstep_runloop.ogg')
+            self.soundWalk = base.loader.loadSfx('phase_3.5/audio/sfx/AV_footstep_walkloop.ogg')
+            self.soundWhisper = base.loader.loadSfx('phase_3.5/audio/sfx/GUI_whisper_3.ogg')
+            self.soundPhoneRing = base.loader.loadSfx('phase_3.5/audio/sfx/telephone_ring.ogg')
+            self.soundSystemMessage = base.loader.loadSfx('phase_3/audio/sfx/clock03.ogg')
+            self.rewardSfx = base.loader.loadSfx('phase_3.5/audio/sfx/tt_s_gui_sbk_cdrSuccess.ogg')
+            self.levelUpSfx = base.loader.loadSfx('phase_4/audio/sfx/MG_sfx_travel_game_bonus.ogg')
+            self.tunnelX = 0.0
+            self.estate = None
+            self.__pieBubble = None
+            self.allowPies = 0
+            self.__pieButton = None
+            self.__piePowerMeter = None
+            self.__piePowerMeterSequence = None
+            self.__pieButtonType = None
+            self.__pieButtonCount = None
+            self.tossPieStart = None
+            self.__presentingPie = 0
+            self.__pieSequence = 0
+            self.enabled = 0
+            self.zoneId = 0
+            self.hasGM = False
+            self.accessLevel = 0
+            self.hp = 15
+            self.maxHp = 15
+            self.toonUpIncrement = 1
+            self.laffMeter = None
+            self.money = 0
+            self.maxMoney = 0
+            self.bankMoney = 0
+            self.maxBankMoney = 0
+            self.earnedExperience = None
+            self.level = 1
+            self.levelExp = 0
+            self.damage = [0, 0, 0, 0, 0, 0]
+            self.defense = [0, 0, 0, 0]
+            self.accuracy = [0, 0, 0, 0, 0, 0]
+            self.damageEffect = 0
+            self.defenseEffect = 0
+            self.accuracyEffect = 0
+            self.maxNPCFriends = 16
+            self.tossTrack = None
+            self.pieTracks = {}
+            self.splatTracks = {}
+            self.lastTossedPie = 0
+            self.tunnelTrack = None
+            self.tunnelPivotPos = [-14, -6, 0]
+            self.tunnelCenterOffset = 9.0
+            self.tunnelCenterInfluence = 0.6
+            self.pivotAngle = 90 + 45
+            self.inventory = None
+            self.hpText = None
+            self.strText = None
+            self.sillySurgeText = False
+            self.interactivePropTrackBonus = -1
+            self.cogTypes = [0,
+             0,
+             0,
+             0]
+            self.cogLevels = [0,
+             0,
+             0,
+             0]
+            self.cogParts = [0,
+             0,
+             0,
+             0]
+            self.cogMerits = [0,
+             0,
+             0,
+             0]
+            self.questCarryLimit = 0
+            self.questingZone = 0
+            self.quests = []
+            self.experienceBar = None
+
+    def generate(self):
+        self.walkDoneEvent = 'walkDone'
+        self.walkStateData = PublicWalk(self.walkDoneEvent)
+        self.walkStateData.load()
 
     def delete(self):
         try:
@@ -121,7 +138,10 @@ class LocalToon(Toon.Toon, WalkControls):
             self.LocalToon_deleted = 1
             self.ignoreAll()
             Toon.Toon.delete(self)
-            WalkControls.delete(self)
+            LocalAvatar.LocalAvatar.delete(self)
+            del self.walkDoneEvent
+            self.walkStateData.unload()
+            del self.walkStateData
             self.stopToonUp()
             self.endAllowPies()
             self.laffMeter.destroy()
@@ -130,18 +150,21 @@ class LocalToon(Toon.Toon, WalkControls):
                 self.inventory.unload()
             self.book.unload()
             self.experienceBar.destroy()
+            self.infoBubble.unload()
             del self.laffMeter
             del self.optionsPage
             del self.mapPage
             del self.toonPage
             del self.invPage
+            del self.questPage
             del self.chatMgr
             del self.inventory
             del self.book
             del self.experienceBar
+            del self.infoBubble
 
     def isLocal(self):
-        return True
+        return 1
 
     def setDoId(self, doId):
         self.doId = doId
@@ -152,28 +175,29 @@ class LocalToon(Toon.Toon, WalkControls):
     def uniqueName(self, idString):
         return ('%s-%s' % (idString, str(self.doId)))
 
+    # These functions control the enabling and disabling of the avatar's controls.
+    # It's the equivalent of enterWalk() and exitWalk() from the Place class in Toontown,
+    # just moved to a higher level so it's easier to access and understand.
     def enable(self):
-        self.collisionsOn()
-        self.enableAvatarControls()
-        self.setupSmartCamera()
-        self.book.showButton()
-        self.beginAllowPies()
-        self.invPage.acceptOnscreenHooks()
-        self.questPage.acceptOnscreenHooks()
-        self.setAnimState('neutral')
+        if self.enabled == 1:
+            return
+        else:
+            self.enabled = 1
+            self.walkStateData.enter()
+            self.invPage.acceptOnscreenHooks()
+            self.questPage.acceptOnscreenHooks()
+            self.walkStateData.fsm.request('walking')
 
     def disable(self):
-        self.stopUpdateSmartCamera()
-        self.shutdownSmartCamera()
-        self.disableAvatarControls()
-        self.collisionsOff()
-        self.book.hideButton()
-        self.endAllowPies()
-        self.invPage.ignoreOnscreenHooks()
-        self.invPage.hideInventoryOnscreen()
-        self.questPage.ignoreOnscreenHooks()
-        self.questPage.hideQuestsOnscreen()
-        self.stopLookAround()
+        if self.enabled == 0:
+            return
+        else:
+            self.enabled = 0
+            self.walkStateData.exit()
+            self.invPage.ignoreOnscreenHooks()
+            self.invPage.hideInventoryOnscreen()
+            self.questPage.ignoreOnscreenHooks()
+            self.questPage.hideQuestsOnscreen()
 
     def setZoneId(self, zoneId):
         self.zoneId = zoneId
@@ -252,15 +276,24 @@ class LocalToon(Toon.Toon, WalkControls):
         else:
             self.laffMeter.setPos(0.133, 0.0, 0.13)
         self.laffMeter.stop()
-        self.experienceBar = ExperienceBar.ExperienceBar(self)
+        self.experienceBar = ExperienceBar(self)
         self.experienceBar.reparentTo(base.a2dBottomCenter)
         self.experienceBar.hide()
+        self.infoBubble = InfoBubble()
+        self.infoBubble.load()
+        self.infoBubble.hide()
         self.accept('time-insert', self.__beginTossPie)
         self.accept('time-insert-up', self.__endTossPie)
         self.accept('time-delete', self.__beginTossPie)
         self.accept('time-delete-up', self.__endTossPie)
         self.accept('pieHit', self.__pieHit)
         self.accept('interrupt-pie', self.interruptPie)
+        # self.accept('InputState-jump', self.__toonMoved)
+        # self.accept('InputState-forward', self.__toonMoved)
+        # self.accept('InputState-reverse', self.__toonMoved)
+        # self.accept('InputState-turnLeft', self.__toonMoved)
+        # self.accept('InputState-turnRight', self.__toonMoved)
+        # self.accept('InputState-slide', self.__toonMoved)
         self.accept('shift-f1', self.sayLocation)
 
     def enableDebug(self):
@@ -279,6 +312,8 @@ class LocalToon(Toon.Toon, WalkControls):
         self.maxHp = maxHp
         if self.hp >= self.maxHp:
             self.hp = self.maxHp
+        if self.hp - oldHp == 0:
+            return
         if self.laffMeter:
             self.laffMeter.adjustFace(self.hp, self.maxHp)
         if showText:
@@ -408,6 +443,15 @@ class LocalToon(Toon.Toon, WalkControls):
     def getMaxBankMoney(self):
         return self.maxBankMoney
 
+    def addMoney(self, money):
+        newMoney = self.money + money
+        if newMoney > self.maxMoney:
+            self.setMoney(self.maxMoney)
+            leftover = newMoney - self.maxMoney
+            self.setBankMoney(self.bankMoney + leftover)
+        else:
+            self.setMoney(newMoney)
+
     def setTrackAccess(self, trackArray):
         self.trackArray = trackArray
         if self.inventory:
@@ -491,6 +535,8 @@ class LocalToon(Toon.Toon, WalkControls):
         self.trackProgress = progress
         if hasattr(self, 'trackPage'):
             self.trackPage.updatePage()
+        base.avatarData.setTrackProgress = self.getTrackProgress()
+        dataMgr.saveToonData(base.avatarData)
 
     def getTrackProgress(self):
         return [self.trackProgressId, self.trackProgress]
@@ -516,7 +562,7 @@ class LocalToon(Toon.Toon, WalkControls):
     def getMaxLevelExp(self):
         return FunnyFarmGlobals.LevelExperience[self.level - 1]
 
-    def addLevelExp(self, exp):
+    def addLevelExp(self, exp, trackFrame = 0, carryIndex = 0, carryAmount = 0):
         totalExp = self.levelExp + exp
         if totalExp >= self.getMaxLevelExp():
             leftover = totalExp - self.getMaxLevelExp()
@@ -524,10 +570,10 @@ class LocalToon(Toon.Toon, WalkControls):
                 self.setLevelExp(leftover)
             else:
                 self.setLevelExp(self.getMaxLevelExp())
-                self.showHpString('%d XP' % exp, color=Vec4(1.0, 0.5, 1.0, 1.0))
+                self.showHpString('%d XP' % exp, duration=1.0, color=Vec4(1.0, 0.5, 1.0, 1.0), trackFrame=trackFrame, carryIndex=carryIndex, carryAmount=carryAmount)
         else:
             self.setLevelExp(totalExp)
-            self.showHpString('%d XP' % exp, color=Vec4(1.0, 0.5, 1.0, 1.0))
+            self.showHpString('%d XP' % exp, duration=1.0, color=Vec4(1.0, 0.5, 1.0, 1.0), trackFrame=trackFrame, carryIndex=carryIndex, carryAmount=carryAmount)
 
     def levelUp(self, exp):
         if (self.level + 1) > FunnyFarmGlobals.ToonLevelCap:
@@ -721,6 +767,21 @@ class LocalToon(Toon.Toon, WalkControls):
         spawn = random.choice(spawnPoints)
         self.setPos(spawn[0])
         self.setHpr(spawn[1])
+
+    def checkQuestCutscene(self):
+        currZone = base.cr.playGame.getActiveZone()
+        if currZone.place:
+            zoneId = currZone.place.zoneId
+        else:
+            zoneId = currZone.zoneId
+        for questDesc in self.quests:
+            if questDesc[0] in Quests.Cutscenes:
+                if zoneId == Quests.getToNpcLocation(questDesc[0]) and questDesc[1] == 0:
+                    base.cr.cutsceneMgr.enterCutscene(questDesc[0])
+                    return
+
+    def showInfoBubble(self, index, doneEvent):
+        self.infoBubble.enter(index, doneEvent)
 
     def b_setTunnelIn(self, endX, tunnelOrigin):
         timestamp = globalClockDelta.getFrameNetworkTime()
@@ -1043,7 +1104,7 @@ class LocalToon(Toon.Toon, WalkControls):
         hpr = self.getHpr()
         timestamp32 = globalClockDelta.getFrameNetworkTime(bits=32)
         Emote.globalEmote.disableBody(self)
-        taskMgr.remove('AnimationHandler')
+        self.walkStateData.fsm.request('off')
         messenger.send('begin-pie')
         ival = self.getPresentPieInterval(pos[0], pos[1], pos[2], hpr[0])
         ival = Sequence(ival, name=self.uniqueName('localPresentPie'))
@@ -1144,7 +1205,7 @@ class LocalToon(Toon.Toon, WalkControls):
             del self.pieTracks[sequence]
         if self.__piePowerMeterSequence == sequence:
             self.__piePowerMeter.hide()
-        taskMgr.add(self.handleAnimation, 'AnimationHandler')
+        self.walkStateData.fsm.request('walking')
 
     def __finishPieTrack(self, sequence):
         if sequence in self.pieTracks:
@@ -1266,8 +1327,8 @@ class LocalToon(Toon.Toon, WalkControls):
         if self.hp == None or hpLost < 0:
             return
         oldHp = self.hp
-        self.hp = max(self.hp - hpLost, 0)
-        hpLost = oldHp - self.hp
+        newHp = max(self.hp - hpLost, 0)
+        hpLost = oldHp - newHp
         if hpLost >= 0:
             # a little hacky but whatever
             if base.cr.playGame.getActiveZone().battle:
@@ -1277,9 +1338,10 @@ class LocalToon(Toon.Toon, WalkControls):
                     self.showHpText(-hpLost, bonus)
             else:
                 self.showHpText(-hpLost, bonus)
-            self.setHealth(self.hp, self.maxHp)
+            self.setHealth(newHp, self.maxHp)
             if self.hp <= 0 and oldHp > 0:
-                self.setupCamera()
+                self.enable()
+                self.disable()
                 camera.wrtReparentTo(render)
                 self.setAnimState('Died', callback=self.died)
 
@@ -1420,7 +1482,7 @@ class LocalToon(Toon.Toon, WalkControls):
             seq = Sequence(Parallel(self.hpText.posInterval(1.0, Point3(0, 0, self.height + 1.5), blendType='easeOut'), self.strText.posInterval(1.0, Point3(0, 0, self.height + 2.5), blendType='easeOut')), Wait(0.85), Parallel(self.hpText.colorInterval(0.1, Vec4(r, g, b, 0), 0.1), self.strText.colorInterval(0.1, Vec4(r, g, b, 0), 0.1)), Func(self.hideHpText))
             seq.start()
 
-    def showHpString(self, text, duration = 0.85, scale = 0.7, color = Vec4(1, 0, 0, 1)):
+    def showHpString(self, text, duration = 0.85, scale = 0.7, color = Vec4(1, 0, 0, 1), trackFrame = 0, carryIndex = 0, carryAmount = 0):
         if self.HpTextEnabled and not self.ghostMode:
             if text != '':
                 if self.hpText:
@@ -1434,8 +1496,44 @@ class LocalToon(Toon.Toon, WalkControls):
                 self.hpText = self.attachNewNode(self.hpTextNode)
                 self.hpText.setScale(scale)
                 self.hpText.setBillboardAxis()
-                self.hpText.setPos(0, 0, self.height / 2)
-                seq = Sequence(self.hpText.posInterval(1.0, Point3(0, 0, self.height + 1.3), blendType='easeOut'), Wait(duration), self.hpText.colorScaleInterval(1.0, Vec4(1.0, 1.0, 1.0, 0)), Func(self.hideHpText))
+                offset = 0
+                if carryIndex:
+                    if carryIndex == 5:
+                        self.HpTextGenerator.setText(TTLocalizer.RewardCarryToonTasksText % carryAmount)
+                    elif carryIndex == 6:
+                        self.HpTextGenerator.setText(TTLocalizer.RewardCarryJellybeansText % carryAmount)
+                    elif carryIndex == 7:
+                        self.HpTextGenerator.setText(TTLocalizer.RewardCarryGagsText % carryAmount)
+                    self.HpTextGenerator.setTextColor(Vec4(0.9, 0.6, 0, 1))
+                    self.auxText = self.attachNewNode(self.HpTextGenerator.generate())
+                    self.auxText.setScale(scale * 0.7)
+                    self.auxText.setBillboardAxis()
+                    self.auxText.setPos(0, 0, self.height / 2)
+                    offset += 0.7
+                elif trackFrame:
+                    self.HpTextGenerator.setText(TTLocalizer.RewardTrackFrameText % {'trackName': TTLocalizer.BattleGlobalTracks[self.trackProgressId], 'frameNum': trackFrame})
+                    self.HpTextGenerator.setTextColor(Vec4(0.5, 0.5, 0.5, 1))
+                    self.auxText = self.attachNewNode(self.HpTextGenerator.generate())
+                    self.auxText.setScale(scale * 0.7)
+                    self.auxText.setBillboardAxis()
+                    self.auxText.setPos(0, 0, self.height / 2)
+                    offset += 0.7
+                self.hpText.setPos(0, 0, (self.height / 2) + offset)
+                if hasattr(self, 'auxText'):
+                    seq = Sequence(
+                        Parallel(
+                            self.hpText.posInterval(1.0, Point3(0, 0, (self.height + 1.3) + offset), blendType='easeOut'),
+                            self.auxText.posInterval(1.0, Point3(0, 0, self.height + 1.3), blendType='easeOut')
+                        ),
+                        Wait(duration),
+                        Parallel(
+                            self.hpText.colorScaleInterval(1.0, Vec4(1.0, 1.0, 1.0, 0)),
+                            self.auxText.colorScaleInterval(1.0, Vec4(1.0, 1.0, 1.0, 0))
+                        ),
+                        Func(self.hideHpText)
+                    )
+                else:
+                    seq = Sequence(self.hpText.posInterval(1.0, Point3(0, 0, self.height + 1.3), blendType='easeOut'), Wait(duration), self.hpText.colorScaleInterval(1.0, Vec4(1.0, 1.0, 1.0, 0)), Func(self.hideHpText))
                 seq.start()
 
     def hideHpText(self):
@@ -1446,6 +1544,9 @@ class LocalToon(Toon.Toon, WalkControls):
         if self.strText:
             self.strText.removeNode()
             self.strText = None
+        if hasattr(self, 'auxText'):
+            self.auxText.removeNode()
+            del self.auxText
         self.nametag3d.clearDepthTest()
         self.nametag3d.clearBin()
         self.sillySurgeText = False
@@ -1453,16 +1554,73 @@ class LocalToon(Toon.Toon, WalkControls):
     def died(self):
         base.cr.playGame.exitActiveZone()
         self.reparentTo(render)
-        self.setupCamera()
         self.enable()
         zoneId = self.getZoneId()
-        if zoneId == FunnyFarmGlobals.SecretArea:
-            hoodId = FunnyFarmGlobals.FunnyFarmCentral
-        else:
-            hoodId = FunnyFarmGlobals.getHoodId(zoneId)
+        hoodId = FunnyFarmGlobals.getHoodId(zoneId)
         base.cr.playGame.enterHood(hoodId)
 
     def sayLocation(self):
         locStr = "X: {0}\nY: {1}\nZ: {2}\nH: {3}\nZone: {4}\nVersion: {5}".format(round(self.getX(), 3), round(self.getY(), 3), round(self.getZ(), 3), round(self.getH(), 3),
                                                                                   self.zoneId, config.GetString('game-version', 'no_version_set'))
         self.setChatAbsolute(locStr, CFThought)
+
+    def disableBodyCollisions(self):
+        pass
+
+    # These functions are for reflections of the toon on the floor in places like Loony Labs.
+    # This is currently just an alpha test; it looks pretty awkward for a variety of reasons, 
+    # so I'm unsure if we're going to keep it or not.
+    def makeReflection(self):
+        self.reflection = Toon.Toon()
+        self.reflection.setDNA(self.getDNA())
+        self.reflection.setHat(*base.avatarData.setHat)
+        self.reflection.setGlasses(*base.avatarData.setGlasses)
+        self.reflection.setBackpack(*base.avatarData.setBackpack)
+        self.reflection.setShoes(*base.avatarData.setShoes)
+        self.reflection.applyCheesyEffect(base.avatarData.setCheesyEffect)
+        self.reflection.hideName()
+        self.reflection.hideShadow()
+        self.reflection.reparentTo(self)
+        self.reflection.setR(180)
+        self.reflection.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.MNone))
+        self.reflection.setBin('default', 0)
+        self.reflection.setSx(-1)
+        self.reflection.setAttrib(CullFaceAttrib.make(CullFaceAttrib.MNone))
+        self.reflection.setZ(-0.15)
+        self.reflection.setAnimState('neutral', 1.0)
+
+    def deleteReflection(self):
+        self.reflection.delete()
+        del self.reflection
+
+    def startUpdateReflection(self):
+        self.reflectionAnim = None
+        self.reflectionRate = None
+        taskMgr.add(self.updateReflection, 'ltUpdateReflection')
+
+    def stopUpdateReflection(self):
+        taskMgr.remove('ltUpdateReflection')
+        del self.reflectionAnim
+        del self.reflectionRate
+
+    def updateReflection(self, task):
+        reflectionAnim = self.reflectionAnim
+        reflectionRate = self.reflectionRate
+        playingAnim = self.playingAnim
+        playingRate = self.playingRate
+        if reflectionAnim != playingAnim or reflectionRate != playingRate:
+            self.reflectionAnim = playingAnim
+            self.reflectionRate = playingRate
+            if playingAnim == 'jump-idle' or playingAnim == 'running-jump-idle':
+                if playingAnim == 'running-jump-idle':
+                    self.reflection.playingAnim = None
+                self.reflection.setAnimState('jumpAirborne', 1.0)
+            elif playingAnim == 'jump-land' or playingAnim == 'running-jump-land':
+                self.reflection.setAnimState('jumpLand', 1.0)
+            else:
+                self.reflection.setAnimState(self.reflectionAnim, self.reflectionRate)
+        if playingAnim == 'jump-idle' or playingAnim == 'running-jump-idle':
+            self.reflection.setZ((-self.getZ() * 2) - 0.15)
+        else:
+            self.reflection.setZ(-0.15)
+        return Task.cont

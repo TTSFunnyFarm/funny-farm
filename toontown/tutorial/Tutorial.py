@@ -33,7 +33,8 @@ class Tutorial(ToonHood):
         ]
 
     def enter(self, tunnel=None, init=0):
-        base.localAvatar.setZoneId(self.zoneId)
+        self.toon.setZoneId(self.zoneId)
+        self.toon.setPos(0, 0, -0.5)
         musicMgr.playCurrentZoneMusic()
         Sequence(Wait(0.3), Func(self.toon.enterTeleportIn, 1, 0, self.__handleEntered)).start()
 
@@ -146,26 +147,22 @@ class Tutorial(ToonHood):
         self.toon.lookAt(self.flippy)
         self.toon.setY(self.flippy, 7.5)
         camera.setPosHpr(-2, 7, 3.3, 205, 5, 0)
-        Sequence(Wait(0.5), Func(self.introSequence, 0)).start()
+        Sequence(Wait(0.5), Func(self.introSequence)).start()
 
-    def introChat(self, pageNumber):
-        if pageNumber >= len(TTLocalizer.TutorialIntro) - 1:
-            self.flippy.setLocalPageChat(TTLocalizer.TutorialIntro[-1], None)
-            self.acceptOnce('Nametag-nextChat', self.enterGag)
-        else:
-            self.flippy.setLocalPageChat(TTLocalizer.TutorialIntro[pageNumber], None)
-            self.acceptOnce('Nametag-nextChat', self.introSequence, [pageNumber + 1])
-
-    def introSequence(self, pageNumber):
+    def introSequence(self):
         self.flippy.clearChat()
+        self.flippy.setLocalPageChat(TTLocalizer.TutorialIntro, None)
+        self.accept(self.flippy.uniqueName('nextChatPage'), self.introChat)
+        self.acceptOnce(self.flippy.uniqueName('doneChatPage'), self.enterGag)
+
+    def introChat(self, pageNumber, elapsedTime):
         if pageNumber == 1:
             Sequence(
                 Func(self.guiCogs.reparentTo, camera),
-                Func(self.guiCogs.scaleInterval(0.5, (1.875, 1.875, 1.875)).start),
-                Wait(1.0833),
-                Func(self.introChat, 1)
+                Func(self.guiCogs.scaleInterval(0.5, (2, 2, 2)).start),
+                Wait(0.5),
+                Func(self.guiCogs.scaleInterval(0.1, (1.875, 1.875, 1.875)).start)
             ).start()
-            return
         elif pageNumber == 3:
             self.guiCogs.reparentTo(hidden)
             self.guiSquirt.reparentTo(camera)
@@ -177,24 +174,23 @@ class Tutorial(ToonHood):
             self.guiFarm.reparentTo(camera)
         elif pageNumber == 6:
             Sequence(
+                Func(self.guiFarm.scaleInterval(0.1, (2, 2, 2)).start),
+                Wait(0.1),
                 Func(self.guiFarm.scaleInterval(0.5, (0.01, 0.01, 0.01)).start),
                 Wait(0.5),
                 Func(self.guiFarm.reparentTo, hidden),
             ).start()
-        self.introChat(pageNumber)
 
-    def enterGag(self):
+    def enterGag(self, elapsedTime):
         self.flippy.clearChat()
+        self.ignore(self.flippy.uniqueName('nextChatPage'))
         self.inventory = self.toon.inventory
         self.inventory.zeroInv()
         self.inventory.updateGUI()
-        self.gagChat()
+        self.flippy.setLocalPageChat(TTLocalizer.TutorialGags_0, None)
+        self.acceptOnce(self.flippy.uniqueName('doneChatPage'), self.gagSequence)
 
-    def gagChat(self):
-        self.flippy.setLocalPageChat(TTLocalizer.TutorialGags[0], None)
-        self.acceptOnce('Nametag-nextChat', self.gagSequence)
-
-    def gagSequence(self):
+    def gagSequence(self, elapsedTime):
         self.flippy.clearChat()
         gagSeq = Sequence(
             Func(self.inventory.reparentTo, camera),
@@ -205,7 +201,7 @@ class Tutorial(ToonHood):
             Func(self.setInventoryYPos, 5, 0, -.1),
             Func(self.inventory.scaleInterval(1, (3, .01, 3)).start),
             Wait(1),
-            Func(self.tart.reparentTo, self.flippy.getGeomNode().find('**/def_joint_right_hold')),
+            Func(self.tart.reparentTo, self.flippy.find('**/1000/**/def_joint_right_hold')),
             Func(self.tart.setPosHprScale, 0.19, 0.02, 0.00, 0.00, 0.00, 349.38, 0.34, 0.34, 0.34),
             Func(self.flippy.setPlayRate, 1.8, 'right-hand-start'),
             Func(self.flippy.play, 'right-hand-start'),
@@ -223,7 +219,7 @@ class Tutorial(ToonHood):
             Func(self.addInventory, 4, 0, 1),
             Func(self.inventory.setPosHprScale, -0.77, 7.92, 1.11, 0, 0, 0, 3, .01, 3),
             Func(self.tart.reparentTo, hidden),
-            Func(self.flower.reparentTo, self.flippy.find('**/def_joint_right_hold')),
+            Func(self.flower.reparentTo, self.flippy.find('**/1000/**/def_joint_right_hold')),
             Func(self.flower.setPosHprScale, 0.10, -0.14, 0.20, 180.00, 287.10, 168.69, 0.70, 0.70, 0.70),
             Func(self.flippy.setPlayRate, 1.8, 'right-hand-start'),
             Func(self.flippy.play, 'right-hand-start'),
@@ -243,12 +239,12 @@ class Tutorial(ToonHood):
             Func(self.flower.reparentTo, hidden),
             Func(self.flippy.loop, 'neutral'),
             Wait(1),
-            Func(self.flippy.setLocalPageChat, TTLocalizer.TutorialGags[1], None),
-            Func(self.acceptOnce, 'Nametag-nextChat', self.enterLaffMeter)
+            Func(self.flippy.setLocalPageChat, TTLocalizer.TutorialGags_1, None),
+            Func(self.acceptOnce, self.flippy.uniqueName('doneChatPage'), self.enterLaffMeter)
         )
         gagSeq.start()
 
-    def enterLaffMeter(self):
+    def enterLaffMeter(self, elapsedTime):
         self.flippy.clearChat()
         self.laffMeter = self.toon.laffMeter
         laffSeq = Sequence(
@@ -270,19 +266,12 @@ class Tutorial(ToonHood):
             Wait(1.0833),
             Func(self.flippy.setPlayRate, 1.0, 'right-hand'),
             Func(self.flippy.loop, 'right-hand'),
-            Func(self.laffMeterChat, 0)
+            Func(self.flippy.setLocalPageChat, TTLocalizer.TutorialLaffMeter_0, None),
+            Func(self.acceptOnce, self.flippy.uniqueName('doneChatPage'), self.greenLocalAvatar)
         )
         laffSeq.start()
 
-    def laffMeterChat(self, pageNumber):
-        if pageNumber == 1:
-            self.flippy.setLocalPageChat(TTLocalizer.TutorialLaffMeter[1], None)
-            self.acceptOnce('Nametag-nextChat', self.killTheLocalAvatar)
-        else:
-            self.flippy.setLocalPageChat(TTLocalizer.TutorialLaffMeter[pageNumber], None)
-            self.acceptOnce('Nametag-nextChat', self.laffMeterChat, [pageNumber + 1])
-
-    def killTheLocalAvatar(self):
+    def greenLocalAvatar(self, elapsedTime):
         self.flippy.clearChat()
         laffSeq = Sequence(
             Func(self.flippy.sadEyes),
@@ -328,12 +317,12 @@ class Tutorial(ToonHood):
             Func(self.laffMeter.adjustFace, 1, 20),
             Wait(0.1),
             Func(self.laffMeter.adjustFace, 0, 20),
-            Func(self.flippy.setLocalPageChat, TTLocalizer.TutorialLaffMeter[2], None),
-            Func(self.acceptOnce, 'Nametag-nextChat', self.laffMeterSequence)
+            Func(self.flippy.setLocalPageChat, TTLocalizer.TutorialLaffMeter_1, None),
+            Func(self.acceptOnce, self.flippy.uniqueName('doneChatPage'), self.laffMeterSequence)
         )
         laffSeq.start()
 
-    def laffMeterSequence(self):
+    def laffMeterSequence(self, elapsedTime):
         self.flippy.clearChat()
         laffSeq = Sequence(
             Func(self.flippy.normalEyes),
@@ -352,10 +341,10 @@ class Tutorial(ToonHood):
         laffSeq.start()
 
     def enterBook(self):
-        self.flippy.setLocalPageChat(TTLocalizer.TutorialBook[0], None)
-        self.acceptOnce('Nametag-nextChat', self.bookSequence)
+        self.flippy.setLocalPageChat(TTLocalizer.TutorialBook_0, None)
+        self.acceptOnce(self.flippy.uniqueName('doneChatPage'), self.bookSequence)
 
-    def bookSequence(self):
+    def bookSequence(self, elapsedTime):
         self.flippy.clearChat()
         self.book = self.toon.book.bookOpenButton
         self.book['command'] = None
@@ -376,14 +365,14 @@ class Tutorial(ToonHood):
         bookSeq.start()
 
     def exitBook(self):
-        self.flippy.setLocalPageChat(TTLocalizer.TutorialBook[1], None)
-        self.acceptOnce('Nametag-nextChat', self.enterChat)
+        self.flippy.setLocalPageChat(TTLocalizer.TutorialBook_1, None)
+        self.acceptOnce(self.flippy.uniqueName('doneChatPage'), self.enterChat)
 
-    def enterChat(self):
-        self.flippy.setLocalPageChat(TTLocalizer.TutorialChat[0], None)
-        self.acceptOnce('Nametag-nextChat', self.chatSequence)
+    def enterChat(self, elapsedTime):
+        self.flippy.setLocalPageChat(TTLocalizer.TutorialChat_0, None)
+        self.acceptOnce(self.flippy.uniqueName('doneChatPage'), self.chatSequence)
 
-    def chatSequence(self):
+    def chatSequence(self, elapsedTime):
         self.flippy.clearChat()
         self.toon.startChat()
         self.toon.chatMgr.disableKeyboardShortcuts()
@@ -401,18 +390,18 @@ class Tutorial(ToonHood):
             Func(self.chat.posInterval(1, (0.0683, 0, -0.072)).start),
             Func(self.chat.scaleInterval(1, (1.179, 1.179, 1.179)).start),
             Wait(1),
-            Func(self.flippy.setLocalPageChat, TTLocalizer.TutorialChat[1], None),
-            Func(self.acceptOnce, 'Nametag-nextChat', self.exitChat)
+            Func(self.flippy.setLocalPageChat, TTLocalizer.TutorialChat_1, None),
+            Func(self.acceptOnce, self.flippy.uniqueName('doneChatPage'), self.exitChat)
         )
         chatSeq.start()
 
-    def exitChat(self):
-        self.flippy.setLocalPageChat(TTLocalizer.TutorialTraining[0], None)
-        self.acceptOnce('Nametag-nextChat', self.trainingSequence)
+    def exitChat(self, elapsedTime):
+        self.flippy.setLocalPageChat(TTLocalizer.TutorialTraining_0, None)
+        self.acceptOnce(self.flippy.uniqueName('doneChatPage'), self.trainingSequence)
 
-    def trainingSequence(self):
+    def trainingSequence(self, elapsedTime):
         trainingSeq = Sequence(
-            Func(self.flippy.setChatAbsolute, TTLocalizer.TutorialTraining[1], CFSpeech|CFTimeout),
+            Func(self.flippy.setChatAbsolute, TTLocalizer.TutorialTraining_1, CFSpeech|CFTimeout),
             Func(self.flippy.hprInterval(2, (0, 0, 0)).start),
             Func(self.flippy.loop, 'walk'),
             Func(self.enableToon),
@@ -452,10 +441,10 @@ class Tutorial(ToonHood):
         self.toon.setZ(-0.5)
         camera.wrtReparentTo(self.flippy)
         camera.setPosHpr(0, 9, 4, 180, 0, 0)
-        self.flippy.setLocalPageChat(TTLocalizer.TutorialTraining[2], None)
-        self.acceptOnce('Nametag-nextChat', self.cogSequence)
+        self.flippy.setLocalPageChat(TTLocalizer.TutorialTraining_2, None)
+        self.acceptOnce(self.flippy.uniqueName('doneChatPage'), self.cogSequence)
 
-    def cogSequence(self):
+    def cogSequence(self, elapsedTime):
         self.flippy.clearChat()
         cogSeq = Sequence(
             Func(musicMgr.stopMusic),
@@ -463,17 +452,18 @@ class Tutorial(ToonHood):
             Func(self.flippy.loop, 'walk'),
             self.flippy.hprInterval(1, (-30, 0, 0)),
             Func(self.flippy.loop, 'neutral'),
-            Func(self.flippy.setLocalPageChat, TTLocalizer.TutorialCog[0], None),
-            Func(self.acceptOnce, 'Nametag-nextChat', self.cogFlyIn)
+            Func(self.flippy.setLocalPageChat, TTLocalizer.TutorialCog_0, None),
+            Func(self.acceptOnce, self.flippy.uniqueName('doneChatPage'), self.cogFlyIn)
         )
         cogSeq.start()
 
-    def cogFlyIn(self):
+    def cogFlyIn(self, elapsedTime):
         self.flippy.clearChat()
         # Looks like we have an unexpected visitor...
         flyInSeq = Sequence(
             Func(base.transitions.fadeOut, 1.0),
             Wait(1),
+            Func(aspect2d.hide),
             Func(camera.setPosHpr, -5, 95, 4, 270, 12, 0),
             Func(base.transitions.fadeIn, 1.0),
             Func(base.playMusic, self.spookyMusic, looping=1),
@@ -484,26 +474,19 @@ class Tutorial(ToonHood):
             Wait(2),
             Func(base.transitions.fadeOut, 1.0),
             Wait(1),
+            Func(aspect2d.show),
             Func(camera.wrtReparentTo, self.flippy),
             Func(camera.setPosHpr, 0, 9, 4, 180, 0, 0),
             Func(base.transitions.fadeIn, 1.0),
             Wait(1),
-            Func(self.cogChat, 1)
+            Func(self.flippy.sadEyes),
+            Func(self.flippy.blinkEyes),
+            Func(self.flippy.setLocalPageChat, TTLocalizer.TutorialCog_1, 1),
+            Func(self.acceptOnce, self.flippy.uniqueName('doneChatPage'), self.exitCog)
         )
         flyInSeq.start()
 
-    def cogChat(self, pageNumber):
-        if pageNumber >= len(TTLocalizer.TutorialCog) - 1:
-            self.flippy.setLocalPageChat(TTLocalizer.TutorialCog[-1], True)
-            self.acceptOnce('Nametag-nextChat', self.exitCog)
-        else:
-            self.flippy.setLocalPageChat(TTLocalizer.TutorialCog[pageNumber], None)
-            self.acceptOnce('Nametag-nextChat', self.cogChat, [pageNumber + 1])
-        if pageNumber == 1:
-            self.flippy.sadEyes()
-            self.flippy.blinkEyes()
-
-    def exitCog(self):
+    def exitCog(self, elapsedTime):
         self.flippy.clearChat()
         self.enableToon()
         self.suit.initializeBodyCollisions('suit')
@@ -511,6 +494,7 @@ class Tutorial(ToonHood):
 
     def enterBattle(self, collEntry):
         self.disableToon()
+        self.toon.book.hideButton()
         self.stopSuitWalkInterval()
         self.battle = Battle(self.townBattle, toons=[self.toon], suits=[self.suit], tutorialFlag=1)
         # Never parent a battle directly to render, always use a battle cell 
@@ -523,14 +507,13 @@ class Tutorial(ToonHood):
 
     def exitBattle(self, doneStatus):
         self.enableToon()
+        self.toon.book.showButton()
         self.battleMusic.stop()
         base.playMusic(self.spookyMusic, looping=1)
         self.ignore(self.townBattle.doneEvent)
         self.battle.cleanupBattle()
         self.battle.delete()
         self.battle = None
-        # They've made it far enough to where we can say they finished the tutorial.
-        base.localAvatar.setTutorialAck(1)
         self.enterOutro()
 
     def startSuitWalkInterval(self):
@@ -568,13 +551,25 @@ class Tutorial(ToonHood):
             Func(self.disableToon),
             Func(camera.wrtReparentTo, self.flippy),
             Func(camera.setPosHpr, 0, 9, 4, 180, 0, 0),
-            Func(self.flippy.setLocalPageChat, TTLocalizer.TutorialOutro, True),
-            Func(self.acceptOnce, 'Nametag-nextChat', flippyExit.start)
+            Func(self.flippy.setLocalPageChat, TTLocalizer.TutorialOutro, 1),
+            Func(self.acceptOnce, self.flippy.uniqueName('doneChatPage'), flippyExit.start)
         ).start()
 
     def exitOutro(self):
         self.enableToon()
+        self.disableToon()
+        self.toon.addQuest(1001)
+        self.toon.questPage.questFrames[0].setPosHpr(0, 0, 0, 0, 0, 0)
+        self.toon.questPage.showQuestsOnscreen()
+        self.toon.setTutorialAck(1)
+        self.acceptOnce('bubble-done', self.questDialogDone)
+        Sequence(Wait(0.5), Func(base.localAvatar.showInfoBubble, 0, 'bubble-done')).start()
+
+    def questDialogDone(self):
+        self.toon.questPage.hideQuestsOnscreen()
+        self.toon.questPage.questFrames[0].setPosHpr(-0.45, 0, 0.28, 0, 0, 0)
         self.startActive()
+        self.enableToon()
 
     def enterHood(self, zoneId):
         # For now we're just entering through the rickety road tunnel
@@ -594,17 +589,31 @@ class Tutorial(ToonHood):
         self.inventory.addItems(track, level, number)
         self.inventory.updateGUI(track, level)
 
+    # Alternate versions of LocalToon's enable() and disable() functions,
+    # so that we don't show their shtickerbook, laff meter, or chat button.
     def enableToon(self):
+        self.toon.enabled = 1
+        self.toon.startBlink()
+        self.toon.attachCamera()
+        shouldPush = 1
+        if len(self.toon.cameraPositions) > 0:
+            shouldPush = not self.toon.cameraPositions[self.toon.cameraIndex][4]
+        self.toon.startUpdateSmartCamera(shouldPush)
+        self.toon.showName()
         self.toon.collisionsOn()
         self.toon.enableAvatarControls()
-        self.toon.setupSmartCamera()
         self.toon.beginAllowPies()
+        self.toon.walkStateData.fsm.request('walking')
 
     def disableToon(self):
-        self.toon.stopUpdateSmartCamera()
-        self.toon.shutdownSmartCamera()
+        self.toon.enabled = 0
+        self.toon.walkStateData.fsm.request('off')
         self.toon.disableAvatarControls()
+        self.toon.stopUpdateSmartCamera()
+        self.toon.stopBlink()
+        self.toon.detachCamera()
         self.toon.collisionsOff()
+        self.toon.controlManager.placeOnFloor()
         self.toon.endAllowPies()
 
     def skyTrack(self, task):

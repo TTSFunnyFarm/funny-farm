@@ -34,6 +34,7 @@ class Hood(DirectObject):
                 if tunnel == zoneStr:
                     tunnelOrigin = linkTunnel.find('**/tunnel_origin')
                     base.localAvatar.tunnelIn(tunnelOrigin)
+            self.startActive()
         else:
             base.localAvatar.setRandomSpawn(self.zoneId)
             if init:
@@ -48,7 +49,6 @@ class Hood(DirectObject):
             base.avatarData.setLastHood = self.zoneId
             dataMgr.saveToonData(base.avatarData)
         self.spawnTitleText()
-        self.startActive()
 
     def exit(self):
         musicMgr.stopMusic()
@@ -105,6 +105,7 @@ class Hood(DirectObject):
         base.localAvatar.enable()
         if base.localAvatar.hp <= 0:
             base.localAvatar.setAnimState('Sad')
+        self.startActive()
 
     def startActive(self):
         for door in self.geom.findAllMatches('**/*door_trigger*'):
@@ -118,6 +119,7 @@ class Hood(DirectObject):
                 linkSphere = linkTunnel.find('**/tunnel_sphere')
             linkSphere.setName('tunnel_trigger_%s_%s' % (hoodStr, zoneStr))
             self.acceptOnce('enter%s' % linkSphere.getName(), self.handleEnterTunnel)
+        base.localAvatar.checkQuestCutscene()
 
     def handleDoorTrigger(self):
         pass

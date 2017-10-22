@@ -443,6 +443,10 @@ TIPQuestsClothingTicketRewardPoster = 'Reward: TIP Clothing Ticket'
 QuestsCheesyEffectRewardPoster = 'Reward: %s'
 QuestsCogSuitPartReward = 'You now have a %(cogTrack)s %(part)s Cog Suit Part.'
 QuestsCogSuitPartRewardPoster = 'Reward: %(cogTrack)s %(part)s Part'
+RewardTrackFrameText = '%(trackName)s track frame %(frameNum)d'
+RewardCarryToonTasksText = 'Carry %d ToonTasks'
+RewardCarryJellybeansText = 'Carry %d jellybeans'
+RewardCarryGagsText = 'Carry %d gags'
 QuestsStreetLocationThisPlayground = 'in this playground'
 QuestsStreetLocationThisStreet = 'on this street'
 QuestsStreetLocationNamedPlayground = 'in the %s playground'
@@ -587,7 +591,7 @@ QuestsTailorQuestSCString = 'I need to see a Tailor.'
 QuestMovieQuestChoiceCancel = 'Come back later if you need a ToonTask! Bye!'
 QuestMovieTrackChoiceCancel = 'Come back when you are ready to decide! Bye!'
 QuestMovieQuestChoice = 'Choose a ToonTask.'
-QuestMovieTrackChoice = 'Ready to decide? Choose a track, or feel free to come back later.'
+QuestMovieTrackChoice = 'Ready to decide?'
 GREETING = 0
 QUEST = 1
 INCOMPLETE = 2
@@ -596,17 +600,35 @@ INCOMPLETE_WRONG_NPC = 4
 COMPLETE = 5
 LEAVING = 6
 QuestDialogDict = {
- 1001: {QUEST: '',
+ 1003: {GREETING: '',
+        QUEST: '',
         COMPLETE: 'Boy, that was scary. This is not good...\x07I\'m going to need your help figuring out this problem.',
         LEAVING: ''},
- 1004: {QUEST: 'Before we can get started, you should begin learning another gag track.\x07Learning how to use other gags is a very important part of being able to defeat the Cogs.\x07To start, you can choose between Sound and Lure.\x07Come back to me when you are ready to decide.',
-        INCOMPLETE_PROGRESS: 'Ready to choose?',
-        COMPLETE: 'Ah, excellent choice.\x07To start learning these gags, you will need to collect film strips.\x07You can earn film strips from ToonTasks in addition to your normal experience.\x07There are 15 film strips, which form an animation to show you how to use your new gags.\x07When you collect all 15, you can start buying those gags from the Gag Shop!\x07You can check your progress in the Shticker Book.',
+ 1005: {GREETING: '',
+        QUEST: '',
+        COMPLETE: 'The Silly Meter is broken!\x07Things in Funny Farm definitely aren\'t funny anymore...\x07The only way we can restore silliness to our town is to drive the Cogs out of here!',
         LEAVING: ''},
- 1005: {QUEST: 'Now, let\'s get to business.\x07First we need to check the status of the streets.\x07Could you head out to Rickety Road and see what\'s going on?',
-        LEAVING: '',
+ 1006: {GREETING: '',
+        QUEST: 'Before we get started, you should begin learning another gag track.\x07Learning how to use different types of gags is a very important part of being able to defeat the Cogs.\x07To start, you can choose between Sound and Lure.\x07Come back to me when you are ready to decide.',
+        COMPLETE: 'Ah, excellent choice.\x07To start learning these gags, you will need to collect film strips.\x07You can earn film strips from ToonTasks in addition to your normal experience points.\x07There are 15 film strips, which form an animation to show you how to use your new gags.\x07When you collect all 15, you can start buying those gags from the Gag Shop!\x07You can check your progress in the Shticker Book.',
+        LEAVING: ''},
+ 1007: {GREETING: '',
+        QUEST: 'Now, let\'s get to business.\x07First we need to check the status of the streets.\x07Could you head out to Rickety Road and see what\'s going on out there?',
+        INCOMPLETE_PROGRESS: 'Could you please go and check the status of Rickety Road?',
         COMPLETE: 'The Cogs are already invading the streets?\x07This might be worse than I thought!\x07Thanks for your help.',
-        INCOMPLETE_PROGRESS: 'Could you please go and check the status of Rickety Road?'}
+        LEAVING: ''}
+}
+CutsceneDialogDict = {
+ 1001: 'Hmm... It doesn\'t look like Flippy is in here.\x07Maybe you should check back outside.',
+ 1002: (('This is a warning.\x07We ask that you cease your operations here and terminate any further lab experiments you may be conducting.',
+        'You can\'t stop us from doing anything.\x07We are not backing down this time.',
+        'The size of our corporation and the plans we have are beyond the stretch of your imagination.\x07You will face consequences if you do not oblige.',
+        'We are stronger than we\'ve ever been before.\x07I suggest YOU terminate your presence in our playground, or you\'ll taste my home-baked wrath!',
+        'Suit yourself.'),
+        '%s, it\'s good to see you!\x07Meet me back at the Toon Hall, so we can discuss some things.')
+}
+InfoBubbleDialog = {
+ 0: 'You\'ve just received a new ToonTask!\x07When completed, you will gain experience and other rewards for your Toon!\x07Now head through the tunnel to find Flippy.'
 }
 ChatGarblerDog = ['woof', 'arf', 'rruff']
 ChatGarblerCat = ['meow', 'mew']
@@ -4286,7 +4308,7 @@ ColorShopAll = 'Single Color'
 ClothesShopShorts = 'Shorts'
 ClothesShopShirt = 'Shirts'
 ClothesShopBottoms = 'Bottoms'
-PromptTutorial = "Congratulations!!\nYou are Funny Farm's newest citizen!\n\nWould you like to continue to the Toontorial (It\'s brand new!) or teleport directly to Funny Farm?"
+PromptTutorial = "Congratulations!!\nYou are Funny Farm's newest citizen!\n\nWould you like to continue to the Toontorial (recommended) or teleport directly to Funny Farm?"
 MakeAToonSkipTutorial = 'Skip Toontorial'
 MakeAToonEnterTutorial = 'Enter Toontorial'
 MakeAToonDone = 'Done'
@@ -4515,43 +4537,21 @@ QuestScript150_2 = 'To make friends, find another player, and use the New Friend
 QuestScript150_3 = 'Once you have made a friend, come back here.'
 QuestScript150_4 = 'Some tasks are too difficult to do alone!'
 TutorialGreeting = 'Hello! Come over here using the arrow keys.'
-TutorialIntro = [
-    'Welcome to Funny Farm.',
-    'Many many years ago, Toontown was invaded by evil business robots called Cogs.',
-    'The Cogs despise all silliness, and they can\'t take a joke!',
-    'For 10 long years the Toons fought Cogs with silly jokes and gags...',
-    '...until one day, they became too strong for us.',
-    'We left Toontown and came to Funny Farm, a faraway land that we abandoned long ago.',
-    'But I\'ll tell you more on that later. Let\'s get you some gags.'
-]
-TutorialGags = [
-    'Throw and Squirt are the two most basic gag tracks, so I\'ll give you these to start.',
-    'As you progress, you will gain lots of new gags, including special sugary drinks to boost your stats!'
-]
-TutorialLaffMeter = [
-    'Oh! You also need a Laff meter!',
-    'If your Laff meter gets too low, you\'ll be sad!',
-    'A happy Toon is a healthy Toon!'
-]
-TutorialBook = [
-    'Here is your Shticker Book...',
-    'You\'ll find all sorts of neat-o stuff in there.'
-]
-TutorialChat = [
-    'And finally, here is your chat button.',
-    'You can use that button to say things! It\'ll come in handy every once in a while.'
-]
-TutorialTraining = [
-    'Now let\'s try out those new gags I gave you.',
-    'Practice throwing some pies at the targets ahead.',
-    'Nicely done! You\'re a natural!'
-]
-TutorialCog = [
-    'Uh oh...',
-    'It\'s happening already.',
-    'Quick! Go defeat that Cog!'
-]
-TutorialOutro = 'This can\'t be happening... I have to go and investigate!'
+TutorialIntro = 'Welcome to Funny Farm.\x07Many many years ago, Toontown was invaded by evil business robots called Cogs.\x07The Cogs despise all silliness, and they can\'t take a joke!\x07For 10 long years the Toons fought Cogs with silly jokes and gags...\x07...until one day, they became too strong for us.\x07We left Toontown and built a new settlement here, called Funny Farm.\x07But it\'s only a matter of time before the Cogs find us again.\x07With that said, we need to get you prepared with some gags!'
+TutorialGags_0 = 'Throw and Squirt are the two most basic gag tracks, so I\'ll give you these to start.'
+TutorialGags_1 = 'As you progress, you will gain lots of new gags...\x07...including new inventions being worked on by our Loony Labs scientists!'
+TutorialLaffMeter_0 = 'Oh! You also need a Laff meter!\x07If your Laff meter gets too low, you\'ll be sad!'
+TutorialLaffMeter_1 = 'A happy Toon is a healthy Toon!'
+TutorialBook_0 = 'Here is your Shticker Book...'
+TutorialBook_1 = 'You can keep track of your location, Gags, ToonTasks, and other progress in that book.\x07It will be very useful to you.'
+TutorialChat_0 = 'Also, here is your chat button.'
+TutorialChat_1 = 'You can use that button to say things!\x07It might come in handy sometimes.'
+TutorialTraining_0 = 'Now let\'s try out those new gags I gave you.'
+TutorialTraining_1 = 'Practice throwing some pies at the targets ahead.'
+TutorialTraining_2 = 'Nicely done! You\'re a natural!'
+TutorialCog_0 = 'Uh oh...'
+TutorialCog_1 = 'It\'s happening already.\x07Quick! Go defeat that Cog!'
+TutorialOutro = 'This is not good... I have to go and investigate!'
 MissingKeySanityCheck = 'Ignore me'
 SellbotBossName = 'Senior V. P.'
 CashbotBossName = 'C. F. O.'

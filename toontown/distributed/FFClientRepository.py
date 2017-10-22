@@ -1,15 +1,17 @@
 from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
 from direct.interval.IntervalGlobal import *
-from toontown.login import AvatarChooser
-from toontown.makeatoon import MakeAToon
-from toontown.toontowngui import TTDialog
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
+from toontown.login.AvatarChooser import AvatarChooser
+from toontown.makeatoon.MakeAToon import MakeAToon
+from toontown.toontowngui import TTDialog
+from toontown.quest.QuestManager import QuestManager
+from toontown.quest.CutsceneManager import CutsceneManager
 from otp.otpbase import OTPLocalizer
 from otp.nametag import NametagGlobals
+from PlayGame import PlayGame
 import random
-import PlayGame
 
 class FFClientRepository(DirectObject):
     notify = directNotify.newCategory('ClientRepository')
@@ -19,7 +21,9 @@ class FFClientRepository(DirectObject):
     def __init__(self):
         self.avChoice = None
         self.avCreate = None
-        self.playGame = PlayGame.PlayGame()
+        self.playGame = PlayGame()
+        self.questManager = QuestManager()
+        self.cutsceneMgr = CutsceneManager()
         self.playingGame = 0
         self.waitDialog = None
 
@@ -51,7 +55,7 @@ class FFClientRepository(DirectObject):
             base.transitions.fadeOut(1.0)
         else:
             base.transitions.fadeScreen(1.0)
-        self.avChoice = AvatarChooser.AvatarChooser()
+        self.avChoice = AvatarChooser()
         self.avChoice.load()
         self.avChoice.enter()
 
@@ -63,7 +67,7 @@ class FFClientRepository(DirectObject):
     def enterCreateAvatar(self, index):
         if self.avChoice:
             self.exitChooseAvatar()
-        self.avCreate = MakeAToon.MakeAToon('MakeAToon-done', index, 1)
+        self.avCreate = MakeAToon('MakeAToon-done', index, 1)
         self.avCreate.load()
         self.avCreate.enter()
 
@@ -80,16 +84,17 @@ class FFClientRepository(DirectObject):
 
     def setupLocalAvatar(self, tutorialFlag=0):
         base.localAvatar.reparentTo(render)
-        base.localAvatar.setupControls()
-        base.localAvatar.setupSmartCamera()
+        base.localAvatar.generate()
         base.localAvatar.initInterface()
         base.localAvatar.useLOD(1000)
-        base.localAvatar.startBlink()
         if not tutorialFlag:
             base.localAvatar.book.showButton()
             base.localAvatar.laffMeter.start()
             base.localAvatar.experienceBar.show()
             base.localAvatar.startChat()
+        # Enable the avatar for a moment so that it initializes the camera's position.
+        # Otherwise the camera would just be staring at render while the teleportIn animation plays.
+        base.localAvatar.enable()
         base.localAvatar.disable()
 
     def teleportTo(self, zoneId):

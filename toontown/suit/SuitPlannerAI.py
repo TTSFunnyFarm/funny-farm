@@ -16,7 +16,7 @@ class SuitPlannerAI(DirectObject):
             8,
             0,
             3,
-            2,
+            1,
             (10,
             10,
             40,

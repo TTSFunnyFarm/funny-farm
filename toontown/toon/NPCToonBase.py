@@ -8,7 +8,7 @@ from toontown.hood import ZoneUtil
 import Toon
 from direct.distributed import DistributedObject
 import NPCToons
-# from toontown.quest import Quests
+from toontown.quest import Quests
 from direct.distributed import ClockDelta
 # from toontown.quest import QuestParser
 # from toontown.quest import QuestChoiceGui
@@ -98,6 +98,8 @@ class NPCToonBase(Toon.Toon):
     def setupAvatars(self, av):
         self.ignoreAvatars()
         av.disable()
+        if av.animFSM.getCurrentState().getName() != 'neutral':
+            av.setAnimState('neutral')
         av.headsUp(self, 0, 0, 0)
         self.headsUp(av, 0, 0, 0)
         av.stopLookAround()
@@ -120,83 +122,8 @@ class NPCToonBase(Toon.Toon):
     def avatarEnter(self):
         pass
 
-    def chooseQuestDialogReject(self):
-        return random.choice(TTLocalizer.QuestsDefaultReject)
-
-    def chooseQuestDialogTierNotDone(self):
-        return random.choice(TTLocalizer.QuestsDefaultTierNotDone)
-
     def isBusy(self):
         return self.busy > 0
 
-    def fillInQuestNames(self, text, avName = None, fromNpcId = None, toNpcId = None):
-        ToonTailor = 999
-        ToonHQ = 1000
-        text = copy.deepcopy(text)
-        if avName != None:
-            text = text.replace('_avName_', avName)
-        if toNpcId:
-            if toNpcId == ToonHQ:
-                toNpcName = TTLocalizer.QuestsHQOfficerFillin
-                where = TTLocalizer.QuestsHQWhereFillin
-                buildingName = TTLocalizer.QuestsHQBuildingNameFillin
-                streetDesc = TTLocalizer.QuestsHQLocationNameFillin
-            elif toNpcId == ToonTailor:
-                toNpcName = TTLocalizer.QuestsTailorFillin
-                where = TTLocalizer.QuestsTailorWhereFillin
-                buildingName = TTLocalizer.QuestsTailorBuildingNameFillin
-                streetDesc = TTLocalizer.QuestsTailorLocationNameFillin
-            else:
-                toNpcName = str(NPCToons.getNPCName(toNpcId))
-                where, buildingName, streetDesc = self.getNpcLocationDialog(fromNpcId, toNpcId)
-            text = text.replace('_toNpcName_', toNpcName)
-            text = text.replace('_where_', where)
-            text = text.replace('_buildingName_', buildingName)
-            text = text.replace('_streetDesc_', streetDesc)
-        return text
-
-    def getNpcLocationDialog(self, fromNpcId, toNpcId):
-        if not toNpcId:
-            return (None, None, None)
-        fromNpcZone = None
-        fromBranchId = None
-        if fromNpcId:
-            fromNpcZone = NPCToons.getNPCZone(fromNpcId)
-            fromBranchId = ZoneUtil.getCanonicalBranchZone(fromNpcZone)
-        toNpcZone = NPCToons.getNPCZone(toNpcId)
-        toBranchId = ZoneUtil.getCanonicalBranchZone(toNpcZone)
-        toNpcName, toHoodName, toBuildingArticle, toBuildingName, toStreetTo, toStreetName, isInPlayground = getNpcInfo(toNpcId)
-        if fromBranchId == toBranchId:
-            if isInPlayground:
-                streetDesc = TTLocalizer.QuestsStreetLocationThisPlayground
-            else:
-                streetDesc = TTLocalizer.QuestsStreetLocationThisStreet
-        elif isInPlayground:
-            streetDesc = TTLocalizer.QuestsStreetLocationNamedPlayground % toHoodName
-        else:
-            streetDesc = TTLocalizer.QuestsStreetLocationNamedStreet % {'toStreetName': toStreetName,
-             'toHoodName': toHoodName}
-        paragraph = TTLocalizer.QuestsLocationParagraph % {'building': TTLocalizer.QuestsLocationBuilding % toNpcName,
-         'buildingName': toBuildingName,
-         'buildingVerb': TTLocalizer.QuestsLocationBuildingVerb,
-         'street': streetDesc}
-        return (paragraph, toBuildingName, streetDesc)
-
-    def getNpcInfo(self, npcId):
-        npcName = NPCToons.getNPCName(npcId)
-        npcZone = NPCToons.getNPCZone(npcId)
-        hoodId = ZoneUtil.getCanonicalHoodId(npcZone)
-        hoodName = base.cr.hoodMgr.getFullnameFromId(hoodId)
-        buildingArticle = NPCToons.getBuildingArticle(npcZone)
-        buildingName = NPCToons.getBuildingTitle(npcZone)
-        branchId = ZoneUtil.getCanonicalBranchZone(npcZone)
-        toStreet = ToontownGlobals.StreetNames[branchId][0]
-        streetName = ToontownGlobals.StreetNames[branchId][-1]
-        isInPlayground = ZoneUtil.isPlayground(branchId)
-        return (npcName,
-         hoodName,
-         buildingArticle,
-         buildingName,
-         toStreet,
-         streetName,
-         isInPlayground)
+    def getNpcId(self):
+        return self.npcId

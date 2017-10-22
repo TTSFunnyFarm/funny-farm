@@ -11,13 +11,11 @@ class Interior(DirectObject):
         self.zoneId = zoneId
         self.shopId = shopId
         self.interiorFile = None
-        self.musicOk = 1
 
     def load(self):
         self.interior = loader.loadModel(self.interiorFile)
         self.interior.reparentTo(render)
-        if self.musicOk:
-            musicMgr.playCurrentZoneMusic()
+        musicMgr.playCurrentZoneMusic()
         self.generateNPCs()
 
     def unload(self):
@@ -25,18 +23,23 @@ class Interior(DirectObject):
         self.ignoreAll()
         self.interior.removeNode()
         del self.interior
-        for npc in self.npcs:
-            npc.removeActive()
-            npc.delete()
-            del npc
+        if hasattr(self, 'npcs'):
+            for npc in self.npcs:
+                npc.removeActive()
+                npc.delete()
+                del npc
 
     def generateNPCs(self):
         self.npcs = NPCToons.createNpcsInZone(self.zoneId)
         for i in xrange(len(self.npcs)):
             origin = self.interior.find('**/npc_origin_%d' % i)
-            self.npcs[i].reparentTo(render)
-            self.npcs[i].setPosHpr(origin.getPos(), origin.getHpr())
-            self.npcs[i].addActive()
+            if not origin.isEmpty():
+                self.npcs[i].reparentTo(render)
+                self.npcs[i].setPosHpr(origin, 0, 0, 0, 0, 0, 0)
+                self.npcs[i].origin = origin
+                self.npcs[i].addActive()
+            else:
+                self.notify.warning('generateNPCs(): Could not find npc_origin_%d' % i)
 
     def startActive(self):
         for door in self.interior.findAllMatches('**/door_double_*_ur'):

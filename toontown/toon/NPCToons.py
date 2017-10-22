@@ -102,6 +102,8 @@ def createLocalNPC(npcId, functional = False):
         npc = NPCScientist.NPCScientist()
     elif type == NPC_FLIPPY:
         npc = NPCFlippy.NPCFlippy()
+    elif type == NPC_HQ:
+        npc = NPCToon.NPCToon(hq=1)
     else:
         npc = NPCToon.NPCToon()
     npc.setName(name)
@@ -576,7 +578,7 @@ def getBuildingArticle(zoneId):
 
 
 def getBuildingTitle(zoneId):
-    return TTLocalizer.zone2TitleDict.get(zoneId, 'Toon Building')
+    return TTLocalizer.zone2TitleDict.get(zoneId, '')
 
 # Regular NPC SOS Toons (The good ones)
 HQnpcFriends = {

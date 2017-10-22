@@ -50,9 +50,6 @@ class MusicManager:
         zoneId = FunnyFarmGlobals.getHoodId(base.localAvatar.getZoneId())
         zone = base.cr.playGame.getActiveZone()
         if zone.place:
-            if isinstance(zone.place, Interior):
-                if not zone.place.musicOk:
-                    return
             lookupTable = self.activityMusic
             volume = 0.7
         elif base.cr.playGame.hood:
