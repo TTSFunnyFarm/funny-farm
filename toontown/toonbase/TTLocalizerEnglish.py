@@ -6527,7 +6527,15 @@ zone2TitleDict = {1510: lGagShop,
  1513: lGeneralStore,
  1514: 'Toon Hall',
  1515: 'Loony Labs',
- 1610: lToonHQ
+ 1610: lToonHQ,
+ 1611: 'Udder Nonsense!',
+ 1612: 'Hot Cross Buns',
+ 1613: 'Nice Jesters',
+ 1614: 'Pun Intended Comedy Club',
+ 1615: 'Turnip The Beet',
+ 1616: 'The Wurst Sausage Store',
+ 1617: 'Average Joe Coffeehouse',
+ 1618: 'Used Clown Cars'
 }
 ClosetTimeoutMessage = 'Sorry, you ran out\n of time.'
 ClosetNotOwnerMessage = "This isn't your closet, but you may try on the clothes."

@@ -1,6 +1,7 @@
 from panda3d.core import *
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.hood.ToonHood import ToonHood
+from toontown.building.Building import Building
 from toontown.building import Door
 from toontown.suit.SuitPlanner import SuitPlanner
 from toontown.town.TownBattle import TownBattle
@@ -19,6 +20,8 @@ class Street(ToonHood):
     def enter(self, shop=None, tunnel=None):
         base.localAvatar.setZoneId(self.zoneId)
         musicMgr.playCurrentZoneMusic()
+        self.setupLandmarkBuildings()
+        self.startNametagTask()
         if shop:
             building = self.geom.find('**/tb%s:toon_landmark*' % shop[2:])
             if building.isEmpty():
@@ -42,6 +45,10 @@ class Street(ToonHood):
 
     def exit(self):
         ToonHood.exit(self)
+        self.stopNametagTask()
+        for doId in self.sp.activeSuits.keys():
+            suit = self.sp.activeSuits[doId]
+            suit.removeActive()
 
     def load(self):
         ToonHood.load(self)
@@ -63,18 +70,6 @@ class Street(ToonHood):
     def enterHood(self, zoneId):
         tunnel = str(self.zoneId)
         base.cr.playGame.enterHood(zoneId, tunnel=tunnel)
-
-    def enterPlace(self, shopId, zoneId):
-        ToonHood.enterPlace(self, shopId, zoneId)
-        for doId in self.sp.activeSuits.keys():
-            suit = self.sp.activeSuits[doId]
-            suit.removeActive()
-
-    def exitPlace(self):
-        ToonHood.exitPlace(self)
-        for doId in self.sp.activeSuits.keys():
-            suit = self.sp.activeSuits[doId]
-            suit.addActive()
 
     def startActive(self):
         ToonHood.startActive(self)
@@ -107,3 +102,34 @@ class Street(ToonHood):
         self.battle = None
         self.battleCell.removeNode()
         self.battleCell = None
+
+    def setupLandmarkBuildings(self):
+        self.buildings = []
+        for building in self.geom.findAllMatches('**/tb*toon_landmark*'):
+            zoneStr = building.getName().split(':')
+            block = int(zoneStr[0][2:])
+            zoneId = self.zoneId + 500 + block
+            self.buildings.append(Building(zoneId))
+
+    def startNametagTask(self):
+        taskMgr.add(self.__nametagTask, '%d-nametagTask' % self.zoneId)
+
+    def stopNametagTask(self):
+        taskMgr.remove('%d-nametagTask' % self.zoneId)
+
+    def __nametagTask(self, task):
+        for bldg in self.buildings:
+            origin = bldg.getBuildingNodePath().find('**/*door_origin*')
+            dist = (base.localAvatar.getPos(self.geom) - origin.getPos(self.geom)).length()
+            if dist <= 75:
+                bldg.setupNametag()
+            else:
+                bldg.clearNametag()
+        for doId in self.sp.activeSuits.keys():
+            suit = self.sp.activeSuits[doId]
+            dist = (base.localAvatar.getPos() - suit.getPos()).length()
+            if dist <= 120:
+                suit.addActive()
+            else:
+                suit.removeActive()
+        return task.cont

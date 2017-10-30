@@ -40,8 +40,6 @@ class SuitPlanner(DirectObject):
         newSuit.setLevel(requestStatus['level'])
         newSuit.setElite(requestStatus['elite'])
         newSuit.initializeBodyCollisions('suit')
-        if not base.cr.playGame.getActiveZone().place:
-            newSuit.addActive()
         newSuit.reparentTo(base.cr.playGame.street.geom)
         newSuit.enterFromSky(requestStatus['posA'], requestStatus['posB'])
         newSuit.startUpdatePosition()

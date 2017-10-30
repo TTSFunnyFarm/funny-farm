@@ -123,6 +123,8 @@ class ToonHood(Hood):
         self.exit()
         self.geom.reparentTo(hidden)
         self.geom.stash()
+        self.sky.reparentTo(hidden)
+        self.sky.stash()
         if shopId not in self.Shop2ClassDict.keys():
             self.notify.warning('Could not find shopId: %s' % shopId)
             return
@@ -141,3 +143,5 @@ class ToonHood(Hood):
         self.place = None
         self.geom.unstash()
         self.geom.reparentTo(render)
+        self.sky.unstash()
+        self.sky.reparentTo(camera)
