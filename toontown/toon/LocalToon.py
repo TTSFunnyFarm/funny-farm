@@ -1606,8 +1606,10 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
     def updateReflection(self, task):
         reflectionAnim = self.reflectionAnim
         reflectionRate = self.reflectionRate
-        playingAnim = self.playingAnim
-        playingRate = self.playingRate
+        playingAnim = self.getCurrentAnim()
+        playingRate = self.getPlayRate()
+        if playingAnim == None:
+            playingAnim = self.playingAnim
         if reflectionAnim != playingAnim or reflectionRate != playingRate:
             self.reflectionAnim = playingAnim
             self.reflectionRate = playingRate
@@ -1617,8 +1619,17 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
                 self.reflection.setAnimState('jumpAirborne', 1.0)
             elif playingAnim == 'jump-land' or playingAnim == 'running-jump-land':
                 self.reflection.setAnimState('jumpLand', 1.0)
+            elif playingAnim == 'openBook':
+                self.reflection.enterOpenBook()
+            elif playingAnim == 'readBook':
+                self.reflection.enterReadBook()
+            elif playingAnim == 'closeBook':
+                self.reflection.enterCloseBook()
             else:
-                self.reflection.setAnimState(self.reflectionAnim, self.reflectionRate)
+                if self.reflection.animFSM.getStateNamed(self.reflectionAnim):
+                    self.reflection.setAnimState(self.reflectionAnim, self.reflectionRate)
+                else:
+                    self.reflection.loop(self.reflectionAnim)
         if playingAnim == 'jump-idle' or playingAnim == 'running-jump-idle':
             self.reflection.setZ((-self.getZ() * 2) - 0.15)
         else:
