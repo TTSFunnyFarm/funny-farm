@@ -128,7 +128,7 @@ class Street(ToonHood):
         for doId in self.sp.activeSuits.keys():
             suit = self.sp.activeSuits[doId]
             dist = (base.localAvatar.getPos() - suit.getPos()).length()
-            if dist <= 120:
+            if dist <= 150:
                 suit.addActive()
             else:
                 suit.removeActive()

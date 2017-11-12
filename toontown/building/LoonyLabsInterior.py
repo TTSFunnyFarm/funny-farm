@@ -4,6 +4,7 @@ from direct.interval.IntervalGlobal import *
 from direct.fsm import ClassicFSM, State
 from direct.showbase import Audio3DManager
 from toontown.hood import ZoneUtil
+from toontown.toon.NPCScientist import NPCScientist
 from Interior import Interior
 import ToonInteriorColors
 import InteriorStorage
@@ -70,7 +71,23 @@ class LoonyLabsInterior(Interior):
         self.sillyFSM.requestFinalState()
 
     def generateNPCs(self):
-        pass
+        Interior.generateNPCs(self)
+        self.npcs[0].initializeBodyCollisions('toon')
+        self.npcs[1].initializeBodyCollisions('toon')
+        self.npcs[2].initializeBodyCollisions('toon')
+        self.npcs[0].loop('scientistJealous', fromFrame=0, toFrame=252)
+        self.npcs[1].pingpong('scientistWork', fromFrame=0, toFrame=150)
+        self.npcs[2].setAnimState('neutral')
+        clipBoards = self.npcs[2].findAllMatches('**/ClipBoard')
+        for clipBoard in clipBoards:
+            if not clipBoard.isEmpty():
+                clipBoard.stash()
+        ref0 = self.makeToonReflection(self.npcs[0])
+        ref1 = self.makeToonReflection(self.npcs[1])
+        ref2 = self.makeToonReflection(self.npcs[2])
+        ref0.loop('scientistJealous', fromFrame=0, toFrame=252)
+        ref1.pingpong('scientistWork', fromFrame=0, toFrame=150)
+        ref2.setAnimState('neutral')
 
     def startActive(self):
         Interior.startActive(self)
@@ -105,6 +122,20 @@ class LoonyLabsInterior(Interior):
             ref.setR(180)
         ref.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.MNone))
         ref.setBin('default', 0)
+        return ref
+
+    def makeToonReflection(self, toon):
+        ref = NPCScientist()
+        ref.setDNA(toon.getDNA())
+        ref.hideName()
+        ref.hideShadow()
+        ref.reparentTo(toon)
+        ref.setR(180)
+        ref.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.MNone))
+        ref.setBin('default', 0)
+        ref.setSx(-1)
+        ref.setAttrib(CullFaceAttrib.make(CullFaceAttrib.MNone))
+        ref.setZ(-0.15)
         return ref
 
     def sillyMeterIsRunning(self, isRunning):

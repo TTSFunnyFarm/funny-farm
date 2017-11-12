@@ -44,12 +44,6 @@ class ToonHallInterior(Interior):
     def generateNPCs(self):
         Interior.generateNPCs(self)
         self.npcs[0].useLOD(1000)
-        #self.npcs[1].initPos()
-        #self.npcs[2].initPos()
-        #self.npcs[3].initPos()
-        #self.npcs[1].setAnimState('ScientistJealous')
-        #self.npcs[2].setAnimState('ScientistJealous')
-        #self.npcs[3].setAnimState('ScientistEmcee')
 
     def startActive(self):
         base.localAvatar.checkQuestCutscene()
