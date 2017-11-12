@@ -1,0 +1,3 @@
+[submodule "discordrpc"]
+	path = discordrpc
+	url = https://github.com/sparkpin/py-discord-rpc
