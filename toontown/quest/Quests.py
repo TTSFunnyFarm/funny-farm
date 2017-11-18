@@ -512,11 +512,11 @@ QuestDict = {
         1514,             # To location
         (QuestRewardXP,   # Reward
          10),
-        NA,               # Next quest
+        1004,             # Next quest
         TTLocalizer.QuestDialogDict[1003]), # Dialog dict
  1004: (FF_TIER,
         MainQuest,
-        Finish,
+        Cont,
         (QuestTypeGoTo,),
         NA,
         NA,
@@ -526,12 +526,12 @@ QuestDict = {
         DefaultDialog),
  1005: (FF_TIER,
         MainQuest,
-        Cont,
+        Finish,
         (QuestTypeGoTo,),
         NA,
         1001,
         1514,
-        (QuestRewardGagTraining,),
+        (QuestRewardNone,),
         1006,
         TTLocalizer.QuestDialogDict[1005]),
  1006: (FF_TIER,
@@ -566,8 +566,8 @@ QuestDict = {
 
 Cutscenes = (1001,
  1002,
- 1004,
- 1005)
+ 1004)
+ImportantQuests = (1004,)
 
 def getQuest(id):
     return Quest(id)

@@ -4,6 +4,7 @@ from direct.interval.IntervalGlobal import *
 from direct.fsm import ClassicFSM, State
 from direct.showbase import Audio3DManager
 from toontown.hood import ZoneUtil
+from toontown.toon import NPCToons
 from toontown.toon.NPCScientist import NPCScientist
 from Interior import Interior
 import ToonInteriorColors
@@ -32,7 +33,7 @@ class LoonyLabsInterior(Interior):
            State.State('Phase5', self.enterPhase5, self.exitPhase5, ['Flat', 'Off']),
            State.State('Flat', self.enterFlat, self.exitFlat, ['Off', 'Phase1']),
            State.State('Off', self.enterOff, self.exitOff, [])], 'Setup', 'Off')
-    
+
     def load(self):
         Interior.load(self)
         self.interior.find('**/floor').setTransparency(1)
@@ -61,11 +62,12 @@ class LoonyLabsInterior(Interior):
         del self.randomGenerator
         self.interior.flattenMedium()
         self.sillyFSM.enterInitialState()
-        self.selectPhase(4)
+        self.loadQuestChanges()
         self.acceptOnce('avatarExitDone', self.startActive)
 
     def unload(self):
         Interior.unload(self)
+        self.unloadQuestChanges()
         base.localAvatar.stopUpdateReflection()
         base.localAvatar.deleteReflection()
         self.sillyFSM.requestFinalState()
@@ -78,18 +80,21 @@ class LoonyLabsInterior(Interior):
         self.npcs[0].loop('scientistJealous', fromFrame=0, toFrame=252)
         self.npcs[1].pingpong('scientistWork', fromFrame=0, toFrame=150)
         self.npcs[2].setAnimState('neutral')
-        clipBoards = self.npcs[2].findAllMatches('**/ClipBoard')
+        
+        self.ref0 = self.makeToonReflection(self.npcs[0])
+        self.ref1 = self.makeToonReflection(self.npcs[1])
+        self.ref2 = self.makeToonReflection(self.npcs[2])
+        self.ref0.loop('scientistJealous', fromFrame=0, toFrame=252)
+        self.ref1.pingpong('scientistWork', fromFrame=0, toFrame=150)
+        self.ref2.setAnimState('neutral')
+
+        clipBoards = self.npcs[2].findAllMatches('**/ClipBoard') + self.ref2.findAllMatches('**/ClipBoard')
         for clipBoard in clipBoards:
             if not clipBoard.isEmpty():
                 clipBoard.stash()
-        ref0 = self.makeToonReflection(self.npcs[0])
-        ref1 = self.makeToonReflection(self.npcs[1])
-        ref2 = self.makeToonReflection(self.npcs[2])
-        ref0.loop('scientistJealous', fromFrame=0, toFrame=252)
-        ref1.pingpong('scientistWork', fromFrame=0, toFrame=150)
-        ref2.setAnimState('neutral')
 
     def startActive(self):
+        base.localAvatar.checkQuestCutscene()
         Interior.startActive(self)
         self.accept('enterdoor_trigger_14', self.handleLabDoorTrigger)
 
@@ -137,6 +142,32 @@ class LoonyLabsInterior(Interior):
         ref.setAttrib(CullFaceAttrib.make(CullFaceAttrib.MNone))
         ref.setZ(-0.15)
         return ref
+
+    def loadQuestChanges(self):
+        if base.localAvatar.hasQuestHistory(1004):
+            self.selectPhase(5)
+        else:
+            self.selectPhase(4)
+        for questDesc in base.localAvatar.quests:
+            if questDesc[0] == 1004:
+                self.npcs[0].setPlayRate(0.2, 'scientistJealous')
+                self.ref0.setPlayRate(0.2, 'scientistJealous')
+                self.npcs[1].setPosHpr(-14, 15, 0, 225, 0, 0)
+                for clipBoard in self.npcs[1].findAllMatches('**/ClipBoard') + self.ref1.findAllMatches('**/ClipBoard'):
+                    clipBoard.stash()
+                self.npcs[1].setAnimState('neutral')
+                self.ref1.setAnimState('neutral')
+                self.npcs[2].setHpr(270, 0, 0)
+                self.flippy = NPCToons.createLocalNPC(1001)
+                self.flippy.reparentTo(self.interior)
+                self.flippy.setPosHpr(-12, -25, 0, 330, 0, 0)
+                self.flippy.initializeBodyCollisions('toon')
+                self.flippy.addActive()
+
+    def unloadQuestChanges(self):
+        if hasattr(self, 'flippy'):
+            self.flippy.delete()
+            del self.flippy
 
     def sillyMeterIsRunning(self, isRunning):
         if isRunning:

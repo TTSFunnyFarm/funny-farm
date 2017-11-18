@@ -13,6 +13,9 @@ class QuestManager:
 
     def completeQuest(self, npc, questId):
         base.localAvatar.removeQuest(questId)
+        # If this was a significant quest, add it to their quest history.
+        if questId in Quests.ImportantQuests:
+            base.localAvatar.addQuestHistory(questId)
         levelUp = 0
         if Quests.getQuestFinished(questId):
             # It's the last quest in the progression, give them their reward.
@@ -33,7 +36,11 @@ class QuestManager:
 
     def __handleCompleteQuest(self, npc, nextQuest):
         if nextQuest in Quests.Cutscenes:
-            base.cr.cutsceneMgr.enterCutscene(nextQuest)
+            if nextQuest == 1004:
+                # Loony Labs cutscene is a very special case; unfortunately we have to just hack this in for now.
+                base.cr.cutsceneMgr.enterCutscene(1003)
+            else:
+                base.cr.cutsceneMgr.enterCutscene(nextQuest)
             base.localAvatar.addQuest(nextQuest)
         else:
             self.npcGiveQuest(npc, nextQuest)

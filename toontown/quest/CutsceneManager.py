@@ -13,12 +13,12 @@ class CutsceneManager(DirectObject):
 
     def enterCutscene(self, questId):
         currZone = base.cr.playGame.getActiveZone()
-        if currZone.place:
-            if currZone.place.zoneId != Quests.getToNpcLocation(questId):
-                return self.notify.warning('Failed to start cutscene %d, not in correct zone.' % questId)
-        else:
-            if currZone.zoneId != Quests.getToNpcLocation(questId):
-                return self.notify.warning('Failed to start cutscene %d, not in correct zone.' % questId)
+        # if currZone.place:
+        #     if currZone.place.zoneId != Quests.getToNpcLocation(questId):
+        #         return self.notify.warning('Failed to start cutscene %d, not in correct zone.' % questId)
+        # else:
+        #     if currZone.zoneId != Quests.getToNpcLocation(questId):
+        #         return self.notify.warning('Failed to start cutscene %d, not in correct zone.' % questId)
         self.currQuest = questId
         base.localAvatar.disable()
         base.localAvatar.setAnimState('neutral')

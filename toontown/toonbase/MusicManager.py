@@ -45,7 +45,7 @@ class MusicManager:
         zone = base.cr.playGame.getActiveZone()
         if zone.place:
             lookupTable = self.activityMusic
-            volume = 0.7
+            volume = 0.5
         elif base.cr.playGame.hood:
             lookupTable = self.safezoneMusic
             volume = 1.0

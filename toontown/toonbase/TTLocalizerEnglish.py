@@ -599,20 +599,20 @@ LEAVING = 6
 QuestDialogDict = {
  1003: {GREETING: '',
         QUEST: '',
-        COMPLETE: 'Boy, that was scary. This is not good...\x07I\'m going to need your help figuring out this problem.',
+        COMPLETE: 'Boy, that was scary. This isn\'t good.\x07I\'m going to need your help figuring out this problem.',
         LEAVING: ''},
  1005: {GREETING: '',
         QUEST: '',
-        COMPLETE: 'The Silly Meter is broken!\x07Things in Funny Farm definitely aren\'t funny anymore...\x07The only way we can restore silliness to our town is to drive the Cogs out of here!',
+        COMPLETE: 'The Silly Meter is broken!\x07This isn\'t funny anymore...\x07The only way we can restore silliness to our town is to drive the Cogs out of here!',
         LEAVING: ''},
  1006: {GREETING: '',
-        QUEST: 'Before we get started, you should begin learning another gag track.\x07Learning how to use different types of gags is a very important part of being able to defeat the Cogs.\x07To start, you can choose between Sound and Lure.\x07Come back to me when you are ready to decide.',
+        QUEST: 'Before we get started, you should begin learning another gag track.\x07Learning how to use different gags is a very important part of defeating the Cogs.\x07To start, you can choose between Sound and Lure.\x07Come back to me when you are ready to decide.',
         COMPLETE: 'Ah, excellent choice.\x07To start learning these gags, you will need to collect film strips.\x07You can earn film strips from ToonTasks in addition to your normal experience points.\x07There are 15 film strips, which form an animation to show you how to use your new gags.\x07When you collect all 15, you can start buying those gags from the Gag Shop!\x07You can check your progress in the Shticker Book.',
         LEAVING: ''},
  1007: {GREETING: '',
-        QUEST: 'Now, let\'s get to business.\x07First we need to check the status of the streets.\x07Could you head out to Rickety Road and see what\'s going on out there?',
+        QUEST: 'Now, let\'s get to business.\x07We need to check the status of the streets.\x07Could you head out to Rickety Road?\x07See if you can find any Cogs.',
         INCOMPLETE_PROGRESS: 'Could you please go and check the status of Rickety Road?',
-        COMPLETE: 'The Cogs are already invading the streets?\x07This might be worse than I thought!\x07Thanks for your help.',
+        COMPLETE: 'Ah, the Cogs have already filled up the streets.\x07It\'s just as I thought.\x07Thanks for your help.',
         LEAVING: ''}
 }
 CutsceneDialogDict = {
@@ -622,7 +622,14 @@ CutsceneDialogDict = {
         'The size of our corporation and the plans we have are beyond the stretch of your imagination.\x07You will face consequences if you do not oblige.',
         'We are stronger than we\'ve ever been before.\x07I suggest YOU terminate your presence in our playground, or you\'ll taste my home-baked wrath!',
         'Suit yourself.'),
-        '%s, it\'s good to see you!\x07Meet me back at the Toon Hall, so we can discuss some things.')
+        '%s, it\'s good to see you!\x07Meet me back at the Toon Hall, so we can discuss some things.'),
+ 1004: ('Flippy! We have a problem!\x07This is urgent. Come quick!',
+        'Better go see what\'s going on.\x07Come inside with me.'),
+ 1005: (('What\'s the matter, guys?',
+        'Our Silly Meter readings have plummeted.\x07Ever since you encountered those Cogs, the rates have been decreasing intensely.\x07It\'s almost at zero!',
+        'But then that means...',
+        'Uh, oh.'),
+        'Oh, this is a disaster!')
 }
 InfoBubbleDialog = {
  0: 'You\'ve just received a new ToonTask!\x07When completed, you will gain experience and other rewards for your Toon!\x07Now head through the tunnel to find Flippy.'

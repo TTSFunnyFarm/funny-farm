@@ -124,6 +124,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             self.questCarryLimit = 0
             self.questingZone = 0
             self.quests = []
+            self.questHistory = []
             self.experienceBar = None
 
     def generate(self):
@@ -529,6 +530,31 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         messenger.send('questsChanged')
         base.avatarData.setQuests = self.quests
         dataMgr.saveToonData(base.avatarData)
+
+    def setQuestHistory(self, history):
+        self.questHistory = history  
+
+    def getQuestHistory(self, history):
+        return self.questHistory
+
+    def addQuestHistory(self, quest):
+        if quest in self.questHistory:
+            return
+        self.questHistory.append(quest)
+        base.avatarData.setQuestHistory = self.questHistory
+        dataMgr.saveToonData(base.avatarData)
+
+    def removeQuestHistory(self, quest):
+        if quest not in self.questHistory:
+            return
+        self.questHistory.remove(quest)
+        base.avatarData.setQuestHistory = self.questHistory
+        dataMgr.saveToonData(base.avatarData)
+
+    def hasQuestHistory(self, quest):
+        if quest in self.questHistory:
+            return True
+        return False
 
     def setTrackProgress(self, trackId, progress):
         self.trackProgressId = trackId
