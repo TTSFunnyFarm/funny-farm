@@ -32,6 +32,7 @@ class DisplayOptions:
         res = self.settings.getList('game', 'resolution', default=[800, 600], expectedLength=2)
         embed = self.settings.getBool('game', 'embed', False)
         antialias = self.settings.getInt('game', 'antialiasing', 0)
+        enableLODs = self.settings.getBool('game', 'enable-lods', False)
         if antialias:
             loadPrcFileData('toonBase Settings Framebuffer MSAA', 'framebuffer-multisample 1')
             loadPrcFileData('toonBase Settings MSAA Level', 'multisamples %i' % antialias)
@@ -49,6 +50,7 @@ class DisplayOptions:
         loadPrcFileData('toonBase Settings Music Volume', 'audio-master-music-volume %s' % musicVol)
         loadPrcFileData('toonBase Settings Sfx Volume', 'audio-master-sfx-volume %s' % sfxVol)
         loadPrcFileData('toonBase Settings Toon Chat Sounds', 'toon-chat-sounds %s' % toonChatSounds)
+        loadPrcFileData('toonBase Settings Enable LODs', 'enable-lods %s' % enableLODs)
         self.settingsFullScreen = mode
         self.settingsWidth = res[0]
         self.settingsHeight = res[1]

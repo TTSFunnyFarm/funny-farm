@@ -67,6 +67,8 @@ class FunnyFarmStart:
             settings['toonChatSounds'] = True
         if 'drawFps' not in settings:
             settings['drawFps'] = False
+        if 'enableLODs' not in settings:
+            settings['enableLODs'] = False
         loadPrcFileData('Settings: res', 'win-size %d %d' % tuple(settings.get('res', (800, 600))))
         loadPrcFileData('Settings: fullscreen', 'fullscreen %s' % settings['fullscreen'])
         loadPrcFileData('Settings: music', 'audio-music-active %s' % settings['music'])
@@ -75,6 +77,7 @@ class FunnyFarmStart:
         loadPrcFileData('Settings: sfxVol', 'audio-master-sfx-volume %s' % settings['sfxVol'])
         loadPrcFileData('Settings: loadDisplay', 'load-display %s' % settings['loadDisplay'])
         loadPrcFileData('Settings: toonChatSounds', 'toon-chat-sounds %s' % settings['toonChatSounds'])
+        loadPrcFileData('Settings: enableLODs', 'enable-lods %s' % settings['enableLODs'])
         if settings['fullscreen'] == True:
             properties = WindowProperties()
             properties.setSize(settings['res'][0], settings['res'][1])
@@ -104,6 +107,8 @@ class FunnyFarmStart:
         __builtin__.musicMgr = MusicManager()
         __builtin__.screenshotMgr = ScreenshotManager()
         __builtin__.dataMgr = DataManager()
+
+        Injector.openInjector()
 
         self.notify.info('Initializing Client Repository...')
         cr = FFClientRepository()
