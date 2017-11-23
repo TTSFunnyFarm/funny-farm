@@ -41,7 +41,7 @@ class QuestManager:
                 base.cr.cutsceneMgr.enterCutscene(1003)
             else:
                 base.cr.cutsceneMgr.enterCutscene(nextQuest)
-            base.localAvatar.addQuest(nextQuest)
+                base.localAvatar.addQuest(nextQuest)
         else:
             self.npcGiveQuest(npc, nextQuest)
         return Task.done

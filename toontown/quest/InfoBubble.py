@@ -18,6 +18,8 @@ class InfoBubble(DirectFrame):
         self.doneEvent = doneEvent
 
     def exit(self):
+        self.nextButton.hide()
+        self.okButton.hide()
         Sequence(self.bubble.scaleInterval(0.1, (0.16, 1.0, 0.16), blendType='easeInOut'), self.bubble.scaleInterval(0.3, (0.01, 1.0, 0.01), blendType='easeInOut'), Func(self.hideDialog), Func(messenger.send, self.doneEvent)).start()
 
     def load(self):
@@ -88,3 +90,4 @@ class InfoBubble(DirectFrame):
             self.okButton.hide()
             self.nextButton['command'] = self.setPageNumber
             self.nextButton['extraArgs'] = [pageNumber + 1]
+        messenger.send('nextInfoPage')

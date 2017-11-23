@@ -564,7 +564,8 @@ QuestDict = {
         TTLocalizer.QuestDialogDict[1007])
 }
 
-Cutscenes = (1001,
+Cutscenes = (1,
+ 1001,
  1002,
  1004)
 ImportantQuests = (1004,)
