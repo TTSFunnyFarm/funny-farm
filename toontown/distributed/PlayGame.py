@@ -55,13 +55,13 @@ class PlayGame(DirectObject):
         self.hood.enter(tunnel=tunnel, init=init)
 
     def exitHood(self):
-        ModelPool.garbageCollect()
-        TexturePool.garbageCollect()
         if self.hood.place:
             self.hood.exitPlace()
         self.hood.exit()
         self.hood.unload()
         self.hood = None
+        ModelPool.garbageCollect()
+        TexturePool.garbageCollect()
 
     def enterStreet(self, zoneId, tunnel=None):
         hoodId = ZoneUtil.getCanonicalHoodId(zoneId)
@@ -81,13 +81,13 @@ class PlayGame(DirectObject):
         self.street.enter(tunnel=tunnel)
 
     def exitStreet(self):
-        ModelPool.garbageCollect()
-        TexturePool.garbageCollect()
         if self.street.place:
             self.street.exitPlace()
         self.street.exit()
         self.street.unload()
         self.street = None
+        ModelPool.garbageCollect()
+        TexturePool.garbageCollect()
 
     def exitActiveZone(self):
         if self.hood:
@@ -133,10 +133,10 @@ class PlayGame(DirectObject):
         self.lastGame = self.minigame.getTitle()
 
     def exitMinigame(self):
-        ModelPool.garbageCollect()
-        TexturePool.garbageCollect()
         self.minigame.delete()
         self.minigame = None
+        ModelPool.garbageCollect()
+        TexturePool.garbageCollect()
 
     def enterMinigamePurchase(self, toon, pointsArray, playerMoney, ids, states, remain, doneEvent):
         self.purchase = Purchase.Purchase(toon, pointsArray, playerMoney, ids, states, remain, doneEvent)
@@ -144,9 +144,9 @@ class PlayGame(DirectObject):
         self.purchase.enter()
 
     def exitMinigamePurchase(self):
-        ModelPool.garbageCollect()
-        TexturePool.garbageCollect()
         self.purchase.exitPurchase()
         self.purchase.exit()
         self.purchase.unload()
         self.purchase = None
+        ModelPool.garbageCollect()
+        TexturePool.garbageCollect()

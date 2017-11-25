@@ -64,6 +64,7 @@ class Street(ToonHood):
         self.sp.delete()
         self.townBattle.unload()
         self.townBattle.cleanup()
+        del self.sp
         del self.townBattle
         del self.battleMusic
 
@@ -81,7 +82,7 @@ class Street(ToonHood):
         suit = self.sp.activeSuits[suitId]
         self.sp.removeActiveSuit(suitId)
         self.battleCell = NodePath('battleCell')
-        self.battleCell.reparentTo(render)
+        self.battleCell.reparentTo(self.geom)
         self.battleCell.setPos(pos[0])
         self.battleCell.setH(pos[1])
         self.battle = Battle(self.townBattle, toons=[base.localAvatar], suits=[suit])
@@ -91,17 +92,20 @@ class Street(ToonHood):
         base.playMusic(self.battleMusic, looping=1)
         self.accept(self.townBattle.doneEvent, self.exitBattle)
 
-    def exitBattle(self, *args):
+    def exitBattle(self, doneStatus):
         self.ignore(self.townBattle.doneEvent)
         self.battleMusic.stop()
         musicMgr.playCurrentZoneMusic()
-        base.localAvatar.enable()
-        base.localAvatar.experienceBar.show()
         self.battle.cleanupBattle()
         self.battle.delete()
         self.battle = None
         self.battleCell.removeNode()
         self.battleCell = None
+        base.localAvatar.experienceBar.show()
+        if doneStatus == 'victory':
+            base.localAvatar.enable()
+        elif doneStatus == 'defeat':
+            base.localAvatar.died()
 
     def setupLandmarkBuildings(self):
         self.buildings = []

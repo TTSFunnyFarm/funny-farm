@@ -1363,7 +1363,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         hpLost = oldHp - newHp
         if hpLost >= 0:
             # a little hacky but whatever
-            if base.cr.playGame.getActiveZone().battle:
+            if hasattr(base.cr.playGame.getActiveZone(), 'battle'):
                 if base.cr.playGame.getActiveZone().battle.battleCalc.defenseBoostActive:
                     self.showHpTextBoost(-hpLost, 2)
                 else:
@@ -1372,10 +1372,17 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
                 self.showHpText(-hpLost, bonus)
             self.setHealth(newHp, self.maxHp)
             if self.hp <= 0 and oldHp > 0:
-                self.enable()
-                self.disable()
-                camera.wrtReparentTo(render)
-                self.setAnimState('Died', callback=self.died)
+                if hasattr(base.cr.playGame.getActiveZone(), 'battle'):
+                    # Give the movie some time to switch camera angles if it needs to before we take control of the camera
+                    taskMgr.doMethodLater(0.1, self.goSad, '%d-goSad' % self.doId)
+                else:
+                    self.goSad()
+
+    def goSad(self, *args):
+        self.enable()
+        self.disable()
+        camera.wrtReparentTo(render)
+        self.setAnimState('Died')
 
     def startToonUp(self, healFrequency):
         self.stopToonUp()
@@ -1584,8 +1591,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         self.sillySurgeText = False
 
     def died(self):
-        base.cr.playGame.exitActiveZone()
         self.reparentTo(render)
+        base.cr.playGame.exitActiveZone()
         self.enable()
         zoneId = self.getZoneId()
         hoodId = FunnyFarmGlobals.getHoodId(zoneId)
