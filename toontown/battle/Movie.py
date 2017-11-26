@@ -299,8 +299,6 @@ class Movie(DirectObject.DirectObject):
         self.playTutorialReward_1()
 
     def playTutorialReward_1(self):
-        self.tutRewardDialog_1 = TTDialog.TTDialog(text=TTLocalizer.MovieTutorialReward1, command=self.playTutorialReward_2, style=TTDialog.Acknowledge, fadeScreen=None, pos=(0.65, 0, 0.5), scale=0.8)
-        self.tutRewardDialog_1.hide()
         self._deleteTrack()
         self.track = Sequence(name='tutorial-reward-1')
         self.track.append(Func(self.rewardPanel.initGagFrame, base.localAvatar, [0,
@@ -314,24 +312,22 @@ class Movie(DirectObject.DirectObject):
          0,
          0], noSkip=True))
         self.track += self.rewardPanel.getTrackIntervalList(base.localAvatar, THROW_TRACK, 0, 1, 0)
-        self.track.append(Func(self.tutRewardDialog_1.show))
+        self.track.append(Func(base.localAvatar.showInfoBubble, 2, 'play-reward-2'))
+        self.acceptOnce('play-reward-2', self.playTutorialReward_2)
         self.track.start()
         return
 
-    def playTutorialReward_2(self, value):
-        self.tutRewardDialog_1.cleanup()
-        self.tutRewardDialog_2 = TTDialog.TTDialog(text=TTLocalizer.MovieTutorialReward2, command=self.playTutorialReward_3, style=TTDialog.Acknowledge, fadeScreen=None, pos=(0.65, 0, 0.5), scale=0.8)
-        self.tutRewardDialog_2.hide()
+    def playTutorialReward_2(self):
         self._deleteTrack()
         self.track = Sequence(name='tutorial-reward-2')
         self.track.append(Wait(1.0))
         self.track += self.rewardPanel.getTrackIntervalList(base.localAvatar, SQUIRT_TRACK, 0, 1, 0)
-        self.track.append(Func(self.tutRewardDialog_2.show))
+        self.track.append(Func(base.localAvatar.showInfoBubble, 3, 'play-reward-3'))
+        self.acceptOnce('play-reward-3', self.playTutorialReward_3)
         self.track.start()
         return
 
-    def playTutorialReward_3(self, value):
-        self.tutRewardDialog_2.cleanup()
+    def playTutorialReward_3(self):
         from toontown.toon import Toon
         from toontown.toon import ToonDNA
 

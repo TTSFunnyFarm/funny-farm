@@ -631,9 +631,16 @@ CutsceneDialogDict = {
         'Uh, oh.'),
         'Oh, this is a disaster!')
 }
+MovieTutorialReward1 = 'You received 1 Throw point! When you get 10, you will get a new gag!'
+MovieTutorialReward2 = 'You received 1 Squirt point! When you get 10, you will get a new gag!'
+MovieTutorialReward3 = 'Good job! You completed your first ToonTask!'
+MovieTutorialReward4 = 'Go to Toon Headquarters for your reward!'
+MovieTutorialReward5 = 'Have fun!'
 InfoBubbleDialog = {
  0: 'You\'ve just received a new ToonTask!\x07When completed, you will gain experience and other rewards for your Toon!\x07Now head through the tunnel to find Flippy.',
- 1: 'Remember, in order to defeat the Cogs you must buy gags.\x07You can ride the trolley to play minigames, earn jellybeans, and purchase gags.\x07Or if you already have some jellybeans on hand, head to Goofy\'s Gag Shop to purchase gags quickly!'
+ 1: 'Remember, in order to defeat the Cogs you must buy gags.\x07You can ride the trolley to play minigames, earn jellybeans, and purchase gags.\x07Or if you already have some jellybeans on hand, head to Goofy\'s Gag Shop to purchase gags quickly!',
+ 2: MovieTutorialReward1,
+ 3: MovieTutorialReward2
 }
 ChatGarblerDog = ['woof', 'arf', 'rruff']
 ChatGarblerCat = ['meow', 'mew']
@@ -3799,11 +3806,6 @@ NPCForceAcknowledgeMessage7 = "Don't forget to make a friend!\n\n\n\n\n\n\nClick
 NPCForceAcknowledgeMessage8 = 'Great! You made a new friend!\n\n\n\n\n\n\n\n\nYou should go back at Toon Headquarters now.'
 NPCForceAcknowledgeMessage9 = 'Good job using the phone!\n\n\n\n\n\n\n\n\nReturn to Toon Headquarters to claim your reward.'
 ToonSleepString = '. . . ZZZ . . .'
-MovieTutorialReward1 = 'You received 1 Throw point! When you get 10, you will get a new gag!'
-MovieTutorialReward2 = 'You received 1 Squirt point! When you get 10, you will get a new gag!'
-MovieTutorialReward3 = 'Good job! You completed your first ToonTask!'
-MovieTutorialReward4 = 'Go to Toon Headquarters for your reward!'
-MovieTutorialReward5 = 'Have fun!'
 BattleGlobalTracks = ['power-up',
  'trap',
  'lure',
