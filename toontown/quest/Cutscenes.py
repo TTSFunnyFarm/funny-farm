@@ -20,7 +20,7 @@ def scene1001():
     return track
 
 def scene1002():
-    bgm = base.loader.loadSfx('phase_12/audio/bgm/Bossbot_Entry_v1.ogg')
+    bgm = base.loader.loadMusic('phase_12/audio/bgm/Bossbot_Entry_v1.ogg')
     suit = base.cr.playGame.hood.suit
     flippy = base.cr.playGame.hood.flippy
     track = Sequence()
