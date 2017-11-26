@@ -239,7 +239,7 @@ class ToonHead(Actor.Actor):
         self.lerpLookAt(lookAtPnt, blink=1)
         return
 
-    def generateToonHead(self, copy, style, lods, forGui = 0, noLODShortCircuit = False):
+    def generateToonHead(self, copy, style, lods, forGui = 0):
         global PreloadHeads
         headStyle = style.head
         fix = None
@@ -377,7 +377,7 @@ class ToonHead(Actor.Actor):
             headHeight = 0.75
         else:
             ToonHead.notify.error('unknown head style: %s' % headStyle)
-        if len(lods) == 1 and not noLODShortCircuit:
+        if len(lods) == 1:
             filepath = 'phase_3' + filePrefix + lods[0]
             self.loadModel(PreloadHeads[filepath], 'head', 'lodRoot', copy = True)
             if not forGui:
@@ -594,37 +594,36 @@ class ToonHead(Actor.Actor):
                     self.drawInFront('joint_pupil*', 'eyes*', -1, lodName=lodName)
 
             self.__eyes = self.getLOD(1000).find('**/eyes*')
-            if config.GetBool('enable-lods', False):
-                self.__lod500Eyes = self.getLOD(500).find('**/eyes*')
-                self.__lod250Eyes = self.getLOD(250).find('**/eyes*')
-                if self.__lod500Eyes.isEmpty():
-                    self.__lod500Eyes = None
-                else:
-                    self.__lod500Eyes.setColorOff()
-                    if base.config.GetBool('want-new-anims', 1):
-                        if not self.find('**/joint_pupilL*').isEmpty():
-                            self.__lod500lPupil = self.__lod500Eyes.find('**/joint_pupilL*')
-                            self.__lod500rPupil = self.__lod500Eyes.find('**/joint_pupilR*')
-                        else:
-                            self.__lod500lPupil = self.__lod500Eyes.find('**/def_left_pupil*')
-                            self.__lod500rPupil = self.__lod500Eyes.find('**/def_right_pupil*')
-                    else:
+            self.__lod500Eyes = self.getLOD(500).find('**/eyes*')
+            self.__lod250Eyes = self.getLOD(250).find('**/eyes*')
+            if self.__lod500Eyes.isEmpty():
+                self.__lod500Eyes = None
+            else:
+                self.__lod500Eyes.setColorOff()
+                if base.config.GetBool('want-new-anims', 1):
+                    if not self.find('**/joint_pupilL*').isEmpty():
                         self.__lod500lPupil = self.__lod500Eyes.find('**/joint_pupilL*')
                         self.__lod500rPupil = self.__lod500Eyes.find('**/joint_pupilR*')
-                if self.__lod250Eyes.isEmpty():
-                    self.__lod250Eyes = None
-                else:
-                    self.__lod250Eyes.setColorOff()
-                    if base.config.GetBool('want-new-anims', 1):
-                        if not self.find('**/joint_pupilL*').isEmpty():
-                            self.__lod250lPupil = self.__lod250Eyes.find('**/joint_pupilL*')
-                            self.__lod250rPupil = self.__lod250Eyes.find('**/joint_pupilR*')
-                        else:
-                            self.__lod250lPupil = self.__lod250Eyes.find('**/def_left_pupil*')
-                            self.__lod250rPupil = self.__lod250Eyes.find('**/def_right_pupil*')
                     else:
+                        self.__lod500lPupil = self.__lod500Eyes.find('**/def_left_pupil*')
+                        self.__lod500rPupil = self.__lod500Eyes.find('**/def_right_pupil*')
+                else:
+                    self.__lod500lPupil = self.__lod500Eyes.find('**/joint_pupilL*')
+                    self.__lod500rPupil = self.__lod500Eyes.find('**/joint_pupilR*')
+            if self.__lod250Eyes.isEmpty():
+                self.__lod250Eyes = None
+            else:
+                self.__lod250Eyes.setColorOff()
+                if base.config.GetBool('want-new-anims', 1):
+                    if not self.find('**/joint_pupilL*').isEmpty():
                         self.__lod250lPupil = self.__lod250Eyes.find('**/joint_pupilL*')
                         self.__lod250rPupil = self.__lod250Eyes.find('**/joint_pupilR*')
+                    else:
+                        self.__lod250lPupil = self.__lod250Eyes.find('**/def_left_pupil*')
+                        self.__lod250rPupil = self.__lod250Eyes.find('**/def_right_pupil*')
+                else:
+                    self.__lod250lPupil = self.__lod250Eyes.find('**/joint_pupilL*')
+                    self.__lod250rPupil = self.__lod250Eyes.find('**/joint_pupilR*')
         else:
             self.drawInFront('eyes*', 'head-front*', mode)
             if base.config.GetBool('want-new-anims', 1):

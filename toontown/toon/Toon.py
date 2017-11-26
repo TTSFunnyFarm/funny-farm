@@ -24,7 +24,7 @@ from direct.showbase.PythonUtil import Functor
 from toontown.distributed import DelayDelete
 from otp.nametag.NametagConstants import *
 import AccessoryGlobals
-import types, sys
+import types
 
 def teleportDebug(requestStatus, msg, onlyIfToAv = True):
     if teleportNotify.getDebug():
@@ -213,17 +213,16 @@ def loadModels():
             fileRoot = LegDict[key]
             model = loader.loadModelNode('/phase_3' + fileRoot + '1000')
             Preloaded.append(model)
-            if config.GetBool('enable-lods', False):
-                model = loader.loadModelNode('/phase_3' + fileRoot + '500')
-                Preloaded.append(model)
-                model = loader.loadModelNode('/phase_3' + fileRoot + '250')
-                Preloaded.append(model)
+            model = loader.loadModelNode('/phase_3' + fileRoot + '500')
+            Preloaded.append(model)
+            model = loader.loadModelNode('/phase_3' + fileRoot + '250')
+            Preloaded.append(model)
 
         for key in TorsoDict.keys():
             fileRoot = TorsoDict[key]
             model = loader.loadModelNode('/phase_3' + fileRoot + '1000')
             Preloaded.append(model)
-            if len(key) > 1 and config.GetBool('enable-lods', False):
+            if len(key) > 1:
                 model = loader.loadModelNode('/phase_3' + fileRoot + '500')
                 Preloaded.append(model)
                 model = loader.loadModelNode('/phase_3' + fileRoot + '250')
@@ -233,11 +232,10 @@ def loadModels():
             fileRoot = HeadDict[key]
             model = loader.loadModelNode('/phase_3' + fileRoot + '1000')
             Preloaded.append(model)
-            if config.GetBool('enable-lods', False):
-                model = loader.loadModelNode('/phase_3' + fileRoot + '500')
-                Preloaded.append(model)
-                model = loader.loadModelNode('/phase_3' + fileRoot + '250')
-                Preloaded.append(model)
+            model = loader.loadModelNode('/phase_3' + fileRoot + '500')
+            Preloaded.append(model)
+            model = loader.loadModelNode('/phase_3' + fileRoot + '250')
+            Preloaded.append(model)
 
 
 def loadBasicAnims():
@@ -683,18 +681,17 @@ class Toon(Avatar.Avatar, ToonHead):
 
     def setLODs(self):
         self.setLODNode()
-        if config.GetBool('enable-lods', False):
-            levelOneIn = config.GetInt('lod1-in', 20)
-            levelOneOut = config.GetInt('lod1-out', 0)
-            levelTwoIn = config.GetInt('lod2-in', 80)
-            levelTwoOut = config.GetInt('lod2-out', 20)
-            levelThreeIn = config.GetInt('lod3-in', 280)
-            levelThreeOut = config.GetInt('lod3-out', 80)
-            self.addLOD(1000, levelOneIn, levelOneOut)
-            self.addLOD(500, levelTwoIn, levelTwoOut)
-            self.addLOD(250, levelThreeIn, levelThreeOut)
-        else:
-            self.addLOD(1000, sys.maxint, 0)
+        levelOneIn = config.GetInt('lod1-in', 20)
+        levelOneOut = config.GetInt('lod1-out', 0)
+        levelTwoIn = config.GetInt('lod2-in', 80)
+        levelTwoOut = config.GetInt('lod2-out', 20)
+        levelThreeIn = config.GetInt('lod3-in', 280)
+        levelThreeOut = config.GetInt('lod3-out', 80)
+        self.addLOD(1000, levelOneIn, levelOneOut)
+        self.addLOD(500, levelTwoIn, levelTwoOut)
+        self.addLOD(250, levelThreeIn, levelThreeOut)
+        if not config.GetBool('enable-lods', False):
+            self.useLOD(1000)
 
     def generateToon(self):
         self.setLODs()
@@ -811,18 +808,15 @@ class Toon(Avatar.Avatar, ToonHead):
         if filePrefix is None:
             self.notify.error('unknown leg style: %s' % legStyle)
         self.loadModel('phase_3' + filePrefix + '1000', 'legs', '1000', copy)
-        if config.GetBool('enable-lods', False):
-            self.loadModel('phase_3' + filePrefix + '500', 'legs', '500', copy)
-            self.loadModel('phase_3' + filePrefix + '250', 'legs', '250', copy)
+        self.loadModel('phase_3' + filePrefix + '500', 'legs', '500', copy)
+        self.loadModel('phase_3' + filePrefix + '250', 'legs', '250', copy)
         if not copy:
             self.showPart('legs', '1000')
-            if config.GetBool('enable-lods', False):
-                self.showPart('legs', '500')
-                self.showPart('legs', '250')
+            self.showPart('legs', '500')
+            self.showPart('legs', '250')
         self.loadAnims(LegsAnimDict[legStyle], 'legs', '1000')
-        if config.GetBool('enable-lods', False):
-            self.loadAnims(LegsAnimDict[legStyle], 'legs', '500')
-            self.loadAnims(LegsAnimDict[legStyle], 'legs', '250')
+        self.loadAnims(LegsAnimDict[legStyle], 'legs', '500')
+        self.loadAnims(LegsAnimDict[legStyle], 'legs', '250')
         self.findAllMatches('**/boots_short').stash()
         self.findAllMatches('**/boots_long').stash()
         self.findAllMatches('**/shoes').stash()
@@ -831,9 +825,8 @@ class Toon(Avatar.Avatar, ToonHead):
     def swapToonLegs(self, legStyle, copy = 1):
         self.unparentToonParts()
         self.removePart('legs', '1000')
-        if config.GetBool('enable-lods', False):
-            self.removePart('legs', '500')
-            self.removePart('legs', '250')
+        self.removePart('legs', '500')
+        self.removePart('legs', '250')
         # Bugfix: Until upstream Panda3D includes this, we have to do it here.
         if 'legs' in self._Actor__commonBundleHandles:
             del self._Actor__commonBundleHandles['legs']
@@ -853,21 +846,19 @@ class Toon(Avatar.Avatar, ToonHead):
         if filePrefix is None:
             self.notify.error('unknown torso style: %s' % torsoStyle)
         self.loadModel('phase_3' + filePrefix + '1000', 'torso', '1000', copy)
-        if len(torsoStyle) == 1 and config.GetBool('enable-lods', False):
+        if len(torsoStyle) == 1:
             self.loadModel('phase_3' + filePrefix + '1000', 'torso', '500', copy)
             self.loadModel('phase_3' + filePrefix + '1000', 'torso', '250', copy)
-        elif config.GetBool('enable-lods', False):
+        else:
             self.loadModel('phase_3' + filePrefix + '500', 'torso', '500', copy)
             self.loadModel('phase_3' + filePrefix + '250', 'torso', '250', copy)
         if not copy:
             self.showPart('torso', '1000')
-            if config.GetBool('enable-lods', False):
-                self.showPart('torso', '500')
-                self.showPart('torso', '250')
+            self.showPart('torso', '500')
+            self.showPart('torso', '250')
         self.loadAnims(TorsoAnimDict[torsoStyle], 'torso', '1000')
-        if config.GetBool('enable-lods', False):
-            self.loadAnims(TorsoAnimDict[torsoStyle], 'torso', '500')
-            self.loadAnims(TorsoAnimDict[torsoStyle], 'torso', '250')
+        self.loadAnims(TorsoAnimDict[torsoStyle], 'torso', '500')
+        self.loadAnims(TorsoAnimDict[torsoStyle], 'torso', '250')
         if genClothes == 1 and not len(torsoStyle) == 1:
             self.generateToonClothes()
         return
@@ -875,9 +866,8 @@ class Toon(Avatar.Avatar, ToonHead):
     def swapToonTorso(self, torsoStyle, copy = 1, genClothes = 1):
         self.unparentToonParts()
         self.removePart('torso', '1000')
-        if config.GetBool('enable-lods', False):
-            self.removePart('torso', '500')
-            self.removePart('torso', '250')
+        self.removePart('torso', '500')
+        self.removePart('torso', '250')
         # Bugfix: Until upstream Panda3D includes this, we have to do it here.
         if 'torso' in self._Actor__commonBundleHandles:
             del self._Actor__commonBundleHandles['torso']
@@ -891,24 +881,19 @@ class Toon(Avatar.Avatar, ToonHead):
         self.generateBackpack()
 
     def generateToonHead(self, copy = 1):
-        if config.GetBool('enable-lods', False):
-            headHeight = ToonHead.generateToonHead(self, copy, self.style, ('1000', '500', '250'))
-        else:
-            headHeight = ToonHead.generateToonHead(self, copy, self.style, ('1000',), noLODShortCircuit = True)
+        headHeight = ToonHead.generateToonHead(self, copy, self.style, ('1000', '500', '250'))
         if self.style.getAnimal() == 'dog':
             self.loadAnims(HeadAnimDict[self.style.head], 'head', '1000')
-            if config.GetBool('enable-lods', False):
-                self.loadAnims(HeadAnimDict[self.style.head], 'head', '500')
-                self.loadAnims(HeadAnimDict[self.style.head], 'head', '250')
+            self.loadAnims(HeadAnimDict[self.style.head], 'head', '500')
+            self.loadAnims(HeadAnimDict[self.style.head], 'head', '250')
 
     def swapToonHead(self, headStyle, copy = 1):
         self.stopLookAroundNow()
         self.eyelids.request('open')
         self.unparentToonParts()
         self.removePart('head', '1000')
-        if config.GetBool('enable-lods', False):
-            self.removePart('head', '500')
-            self.removePart('head', '250')
+        self.removePart('head', '500')
+        self.removePart('head', '250')
         # Bugfix: Until upstream Panda3D includes this, we have to do it here.
         if 'head' in self._Actor__commonBundleHandles:
             del self._Actor__commonBundleHandles['head']
