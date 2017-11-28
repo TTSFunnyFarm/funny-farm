@@ -45,7 +45,7 @@ class FFStreet(Street):
         self.trainColl = self.train.attachNewNode(CollisionNode('train_collision'))
         self.trainColl.node().addSolid(cb)
         self.train.setH(90)
-        self.trainLoop = Sequence(self.train.posInterval(32, pos=Point3(445, 45, -0.5), startPos=(-260, 45, -0.5)), Wait(10))
+        self.trainLoop = Sequence(self.train.posInterval(32, pos=Point3(445, 45, -0.5), startPos=(-260, 45, -0.5)), Wait(90))
         self.trainLoop.loop()
         self.audio3d = Audio3DManager.Audio3DManager(base.sfxManagerList[0], camera)
         self.trainSfx = self.audio3d.loadSfx('phase_14/audio/sfx/train_loop.ogg')
