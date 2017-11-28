@@ -57,6 +57,8 @@ class NPCToon(NPCToonBase):
 
     def handleCollisionSphereEnter(self, collEntry):
         if self.allowedToTalk():
+            base.localAvatar.disable()
+            base.localAvatar.setAnimState('neutral', 1)
             self.avatarEnter()
             self.nametag3d.setDepthTest(0)
             self.nametag3d.setBin('fixed', 0)
@@ -112,11 +114,13 @@ class NPCToon(NPCToonBase):
             rejectString = Quests.chooseQuestDialogReject()
             rejectString = Quests.fillInQuestNames(rejectString, avName=base.avatarData.setName)
             self.setChatAbsolute(rejectString, CFSpeech | CFTimeout)
+            self.freeAvatar()
             return
         if mode == NPCToons.QUEST_MOVIE_TIER_NOT_DONE:
             rejectString = Quests.chooseQuestDialogTierNotDone()
             rejectString = Quests.fillInQuestNames(rejectString, avName=av.getName())
             self.setChatAbsolute(rejectString, CFSpeech | CFTimeout)
+            self.freeAvatar()
             return
         self.setupAvatars(av)
         fullString = ''
