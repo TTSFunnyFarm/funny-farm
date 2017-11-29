@@ -4,7 +4,6 @@ from direct.task import Task
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals
 from toontown.toontowngui import TTDialog
-import DisplaySettingsDialog
 import ShtikerPage
 
 class OptionsPage(ShtikerPage.ShtikerPage):
@@ -61,11 +60,6 @@ class OptionsPage(ShtikerPage.ShtikerPage):
 
 class OptionsTabPage(DirectFrame):
     notify = directNotify.newCategory('OptionsTabPage')
-    DisplaySettingsTaskName = 'save-display-settings'
-    DisplaySettingsDelay = 60
-    ChangeDisplaySettings = base.config.GetBool('change-display-settings', 1)
-    ChangeDisplayAPI = base.config.GetBool('change-display-api', 0)
-
     def __init__(self, parent = aspect2d):
         self._parent = parent
         self.currentSizeIndex = None
@@ -80,12 +74,6 @@ class OptionsTabPage(DirectFrame):
         DirectFrame.destroy(self)
 
     def load(self):
-        self.displaySettings = None
-        self.displaySettingsChanged = 0
-        self.displaySettingsSize = (None, None)
-        self.displaySettingsFullscreen = None
-        self.displaySettingsApi = None
-        self.displaySettingsApiChanged = 0
         guiButton = loader.loadModel('phase_3/models/gui/quit_button')
         gui = loader.loadModel('phase_3.5/models/gui/friendslist_gui')
         helpGui = loader.loadModel('phase_3.5/models/gui/tt_m_gui_brd_help.bam')
@@ -106,14 +94,14 @@ class OptionsTabPage(DirectFrame):
 
         self.Music_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, pos=(leftMargin, 0, textStartHeight - textRowHeight))
         self.SoundFX_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 2))
-        self.DisplaySettings_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=10, pos=(leftMargin, 0, textStartHeight - textRowHeight * 4))
+        self.Fullscreen_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 4))
         self.Antialias_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 5))
         self.LOD_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 6))
         self.Fps_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 7))
 
         self.Music_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight), command=self.__doToggleMusic)
         self.SoundFX_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 2), command=self.__doToggleSfx)
-        self.DisplaySettingsButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image3_color=Vec4(0.5, 0.5, 0.5, 0.5), image_scale=button_image_scale, text=TTLocalizer.OptionsPageChange, text3_fg=(0.5, 0.5, 0.5, 0.75), text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 4), command=self.__doDisplaySettings)
+        self.Fullscreen_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image3_color=Vec4(0.5, 0.5, 0.5, 0.5), image_scale=button_image_scale, text=TTLocalizer.OptionsPageChange, text3_fg=(0.5, 0.5, 0.5, 0.75), text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 4), command=self.__doToggleFullscreen)
         self.Antialias_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 5), command=self.__doToggleAntialias)
         self.LOD_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 6), command=self.__doToggleLOD)
         self.Fps_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 7), command=self.__doToggleFps)
@@ -129,11 +117,10 @@ class OptionsTabPage(DirectFrame):
 
     def enter(self):
         self.show()
-        taskMgr.remove(self.DisplaySettingsTaskName)
         self.settingsChanged = 0
         self.__setMusicButton()
         self.__setSoundFXButton()
-        self.__setDisplaySettings()
+        self.__setFullscreenButton()
         self._setAntialiasingButton()
         self._setLODButton()
         self.__setFpsButton()
@@ -144,15 +131,9 @@ class OptionsTabPage(DirectFrame):
         self.hide()
 
     def unload(self):
-        self.writeDisplaySettings()
-        taskMgr.remove(self.DisplaySettingsTaskName)
-        if self.displaySettings != None:
-            self.ignore(self.displaySettings.doneEvent)
-            self.displaySettings.unload()
-        self.displaySettings = None
         self.Music_toggleButton.destroy()
         self.SoundFX_toggleButton.destroy()
-        self.DisplaySettingsButton.destroy()
+        self.Fullscreen_toggleButton.destroy()
         self.Antialias_toggleButton.destroy()
         self.LOD_toggleButton.destroy()
         self.Fps_toggleButton.destroy()
@@ -164,13 +145,13 @@ class OptionsTabPage(DirectFrame):
         del self.videoLabel
         del self.Music_Label
         del self.SoundFX_Label
-        del self.DisplaySettings_Label
+        del self.Fullscreen_Label
         del self.Antialias_Label
         del self.LOD_Label
         del self.Fps_Label
         del self.Music_toggleButton
         del self.SoundFX_toggleButton
-        del self.DisplaySettingsButton
+        del self.Fullscreen_toggleButton
         del self.Antialias_toggleButton
         del self.LOD_toggleButton
         del self.Fps_toggleButton
@@ -248,6 +229,16 @@ class OptionsTabPage(DirectFrame):
             settings['drawFps'] = True
         self.__setFpsButton()
 
+    def __doToggleFullscreen(self):
+        messenger.send('wakeup')
+        settings['fullscreen'] = not settings['fullscreen']
+        if not config.GetBool('fullscreen-requires-restart', False):
+            properties = WindowProperties()
+            properties.setSize(base.pipe.getDisplayWidth(), base.pipe.getDisplayHeight())
+            properties.setFullscreen(settings['fullscreen'])
+            base.win.requestProperties(properties)
+        self.__setFullscreenButton()
+
     def __setMusicButton(self):
         if base.musicActive:
             self.Music_Label['text'] = TTLocalizer.OptionsPageMusicOnLabel
@@ -263,6 +254,16 @@ class OptionsTabPage(DirectFrame):
         else:
             self.SoundFX_Label['text'] = TTLocalizer.OptionsPageSFXOffLabel
             self.SoundFX_toggleButton['text'] = TTLocalizer.OptionsPageToggleOn
+
+    def __setFullscreenButton(self):
+        if settings['fullscreen']:
+            self.Fullscreen_Label['text'] = TTLocalizer.OptionsPageFullscreenOnLabel
+            self.Fullscreen_toggleButton['text'] = TTLocalizer.OptionsPageToggleOff
+        else:
+            self.Fullscreen_Label['text'] = TTLocalizer.OptionsPageFullscreenOffLabel
+            self.Fullscreen_toggleButton['text'] = TTLocalizer.OptionsPageToggleOn
+        if config.GetBool('fullscreen-requires-restart', False):
+            self.Fullscreen_Label['text'] += TTLocalizer.OptionsPageRequiresRestart
 
     def __setToonChatSoundsButton(self):
         if base.toonChatSounds:
@@ -348,41 +349,6 @@ class OptionsTabPage(DirectFrame):
             self.Whispers_Label['text'] = TTLocalizer.OptionsPageWhisperDisabledLabel
             self.Whispers_toggleButton['text'] = TTLocalizer.OptionsPageToggleOn
 
-    def __doDisplaySettings(self):
-        if self.displaySettings == None:
-            self.displaySettings = DisplaySettingsDialog.DisplaySettingsDialog()
-            self.displaySettings.load()
-            self.accept(self.displaySettings.doneEvent, self.__doneDisplaySettings)
-        self.displaySettings.enter(self.ChangeDisplaySettings, self.ChangeDisplayAPI)
-
-    def __doneDisplaySettings(self, anyChanged, apiChanged):
-        if anyChanged:
-            self.__setDisplaySettings()
-            properties = base.win.getProperties()
-            self.displaySettingsChanged = 1
-            self.displaySettingsSize = (properties.getXSize(), properties.getYSize())
-            self.displaySettingsFullscreen = properties.getFullscreen()
-            self.displaySettingsApi = base.pipe.getInterfaceName()
-            self.displaySettingsApiChanged = apiChanged
-            self.writeDisplaySettings()
-
-    def __setDisplaySettings(self):
-        properties = base.win.getProperties()
-        if not properties.getFullscreen():
-            screensize = TTLocalizer.OptionsPageDisplayWindowed % (properties.getXSize(), properties.getYSize())
-        else:
-            screensize = TTLocalizer.OptionsPageDisplayFullscreen
-        api = base.pipe.getInterfaceName()
-        settings = {'screensize': screensize,
-         'api': api}
-        if self.ChangeDisplayAPI:
-            OptionsPage.notify.debug('change display settings...')
-            text = TTLocalizer.OptionsPageDisplaySettings % settings
-        else:
-            OptionsPage.notify.debug('no change display settings...')
-            text = TTLocalizer.OptionsPageDisplaySettingsNoApi % settings
-        self.DisplaySettings_Label['text'] = text
-
     def __doSpeedChatStyleLeft(self):
         if self.speedChatStyleIndex > 0:
             self.speedChatStyleIndex = self.speedChatStyleIndex - 1
@@ -411,14 +377,6 @@ class OptionsTabPage(DirectFrame):
         else:
             self.speedChatStyleRightArrow['state'] = DGG.DISABLED
         base.localAvatar.b_setSpeedChatStyleIndex(self.speedChatStyleIndex)
-
-    def writeDisplaySettings(self, task=None):
-        if not self.displaySettingsChanged:
-            return
-        taskMgr.remove(self.DisplaySettingsTaskName)
-        settings['res'] = (self.displaySettingsSize[0], self.displaySettingsSize[1])
-        settings['fullscreen'] = self.displaySettingsFullscreen
-        return Task.done
 
     def enterAntialiasHelp(self):
         self.help = TTDialog.TTDialog(text=TTLocalizer.OptionsPageAntialiasingHelp, text_wordwrap=14, style=TTDialog.Acknowledge, command=self.exitHelp)
