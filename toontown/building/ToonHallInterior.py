@@ -13,7 +13,11 @@ class ToonHallInterior(Interior):
         self.interiorFile = 'phase_14/models/modules/toonhall_interior'
 
     def load(self):
-        Interior.load(self)
+        # Overrides Interior.load because we don't want to start music here
+        self.interior = loader.loadModel(self.interiorFile)
+        self.interior.reparentTo(render)
+        self.generateNPCs()
+        
         self.randomGenerator = random.Random()
         self.randomGenerator.seed(self.zoneId)
         hoodId = ZoneUtil.getCanonicalHoodId(self.zoneId)
@@ -39,7 +43,15 @@ class ToonHallInterior(Interior):
         self.acceptOnce('avatarExitDone', self.startActive)
 
     def unload(self):
-        Interior.unload(self)
+        # Overrides Interior.unload because we don't want to stop music here
+        self.ignoreAll()
+        self.interior.removeNode()
+        del self.interior
+        if hasattr(self, 'npcs'):
+            for npc in self.npcs:
+                npc.removeActive()
+                npc.delete()
+                del npc
 
     def generateNPCs(self):
         Interior.generateNPCs(self)

@@ -130,6 +130,9 @@ class ToonHood(Hood):
             return
         self.place = self.Shop2ClassDict[shopId](shopId, zoneId)
         self.place.load()
+        # So that music loops continuously between toon hall and loony labs:
+        if shopId == 'toonhall':
+            musicMgr.playCurrentZoneMusic()
         if shopId == 'door_1':
             door = Door.Door(self.place.door2, shopId + '_int')
         else:

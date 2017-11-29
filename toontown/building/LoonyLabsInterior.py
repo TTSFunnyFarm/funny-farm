@@ -35,9 +35,13 @@ class LoonyLabsInterior(Interior):
            State.State('Off', self.enterOff, self.exitOff, [])], 'Setup', 'Off')
 
     def load(self):
-        Interior.load(self)
+        # Overrides Interior.load because we don't want to start music here
+        self.interior = loader.loadModel(self.interiorFile)
+        self.interior.reparentTo(render)
+        self.generateNPCs()
+
         self.interior.find('**/floor').setTransparency(1)
-        self.interior.find('**/floor').setColor(1, 1, 1, 0.85)
+        self.interior.find('**/floor').setColor(1, 1, 1, 0.9)
         self.randomGenerator = random.Random()
         self.randomGenerator.seed(self.zoneId)
         hoodId = ZoneUtil.getCanonicalHoodId(self.zoneId)
@@ -66,7 +70,15 @@ class LoonyLabsInterior(Interior):
         self.acceptOnce('avatarExitDone', self.startActive)
 
     def unload(self):
-        Interior.unload(self)
+        # Overrides Interior.unload because we don't want to stop music here
+        self.ignoreAll()
+        self.interior.removeNode()
+        del self.interior
+        if hasattr(self, 'npcs'):
+            for npc in self.npcs:
+                npc.removeActive()
+                npc.delete()
+                del npc
         self.unloadQuestChanges()
         base.localAvatar.stopUpdateReflection()
         base.localAvatar.deleteReflection()
