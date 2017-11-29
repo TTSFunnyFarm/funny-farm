@@ -34,4 +34,6 @@ want-winter #f
 # Misc.
 want-pets #f
 game-version ff-dev
+# For whatever reason, changing fullscreen mode in-game causes collisions to break, sending your Toon flying.
+# This setting will require a game restart for changes to the fullscreen setting to take effect.
 fullscreen-requires-restart #t
