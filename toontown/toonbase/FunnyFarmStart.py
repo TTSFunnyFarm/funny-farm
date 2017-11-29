@@ -114,8 +114,8 @@ class FunnyFarmStart:
         __builtin__.screenshotMgr = ScreenshotManager()
         __builtin__.dataMgr = DataManager()
 
-        
-        Injector.openInjector()
+        if __debug__:
+            Injector.openInjector()
         
         self.notify.info('Initializing Client Repository...')
         cr = FFClientRepository()
