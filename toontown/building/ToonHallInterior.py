@@ -43,7 +43,6 @@ class ToonHallInterior(Interior):
 
     def generateNPCs(self):
         Interior.generateNPCs(self)
-        self.npcs[0].useLOD(1000)
 
     def startActive(self):
         base.localAvatar.checkQuestCutscene()

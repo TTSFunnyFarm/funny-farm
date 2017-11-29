@@ -69,7 +69,6 @@ class Tutorial(ToonHood):
         self.flippy.reparentTo(render)
         self.flippy.setPosHpr(0, 20, -0.5, 180, 0, 0)
         self.flippy.initializeBodyCollisions('toon')
-        self.flippy.useLOD(1000)
         self.flippy.startBlink()
         self.flippy.addActive()
 
