@@ -368,10 +368,10 @@ class OptionsTabPage(DirectFrame):
 
     def __setDisplaySettings(self):
         properties = base.win.getProperties()
-        if properties.getFullscreen():
-            screensize = '%s x %s' % (properties.getXSize(), properties.getYSize())
+        if not properties.getFullscreen():
+            screensize = TTLocalizer.OptionsPageDisplayWindowed % (properties.getXSize(), properties.getYSize())
         else:
-            screensize = TTLocalizer.OptionsPageDisplayWindowed
+            screensize = TTLocalizer.OptionsPageDisplayFullscreen
         api = base.pipe.getInterfaceName()
         settings = {'screensize': screensize,
          'api': api}

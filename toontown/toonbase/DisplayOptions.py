@@ -23,7 +23,7 @@ class DisplayOptions:
         self.loadFromSettings()
 
     def loadFromSettings(self):
-        mode = self.settings.getBool('game', 'fullscreen-mode')
+        mode = self.settings.getBool('game', 'fullscreen', False)
         music = self.settings.getBool('game', 'music', True)
         sfx = self.settings.getBool('game', 'sfx', True)
         toonChatSounds = self.settings.getBool('game', 'toon-chat-sounds', True)
