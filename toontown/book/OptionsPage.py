@@ -2,6 +2,7 @@ from panda3d.core import *
 from direct.gui.DirectGui import *
 from direct.task import Task
 from toontown.toonbase import TTLocalizer
+from toontown.toonbase import ToontownGlobals
 from toontown.toontowngui import TTDialog
 import DisplaySettingsDialog
 import ShtikerPage
@@ -87,56 +88,44 @@ class OptionsTabPage(DirectFrame):
         self.displaySettingsApiChanged = 0
         guiButton = loader.loadModel('phase_3/models/gui/quit_button')
         gui = loader.loadModel('phase_3.5/models/gui/friendslist_gui')
+        helpGui = loader.loadModel('phase_3.5/models/gui/tt_m_gui_brd_help.bam')
         titleHeight = 0.61
         textStartHeight = 0.45
         textRowHeight = 0.13
         leftMargin = -0.72
-        buttonbase_xcoord = 0.35
+        buttonbase_xcoord = 0.36
         buttonbase_ycoord = 0.45
         button_image_scale = (0.7, 1, 1)
         button_textpos = (0, -0.02)
         options_text_scale = 0.052
         disabled_arrow_color = Vec4(0.6, 0.6, 0.6, 1.0)
         self.speed_chat_scale = 0.055
-        self.Music_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, pos=(leftMargin, 0, textStartHeight))
-        self.SoundFX_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight))
-        #self.Friends_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - 3 * textRowHeight))
-        #self.Whispers_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - 4 * textRowHeight))
-        self.DisplaySettings_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=10, pos=(leftMargin, 0, textStartHeight - 6 * textRowHeight))
-        #self.SpeedChatStyle_Label = DirectLabel(parent=self, relief=None, text=TTLocalizer.OptionsPageSpeedChatStyleLabel, text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=10, pos=(leftMargin, 0, textStartHeight - 6 * textRowHeight))
-        self.ToonChatSounds_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=15, pos=(leftMargin, 0, textStartHeight - 2 * textRowHeight + 0.025))
-        self.ToonChatSounds_Label.setScale(0.9)
-        self.Fps_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - 3 * textRowHeight))
-        self.Antialias_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - 4 * textRowHeight))
-        self.LOD_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - 5 * textRowHeight))
-        self.Music_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord), command=self.__doToggleMusic)
-        self.SoundFX_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight), command=self.__doToggleSfx)
-        self.Fps_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 3), command=self.__doToggleFps)
-        #self.Friends_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 3), command=self.__doToggleAcceptFriends)
-        self.Antialias_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 4), command=self.__doToggleAntialias)
-        self.LOD_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 5), command=self.__doToggleLOD)
-        #self.Whispers_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 4), command=self.__doToggleAcceptWhispers)
-        self.DisplaySettingsButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image3_color=Vec4(0.5, 0.5, 0.5, 0.5), image_scale=button_image_scale, text=TTLocalizer.OptionsPageChange, text3_fg=(0.5, 0.5, 0.5, 0.75), text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 6), command=self.__doDisplaySettings)
-        #self.speedChatStyleLeftArrow = DirectButton(parent=self, relief=None, image=(gui.find('**/Horiz_Arrow_UP'),
-         #gui.find('**/Horiz_Arrow_DN'),
-         #gui.find('**/Horiz_Arrow_Rllvr'),
-         #gui.find('**/Horiz_Arrow_UP')), image3_color=Vec4(1, 1, 1, 0.5), scale=(-1.0, 1.0, 1.0), pos=(0.25, 0, buttonbase_ycoord - textRowHeight * 6), command=self.__doSpeedChatStyleLeft)
-        #self.speedChatStyleRightArrow = DirectButton(parent=self, relief=None, image=(gui.find('**/Horiz_Arrow_UP'),
-         #gui.find('**/Horiz_Arrow_DN'),
-         #gui.find('**/Horiz_Arrow_Rllvr'),
-         #gui.find('**/Horiz_Arrow_UP')), image3_color=Vec4(1, 1, 1, 0.5), pos=(0.65, 0, buttonbase_ycoord - textRowHeight * 6), command=self.__doSpeedChatStyleRight)
-        self.ToonChatSounds_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'),
-         guiButton.find('**/QuitBtn_DN'),
-         guiButton.find('**/QuitBtn_RLVR'),
-         guiButton.find('**/QuitBtn_UP')), image3_color=Vec4(0.5, 0.5, 0.5, 0.5), image_scale=button_image_scale, text='', text3_fg=(0.5, 0.5, 0.5, 0.75), text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 2 + 0.025), command=self.__doToggleToonChatSounds)
-        self.ToonChatSounds_toggleButton.setScale(0.8)
-        #self.speedChatStyleText = SpeedChat.SpeedChat(name='OptionsPageStyleText', structure=[2000], backgroundModelName='phase_3/models/gui/ChatPanel', guiModelName='phase_3.5/models/gui/speedChatGui')
-        #self.speedChatStyleText.setScale(self.speed_chat_scale)
-        #self.speedChatStyleText.setPos(0.37, 0, buttonbase_ycoord - textRowHeight * 6 + 0.03)
-        #self.speedChatStyleText.reparentTo(self, DGG.FOREGROUND_SORT_INDEX)
+        
+        self.audioLabel = DirectLabel(parent=self, relief=None, text=TTLocalizer.OptionsPageAudioLabel, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_align=TextNode.ACenter, text_scale=0.07, pos=(-0.5, 0, textStartHeight - 0.03))
+        self.videoLabel = DirectLabel(parent=self, relief=None, text=TTLocalizer.OptionsPageVideoLabel, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_align=TextNode.ACenter, text_scale=0.07, pos=(-0.5, 0, (textStartHeight - textRowHeight * 3) - 0.03))
+
+        self.Music_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, pos=(leftMargin, 0, textStartHeight - textRowHeight))
+        self.SoundFX_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 2))
+        self.DisplaySettings_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=10, pos=(leftMargin, 0, textStartHeight - textRowHeight * 4))
+        self.Antialias_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 5))
+        self.LOD_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 6))
+        self.Fps_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 7))
+
+        self.Music_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight), command=self.__doToggleMusic)
+        self.SoundFX_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 2), command=self.__doToggleSfx)
+        self.DisplaySettingsButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image3_color=Vec4(0.5, 0.5, 0.5, 0.5), image_scale=button_image_scale, text=TTLocalizer.OptionsPageChange, text3_fg=(0.5, 0.5, 0.5, 0.75), text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 4), command=self.__doDisplaySettings)
+        self.Antialias_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 5), command=self.__doToggleAntialias)
+        self.LOD_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 6), command=self.__doToggleLOD)
+        self.Fps_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 7), command=self.__doToggleFps)
         self.exitButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=1.15, text=TTLocalizer.OptionsPageExitToontown, text_scale=options_text_scale, text_pos=button_textpos, textMayChange=0, pos=(0.45, 0, -0.6), command=self.__handleExitShowWithConfirm)
+        
+        self.Antialias_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.43, 0, (textStartHeight - textRowHeight * 5) + 0.01), scale=0.45, command=self.enterAntialiasHelp)
+        self.LOD_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.33, 0, (textStartHeight - textRowHeight * 6) + 0.01), scale=0.45, command=self.enterLODHelp)
+        self.Fps_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.42, 0, (textStartHeight - textRowHeight * 7) + 0.01), scale=0.45, command=self.enterFpsHelp)
+
         guiButton.removeNode()
         gui.removeNode()
+        helpGui.removeNode()
 
     def enter(self):
         self.show()
@@ -144,22 +133,15 @@ class OptionsTabPage(DirectFrame):
         self.settingsChanged = 0
         self.__setMusicButton()
         self.__setSoundFXButton()
-        #self.__setAcceptFriendsButton()
-        #self.__setAcceptWhispersButton()
         self.__setDisplaySettings()
-        self.__setToonChatSoundsButton()
-        self.__setFpsButton()
         self._setAntialiasingButton()
         self._setLODButton()
-        #self.speedChatStyleText.enter()
-        #self.speedChatStyleIndex = base.localAvatar.getSpeedChatStyleIndex()
-        #self.updateSpeedChatStyle()
+        self.__setFpsButton()
         self.exitButton.show()
 
     def exit(self):
         self.ignore('confirmDone')
         self.hide()
-        #self.speedChatStyleText.exit()
 
     def unload(self):
         self.writeDisplaySettings()
@@ -168,29 +150,34 @@ class OptionsTabPage(DirectFrame):
             self.ignore(self.displaySettings.doneEvent)
             self.displaySettings.unload()
         self.displaySettings = None
-        self.exitButton.destroy()
         self.Music_toggleButton.destroy()
         self.SoundFX_toggleButton.destroy()
-        #self.Friends_toggleButton.destroy()
-        #self.Whispers_toggleButton.destroy()
         self.DisplaySettingsButton.destroy()
-        #self.speedChatStyleLeftArrow.destroy()
-        #self.speedChatStyleRightArrow.destroy()
-        del self.exitButton
-        del self.SoundFX_Label
+        self.Antialias_toggleButton.destroy()
+        self.LOD_toggleButton.destroy()
+        self.Fps_toggleButton.destroy()
+        self.exitButton.destroy()
+        self.Antialias_Help.destroy()
+        self.LOD_Help.destroy()
+        self.Fps_Help.destroy()
+        del self.audioLabel
+        del self.videoLabel
         del self.Music_Label
-        #del self.Friends_Label
-        #del self.Whispers_Label
-        #del self.SpeedChatStyle_Label
-        del self.SoundFX_toggleButton
+        del self.SoundFX_Label
+        del self.DisplaySettings_Label
+        del self.Antialias_Label
+        del self.LOD_Label
+        del self.Fps_Label
         del self.Music_toggleButton
-        #del self.Friends_toggleButton
-        #del self.Whispers_toggleButton
-        #del self.speedChatStyleLeftArrow
-        #del self.speedChatStyleRightArrow
-        #self.speedChatStyleText.exit()
-        #self.speedChatStyleText.destroy()
-        #del self.speedChatStyleText
+        del self.SoundFX_toggleButton
+        del self.DisplaySettingsButton
+        del self.Antialias_toggleButton
+        del self.LOD_toggleButton
+        del self.Fps_toggleButton
+        del self.exitButton
+        del self.Antialias_Help
+        del self.LOD_Help
+        del self.Fps_Help
         self.currentSizeIndex = None
 
     def __doToggleMusic(self):
@@ -205,14 +192,6 @@ class OptionsTabPage(DirectFrame):
             musicMgr.playCurrentZoneMusic()
         self.settingsChanged = 1
         self.__setMusicButton()
-
-    def __setMusicButton(self):
-        if base.musicActive:
-            self.Music_Label['text'] = TTLocalizer.OptionsPageMusicOnLabel
-            self.Music_toggleButton['text'] = TTLocalizer.OptionsPageToggleOff
-        else:
-            self.Music_Label['text'] = TTLocalizer.OptionsPageMusicOffLabel
-            self.Music_toggleButton['text'] = TTLocalizer.OptionsPageToggleOn
 
     def __doToggleSfx(self):
         messenger.send('wakeup')
@@ -237,18 +216,6 @@ class OptionsTabPage(DirectFrame):
         self.settingsChanged = 1
         self.__setToonChatSoundsButton()
 
-    def __doToggleFps(self):
-        messenger.send('wakeup')
-        if base.drawFps:
-            base.setFrameRateMeter(False)
-            base.drawFps = False
-            settings['drawFps'] = False
-        else:
-            base.setFrameRateMeter(True)
-            base.drawFps = True
-            settings['drawFps'] = True
-        self.__setFpsButton()
-
     def __doToggleAntialias(self):
         messenger.send('wakeup')
         if settings['antialiasing']:
@@ -269,6 +236,26 @@ class OptionsTabPage(DirectFrame):
         base.needRestartLOD = True
         self._setLODButton()
 
+    def __doToggleFps(self):
+        messenger.send('wakeup')
+        if base.drawFps:
+            base.setFrameRateMeter(False)
+            base.drawFps = False
+            settings['drawFps'] = False
+        else:
+            base.setFrameRateMeter(True)
+            base.drawFps = True
+            settings['drawFps'] = True
+        self.__setFpsButton()
+
+    def __setMusicButton(self):
+        if base.musicActive:
+            self.Music_Label['text'] = TTLocalizer.OptionsPageMusicOnLabel
+            self.Music_toggleButton['text'] = TTLocalizer.OptionsPageToggleOff
+        else:
+            self.Music_Label['text'] = TTLocalizer.OptionsPageMusicOffLabel
+            self.Music_toggleButton['text'] = TTLocalizer.OptionsPageToggleOn
+
     def __setSoundFXButton(self):
         if base.sfxActive:
             self.SoundFX_Label['text'] = TTLocalizer.OptionsPageSFXOnLabel
@@ -276,7 +263,6 @@ class OptionsTabPage(DirectFrame):
         else:
             self.SoundFX_Label['text'] = TTLocalizer.OptionsPageSFXOffLabel
             self.SoundFX_toggleButton['text'] = TTLocalizer.OptionsPageToggleOn
-        self.__setToonChatSoundsButton()
 
     def __setToonChatSoundsButton(self):
         if base.toonChatSounds:
@@ -291,14 +277,6 @@ class OptionsTabPage(DirectFrame):
         else:
             self.ToonChatSounds_Label.setColorScale(0.5, 0.5, 0.5, 0.5)
             self.ToonChatSounds_toggleButton['state'] = DGG.DISABLED
-
-    def __setFpsButton(self):
-        if base.drawFps:
-            self.Fps_Label['text'] = TTLocalizer.OptionsPageFpsOnLabel
-            self.Fps_toggleButton['text'] = TTLocalizer.OptionsPageToggleOff
-        else:
-            self.Fps_Label['text'] = TTLocalizer.OptionsPageFpsOffLabel
-            self.Fps_toggleButton['text'] = TTLocalizer.OptionsPageToggleOn
 
     def _setAntialiasingButton(self):
         if settings['antialiasing']:
@@ -319,6 +297,14 @@ class OptionsTabPage(DirectFrame):
             self.LOD_toggleButton['text'] = TTLocalizer.OptionsPageToggleOn
         if base.needRestartLOD:
             self.LOD_Label['text'] += TTLocalizer.OptionsPageRequiresRestart
+
+    def __setFpsButton(self):
+        if base.drawFps:
+            self.Fps_Label['text'] = TTLocalizer.OptionsPageFpsOnLabel
+            self.Fps_toggleButton['text'] = TTLocalizer.OptionsPageToggleOff
+        else:
+            self.Fps_Label['text'] = TTLocalizer.OptionsPageFpsOffLabel
+            self.Fps_toggleButton['text'] = TTLocalizer.OptionsPageToggleOn
 
     def __doToggleAcceptFriends(self):
         messenger.send('wakeup')
@@ -433,6 +419,22 @@ class OptionsTabPage(DirectFrame):
         settings['res'] = (self.displaySettingsSize[0], self.displaySettingsSize[1])
         settings['fullscreen'] = self.displaySettingsFullscreen
         return Task.done
+
+    def enterAntialiasHelp(self):
+        self.help = TTDialog.TTDialog(text=TTLocalizer.OptionsPageAntialiasingHelp, text_wordwrap=14, style=TTDialog.Acknowledge, command=self.exitHelp)
+        self.help.show()
+
+    def enterLODHelp(self):
+        self.help = TTDialog.TTDialog(text=TTLocalizer.OptionsPageLODHelp, text_wordwrap=14, style=TTDialog.Acknowledge, command=self.exitHelp)
+        self.help.show()
+
+    def enterFpsHelp(self):
+        self.help = TTDialog.TTDialog(text=TTLocalizer.OptionsPageFpsHelp, text_wordwrap=14, style=TTDialog.Acknowledge, command=self.exitHelp)
+        self.help.show()
+
+    def exitHelp(self, response):
+        self.help.destroy()
+        del self.help
 
     def __handleExitShowWithConfirm(self):
         self.confirm = TTDialog.TTGlobalDialog(doneEvent='confirmDone', message=TTLocalizer.OptionsPageExitConfirm, style=TTDialog.TwoChoice)
