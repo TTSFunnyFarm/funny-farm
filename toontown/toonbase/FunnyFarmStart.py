@@ -94,7 +94,7 @@ class FunnyFarmStart:
             base.drawFps = 1
         if settings['fullscreen']:
             properties = WindowProperties()
-            properties.setSize(*settings['res'])
+            properties.setSize(*winSize)
             properties.setFullscreen(settings['fullscreen'])
             base.win.requestProperties(properties)
 
