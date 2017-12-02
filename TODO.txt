@@ -1,15 +1,6 @@
-ToonTasks:
-  - Implement QuestManager to handle giving out & turning in quests
-  - Make Loony Labs interior
-  - Design new information bubbles to pop up at the bottom of your screen
-
-Miscellaneous:
-  - Playground treasures
-  - Cog gallery page
-  - Track training page
+- Cog gallery page
+- Track training page
+- Populate Funny Farm with random NPCs
 
 Jobs for people besides Patrick:
-  - Come up with shop names for Funny Farm streets and/or Silly Springs streets; write them down
-  - Come up with respective NPCs for those shops
-  - Create a few task storylines, quick and easy ones for Funny Farm (maybe you can use these to help you come up with names).
-  - Anyone who is familiar with the level editor is welcome to create some streets for me, lmk and I'll give you details.
+  - Come up with Funny Farm ToonTasks for teleport access, carry 2 toontasks, carry 80 jellybeans, etc.

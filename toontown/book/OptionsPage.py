@@ -409,20 +409,28 @@ class OptionsTabPage(DirectFrame):
         base.localAvatar.b_setSpeedChatStyleIndex(self.speedChatStyleIndex)
 
     def enterAntialiasHelp(self):
-        self.help = TTDialog.TTDialog(text=TTLocalizer.OptionsPageAntialiasingHelp, text_wordwrap=14, style=TTDialog.Acknowledge, command=self.exitHelp)
+        self.help = TTDialog.TTDialog(text=TTLocalizer.OptionsPageAntialiasingHelp, text_wordwrap=14, pos=(0, 0, 0.2), style=TTDialog.Acknowledge, command=self.exitHelp)
+        self.help['text_pos'] = (-0.5, 0.13)
+        self.heading = DirectLabel(parent=self.help, relief=None, text=TTLocalizer.OptionsPageAntialiasingHeading, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_scale=0.07, pos=(-0.24, 0, 0.29))
         self.help.show()
 
     def enterLODHelp(self):
-        self.help = TTDialog.TTDialog(text=TTLocalizer.OptionsPageLODHelp, text_wordwrap=14, style=TTDialog.Acknowledge, command=self.exitHelp)
+        self.help = TTDialog.TTDialog(text=TTLocalizer.OptionsPageLODHelp, text_wordwrap=14, pos=(0, 0, 0.2), style=TTDialog.Acknowledge, command=self.exitHelp)
+        self.help['text_pos'] = (-0.47, 0.1)
+        self.heading = DirectLabel(parent=self.help, relief=None, text=TTLocalizer.OptionsPageLODHeading, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_scale=0.07, pos=(-0.27, 0, 0.25))
         self.help.show()
 
     def enterFpsHelp(self):
-        self.help = TTDialog.TTDialog(text=TTLocalizer.OptionsPageFpsHelp, text_wordwrap=14, style=TTDialog.Acknowledge, command=self.exitHelp)
+        self.help = TTDialog.TTDialog(text=TTLocalizer.OptionsPageFpsHelp, text_wordwrap=14, pos=(0, 0, 0.2), style=TTDialog.Acknowledge, command=self.exitHelp)
+        self.help['text_pos'] = (-0.45, 0.07)
+        self.heading = DirectLabel(parent=self.help, relief=None, text=TTLocalizer.OptionsPageFpsHeading, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_scale=0.07, pos=(-0.26, 0, 0.22))
         self.help.show()
 
     def exitHelp(self, response):
         self.help.destroy()
+        self.heading.destroy()
         del self.help
+        del self.heading
 
     def __handleExitShowWithConfirm(self):
         self.confirm = TTDialog.TTGlobalDialog(doneEvent='confirmDone', message=TTLocalizer.OptionsPageExitConfirm, style=TTDialog.TwoChoice)
