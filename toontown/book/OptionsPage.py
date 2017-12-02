@@ -107,7 +107,7 @@ class OptionsTabPage(DirectFrame):
         self.Fps_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 7), command=self.__doToggleFps)
         self.exitButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=1.15, text=TTLocalizer.OptionsPageExitToontown, text_scale=options_text_scale, text_pos=button_textpos, textMayChange=0, pos=(0.45, 0, -0.6), command=self.__handleExitShowWithConfirm)
         
-        self.Antialias_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.43, 0, (textStartHeight - textRowHeight * 5) + 0.01), scale=0.45, command=self.enterAntialiasHelp)
+        self.Antialias_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.44, 0, (textStartHeight - textRowHeight * 5) + 0.01), scale=0.45, command=self.enterAntialiasHelp)
         self.LOD_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.33, 0, (textStartHeight - textRowHeight * 6) + 0.01), scale=0.45, command=self.enterLODHelp)
         self.Fps_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.42, 0, (textStartHeight - textRowHeight * 7) + 0.01), scale=0.45, command=self.enterFpsHelp)
 
@@ -410,8 +410,8 @@ class OptionsTabPage(DirectFrame):
 
     def enterAntialiasHelp(self):
         self.help = TTDialog.TTDialog(text=TTLocalizer.OptionsPageAntialiasingHelp, text_wordwrap=14, pos=(0, 0, 0.2), style=TTDialog.Acknowledge, command=self.exitHelp)
-        self.help['text_pos'] = (-0.5, 0.13)
-        self.heading = DirectLabel(parent=self.help, relief=None, text=TTLocalizer.OptionsPageAntialiasingHeading, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_scale=0.07, pos=(-0.24, 0, 0.29))
+        self.help['text_pos'] = (-0.5, 0.23)
+        self.heading = DirectLabel(parent=self.help, relief=None, text=TTLocalizer.OptionsPageAntialiasingHeading, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_scale=0.07, pos=(-0.21, 0, 0.37))
         self.help.show()
 
     def enterLODHelp(self):
