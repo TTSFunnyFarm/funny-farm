@@ -232,12 +232,42 @@ class OptionsTabPage(DirectFrame):
     def __doToggleFullscreen(self):
         messenger.send('wakeup')
         settings['fullscreen'] = not settings['fullscreen']
-        if not config.GetBool('fullscreen-requires-restart', False):
-            properties = WindowProperties()
-            properties.setSize(base.pipe.getDisplayWidth(), base.pipe.getDisplayHeight())
-            properties.setFullscreen(settings['fullscreen'])
-            base.win.requestProperties(properties)
+        # Hackfix: In order to avoid resolution issues when the user has their window fullscreened 
+        # (which most people do), we're gonna first set their resolution to an acceptable size, 
+        # and THEN correct the resolution with their actual display size.
+        if settings['fullscreen']:
+            tempProperties = WindowProperties()
+            tempProperties.setSize(1024, 768)
+            tempProperties.setFullscreen(settings['fullscreen'])
+            base.win.requestProperties(tempProperties)
+            base.graphicsEngine.renderFrame()
+        
+        properties = WindowProperties()
+        if settings['fullscreen']:
+            width, height = (base.pipe.getDisplayWidth(), base.pipe.getDisplayHeight())
+        else:
+            width, height = tuple(settings['res'])
+        properties.setSize(width, height)
+        properties.setFullscreen(settings['fullscreen'])
+        base.win.requestProperties(properties)
+        base.graphicsEngine.renderFrame()
+        
+        newProperties = base.win.getProperties()
+        if properties.getFullscreen() and not newProperties.getFullscreen():
+            # Either their video card can't display 1024x768 or some other weird problem occurred.
+            self.__revertBack()
+            return
         self.__setFullscreenButton()
+
+    def __revertBack(self):
+        settings['fullscreen'] = False
+        self.revertDialog = TTDialog.TTDialog(text=TTLocalizer.OptionsPageFullscreenFailed, text_wordwrap=14, style=TTDialog.Acknowledge, command=self.__revertDone)
+        self.revertDialog.show()
+
+    def __revertDone(self, command):
+        self.revertDialog.destroy()
+        self.revertDialog = None
+        return
 
     def __setMusicButton(self):
         if base.musicActive:

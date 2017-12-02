@@ -1,7 +1,7 @@
 # Window options
 window-title Toontown's Funny Farm
 win-origin 8 31
-win-size 800 600
+win-size 1280 720
 cursor-filename phase_3/etc/toonmono.cur
 icon-filename phase_3/etc/funnyfarm.ico
 
@@ -34,6 +34,3 @@ want-winter #f
 # Misc.
 want-pets #f
 game-version ff-dev
-# For whatever reason, changing fullscreen mode in-game causes collisions to break, sending your Toon flying.
-# This setting will require a game restart for changes to the fullscreen setting to take effect.
-fullscreen-requires-restart #t
