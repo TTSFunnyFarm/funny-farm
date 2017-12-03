@@ -21,7 +21,6 @@ class WaterShader(DirectObject.DirectObject):
         base.sf = 2
 
     def start(self, waterName, landGeom, sky):
-        # TODO: We need two clip planes: one to clip above the water for refraction, and one to clip below water for reflection. They should affect the respective cameras, but not main camera.
         if self.shader is not None:
             self.notify.warning("Tried to generate WaterShader twice")
             return
