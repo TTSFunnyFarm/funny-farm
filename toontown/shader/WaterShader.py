@@ -21,6 +21,8 @@ class WaterShader(DirectObject.DirectObject):
         self.reflectCP = None
         self.refractCP = None
         self.toon = None
+        self.toonAnim = None
+        self.toonAnimRate = None
         self.waterPos = 0
 
     def start(self, waterName, landGeom, sky):
@@ -130,6 +132,8 @@ class WaterShader(DirectObject.DirectObject):
         if self.refractionCam:
             self.refractionCam.removeNode()
             self.refractionCam = None
+        self.toonAnim = None
+        self.toonAnimRate = None
 
     def updateRefl(self, task):
         if self.reflectionCam is None:
@@ -157,12 +161,34 @@ class WaterShader(DirectObject.DirectObject):
         return Task.cont
 
     def updateToon(self, task):
-        anim = base.localAvatar.getCurrentAnim()
         self.toon.setPos(base.localAvatar.getPos(render))
         self.toon.setHpr(base.localAvatar.getHpr(render))
-        if anim is not None and anim != self.toon.getCurrentAnim():
-            self.toon.setPlayRate(base.localAvatar.getPlayRate(anim), anim)
-            self.toon.loop(anim, restart = False)
+        anim = self.toonAnim
+        animRate = self.toonAnimRate
+        playingAnim = base.localAvatar.getCurrentAnim()
+        playingRate = base.localAvatar.getPlayRate()
+        if playingAnim == None:
+            playingAnim = base.localAvatar.playingAnim
+        if anim != playingAnim or animRate != playingRate:
+            self.toonAnim = playingAnim
+            self.toonAnimRate = playingRate
+            if playingAnim == 'jump-idle' or playingAnim == 'running-jump-idle':
+                if playingAnim == 'running-jump-idle':
+                    self.toon.playingAnim = None
+                self.toon.setAnimState('jumpAirborne', 1.0)
+            elif playingAnim == 'jump-land' or playingAnim == 'running-jump-land':
+                self.toon.setAnimState('jumpLand', 1.0)
+            elif playingAnim == 'openBook':
+                self.toon.enterOpenBook()
+            elif playingAnim == 'readBook':
+                self.toon.enterReadBook()
+            elif playingAnim == 'closeBook':
+                self.toon.enterCloseBook()
+            else:
+                if self.toon.animFSM.getStateNamed(self.toonAnim):
+                    self.toon.setAnimState(self.toonAnim, self.toonAnimRate)
+                else:
+                    self.toon.loop(self.toonAnim)
         return Task.cont
 
     def taskName(self, task):
