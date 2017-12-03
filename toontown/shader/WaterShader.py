@@ -2,6 +2,7 @@ from panda3d.core import *
 from direct.directnotify import DirectNotifyGlobal
 from direct.showbase import DirectObject
 from direct.task import Task
+from toontown.toon import Toon
 
 WATER_SPEED = 0.03
 
@@ -19,6 +20,7 @@ class WaterShader(DirectObject.DirectObject):
         self.refractGeom = None
         self.reflectCP = None
         self.refractCP = None
+        self.toon = None
         self.waterPos = 0
 
     def start(self, waterName, landGeom, sky):
@@ -49,6 +51,19 @@ class WaterShader(DirectObject.DirectObject):
         self.refractionCam.node().setLens(base.camLens)
         taskMgr.add(self.updateRefl, self.taskName('updateRefl'))
         taskMgr.add(self.updateRefr, self.taskName('updateRefr'))
+        # Make a duplicate of the player
+        self.toon = Toon.Toon()
+        self.toon.setDNA(base.localAvatar.getDNA())
+        self.toon.setHat(*base.avatarData.setHat)
+        self.toon.setGlasses(*base.avatarData.setGlasses)
+        self.toon.setBackpack(*base.avatarData.setBackpack)
+        self.toon.setShoes(*base.avatarData.setShoes)
+        self.toon.applyCheesyEffect(base.avatarData.setCheesyEffect)
+        self.toon.hideName()
+        self.toon.hideShadow()
+        self.toon.reparentTo(self.refractGeom)
+        self.toon.setAnimState('neutral', 1.0)
+        taskMgr.add(self.updateToon, self.taskName('updateToon'))
         # Load shader
         self.shader = Shader.load(Shader.SL_GLSL, "phase_3/models/shaders/water_vert.glsl", "phase_3/models/shaders/water_frag.glsl")
         self.geom = landGeom.find('**/' + waterName)
@@ -77,6 +92,7 @@ class WaterShader(DirectObject.DirectObject):
         taskMgr.remove(self.taskName('updateRefl'))
         taskMgr.remove(self.taskName('updateRefr'))
         taskMgr.remove(self.taskName('updateUniforms'))
+        taskMgr.remove(self.taskName('updateToon'))
         if self.geom:
             self.geom.clearShader()
             self.geom = None
@@ -105,8 +121,15 @@ class WaterShader(DirectObject.DirectObject):
         if self.refractCP:
             self.refractCP.removeNode()
             self.refractCP = None
-        self.reflectionCam = None
-        self.refractionCam = None
+        if self.toon:
+            self.toon.delete()
+            self.toon = None
+        if self.reflectionCam:
+            self.reflectionCam.removeNode()
+            self.reflectionCam = None
+        if self.refractionCam:
+            self.refractionCam.removeNode()
+            self.refractionCam = None
 
     def updateRefl(self, task):
         if self.reflectionCam is None:
@@ -131,6 +154,15 @@ class WaterShader(DirectObject.DirectObject):
         moveFactor = (WATER_SPEED * globalClock.getFrameTime()) % 1
         self.geom.setShaderInput("moveFactor", moveFactor)
         self.geom.setShaderInput("cameraPos", base.cam.getPos(render))
+        return Task.cont
+
+    def updateToon(self, task):
+        anim = base.localAvatar.getCurrentAnim()
+        self.toon.setPos(base.localAvatar.getPos(render))
+        self.toon.setHpr(base.localAvatar.getHpr(render))
+        if anim is not None and anim != self.toon.getCurrentAnim():
+            self.toon.setPlayRate(base.localAvatar.getPlayRate(anim), anim)
+            self.toon.loop(anim, restart = False)
         return Task.cont
 
     def taskName(self, task):
