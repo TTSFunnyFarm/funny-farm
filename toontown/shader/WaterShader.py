@@ -36,8 +36,8 @@ class WaterShader(DirectObject.DirectObject):
         self.reflectGeom.find('**/' + waterName).removeNode()
         self.refractGeom.find('**/' + waterName).removeNode()
         # Make framebuffers
-        reflFactor = config.GetFloat("reflection-scale-factor", 1)
-        refrFactor = config.GetFloat("refraction-scale-factor", 1)
+        reflFactor = config.GetFloat("reflection-scale-factor", 0.25)
+        refrFactor = config.GetFloat("refraction-scale-factor", 0.75)
         self.reflectionFB = base.win.makeTextureBuffer("waterRefl", int(base.win.getXSize() * reflFactor), int(base.win.getYSize() * reflFactor))
         self.refractionFB = base.win.makeTextureBuffer("waterRefr", int(base.win.getXSize() * refrFactor), int(base.win.getYSize() * refrFactor))
         self.reflectionCam = base.makeCamera(self.reflectionFB)
