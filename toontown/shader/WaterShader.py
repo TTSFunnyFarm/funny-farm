@@ -1,0 +1,122 @@
+from panda3d.core import *
+from direct.directnotify import DirectNotifyGlobal
+from direct.showbase import DirectObject
+from direct.task import Task
+
+class WaterShader(DirectObject.DirectObject):
+    notify = DirectNotifyGlobal.directNotify.newCategory("WaterShader")
+    def __init__(self):
+        DirectObject.DirectObject.__init__(self)
+        self.reflectionFB = None
+        self.refractionFB = None
+        self.shader = None
+        self.geom = None
+        self.reflectionCam = None
+        self.refractionCam = None
+        self.reflectGeom = None
+        self.refractGeom = None
+        self.reflectCP = None
+        self.refractCP = None
+        self.waterPos = 0
+        base.sf = 2
+
+    def start(self, waterName, landGeom, sky):
+        # TODO: We need two clip planes: one to clip above the water for refraction, and one to clip below water for reflection. They should affect the respective cameras, but not main camera.
+        if self.shader is not None:
+            self.notify.warning("Tried to generate WaterShader twice")
+            return
+        # Make geom copies
+        self.reflectGeom = render.attachNewNode("refl")
+        self.refractGeom = render.attachNewNode("refr")
+        self.reflectGeom.detachNode()
+        self.refractGeom.detachNode()
+        landGeom.copyTo(self.reflectGeom)
+        landGeom.copyTo(self.refractGeom)
+        sky.copyTo(self.reflectGeom)
+        sky.copyTo(self.refractGeom)
+        self.reflectGeom.find('**/' + waterName).removeNode()
+        self.refractGeom.find('**/' + waterName).removeNode()
+        # Make framebuffers
+        reflFactor = config.GetFloat("reflection-scale-factor", 1)
+        refrFactor = config.GetFloat("refraction-scale-factor", 1)
+        self.reflectionFB = base.win.makeTextureBuffer("waterRefl", int(base.win.getXSize() * reflFactor), int(base.win.getYSize() * reflFactor))
+        self.refractionFB = base.win.makeTextureBuffer("waterRefr", int(base.win.getXSize() * refrFactor), int(base.win.getYSize() * refrFactor))
+        self.reflectionCam = base.makeCamera(self.reflectionFB)
+        self.refractionCam = base.makeCamera(self.refractionFB)
+        self.reflectionCam.reparentTo(self.reflectGeom)
+        self.refractionCam.reparentTo(self.refractGeom)
+        self.reflectionCam.node().setLens(base.camLens)
+        self.refractionCam.node().setLens(base.camLens)
+        taskMgr.add(self.updateRefl, self.taskName('updateRefl'))
+        taskMgr.add(self.updateRefr, self.taskName('updateRefr'))
+        # Load shader
+        self.shader = Shader.load(Shader.SL_GLSL, "phase_3/models/shaders/water_vert.glsl", "phase_3/models/shaders/water_frag.glsl")
+        self.geom = landGeom.find('**/' + waterName)
+        self.geom.setTransparency(TransparencyAttrib.M_alpha)
+        self.reflectCP = self.reflectGeom.attachNewNode(PlaneNode("reflPlane", LPlane(0, 0, 1, -self.waterPos)))
+        self.refractCP = self.refractGeom.attachNewNode(PlaneNode("refrPlane", LPlane(0, 0, -1, self.waterPos)))
+        self.reflectGeom.setClipPlane(self.reflectCP)
+        self.refractGeom.setClipPlane(self.refractCP)
+        self.geom.setShader(self.shader)
+        self.reflectionFB.getTexture().setWrapU(Texture.WM_repeat)
+        self.reflectionFB.getTexture().setWrapV(Texture.WM_repeat)
+        self.refractionFB.getTexture().setWrapU(Texture.WM_repeat)
+        self.refractionFB.getTexture().setWrapV(Texture.WM_repeat)
+        self.geom.setShaderInput("reflectTex", self.reflectionFB.getTexture())
+        self.geom.setShaderInput("refractTex", self.refractionFB.getTexture())
+
+
+    def stop(self):
+        taskMgr.remove(self.taskName('updateRefl'))
+        if self.geom:
+            self.geom.clearShader()
+            self.geom = None
+        # Remove shader
+        if self.shader is not None:
+            self.shader.releaseAll()
+            self.shader = None
+        # Remove framebuffers
+        if self.reflectionFB is not None:
+            self.reflectionFB.clearRenderTextures()
+            base.graphicsEngine.removeWindow(self.reflectionFB)
+            self.reflectionFB = None
+        if self.refractionFB is not None:
+            self.refractionFB.clearRenderTextures()
+            base.graphicsEngine.removeWindow(self.refractionFB)
+            self.refractionFB = None
+        if self.reflectGeom:
+            self.reflectGeom.removeNode()
+            self.reflectGeom = None
+        if self.refractGeom:
+            self.refractGeom.removeNode()
+            self.refractGeom = None
+        if self.reflectCP:
+            self.reflectCP.removeNode()
+            self.reflectCP = None
+        if self.refractCP:
+            self.refractCP.removeNode()
+            self.refractCP = None
+        self.reflectionCam = None
+        self.refractionCam = None
+
+    def updateRefl(self, task):
+        if self.reflectionCam is None:
+            return Task.done
+        dist = base.sf * (base.camera.getZ(render) - self.waterPos)
+        self.reflectionCam.setX(base.camera.getX(render))
+        self.reflectionCam.setY(base.camera.getY(render))
+        self.reflectionCam.setZ(base.camera.getZ(render) - dist)
+        self.reflectionCam.setH(base.camera.getH(render))
+        self.reflectionCam.setP(-base.camera.getP(render))
+        self.reflectionCam.setR(-base.camera.getR(render))
+        return Task.cont
+
+    def updateRefr(self, task):
+        if self.refractionCam is None:
+            return Task.done
+        self.refractionCam.setPos(*base.camera.getPos(render))
+        self.refractionCam.setHpr(*base.camera.getHpr(render))
+        return Task.cont
+
+    def taskName(self, task):
+        return "{0}-{1}".format(task, id(self))
