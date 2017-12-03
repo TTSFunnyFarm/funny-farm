@@ -230,3 +230,24 @@ LevelExperience = [
     21000
 ]
 MaxAvatars = 6
+ShaderOff = 0
+ShaderLow = 1
+ShaderMed = 2
+ShaderHigh = 3
+ShaderUltra = 4
+ShaderCustom = 5
+WaterReflectFactorLow = 0.1
+WaterReflectFactorMed = 0.25
+WaterReflectFactorHigh = 0.5
+WaterReflectFactorUltra = 1.0
+WaterRefractFactorLow = 0.25
+WaterRefractFactorMed = 0.5
+WaterRefractFactorHigh = 0.75
+WaterRefractFactorUltra = 1.0
+WaterShaderLevels = [
+    [0, 0],
+    [WaterReflectFactorLow, WaterRefractFactorLow],
+    [WaterReflectFactorMed, WaterRefractFactorMed],
+    [WaterReflectFactorHigh, WaterRefractFactorHigh],
+    [WaterReflectFactorUltra, WaterRefractFactorUltra]
+]

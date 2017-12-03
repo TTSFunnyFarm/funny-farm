@@ -34,4 +34,6 @@ void main() {
 
   color = mix(refractColor, reflectColor, 0.15);
   color = mix(color, vec4(0.35, 0.67, 0.95, 1.0), 0.2);
+  color.b *= 1.25;
+  color.a = 1.0;
 }

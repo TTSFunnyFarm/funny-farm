@@ -21,11 +21,21 @@ class WaterShader(DirectObject.DirectObject):
         self.reflectCP = None
         self.refractCP = None
         self.toon = None
+        self.waterName = None
+        self.landGeom = None
+        self.sky = None
         self.waterPos = 0
 
     def start(self, waterName, landGeom, sky):
         if self.shader is not None:
             self.notify.warning("Tried to generate WaterShader twice")
+            return
+        self.waterName = waterName
+        self.landGeom = landGeom
+        self.sky = sky
+        if not settings.get('waterShader', True):
+            # Water shader is turned off... listen for it to get turned on again
+            self.acceptOnce('update-shader-settings', self.updateShaderSettings)
             return
         # Make geom copies
         self.reflectGeom = render.attachNewNode("refl")
@@ -39,8 +49,8 @@ class WaterShader(DirectObject.DirectObject):
         self.reflectGeom.find('**/' + waterName).removeNode()
         self.refractGeom.find('**/' + waterName).removeNode()
         # Make framebuffers
-        reflFactor = config.GetFloat("reflection-scale-factor", 0.25)
-        refrFactor = config.GetFloat("refraction-scale-factor", 0.75)
+        reflFactor = settings.get('waterReflectionScale', 0.25)
+        refrFactor = settings.get('waterRefractionScale', 0.5)
         self.reflectionFB = base.win.makeTextureBuffer("waterRefl", int(base.win.getXSize() * reflFactor), int(base.win.getYSize() * reflFactor))
         self.refractionFB = base.win.makeTextureBuffer("waterRefr", int(base.win.getXSize() * refrFactor), int(base.win.getYSize() * refrFactor))
         self.reflectionCam = base.makeCamera(self.reflectionFB)
@@ -75,9 +85,10 @@ class WaterShader(DirectObject.DirectObject):
         self.geom.setShaderInput("moveFactor", 0)
         self.geom.setShaderInput("cameraPos", base.camera.getPos(render))
         taskMgr.add(self.updateUniforms, self.taskName('updateUniforms'))
-
+        self.acceptOnce('update-shader-settings', self.updateShaderSettings)
 
     def stop(self):
+        self.ignoreAll()
         taskMgr.remove(self.taskName('updateRefl'))
         taskMgr.remove(self.taskName('updateRefr'))
         taskMgr.remove(self.taskName('updateUniforms'))
@@ -118,6 +129,10 @@ class WaterShader(DirectObject.DirectObject):
         if self.refractionCam:
             self.refractionCam.removeNode()
             self.refractionCam = None
+        # It's not our place to remove these...
+        self.waterName = None
+        self.landGeom = None
+        self.sky = None
 
     def updateRefl(self, task):
         if self.reflectionCam is None:
@@ -146,3 +161,10 @@ class WaterShader(DirectObject.DirectObject):
 
     def taskName(self, task):
         return "{0}-{1}".format(task, id(self))
+
+    def updateShaderSettings(self):
+        wn = self.waterName
+        lg = self.landGeom
+        sky = self.sky
+        self.stop()
+        self.start(wn, lg, sky)

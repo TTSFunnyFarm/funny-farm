@@ -2,7 +2,7 @@ from panda3d.core import *
 from direct.gui.DirectGui import *
 from direct.task import Task
 from toontown.toonbase import TTLocalizer
-from toontown.toonbase import ToontownGlobals
+from toontown.toonbase import ToontownGlobals, FunnyFarmGlobals
 from toontown.toontowngui import TTDialog
 import ShtikerPage
 
@@ -79,7 +79,7 @@ class OptionsTabPage(DirectFrame):
         helpGui = loader.loadModel('phase_3.5/models/gui/tt_m_gui_brd_help.bam')
         titleHeight = 0.61
         textStartHeight = 0.45
-        textRowHeight = 0.13
+        textRowHeight = 0.11
         leftMargin = -0.72
         buttonbase_xcoord = 0.36
         buttonbase_ycoord = 0.45
@@ -98,6 +98,7 @@ class OptionsTabPage(DirectFrame):
         self.Antialias_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 5))
         self.LOD_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 6))
         self.Fps_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 7))
+        self.WaterShader_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 8))
 
         self.Music_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight), command=self.__doToggleMusic)
         self.SoundFX_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 2), command=self.__doToggleSfx)
@@ -105,11 +106,13 @@ class OptionsTabPage(DirectFrame):
         self.Antialias_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 5), command=self.__doToggleAntialias)
         self.LOD_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 6), command=self.__doToggleLOD)
         self.Fps_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 7), command=self.__doToggleFps)
+        self.WaterShader_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 8), command=self.__doChangeWaterShader)
         self.exitButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=1.15, text=TTLocalizer.OptionsPageExitToontown, text_scale=options_text_scale, text_pos=button_textpos, textMayChange=0, pos=(0.45, 0, -0.6), command=self.__handleExitShowWithConfirm)
-        
+
         self.Antialias_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.44, 0, (textStartHeight - textRowHeight * 5) + 0.01), scale=0.45, command=self.enterAntialiasHelp)
         self.LOD_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.33, 0, (textStartHeight - textRowHeight * 6) + 0.01), scale=0.45, command=self.enterLODHelp)
         self.Fps_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.42, 0, (textStartHeight - textRowHeight * 7) + 0.01), scale=0.45, command=self.enterFpsHelp)
+        self.WaterShader_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.46, 0, (textStartHeight - textRowHeight * 8) + 0.01), scale=0.45, command=self.enterShaderLevelHelp)
 
         guiButton.removeNode()
         gui.removeNode()
@@ -124,6 +127,7 @@ class OptionsTabPage(DirectFrame):
         self._setAntialiasingButton()
         self._setLODButton()
         self.__setFpsButton()
+        self.__setWaterShaderButton()
         self.exitButton.show()
 
     def exit(self):
@@ -137,10 +141,12 @@ class OptionsTabPage(DirectFrame):
         self.Antialias_toggleButton.destroy()
         self.LOD_toggleButton.destroy()
         self.Fps_toggleButton.destroy()
+        self.WaterShader_toggleButton.destroy()
         self.exitButton.destroy()
         self.Antialias_Help.destroy()
         self.LOD_Help.destroy()
         self.Fps_Help.destroy()
+        self.WaterShader_Help.destroy()
         del self.audioLabel
         del self.videoLabel
         del self.Music_Label
@@ -149,16 +155,19 @@ class OptionsTabPage(DirectFrame):
         del self.Antialias_Label
         del self.LOD_Label
         del self.Fps_Label
+        del self.WaterShader_Label
         del self.Music_toggleButton
         del self.SoundFX_toggleButton
         del self.Fullscreen_toggleButton
         del self.Antialias_toggleButton
         del self.LOD_toggleButton
         del self.Fps_toggleButton
+        del self.WaterShader_toggleButton
         del self.exitButton
         del self.Antialias_Help
         del self.LOD_Help
         del self.Fps_Help
+        del self.WaterShader_Help
         self.currentSizeIndex = None
 
     def __doToggleMusic(self):
@@ -228,6 +237,25 @@ class OptionsTabPage(DirectFrame):
             base.drawFps = True
             settings['drawFps'] = True
         self.__setFpsButton()
+
+    def __getWaterShaderIndex(self):
+        idx = FunnyFarmGlobals.ShaderCustom
+        for lvl in FunnyFarmGlobals.WaterShaderLevels:
+            if [settings['waterReflectionScale'], settings['waterRefractionScale']] == lvl:
+                idx = FunnyFarmGlobals.WaterShaderLevels.index(lvl)
+        return idx
+
+    def __doChangeWaterShader(self):
+        messenger.send('wakeup')
+        idx = self.__getWaterShaderIndex()
+        if idx == FunnyFarmGlobals.ShaderCustom:
+            idx = 0
+        else:
+            idx = (idx + 1) % len(FunnyFarmGlobals.WaterShaderLevels)
+        settings['waterReflectionScale'], settings['waterRefractionScale'] = FunnyFarmGlobals.WaterShaderLevels[idx]
+        settings['waterShader'] = idx != 0
+        messenger.send('update-shader-settings')
+        self.__setWaterShaderButton()
 
     def __doToggleFullscreen(self):
         messenger.send('wakeup')
@@ -337,6 +365,13 @@ class OptionsTabPage(DirectFrame):
             self.Fps_Label['text'] = TTLocalizer.OptionsPageFpsOffLabel
             self.Fps_toggleButton['text'] = TTLocalizer.OptionsPageToggleOn
 
+    def __setWaterShaderButton(self):
+        idx = self.__getWaterShaderIndex()
+        if not settings['waterShader']:
+            idx = 0
+        self.WaterShader_Label['text'] = TTLocalizer.OptionsPageWaterShader
+        self.WaterShader_toggleButton['text'] = TTLocalizer.OptionsPageShaderLevels[idx]
+
     def __doToggleAcceptFriends(self):
         messenger.send('wakeup')
         acceptingNewFriends = settings.get('acceptingNewFriends', {})
@@ -424,6 +459,12 @@ class OptionsTabPage(DirectFrame):
         self.help = TTDialog.TTDialog(text=TTLocalizer.OptionsPageFpsHelp, text_wordwrap=14, pos=(0, 0, 0.2), style=TTDialog.Acknowledge, command=self.exitHelp)
         self.help['text_pos'] = (-0.45, 0.07)
         self.heading = DirectLabel(parent=self.help, relief=None, text=TTLocalizer.OptionsPageFpsHeading, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_scale=0.07, pos=(-0.26, 0, 0.22))
+        self.help.show()
+
+    def enterShaderLevelHelp(self):
+        self.help = TTDialog.TTDialog(text=TTLocalizer.OptionsPageShaderLevelHelp, text_wordwrap=14, pos=(0, 0, 0.2), style=TTDialog.Acknowledge, command=self.exitHelp)
+        self.help['text_pos'] = (-0.5, 0.23)
+        self.heading = DirectLabel(parent=self.help, relief=None, text=TTLocalizer.OptionsPageShaderLevelHeading, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_scale=0.07, pos=(-0.21, 0, 0.37))
         self.help.show()
 
     def exitHelp(self, response):

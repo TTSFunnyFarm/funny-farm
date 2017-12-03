@@ -3567,6 +3567,8 @@ OptionsPageLODHeading = 'LOD Nodes'
 OptionsPageLODHelp = 'LOD nodes show lower quality models for characters as you move farther away from them.\n\nTurning on LODs can slightly improve performance.'
 OptionsPageFpsHeading = 'FPS Meter'
 OptionsPageFpsHelp = 'If you want to monitor your game\'s performance, you can turn on the FPS meter to see how many frames per second you get.'
+OptionsPageShaderLevelHeading = 'Shader Level'
+OptionsPageShaderLevelHelp = 'This option adjusts the quality of shaders, at the cost of performance.\n\nIt can also disable the shader to save performance.\nIf you are not satisfied with these levels, you can adjust the shader values to your liking in preferences.json.'
 OptionsPageSpeedChatStyleLabel = 'SpeedChat Color'
 OptionsPageDisplayWindowed = '%s x %s'
 OptionsPageDisplayFullscreen = 'Fullscreen'
@@ -3574,6 +3576,15 @@ OptionsPageDisplayEmbedded = 'In the browser'
 OptionsPageFullscreenOnLabel = 'Fullscreen mode is on.'
 OptionsPageFullscreenOffLabel = 'Fullscreen mode is off.'
 OptionsPageFullscreenFailed = 'Fullscreen mode is not compatible with your computer\'s current display.'
+OptionsPageWaterShader = "Water shader level:"
+OptionsPageShaderLevels = [
+ 'Off',
+ 'Low',
+ 'Medium',
+ 'High',
+ 'Ultra',
+ 'Custom'
+]
 OptionsPageSelect = 'Select'
 OptionsPageToggleOn = 'Turn On'
 OptionsPageToggleOff = 'Turn Off'
