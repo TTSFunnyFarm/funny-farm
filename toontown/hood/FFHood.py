@@ -1,6 +1,7 @@
 from panda3d.core import *
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
+from toontown.shader import WaterShader
 from toontown.suit.BattleSuit import BattleSuit
 from toontown.suit.SuitDNA import SuitDNA
 from toontown.toon import NPCToons
@@ -18,20 +19,25 @@ class FFHood(ToonHood):
         self.winterHoodFile = 'phase_14/models/neighborhoods/funny_farm_winter'
         self.skyFile = 'phase_3.5/models/props/TT_sky'
         self.titleColor = (1.0, 0.5, 0.4, 1.0)
+        self.waterShader = None
 
     def enter(self, shop=None, tunnel=None, init=0):
         self.loadQuestChanges()
         ToonHood.enter(self, shop=shop, tunnel=tunnel, init=init)
+        # The water in the pond, tugOfWar_shadow, spills outside the pond into the shadow
 
     def exit(self):
         ToonHood.exit(self)
         self.unloadQuestChanges()
+        self.waterShader.stop()
 
     def load(self):
         ToonHood.load(self)
+        self.waterShader = WaterShader.WaterShader()
 
     def unload(self):
         ToonHood.unload(self)
+        self.waterShader = None
 
     def skyTrack(self, task):
         return SkyUtil.cloudSkyTrack(task)
