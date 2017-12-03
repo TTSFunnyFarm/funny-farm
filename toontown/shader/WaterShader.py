@@ -21,8 +21,6 @@ class WaterShader(DirectObject.DirectObject):
         self.reflectCP = None
         self.refractCP = None
         self.toon = None
-        self.toonAnim = None
-        self.toonAnimRate = None
         self.waterPos = 0
 
     def start(self, waterName, landGeom, sky):
@@ -54,18 +52,7 @@ class WaterShader(DirectObject.DirectObject):
         taskMgr.add(self.updateRefl, self.taskName('updateRefl'))
         taskMgr.add(self.updateRefr, self.taskName('updateRefr'))
         # Make a duplicate of the player
-        self.toon = Toon.Toon()
-        self.toon.setDNA(base.localAvatar.getDNA())
-        self.toon.setHat(*base.avatarData.setHat)
-        self.toon.setGlasses(*base.avatarData.setGlasses)
-        self.toon.setBackpack(*base.avatarData.setBackpack)
-        self.toon.setShoes(*base.avatarData.setShoes)
-        self.toon.applyCheesyEffect(base.avatarData.setCheesyEffect)
-        self.toon.hideName()
-        self.toon.hideShadow()
-        self.toon.reparentTo(self.refractGeom)
-        self.toon.setAnimState('neutral', 1.0)
-        taskMgr.add(self.updateToon, self.taskName('updateToon'))
+        self.toon = base.localAvatar.instanceTo(self.refractGeom)
         # Load shader
         self.shader = Shader.load(Shader.SL_GLSL, "phase_3/models/shaders/water_vert.glsl", "phase_3/models/shaders/water_frag.glsl")
         self.geom = landGeom.find('**/' + waterName)
@@ -94,7 +81,6 @@ class WaterShader(DirectObject.DirectObject):
         taskMgr.remove(self.taskName('updateRefl'))
         taskMgr.remove(self.taskName('updateRefr'))
         taskMgr.remove(self.taskName('updateUniforms'))
-        taskMgr.remove(self.taskName('updateToon'))
         if self.geom:
             self.geom.clearShader()
             self.geom = None
@@ -124,7 +110,7 @@ class WaterShader(DirectObject.DirectObject):
             self.refractCP.removeNode()
             self.refractCP = None
         if self.toon:
-            self.toon.delete()
+            self.toon.removeNode()
             self.toon = None
         if self.reflectionCam:
             self.reflectionCam.removeNode()
@@ -132,8 +118,6 @@ class WaterShader(DirectObject.DirectObject):
         if self.refractionCam:
             self.refractionCam.removeNode()
             self.refractionCam = None
-        self.toonAnim = None
-        self.toonAnimRate = None
 
     def updateRefl(self, task):
         if self.reflectionCam is None:
@@ -158,37 +142,6 @@ class WaterShader(DirectObject.DirectObject):
         moveFactor = (WATER_SPEED * globalClock.getFrameTime()) % 1
         self.geom.setShaderInput("moveFactor", moveFactor)
         self.geom.setShaderInput("cameraPos", base.cam.getPos(render))
-        return Task.cont
-
-    def updateToon(self, task):
-        self.toon.setPos(base.localAvatar.getPos(render))
-        self.toon.setHpr(base.localAvatar.getHpr(render))
-        anim = self.toonAnim
-        animRate = self.toonAnimRate
-        playingAnim = base.localAvatar.getCurrentAnim()
-        playingRate = base.localAvatar.getPlayRate()
-        if playingAnim == None:
-            playingAnim = base.localAvatar.playingAnim
-        if anim != playingAnim or animRate != playingRate:
-            self.toonAnim = playingAnim
-            self.toonAnimRate = playingRate
-            if playingAnim == 'jump-idle' or playingAnim == 'running-jump-idle':
-                if playingAnim == 'running-jump-idle':
-                    self.toon.playingAnim = None
-                self.toon.setAnimState('jumpAirborne', 1.0)
-            elif playingAnim == 'jump-land' or playingAnim == 'running-jump-land':
-                self.toon.setAnimState('jumpLand', 1.0)
-            elif playingAnim == 'openBook':
-                self.toon.enterOpenBook()
-            elif playingAnim == 'readBook':
-                self.toon.enterReadBook()
-            elif playingAnim == 'closeBook':
-                self.toon.enterCloseBook()
-            else:
-                if self.toon.animFSM.getStateNamed(self.toonAnim):
-                    self.toon.setAnimState(self.toonAnim, self.toonAnimRate)
-                else:
-                    self.toon.loop(self.toonAnim)
         return Task.cont
 
     def taskName(self, task):
