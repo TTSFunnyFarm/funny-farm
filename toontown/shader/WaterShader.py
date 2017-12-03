@@ -3,6 +3,8 @@ from direct.directnotify import DirectNotifyGlobal
 from direct.showbase import DirectObject
 from direct.task import Task
 
+WATER_SPEED = 0.03
+
 class WaterShader(DirectObject.DirectObject):
     notify = DirectNotifyGlobal.directNotify.newCategory("WaterShader")
     def __init__(self):
@@ -18,7 +20,6 @@ class WaterShader(DirectObject.DirectObject):
         self.reflectCP = None
         self.refractCP = None
         self.waterPos = 0
-        base.sf = 2
 
     def start(self, waterName, landGeom, sky):
         if self.shader is not None:
@@ -57,16 +58,25 @@ class WaterShader(DirectObject.DirectObject):
         self.reflectGeom.setClipPlane(self.reflectCP)
         self.refractGeom.setClipPlane(self.refractCP)
         self.geom.setShader(self.shader)
+        # Texture setup
+        dudvMap = loader.loadTexture('phase_14/maps/water_dudv.jpg')
         self.reflectionFB.getTexture().setWrapU(Texture.WM_repeat)
         self.reflectionFB.getTexture().setWrapV(Texture.WM_repeat)
         self.refractionFB.getTexture().setWrapU(Texture.WM_repeat)
         self.refractionFB.getTexture().setWrapV(Texture.WM_repeat)
+        dudvMap.setWrapV(Texture.WM_repeat)
         self.geom.setShaderInput("reflectTex", self.reflectionFB.getTexture())
         self.geom.setShaderInput("refractTex", self.refractionFB.getTexture())
+        self.geom.setShaderInput("dudvMap", dudvMap)
+        self.geom.setShaderInput("moveFactor", 0)
+        self.geom.setShaderInput("cameraPos", base.camera.getPos(render))
+        taskMgr.add(self.updateUniforms, self.taskName('updateUniforms'))
 
 
     def stop(self):
         taskMgr.remove(self.taskName('updateRefl'))
+        taskMgr.remove(self.taskName('updateRefr'))
+        taskMgr.remove(self.taskName('updateUniforms'))
         if self.geom:
             self.geom.clearShader()
             self.geom = None
@@ -101,20 +111,26 @@ class WaterShader(DirectObject.DirectObject):
     def updateRefl(self, task):
         if self.reflectionCam is None:
             return Task.done
-        dist = base.sf * (base.camera.getZ(render) - self.waterPos)
-        self.reflectionCam.setX(base.camera.getX(render))
-        self.reflectionCam.setY(base.camera.getY(render))
-        self.reflectionCam.setZ(base.camera.getZ(render) - dist)
-        self.reflectionCam.setH(base.camera.getH(render))
-        self.reflectionCam.setP(-base.camera.getP(render))
-        self.reflectionCam.setR(-base.camera.getR(render))
+        dist = 2 * (base.cam.getZ(render) - self.waterPos)
+        self.reflectionCam.setX(base.cam.getX(render))
+        self.reflectionCam.setY(base.cam.getY(render))
+        self.reflectionCam.setZ(base.cam.getZ(render) - dist)
+        self.reflectionCam.setH(base.cam.getH(render))
+        self.reflectionCam.setP(-base.cam.getP(render))
+        self.reflectionCam.setR(-base.cam.getR(render))
         return Task.cont
 
     def updateRefr(self, task):
         if self.refractionCam is None:
             return Task.done
-        self.refractionCam.setPos(*base.camera.getPos(render))
-        self.refractionCam.setHpr(*base.camera.getHpr(render))
+        self.refractionCam.setPos(*base.cam.getPos(render))
+        self.refractionCam.setHpr(*base.cam.getHpr(render))
+        return Task.cont
+
+    def updateUniforms(self, task):
+        moveFactor = (WATER_SPEED * globalClock.getFrameTime()) % 1
+        self.geom.setShaderInput("moveFactor", moveFactor)
+        self.geom.setShaderInput("cameraPos", base.cam.getPos(render))
         return Task.cont
 
     def taskName(self, task):
