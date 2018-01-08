@@ -1,6 +1,7 @@
 from panda3d.core import *
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
+from toontown.battle import BattleParticles
 from toontown.suit.BattleSuit import BattleSuit
 from toontown.suit.SuitDNA import SuitDNA
 from toontown.toon import NPCToons
@@ -22,16 +23,31 @@ class FFHood(ToonHood):
     def enter(self, shop=None, tunnel=None, init=0):
         self.loadQuestChanges()
         ToonHood.enter(self, shop=shop, tunnel=tunnel, init=init)
+        if hasattr(self, 'snow'):
+            self.snow.start(camera, self.snowRender)
 
     def exit(self):
         ToonHood.exit(self)
         self.unloadQuestChanges()
+        if hasattr(self, 'snow'):
+            self.snow.disable()
 
     def load(self):
         ToonHood.load(self)
+        if base.air.holidayMgr.isWinter():
+            self.snow = BattleParticles.loadParticleFile('snowdisk.ptf')
+            self.snow.setPos(0, 0, 5)
+            self.snowRender = render.attachNewNode('snowRender')
+            self.snowRender.setDepthWrite(0)
+            self.snowRender.setBin('fixed', 1)
 
     def unload(self):
         ToonHood.unload(self)
+        if hasattr(self, 'snow'):
+            self.snow.cleanup()
+            self.snowRender.removeNode()
+            del self.snow
+            del self.snowRender
 
     def skyTrack(self, task):
         return SkyUtil.cloudSkyTrack(task)
