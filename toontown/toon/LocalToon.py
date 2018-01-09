@@ -556,6 +556,12 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             return True
         return False
 
+    def clearQuestHistory(self):
+        for quest in self.questHistory:
+            self.questHistory.remove(quest)
+        base.avatarData.setQuestHistory = self.questHistory
+        dataMgr.saveToonData(base.avatarData)
+
     def setTrackProgress(self, trackId, progress):
         self.trackProgressId = trackId
         self.trackProgress = progress
@@ -783,6 +789,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         self.setBankMoney(0)
         self.setLevel(1)
         self.setLevelExp(0)
+        self.setTrackProgress(-1, -1)
+        self.clearQuestHistory()
 
     def setRandomSpawn(self, zoneId):
         if zoneId not in FunnyFarmGlobals.SpawnPoints.keys():
