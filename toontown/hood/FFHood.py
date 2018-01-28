@@ -2,6 +2,7 @@ from panda3d.core import *
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.shader import WaterShader
+from toontown.battle import BattleParticles
 from toontown.suit.BattleSuit import BattleSuit
 from toontown.suit.SuitDNA import SuitDNA
 from toontown.toon import NPCToons
@@ -25,19 +26,34 @@ class FFHood(ToonHood):
         self.loadQuestChanges()
         ToonHood.enter(self, shop=shop, tunnel=tunnel, init=init)
         # The water in the pond, tugOfWar_shadow, spills outside the pond into the shadow
+        if hasattr(self, 'snow'):
+            self.snow.start(camera, self.snowRender)
 
     def exit(self):
         ToonHood.exit(self)
         self.unloadQuestChanges()
         self.waterShader.stop()
+        if hasattr(self, 'snow'):
+            self.snow.disable()
 
     def load(self):
         ToonHood.load(self)
         self.waterShader = WaterShader.WaterShader()
+        if base.air.holidayMgr.isWinter():
+            self.snow = BattleParticles.loadParticleFile('snowdisk.ptf')
+            self.snow.setPos(0, 0, 5)
+            self.snowRender = render.attachNewNode('snowRender')
+            self.snowRender.setDepthWrite(0)
+            self.snowRender.setBin('fixed', 1)
 
     def unload(self):
         ToonHood.unload(self)
         self.waterShader = None
+        if hasattr(self, 'snow'):
+            self.snow.cleanup()
+            self.snowRender.removeNode()
+            del self.snow
+            del self.snowRender
 
     def skyTrack(self, task):
         return SkyUtil.cloudSkyTrack(task)

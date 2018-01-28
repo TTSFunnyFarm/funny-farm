@@ -20,8 +20,8 @@ class QuestManager:
         if Quests.getQuestFinished(questId):
             # It's the last quest in the progression, give them their reward.
             levelUp = self.giveReward(questId)
-        if not levelUp:
-            base.localAvatar.setHealth(base.localAvatar.maxHp, base.localAvatar.maxHp)
+            if not levelUp:
+                base.localAvatar.setHealth(base.localAvatar.maxHp, base.localAvatar.maxHp)
         nextQuest = Quests.getNextQuest(questId)
         if nextQuest == Quests.NA:
             base.localAvatar.enable()
@@ -46,6 +46,41 @@ class QuestManager:
             self.npcGiveQuest(npc, nextQuest)
         return Task.done
 
+    def recoverItems(self, toon, suitsKilled, zoneId):
+        recovered, notRecovered = ([] for i in xrange(2))
+        for index, questDesc in enumerate(toon.quests):
+            quest = Quests.getQuest(questDesc[0])
+            quest.setQuestProgress(questDesc[1])
+            if quest.getType() == Quests.QuestTypeRecover:
+                isComplete = quest.getCompletionStatus()
+                if isComplete == Quests.COMPLETE:
+                    # This quest is complete, skip.
+                    continue
+                # It's a quest where we need to recover an item!
+                if quest.isLocationMatch(zoneId):
+                    # We're in the correct area to recover the item.
+                    if quest.getHolder() == Quests.Any or quest.getHolderType() in ['type', 'track', 'level']:
+                        for suit in suitsKilled:
+                            if quest.getCompletionStatus() == Quests.COMPLETE:
+                                # Test if the task has already been completed.
+                                # If it has, we don't need to iterate through the cogs anymore.
+                                break
+                            # Now we'll make sure we killed the right type of cog.
+                            if (quest.getHolder() == Quests.Any) \
+                            or (quest.getHolderType() == 'type' and quest.getHolder() == suit['type']) \
+                            or (quest.getHolderType() == 'track' and quest.getHolder() == suit['track']) \
+                            or (quest.getHolderType() == 'level' and quest.getHolder() <= suit['level']):
+                                progress = toon.quests[index][1] & pow(2, 16) - 1
+                                completion = quest.testRecover(progress)
+                                if completion[0]:
+                                    # We win! We got the item from the cogs.
+                                    recovered.append(quest.getItem())
+                                    toon.setQuestProgress(quest.questId, progress + 1)
+                                else:
+                                    # Tough luck, maybe next time.
+                                    notRecovered.append(quest.getItem())
+        return (recovered, notRecovered)
+
     def requestInteract(self, npc):
         toon = base.localAvatar
         # First check if they need to turn in any quests.
@@ -64,7 +99,12 @@ class QuestManager:
                 if quest.getType() == Quests.QuestTypeChoose:
                     npc.presentTrackChoice(toon.doId, questId, quest.getChoices())
                 else:
-                    npc.completeQuest(toon.doId, questId)
+                    if Quests.getQuestFinished(questId):
+                        # They only COMPLETE the quest when the actual quest progression is over.
+                        npc.completeQuest(toon.doId, questId)
+                    else:
+                        # Otherwise, it'll silently complete the continuing quest and smoothly transition to the next one.
+                        self.completeQuest(npc, questId)
                 return
             else:
                 # Wrong NPC, not much we can do here.

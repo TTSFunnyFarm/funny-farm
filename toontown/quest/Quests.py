@@ -155,6 +155,12 @@ class Quest:
             self.cogTrack = self.questType[3]
             self.cogType = self.questType[4]
             self.cogLocation = self.questType[5]
+        elif self.questType[0] == QuestTypeRecover:
+            self.numItems = self.questType[1]
+            self.item = self.questType[2]
+            self.percentChance = self.questType[3]
+            self.holder = self.questType[4]
+            self.holderType = self.questType[5]
         # todo finish quest types
         self.fromNpc = questInfo[4]
         self.toNpc = questInfo[5]
@@ -205,19 +211,19 @@ class Quest:
         pass
 
     def getNumItems(self):
-        pass
+        return self.numItems
 
     def getItem(self):
-        pass
+        return self.item
 
     def getPercentChance(self):
-        pass
+        return self.percentChance
 
     def getHolder(self):
-        pass
+        return self.holder
 
     def getHolderType(self):
-        pass
+        return self.holderType
 
     def getNumQuestItems(self):
         if self.questType[0] == QuestTypeGoTo:
@@ -456,7 +462,7 @@ class Quest:
             questCogType = self.getCogType()
             questCogTrack = self.getCogTrack()
             if questCogLevel is Any or questCogLevel <= cogDict['level']:
-                if questCogType is Any:
+                if questCogType is Any and questCogTrack is Any:
                     cogCounts = 1
                 elif questCogType == cogDict['type']:
                     cogCounts = 1
@@ -469,6 +475,31 @@ class Quest:
             return cogCounts and avId in cogDict['activeToons'] and self.isLocationMatch(zoneId)
         else:
             return 0
+
+    def testRecover(self, progress):
+        test = random.random() * 100
+        chance = self.getPercentChance()
+        numberDone = progress & pow(2, 16) - 1
+        numberNotDone = progress >> 16
+        returnTest = None
+        avgNum2Kill = 1.0 / (chance / 100.0)
+        if numberNotDone >= avgNum2Kill * 1.5:
+            chance = 100
+        elif numberNotDone > avgNum2Kill * 0.5:
+            diff = float(numberNotDone - avgNum2Kill * 0.5)
+            luck = 1.0 + abs(diff / (avgNum2Kill * 0.5))
+            chance *= luck
+        if test <= chance:
+            returnTest = 1
+            numberNotDone = 0
+            numberDone += 1
+        else:
+            returnTest = 0
+            numberNotDone += 1
+            numberDone += 0
+        returnCount = numberNotDone << 16
+        returnCount += numberDone
+        return (returnTest, returnCount)
 
 DefaultDialog = {GREETING: DefaultGreeting,
  QUEST: DefaultQuest,
@@ -557,11 +588,146 @@ QuestDict = {
         Same,
         1514,
         (QuestRewardXP,
-         25,
+         20,
          QuestRewardTrackFrame,
          1),
+        1008,
+        TTLocalizer.QuestDialogDict[1007]),
+ 1008: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeGoTo,),
+        1001,
+        1107,
+        1612,
+        (QuestRewardXP,
+         20,
+         QuestRewardTrackFrame,
+         2),
+        1009,
+        TTLocalizer.QuestDialogDict[1008]),
+ 1009: (FF_TIER,
+        MainQuest,
+        Finish,
+        (QuestTypeDefeatCog,
+         3,
+         Any,
+         's',
+         Any,
+         FunnyFarmGlobals.RicketyRoad),
+        1107,
+        Same,
+        1612,
+        (QuestRewardXP,
+         20,
+         QuestRewardTrackFrame,
+         2),
+        1010,
+        TTLocalizer.QuestDialogDict[1009]),
+ 1010: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeGoTo,),
+        1107,
+        1112,
+        1617,
+        (QuestRewardXP,
+         30,
+         QuestRewardTrackFrame,
+         3),
+        1011,
+        TTLocalizer.QuestDialogDict[1010]),
+ 1011: (FF_TIER,
+        MainQuest,
+        Finish,
+        (QuestTypeDefeatCog,
+         4,
+         2,
+         Any,
+         Any,
+         FunnyFarmGlobals.RicketyRoad),
+        1112,
+        Same,
+        1617,
+        (QuestRewardXP,
+         30,
+         QuestRewardTrackFrame,
+         3),
+        1012,
+        TTLocalizer.QuestDialogDict[1011]),
+ 1012: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeGoTo,),
+        1112,
+        1001,
+        1514,
+        (QuestRewardXP,
+         30),
+        1013,
+        TTLocalizer.QuestDialogDict[1012]),
+ 1013: (FF_TIER,
+        MainQuest,
+        Finish,
+        (QuestTypeRecover,
+         1,
+         1,
+         25,
+         Any,
+         Any,
+         FunnyFarmGlobals.FunnyFarm),
+        1001,
+        Same,
+        1514,
+        (QuestRewardXP,
+         30),
+        1014,
+        TTLocalizer.QuestDialogDict[1013]),
+ 1014: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeGoTo,),
+        1001,
+        1108,
+        1613,
+        (QuestRewardXP,
+         35),
+        1015,
+        TTLocalizer.QuestDialogDict[1014]),
+ 1015: (FF_TIER,
+        MainQuest,
+        Finish,
+        (QuestTypeDefeatCog,
+         4,
+         Any,
+         'm',
+         Any,
+         FunnyFarmGlobals.RicketyRoad),
+        1108,
+        Same,
+        1613,
+        (QuestRewardXP,
+         35),
+        1016,
+        TTLocalizer.QuestDialogDict[1015]),
+ 1016: (FF_TIER,
+        MainQuest,
+        Finish,
+        (QuestTypeDefeatCog,
+         4,
+         Any,
+         Any,
+         'sc',
+         FunnyFarmGlobals.RicketyRoad),
+        1108,
+        Same,
+        1613,
+        (QuestRewardXP,
+         40,
+         QuestRewardTrackFrame,
+         4),
         NA,
-        TTLocalizer.QuestDialogDict[1007])
+        TTLocalizer.QuestDialogDict[1016])
 }
 
 Cutscenes = (1,
@@ -569,6 +735,12 @@ Cutscenes = (1,
  1002,
  1004)
 ImportantQuests = (1004,)
+
+def getItemName(itemId):
+    return ItemDict[itemId][0]
+
+def getPluralItemName(itemId):
+    return ItemDict[itemId][1]
 
 def getQuest(id):
     return Quest(id)
@@ -631,8 +803,8 @@ def getNpcInfo(npcId):
     buildingArticle = NPCToons.getBuildingArticle(npcZone)
     buildingName = NPCToons.getBuildingTitle(npcZone)
     branchId = ZoneUtil.getCanonicalBranchZone(npcZone)
-    toStreet = ToontownGlobals.StreetNames[branchId][0]
-    streetName = ToontownGlobals.StreetNames[branchId][-1]
+    toStreet = FunnyFarmGlobals.StreetNames[branchId]
+    streetName = FunnyFarmGlobals.StreetNames[branchId]
     isInPlayground = ZoneUtil.isPlayground(branchId)
     return (npcName,
      hoodName,

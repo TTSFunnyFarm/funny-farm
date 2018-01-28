@@ -826,6 +826,12 @@ class Battle(DirectObject, NodePath, BattleBase):
             else:
                 self.startCamTrack()
         else:
+            for toonId in self.activeToonIds:
+                toon = self.getToon(toonId)
+                if toon:
+                    self.toonItems[toonId] = base.cr.questManager.recoverItems(toon, self.suitsKilled, toon.getZoneId())
+                    # Undecided whether we'll have the merits system or not
+                    # self.toonMerits[toonId] = self.air.promotionMgr.recoverMerits(toon, self.suitsKilled, self.zoneId)
             self.setJoinable(0)
             self.setBattleExperience(*self.getBattleExperience())
             self.assignRewards()

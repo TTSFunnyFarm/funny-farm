@@ -327,7 +327,7 @@ class QuestPoster(DirectFrame):
                 toNpcName = NPCToons.getNPCName(toNpcId)
                 toNpcBuildingName = NPCToons.getBuildingTitle(toNpcZone)
             toNpcBranchId = ZoneUtil.getBranchZone(toNpcZone)
-            toNpcStreetName = ZoneUtil.getStreetName(toNpcBranchId)
+            toNpcStreetName = FunnyFarmGlobals.StreetNames[toNpcBranchId]
             toNpcHoodId = ZoneUtil.getCanonicalHoodId(toNpcZone)
             toNpcLocationName = FunnyFarmGlobals.hoodNameMap[toNpcHoodId]
         lPos = Vec3(0, 0, 0.13)
