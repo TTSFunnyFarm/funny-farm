@@ -1,6 +1,7 @@
 from panda3d.core import *
 from direct.interval.IntervalGlobal import *
 from direct.showbase import Audio3DManager
+from toontown.shader import WaterShader
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.hood import SkyUtil
 from Street import Street
@@ -15,26 +16,33 @@ class FFStreet(Street):
         self.winterHoodFile = '%s_winter' % self.hoodFile
         self.skyFile = 'phase_3.5/models/props/TT_sky'
         self.titleColor = (1.0, 0.5, 0.4, 1.0)
+        self.waterShader = None
 
     def enter(self, shop=None, tunnel=None):
         Street.enter(self, shop=shop, tunnel=tunnel)
         if self.zoneId == FunnyFarmGlobals.RicketyRoad:
             self.trainSfx.play()
             self.audio3d.attachSoundToObject(self.trainSfx, self.train)
+            self.waterShader.waterPos = -1.75
+            # The water here, g16, also affects the fence
 
     def exit(self):
         Street.exit(self)
+        self.waterShader.stop()
+        self.waterShader.waterPos = 0
         if self.zoneId == FunnyFarmGlobals.RicketyRoad:
             self.audio3d.detachSound(self.trainSfx)
             self.trainSfx.stop()
 
     def load(self):
         Street.load(self)
+        self.waterShader = WaterShader.WaterShader()
         if self.zoneId == FunnyFarmGlobals.RicketyRoad:
             self.loadTrain()
 
     def unload(self):
         Street.unload(self)
+        self.waterShader = None
         if self.zoneId == FunnyFarmGlobals.RicketyRoad:
             self.unloadTrain()
 
