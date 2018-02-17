@@ -6,6 +6,7 @@ from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.building import Door
+from toontown.toon import NPCToons
 import ZoneUtil
 
 class Hood(DirectObject):
@@ -74,12 +75,18 @@ class Hood(DirectObject):
         self.sky.flattenMedium()
         self.geom.reparentTo(render)
         self.geom.flattenMedium()
+        self.generateNPCs()
         gsg = base.win.getGsg()
         if gsg:
             self.geom.prepareScene(gsg)
 
     def unload(self):
         self.stopSky()
+        if hasattr(self, 'npcs'):
+            for npc in self.npcs:
+                npc.removeActive()
+                npc.delete()
+                del npc
         self.geom.removeNode()
         self.sky.removeNode()
         del self.geom
@@ -104,6 +111,20 @@ class Hood(DirectObject):
         if base.localAvatar.hp <= 0:
             base.localAvatar.setAnimState('Sad')
         self.startActive()
+
+    def generateNPCs(self):
+        self.npcs = NPCToons.createNpcsInZone(self.zoneId)
+        for i in xrange(len(self.npcs)):
+            origin = self.geom.find('**/npc_origin_%d' % i)
+            if not origin.isEmpty():
+                self.npcs[i].reparentTo(self.geom)
+                self.npcs[i].setPosHpr(origin, 0, 0, 0, 0, 0, 0)
+                self.npcs[i].origin = origin
+                self.npcs[i].initializeBodyCollisions('toon')
+                self.npcs[i].addActive()
+                self.npcs[i].setAllowedToTalk(0)
+            else:
+                self.notify.warning('generateNPCs(): Could not find npc_origin_%d' % i)
 
     def startActive(self):
         for door in self.geom.findAllMatches('**/*door_trigger*'):

@@ -22,6 +22,7 @@ class NPCToon(NPCToonBase):
         self.pendingTracks = None
         self.pendingTrackQuest = None
         self.busy = 0
+        self.canTalk = 1
         return
 
     def getHq(self):
@@ -52,8 +53,11 @@ class NPCToon(NPCToonBase):
     def avatarEnter(self):
         base.cr.questManager.requestInteract(self)
 
+    def setAllowedToTalk(self, canTalk):
+        self.canTalk = canTalk
+
     def allowedToTalk(self):
-        return True
+        return self.canTalk
 
     def handleCollisionSphereEnter(self, collEntry):
         if self.allowedToTalk():

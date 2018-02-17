@@ -136,4 +136,10 @@ class Street(ToonHood):
                 suit.addActive()
             else:
                 suit.removeActive()
+        for npc in self.npcs:
+            dist = (base.localAvatar.getPos() - npc.getPos()).length()
+            if dist <= 125:
+                npc.addActive()
+            else:
+                npc.removeActive()
         return task.cont
