@@ -130,6 +130,12 @@ class QuestManager:
                         # Keep working on that task, _avName_!
                         npc.incompleteQuest(toon.doId, questId, Quests.INCOMPLETE, toNpcId)
                 return # Yes, the NPC's response is only based on the player's first quest.
+        if npc.getMainQuest():
+            # todo: Give them the main quest if they don't have it for some reason
+            pass
+        if npc.getQuestOffer():
+            # todo: Offer them a side quest if available
+            pass
 
         # todo: quest tier upgrades
         # todo: present quest choices

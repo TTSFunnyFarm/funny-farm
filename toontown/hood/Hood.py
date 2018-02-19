@@ -7,6 +7,7 @@ from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.building import Door
 from toontown.toon import NPCToons
+from toontown.quest import Quests
 import ZoneUtil
 
 class Hood(DirectObject):
@@ -57,6 +58,8 @@ class Hood(DirectObject):
             self.titleTrack = None
             self.title.cleanup()
             self.title = None
+        for npc in self.npcs:
+            npc.removeActive()
 
     def load(self):
         if base.air.holidayMgr.isHalloween():
@@ -125,6 +128,23 @@ class Hood(DirectObject):
                 self.npcs[i].setAllowedToTalk(0)
             else:
                 self.notify.warning('generateNPCs(): Could not find npc_origin_%d' % i)
+        self.refreshQuestIcons()
+
+    def refreshQuestIcons(self):
+        for npc in self.npcs:
+            for questDesc in base.localAvatar.quests:
+                quest = Quests.getQuest(questDesc[0])
+                quest.setQuestProgress(questDesc[1])
+                if quest.getCompletionStatus() == Quests.COMPLETE or quest.getType() in [Quests.QuestTypeGoTo, Quests.QuestTypeChoose, Quests.QuestTypeDeliver]:
+                    if quest.toNpc == npc.getNpcId():
+                        if quest.questCategory == Quests.MainQuest:
+                            npc.setMainQuest(questDesc[0])
+                        else:
+                            npc.setSideQuest(questDesc[0])
+                        break
+                    else:
+                        npc.clearQuestIcon()
+            # todo: display quest offers on toons
 
     def startActive(self):
         for door in self.geom.findAllMatches('**/*door_trigger*'):
@@ -139,6 +159,7 @@ class Hood(DirectObject):
             linkSphere.setName('tunnel_trigger_%s_%s' % (hoodStr, zoneStr))
             self.acceptOnce('enter%s' % linkSphere.getName(), self.handleEnterTunnel)
         base.localAvatar.checkQuestCutscene()
+        self.accept('questsChanged', self.refreshQuestIcons)
 
     def handleDoorTrigger(self):
         pass

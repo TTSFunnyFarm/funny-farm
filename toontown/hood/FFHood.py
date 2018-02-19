@@ -81,12 +81,13 @@ class FFHood(ToonHood):
                     self.suit.addActive()
                     self.suit.loop('neutral')
                 if not hasattr(self, 'flippy'):
-                    self.flippy = NPCToons.createLocalNPC(1001)
+                    self.flippy = NPCToons.createLocalNPC(1001, functional=True)
                     self.flippy.initializeBodyCollisions('toon')
                     self.flippy.reparentTo(self.geom)
                     self.flippy.setPosHpr(-70, -20, 0, 90, 0, 0)
                     self.flippy.useLOD(1000)
                     self.flippy.addActive()
+                    self.flippy.stopLookAround()
                 return
 
     def unloadQuestChanges(self):

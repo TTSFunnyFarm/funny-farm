@@ -12,6 +12,7 @@ from toontown.building import LoonyLabsInterior
 from toontown.building import ToonInterior
 from toontown.building import Door
 from toontown.trolley.Trolley import Trolley
+from toontown.quest import Quests
 from Hood import Hood
 
 class ToonHood(Hood):
@@ -31,7 +32,7 @@ class ToonHood(Hood):
         self.trolley = None
         self.telescope = None
         self.animSeq = None
-        self.buildings = None
+        self.buildings = []
 
     def enter(self, shop=None, tunnel=None, init=0):
         base.localAvatar.setZoneId(self.zoneId)
@@ -49,7 +50,7 @@ class ToonHood(Hood):
 
     def exit(self):
         Hood.exit(self)
-        if self.buildings:
+        if len(self.buildings) > 0:
             self.destroyLandmarkBuildings()
 
     def load(self):
@@ -81,7 +82,6 @@ class ToonHood(Hood):
             self.trolley.addActive()
 
     def setupLandmarkBuildings(self):
-        self.buildings = []
         for building in self.geom.findAllMatches('**/tb*toon_landmark*'):
             zoneStr = building.getName().split(':')
             block = int(zoneStr[0][2:])
@@ -89,12 +89,30 @@ class ToonHood(Hood):
             self.buildings.append(Building(zoneId))
         for building in self.buildings:
             building.load()
+        self.refreshQuestIcons()
 
     def destroyLandmarkBuildings(self):
         for building in self.buildings:
             building.unload()
             del building
-        self.buildings = None
+        self.buildings = []
+
+    def refreshQuestIcons(self):
+        Hood.refreshQuestIcons(self)
+        for building in self.buildings:
+            for questDesc in base.localAvatar.quests:
+                quest = Quests.getQuest(questDesc[0])
+                quest.setQuestProgress(questDesc[1])
+                if quest.getCompletionStatus() == Quests.COMPLETE or quest.getType() in [Quests.QuestTypeGoTo, Quests.QuestTypeChoose, Quests.QuestTypeDeliver]:
+                    if quest.toLocation == building.zoneId:
+                        if quest.questCategory == Quests.MainQuest:
+                            building.setMainQuest(questDesc[0])
+                        else:
+                            building.setSideQuest(questDesc[0])
+                        break
+                    else:
+                        building.clearQuestIcon()
+            # todo: display quest offers on buildings
 
     def handleDoorTrigger(self, collEntry):
         building = collEntry.getIntoNodePath().getParent()

@@ -79,6 +79,17 @@ class NPCToon(NPCToonBase):
             self.setPosHpr(self.origin, 0, 0, 0, 0, 0, 0)
         self.freeAvatar()
         taskMgr.remove(self.uniqueName('clearMovie'))
+        
+        if mode != NPCToons.QUEST_MOVIE_QUEST_CHOICE_CANCEL and mode != NPCToons.QUEST_MOVIE_TRACK_CHOICE_CANCEL:
+            self.clearQuestIcon()
+        if mode == NPCToons.QUEST_MOVIE_ASSIGN:
+            questId, toNpcId = quests
+            quest = Quests.getQuest(questId)
+            if quest.getType() == Quests.QuestTypeChoose:
+                self.setMainQuest(questId)
+            # More hacks, sorry
+            if questId == 1003:
+                messenger.send('cutscene-done')
         if mode == NPCToons.QUEST_MOVIE_COMPLETE:
             questId, toNpcId = quests
             base.cr.questManager.completeQuest(self, questId)

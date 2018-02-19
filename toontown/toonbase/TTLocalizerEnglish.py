@@ -484,7 +484,7 @@ COMPLETE = 5
 LEAVING = 6
 QuestDialogDict = {
  1003: {GREETING: '',
-        QUEST: '',
+        QUEST: '_avName_, it\'s good to see you!\x07Meet me back at the Toon Hall, so we can discuss some things.',
         COMPLETE: 'Boy, that was scary. This isn\'t good.\x07I\'m going to need your help figuring out this problem.',
         LEAVING: ''},
  1005: {GREETING: '',
@@ -537,16 +537,18 @@ QuestDialogDict = {
         QUEST: 'I bring good news! I\'ve found a piece of paper!\x07It seems to be ripped. Perhaps we\'ll need a stapler.\x07You say you possess the other parts of this letter?\x07Excellent! You should be able to use this better.\x07You could take it to Flippy and settle the rest.\x07Thanks for your help, I wish you the best!'},
  1018: {GREETING: '',
         LEAVING: '',
-        QUEST: 'You found the last piece of the memo! Toontastic!\x07Let\'s see what it says...\x07"Soon the power of the Toons will lie in the hands of the corporation..."\x07"All ground forces are to maintain their current position until further notice."\x07"Signed, Mover & Shaker, Manager."\x07Well, I think it\'s clear we need to hunt down this "manager" and shut down this operation!\x07Go speak to Mr. Wurst.\x07He is the president of the Rickety Road Association.\x07Ask him if he knows anything about a Cog manager in town._where_'}
+        QUEST: 'You found the last piece of the memo!\x07Toontastic! Let\'s see what it says...\x07"Soon the power of the Toons will lie in the hands of the corporation..."\x07"All ground forces are to maintain their current position until further notice."\x07"Signed, Mover & Shaker, Manager."\x07Well, I think it\'s clear we need to hunt down this "manager" and shut down this operation!\x07Go speak to Mr. Wurst.\x07He is the president of the Rickety Road Association.\x07Let him know what\'s going on, so he can help us begin a full-fledged search._where_'},
+ 1019: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Hello. What can I help you with?\x07You recovered a letter from the Cogs? Let me read that...\x07Hmm...\x07Ah, OK, and Flippy sent you here so that I could inform all of Rickety Road to search for this "manager".\x07Done. I\'ll get right on that.\x07In the meantime, could you help me out?\x07I sent my assistant to retrieve some parts to fix one of our appliances, but he hasn\'t returned in a while.\x07Will you go out and look for him?\x07Just help him get back here safely.'}
 }
 CutsceneDialogDict = {
  1001: 'Hmm... It doesn\'t look like Flippy is in here.\x07Maybe you should check back outside.',
- 1002: (('This is a warning.\x07We ask that you cease your operations here and terminate any further lab experiments you may be conducting.',
+ 1002: ('This is a warning.\x07We ask that you cease your operations here and terminate any further lab experiments you may be conducting.',
         'You can\'t stop us from doing anything.\x07We are not backing down this time.',
         'The size of our corporation and the plans we have are beyond the stretch of your imagination.\x07You will face consequences if you do not oblige.',
         'We are stronger than we\'ve ever been before.\x07I suggest YOU terminate your presence in our playground, or you\'ll taste my home-baked wrath!',
         'Suit yourself.'),
-        '%s, it\'s good to see you!\x07Meet me back at the Toon Hall, so we can discuss some things.'),
  1004: ('Flippy! We have a problem!\x07This is urgent. Come quick!',
         'Better go see what\'s going on.\x07Come inside with me.'),
  1005: (('What\'s the matter, guys?',

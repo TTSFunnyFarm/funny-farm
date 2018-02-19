@@ -108,12 +108,14 @@ class Street(ToonHood):
             base.localAvatar.died()
 
     def setupLandmarkBuildings(self):
+        # Overrides ToonHood because we don't want to load the nametags right away
         self.buildings = []
         for building in self.geom.findAllMatches('**/tb*toon_landmark*'):
             zoneStr = building.getName().split(':')
             block = int(zoneStr[0][2:])
             zoneId = self.zoneId + 500 + block
             self.buildings.append(Building(zoneId))
+        self.refreshQuestIcons()
 
     def startNametagTask(self):
         taskMgr.add(self.__nametagTask, '%d-nametagTask' % self.zoneId)

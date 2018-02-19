@@ -2,6 +2,7 @@ from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
 from toontown.toon import NPCToons
 from toontown.hood import ZoneUtil
+from toontown.quest import Quests
 import Door
 
 class Interior(DirectObject):
@@ -40,6 +41,23 @@ class Interior(DirectObject):
                 self.npcs[i].addActive()
             else:
                 self.notify.warning('generateNPCs(): Could not find npc_origin_%d' % i)
+        self.refreshQuestIcons()
+    
+    def refreshQuestIcons(self):
+        for npc in self.npcs:
+            for questDesc in base.localAvatar.quests:
+                quest = Quests.getQuest(questDesc[0])
+                quest.setQuestProgress(questDesc[1])
+                if quest.getCompletionStatus() == Quests.COMPLETE or quest.getType() in [Quests.QuestTypeGoTo, Quests.QuestTypeChoose, Quests.QuestTypeDeliver]:
+                    if quest.toNpc == npc.getNpcId():
+                        if quest.questCategory == Quests.MainQuest:
+                            npc.setMainQuest(questDesc[0])
+                        else:
+                            npc.setSideQuest(questDesc[0])
+                        break
+                    else:
+                        npc.clearQuestIcon()
+            # todo: display quest offers on toons
 
     def startActive(self):
         for door in self.interior.findAllMatches('**/door_double_*_ur'):

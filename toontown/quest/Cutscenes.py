@@ -33,30 +33,32 @@ def scene1002():
     sceneDialog = TTLocalizer.CutsceneDialogDict[1002]
 
     def cleanup():
-        base.cr.playGame.hood.unloadQuestChanges()
-        base.localAvatar.removeQuest(1002)
-        base.localAvatar.addQuest(1003)
         bgm.stop()
         musicMgr.playCurrentZoneMusic()
         aspect2d.show()
-        messenger.send('cutscene-done')
 
-    def handleDone(elapsedTime):
-        flippy.enterTeleportOut(callback=cleanup)
+    def questDone():
+        flippy.setAllowedToTalk(0)
+        flippy.enterTeleportOut(callback=base.cr.playGame.hood.unloadQuestChanges)
 
     def sceneDone(elapsedTime):
         mtrack = Sequence()
         mtrack.append(suit.beginSupaFlyMove(suit.getPos(), 0, 'toSky'))
-        mtrack.append(Func(flippy.loop, 'walk'))
-        mtrack.append(Parallel(LerpPosHprInterval(camera, duration=1.5, pos=(-66, -35, 4), hpr=(15, 0, 0), blendType='easeInOut'), LerpHprInterval(flippy, duration=1.5, hpr=Vec3(195, 0, 0))))
-        mtrack.append(Func(flippy.loop, 'neutral'))
-        mtrack.append(Func(flippy.setLocalPageChat, sceneDialog[1] % base.localAvatar.getName(), 1))
-        mtrack.append(Func(flippy.acceptOnce, flippy.uniqueName('doneChatPage'), handleDone))
+        mtrack.append(Func(base.transitions.fadeOut, 1.0))
+        mtrack.append(Wait(1.0))
+        mtrack.append(Func(base.localAvatar.enable))
+        mtrack.append(Func(suit.removeActive))
+        mtrack.append(Func(flippy.setHpr, 195, 0, 0))
+        mtrack.append(Func(flippy.setMainQuest, 1002))
+        mtrack.append(Func(base.transitions.fadeIn, 1.0))
+        mtrack.append(Wait(1.0))
+        mtrack.append(Func(cleanup))
+        mtrack.append(Func(flippy.acceptOnce, 'cutscene-done', questDone))
         mtrack.start()
 
     def doDialog(index, elapsedTime):
-        dialog = sceneDialog[0][index]
-        if index >= (len(sceneDialog[0]) - 1):
+        dialog = sceneDialog[index]
+        if index >= (len(sceneDialog) - 1):
             suit.setLocalPageChat(dialog, 1)
             suit.acceptOnce(suit.uniqueName('doneChatPage'), sceneDone)
         elif (index % 2) == 0:

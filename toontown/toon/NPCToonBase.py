@@ -9,7 +9,7 @@ import Toon
 from direct.distributed import DistributedObject
 import NPCToons
 from toontown.quest import Quests
-from direct.distributed import ClockDelta
+from toontown.quest.QuestIcon import *
 # from toontown.quest import QuestParser
 # from toontown.quest import QuestChoiceGui
 from direct.interval.IntervalGlobal import *
@@ -33,6 +33,10 @@ class NPCToonBase(Toon.Toon):
             self.startLookAround()
             self.npcId = 0
             self.busy = 0
+            self.questOffer = None
+            self.mainQuest = None
+            self.sideQuest = None
+            self.questIcon = None
 
     def disable(self):
         self.ignore('enter' + self.cSphereNode.getName())
@@ -127,3 +131,68 @@ class NPCToonBase(Toon.Toon):
 
     def getNpcId(self):
         return self.npcId
+
+    def setQuestOffer(self, questId):
+        self.questOffer = questId
+        if self.questIcon:
+            self.questIcon.unload()
+        self.questIcon = QuestIcon(typeId=Offer)
+        self.questIcon.reparentTo(self)
+        self.questIcon.setPos(0, 0, self.height + 2)
+        self.questIcon.setScale(2.0)
+        self.questIcon.start()
+
+    def clearQuestOffer(self):
+        self.questOffer = None
+        if self.questIcon:
+            self.questIcon.unload()
+            self.questIcon = None
+
+    def getQuestOffer(self):
+        return self.questOffer
+
+    def setMainQuest(self, questId):
+        self.mainQuest = questId
+        if self.questIcon:
+            self.questIcon.unload()
+        self.questIcon = QuestIcon(typeId=Main)
+        self.questIcon.reparentTo(self)
+        self.questIcon.setPos(0, 0, self.height + 2)
+        self.questIcon.setScale(2.0)
+        self.questIcon.start()
+
+    def clearMainQuest(self):
+        self.mainQuest = None
+        if self.questIcon:
+            self.questIcon.unload()
+            self.questIcon = None
+
+    def getMainQuest(self):
+        return self.mainQuest
+
+    def setSideQuest(self, questId):
+        self.sideQuest = questId
+        if self.questIcon:
+            self.questIcon.unload()
+        self.questIcon = QuestIcon(typeId=Bonus)
+        self.questIcon.reparentTo(self)
+        self.questIcon.setPos(0, 0, self.height + 2)
+        self.questIcon.setScale(2.0)
+        self.questIcon.start()
+
+    def clearSideQuest(self):
+        self.sideQuest = None
+        if self.questIcon:
+            self.questIcon.unload()
+            self.questIcon = None
+
+    def getSideQuest(self):
+        return self.sideQuest
+
+    def clearQuestIcon(self):
+        if self.questOffer:
+            self.clearQuestOffer()
+        elif self.mainQuest:
+            self.clearMainQuest()
+        elif self.sideQuest:
+            self.clearSideQuest()
