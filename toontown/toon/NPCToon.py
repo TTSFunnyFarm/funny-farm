@@ -80,13 +80,10 @@ class NPCToon(NPCToonBase):
         self.freeAvatar()
         taskMgr.remove(self.uniqueName('clearMovie'))
         
-        if mode != NPCToons.QUEST_MOVIE_QUEST_CHOICE_CANCEL and mode != NPCToons.QUEST_MOVIE_TRACK_CHOICE_CANCEL:
-            self.clearQuestIcon()
+        if mode == NPCToons.QUEST_MOVIE_TRACK_CHOICE_CANCEL:
+            self.setMainQuest(1)
         if mode == NPCToons.QUEST_MOVIE_ASSIGN:
             questId, toNpcId = quests
-            quest = Quests.getQuest(questId)
-            if quest.getType() == Quests.QuestTypeChoose:
-                self.setMainQuest(questId)
             # More hacks, sorry
             if questId == 1003:
                 messenger.send('cutscene-done')
@@ -141,6 +138,7 @@ class NPCToon(NPCToonBase):
         fullString = ''
         toNpcId = None
         if mode == NPCToons.QUEST_MOVIE_COMPLETE:
+            self.clearQuestIcon()
             questId, toNpcId = quests
             if isLocalToon:
                 self.setupCamera(mode)
@@ -167,6 +165,7 @@ class NPCToon(NPCToonBase):
             if leavingString:
                 fullString += '\x07' + leavingString
         elif mode == NPCToons.QUEST_MOVIE_ASSIGN:
+            self.clearQuestIcon()
             questId, toNpcId = quests
             if isLocalToon:
                 self.setupCamera(mode)
@@ -184,6 +183,7 @@ class NPCToon(NPCToonBase):
                 self.questChoiceGui.setQuests(quests, npcId, ChoiceTimeout)
             return
         elif mode == NPCToons.QUEST_MOVIE_TRACK_CHOICE:
+            self.clearQuestIcon()
             if isLocalToon:
                 self.setupCamera(mode)
             tracks = quests
