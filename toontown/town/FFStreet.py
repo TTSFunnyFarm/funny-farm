@@ -23,8 +23,8 @@ class FFStreet(Street):
         if self.zoneId == FunnyFarmGlobals.RicketyRoad:
             self.trainSfx.play()
             self.audio3d.attachSoundToObject(self.trainSfx, self.train)
-            self.waterShader.waterPos = -1.75
-            # The water here, g16, also affects the fence
+            self.waterShader.waterPos = -1.5
+            self.waterShader.start('water', self.geom, self.sky)
 
     def exit(self):
         Street.exit(self)

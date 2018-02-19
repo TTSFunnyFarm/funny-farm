@@ -25,7 +25,7 @@ class FFHood(ToonHood):
     def enter(self, shop=None, tunnel=None, init=0):
         self.loadQuestChanges()
         ToonHood.enter(self, shop=shop, tunnel=tunnel, init=init)
-        # The water in the pond, tugOfWar_shadow, spills outside the pond into the shadow
+        self.waterShader.start('water', self.geom, self.sky)
         if hasattr(self, 'snow'):
             self.snow.start(camera, self.snowRender)
 
@@ -39,6 +39,7 @@ class FFHood(ToonHood):
     def load(self):
         ToonHood.load(self)
         self.waterShader = WaterShader.WaterShader()
+        self.waterShader.waterPos = 1.05
         if base.air.holidayMgr.isWinter():
             self.snow = BattleParticles.loadParticleFile('snowdisk.ptf')
             self.snow.setPos(0, 0, 5)
@@ -48,6 +49,7 @@ class FFHood(ToonHood):
 
     def unload(self):
         ToonHood.unload(self)
+        self.waterShader.stop()
         self.waterShader = None
         if hasattr(self, 'snow'):
             self.snow.cleanup()
