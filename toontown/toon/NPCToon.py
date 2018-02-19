@@ -316,7 +316,7 @@ class NPCToon(NPCToonBase):
          self.npcId,
          avId,
          [questId, toNpcId])
-        taskMgr.doMethodLater(60.0, self.sendTimeoutMovie, self.uniqueName('clearMovie'))
+        # taskMgr.doMethodLater(60.0, self.sendTimeoutMovie, self.uniqueName('clearMovie'))
 
     def presentQuestChoice(self, avId, quests):
         self.busy = avId
