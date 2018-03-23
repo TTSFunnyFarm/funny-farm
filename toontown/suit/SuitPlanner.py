@@ -13,11 +13,9 @@ class SuitPlanner(DirectObject):
         self.accept('generateSuit', self.createNewSuit)
         self.accept('removeSuit', self.removeSuit)
         self.accept('removeActiveSuit', self.removeActiveSuit)
-        taskMgr.add(self.__checkBattleRange, 'checkBattleRange')
 
     def delete(self):
         self.ignoreAll()
-        taskMgr.remove('checkBattleRange')
         taskMgr.remove('%d-sptCreateSuit' % self.zoneId)
         taskMgr.remove('%d-sptRemoveSuit' % self.zoneId)
         del self.zoneId
@@ -97,6 +95,12 @@ class SuitPlanner(DirectObject):
         for doId in self.activeSuits.keys():
             suit = self.activeSuits[doId]
             self.deleteSuit(suit)
+
+    def startCheckBattleRange(self):
+        taskMgr.add(self.__checkBattleRange, 'checkBattleRange')
+
+    def stopCheckBattleRange(self):
+        taskMgr.remove('checkBattleRange')
 
     def __checkBattleRange(self, task):
         # Checks for suits walking into our battle

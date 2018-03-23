@@ -97,10 +97,12 @@ class Street(ToonHood):
         self.battle.enter()
         musicMgr.stopMusic()
         base.playMusic(self.battleMusic, looping=1)
+        self.sp.startCheckBattleRange()
         self.accept(self.townBattle.doneEvent, self.exitBattle)
 
     def exitBattle(self, doneStatus):
         self.ignore(self.townBattle.doneEvent)
+        self.sp.stopCheckBattleRange()
         self.battleMusic.stop()
         musicMgr.playCurrentZoneMusic()
         self.battle.cleanupBattle()
