@@ -276,6 +276,9 @@ class BattleSuit(Suit, SuitBase):
         self.lifter.setReach(6.0)
         self.lifter.setMaxVelocity(8.0)
         self.lifter.addCollider(self.cRayNodePath, self)
+        self.lifter.addInPattern('enter%in')
+        self.lifter.addAgainPattern(str(self.doId) + '-again%in')
+        self.lifter.addOutPattern('exit%in')
         self.cTrav = base.cTrav
 
     def disableBodyCollisions(self):
