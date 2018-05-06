@@ -1,4 +1,6 @@
+from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
+from direct.interval.IntervalGlobal import *
 from VisGroups import VisGroups
 
 class TownLoader(DirectObject):
@@ -10,6 +12,8 @@ class TownLoader(DirectObject):
         self.currGroup = None
         self.groups = {}
         self.streets = {}
+        self.fadeInDict = {}
+        self.fadeOutDict = {}
 
     def enter(self):
         # Sets up listeners for when any avatar, local or suit, hits a new ground collision
@@ -24,6 +28,8 @@ class TownLoader(DirectObject):
 
     def load(self):
         # Sets up all our lists and dictionaries
+        a1 = Vec4(1, 1, 1, 1)
+        a0 = Vec4(1, 1, 1, 0)
         self.visGroups = VisGroups.get(self.zoneId)
         for i in self.visGroups.keys():
             # Add all of the possible collision triggers (street parts) to a list
@@ -38,7 +44,11 @@ class TownLoader(DirectObject):
                     if not collision.isEmpty():
                         self.streets[street] = i
             # Add the visgroup to a dictionary of visgroups!
-            self.groups[i] = self.streetClass.geom.find('**/%d' % i)
+            groupNode = self.streetClass.geom.find('**/%d' % i)
+            self.groups[i] = groupNode
+            fadeDuration = 0.5
+            self.fadeOutDict[groupNode] = Sequence(Func(groupNode.setTransparency, 1), LerpColorScaleInterval(groupNode, fadeDuration, a0, startColorScale=a1), Func(groupNode.clearColorScale), Func(groupNode.clearTransparency), Func(groupNode.hide), name='fadeZone-' + str(i), autoPause=1)
+            self.fadeInDict[groupNode] = Sequence(Func(groupNode.show), Func(groupNode.setTransparency, 1), LerpColorScaleInterval(groupNode, fadeDuration, a1, startColorScale=a0), Func(groupNode.clearColorScale), Func(groupNode.clearTransparency), name='fadeZone-' + str(i), autoPause=1)
 
     def unload(self):
         del self.visGroups
@@ -77,9 +87,11 @@ class TownLoader(DirectObject):
         for i in self.visGroups.keys():
             group = self.groups[i]
             if i not in self.visGroups[self.currGroup]:
-                group.hide()
+                if not group.isHidden():
+                    self.fadeOutDict[group].start()
             else:
-                group.show()
+                if group.isHidden():
+                    self.fadeInDict[group].start()
         # Update visible npcs
         for npc in self.streetClass.npcs:
             group = int(npc.origin.getParent().getName())
@@ -123,6 +135,9 @@ class TownLoader(DirectObject):
         # Updates the visibility of building nametags, based on the avatar's location
         for bldg in self.streetClass.buildings:
             if bldg.getBuildingNodePath().isEmpty():
+                continue
+            if bldg.getBuildingNodePath().isHidden():
+                bldg.clearNametag()
                 continue
             origin = bldg.getBuildingNodePath().find('**/*door_origin*')
             dist = (base.localAvatar.getPos(self.streetClass.geom) - origin.getPos(self.streetClass.geom)).length()
