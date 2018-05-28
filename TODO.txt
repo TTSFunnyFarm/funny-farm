@@ -1,6 +1,8 @@
 - Cog gallery page
 - Track training page
 - Populate Funny Farm with random NPCs
+- Create second page for video options
+- Add wallpaper to shops
 
 Jobs for people besides Patrick:
   - Come up with Funny Farm ToonTasks for teleport access, carry 2 toontasks, carry 80 jellybeans, etc.
