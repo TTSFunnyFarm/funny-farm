@@ -10,6 +10,12 @@ class QuestManager:
         toNpcId = Quests.getToNpcId(questId)
         npc.assignQuest(base.localAvatar.doId, questId, toNpcId)
         base.localAvatar.addQuest(questId)
+        # This is a special case for delivery quests; we want it to show the 
+        # green complete task when they're heading back to whoever assigned it.
+        if Quests.getQuestType(questId)[0] == Quests.QuestTypeDeliver \
+        and Quests.getQuestFinished(questId) \
+        and Quests.getFromNpcId(questId) == Quests.getToNpcId(questId):
+            base.localAvatar.setQuestProgress(questId, 1)
 
     def completeQuest(self, npc, questId):
         base.localAvatar.removeQuest(questId)
@@ -30,7 +36,7 @@ class QuestManager:
             base.localAvatar.enable()
             base.localAvatar.disable()
             base.localAvatar.setAnimState('neutral')
-            taskMgr.doMethodLater(1.5, self.__handleCompleteQuest, 'completeQuest', [npc, nextQuest])
+            taskMgr.doMethodLater(2.0, self.__handleCompleteQuest, 'completeQuest', [npc, nextQuest])
         else:
             self.__handleCompleteQuest(npc, nextQuest)
 

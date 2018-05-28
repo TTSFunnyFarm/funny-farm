@@ -4,6 +4,7 @@ from direct.showbase import Audio3DManager
 from toontown.shader import WaterShader
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.hood import SkyUtil
+from toontown.toon import NPCToons
 from Street import Street
 
 class FFStreet(Street):
@@ -19,6 +20,7 @@ class FFStreet(Street):
         self.waterShader = None
 
     def enter(self, shop=None, tunnel=None):
+        self.loadQuestChanges()
         Street.enter(self, shop=shop, tunnel=tunnel)
         if self.zoneId == FunnyFarmGlobals.RicketyRoad:
             self.trainSfx.play()
@@ -28,6 +30,7 @@ class FFStreet(Street):
 
     def exit(self):
         Street.exit(self)
+        self.unloadQuestChanges()
         self.waterShader.stop()
         self.waterShader.waterPos = 0
         if self.zoneId == FunnyFarmGlobals.RicketyRoad:
@@ -45,6 +48,29 @@ class FFStreet(Street):
         self.waterShader = None
         if self.zoneId == FunnyFarmGlobals.RicketyRoad:
             self.unloadTrain()
+
+    def startActive(self):
+        Street.startActive(self)
+        if self.zoneId == FunnyFarmGlobals.RicketyRoad:
+            self.accept('entertrain_collision', self.__handleTrainCollision)
+            self.ignore('entertunnel_trigger_ss_2100') # temporary
+
+    def loadQuestChanges(self):
+        for questDesc in base.localAvatar.quests:
+            if questDesc[0] in range(1019, 1023):
+                self.npcs.append(NPCToons.createLocalNPC(1114, True))
+                origin = self.geom.find('**/npc_origin_1')
+                self.npcs[1].reparentTo(self.geom)
+                self.npcs[1].setPosHpr(origin, 0, 0, 0, 0, 0, 0)
+                self.npcs[1].origin = origin
+                self.npcs[1].initializeBodyCollisions('toon')
+                self.npcs[1].addActive()
+                return
+
+    def unloadQuestChanges(self):
+        if len(self.npcs) > 1:
+            self.npcs[1].delete()
+            del self.npcs[1]
 
     def loadTrain(self):
         self.train = loader.loadModel('phase_5/models/props/train')
@@ -69,12 +95,6 @@ class FFStreet(Street):
         del self.trainLoop
         del self.trainSfx
         del self.audio3d
-
-    def startActive(self):
-        Street.startActive(self)
-        if self.zoneId == FunnyFarmGlobals.RicketyRoad:
-            self.accept('entertrain_collision', self.__handleTrainCollision)
-            self.ignore('entertunnel_trigger_ss_2100') # temporary
 
     def __handleTrainCollision(self, entry):
         base.localAvatar.disable()

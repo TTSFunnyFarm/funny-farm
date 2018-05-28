@@ -161,6 +161,8 @@ class Quest:
             self.percentChance = self.questType[3]
             self.holder = self.questType[4]
             self.holderType = self.questType[5]
+        elif self.questType[0] == QuestTypeDeliver:
+            self.item = self.questType[1] 
         # todo finish quest types
         self.fromNpc = questInfo[4]
         self.toNpc = questInfo[5]
@@ -374,7 +376,10 @@ class Quest:
                  'name': ItemDict[item][1]}
             return [itemName, holderName]
         elif self.getType() == QuestTypeDeliver:
-            return [ItemDict[self.getItem()]]
+            iDict = ItemDict[self.getItem()]
+            article = iDict[2]
+            itemName = iDict[0]
+            return [article + itemName]
         elif self.getType() == QuestTypeDeliverGag:
             track, item = self.getGagType()
             num = self.getNumGags()
@@ -736,7 +741,7 @@ QuestDict = {
         1001,
         1514,
         (QuestRewardXP,
-         40),
+         20),
         1018,
         TTLocalizer.QuestDialogDict[1017]),
  1018: (FF_TIER,
@@ -747,20 +752,133 @@ QuestDict = {
         1111,
         1616,
         (QuestRewardXP,
-         40),
+         20),
         1019,
         TTLocalizer.QuestDialogDict[1018]),
  1019: (FF_TIER,
         MainQuest,
-        Cont,
+        Finish,
         (QuestTypeGoTo,),
         1111,
         1114,
         1100,
         (QuestRewardXP,
-         40),
+         20),
+        1020,
+        TTLocalizer.QuestDialogDict[1019]),
+ 1020: (FF_TIER,
+        MainQuest,
+        Finish,
+        (QuestTypeRecover,
+         1,
+         2,
+         30,
+         3,
+         'level',
+         FunnyFarmGlobals.RicketyRoad),
+        1114,
+        1114,
+        1100,
+        (QuestRewardXP,
+         45),
+        1021,
+        TTLocalizer.QuestDialogDict[1020]),
+ 1021: (FF_TIER,
+        MainQuest,
+        Finish,
+        (QuestTypeRecover,
+         3,
+         3,
+         40,
+         Any,
+         Any,
+         FunnyFarmGlobals.RicketyRoad),
+        1114,
+        1114,
+        1100,
+        (QuestRewardXP,
+         45,
+         QuestRewardTrackFrame,
+         5),
+        1022,
+        TTLocalizer.QuestDialogDict[1021]),
+ 1022: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeGoTo,),
+        1114,
+        1111,
+        1616,
+        (QuestRewardXP,
+         50),
+        1023,
+        TTLocalizer.QuestDialogDict[1022]),
+ 1023: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeDeliver,
+         4),
+        1111,
+        1109,
+        1614,
+        (QuestRewardXP,
+         50),
+        1024,
+        TTLocalizer.QuestDialogDict[1023]),
+ 1024: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeDeliver,
+         4),
+        1111,
+        1112,
+        1617,
+        (QuestRewardXP,
+         50),
+        1025,
+        TTLocalizer.QuestDialogDict[1024]),
+ 1025: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeDeliver,
+         4),
+        1111,
+        1108,
+        1613,
+        (QuestRewardXP,
+         50),
+        1026,
+        TTLocalizer.QuestDialogDict[1025]),
+ 1026: (FF_TIER,
+        MainQuest,
+        Finish,
+        (QuestTypeDeliver,
+         4),
+        1111,
+        1111,
+        1616,
+        (QuestRewardXP,
+         50),
+        1027,
+        TTLocalizer.QuestDialogDict[1026]),
+ 1027: (FF_TIER,
+        MainQuest,
+        Finish,
+        (QuestTypeDefeatCog,
+         6,
+         Any,
+         Any,
+         Any,
+         FunnyFarmGlobals.RicketyRoad),
+        1111,
+        1111,
+        1616,
+        (QuestRewardXP,
+         50,
+         QuestRewardTrackFrame,
+         6),
         NA,
-        TTLocalizer.QuestDialogDict[1019])
+        TTLocalizer.QuestDialogDict[1027])
 }
 
 Cutscenes = (1,
@@ -780,6 +898,12 @@ def getQuest(id):
 
 def getQuestFinished(id):
     return QuestDict.get(id)[2]
+
+def getQuestType(id):
+    return QuestDict.get(id)[3]
+
+def getFromNpcId(id):
+    return QuestDict.get(id)[4]
 
 def getToNpcId(id):
     toNpcId = QuestDict.get(id)[5]

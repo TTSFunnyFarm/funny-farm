@@ -461,7 +461,10 @@ QuestsLargeBag = 'Large Bag'
 QuestsSmallBackpack = 'Small Backpack'
 QuestsMediumBackpack = 'Medium Backpack'
 QuestsLargeBackpack = 'Large Backpack'
-QuestsItemDict = {1: ['Part of a Memo', 'Parts of a Memo', 'a ']}
+QuestsItemDict = {1: ['Part of a Memo', 'Parts of a Memo', 'a '],
+ 2: ['Gags', 'Gags', ''],
+ 3: ['Appliance Part', 'Appliance Parts', 'an '],
+ 4: ['Sausages', 'Sausages', '']}
 QuestsHQOfficerFillin = lHQOfficerM
 QuestsHQWhereFillin = ''
 QuestsHQBuildingNameFillin = lToonHQ
@@ -537,10 +540,39 @@ QuestDialogDict = {
         QUEST: 'I bring good news! I\'ve found a piece of paper!\x07It seems to be ripped. Perhaps we\'ll need a stapler.\x07You say you possess the other parts of this letter?\x07Excellent! You should be able to use this better.\x07You could take it to Flippy and settle the rest.\x07Thanks for your help, I wish you the best!'},
  1018: {GREETING: '',
         LEAVING: '',
-        QUEST: 'You found the last piece of the memo!\x07Toontastic! Let\'s see what it says...\x07"Soon the power of the Toons will lie in the hands of the corporation..."\x07"All ground forces are to maintain their current position until further notice."\x07"Signed, Mover & Shaker, Manager."\x07Well, I think it\'s clear we need to hunt down this "manager" and shut down this operation!\x07Go speak to Mr. Wurst.\x07He is the president of the Rickety Road Association.\x07Let him know what\'s going on, so he can help us begin a full-fledged search._where_'},
+        QUEST: 'You found the last piece of the memo!\x07Toontastic! Let\'s see what it says...\x07"Soon the power of the Toons will lie in the hands of the corporation..."\x07"All ground forces are to maintain their current position until further notice."\x07"Signed, Mover & Shaker, Manager."\x07Manager? Hmm.\x07If we can find the manager, we can shut down this operation once and for all!\x07Go speak to Mr. Wurst.\x07He is the president of the Rickety Road Association.\x07Let him know what\'s going on, so he can help us begin a full-fledged search._where_'},
  1019: {GREETING: '',
         LEAVING: '',
-        QUEST: 'Hello. What can I help you with?\x07You recovered a letter from the Cogs? Let me read that...\x07Hmm...\x07Ah, OK, and Flippy sent you here so that I could inform all of Rickety Road to search for this "manager".\x07Done. I\'ll get right on that.\x07In the meantime, could you help me out?\x07I sent my assistant to retrieve some parts to fix one of our appliances, but he hasn\'t returned in a while.\x07Will you go out and look for him?\x07Just help him get back here safely.'}
+        QUEST: 'Hello. What can I help you with?\x07You recovered a letter from the Cogs? Let me read that...\x07Hmm...\x07Ah, OK, and Flippy sent you here so that I could inform all of Rickety Road to search for this "manager".\x07Done. I\'ll get right on that.\x07In the meantime, could you help me out?\x07I sent my assistant to retrieve some parts for one of our appliances, but he hasn\'t returned in a while.\x07Will you go out and look for him?\x07Just help him get back here safely.',
+        COMPLETE: 'Oh, jeez, you scared me.'},
+ 1020: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Ahem, I mean, no I\'m not scared! Those Cogs are no match for me.\x07What\'s that? We weren\'t talking about Cogs. Right.\x07I\'m just enjoying nature over here. Nothing to worry about.\x07Uh oh, Mr. Wurst sent you? He\'s gonna be so mad...\x07Look, I tried fighting some Cogs for some parts, but they took all my gags!\x07They were really strong Cogs. Could you get them back for me?',
+        COMPLETE: 'Oh, thank you so much!\x07I was about to go broke!'},
+ 1021: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'I still have a problem though.\x07I didn\'t get any of the parts Mr. Wurst asked me to get.\x07I hate to bother you, but...\x07Can you collect them for me?\x07There are three different appliance parts I need to get.\x07I don\'t think I\'m ready to take on any more Cogs yet.',
+        COMPLETE: 'Thanks dude! You\'re a legend!'},
+ 1022: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'You can tell Mr. Wurst I\'ll be back soon.\x07And thanks for covering me, man.\x07Without your help I might be out of a job!'},
+ 1023: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Ah, it\'s good to hear he\'ll get back here safely.\x07Now, I spent a lot of time sending out messages to the shopkeepers.\x07As a result, I\'ve fallen behind in my deliveries!\x07Will you do me a favor and deliver these sausages to everyone on my list?\x07I will amply reward you.'},
+ 1024: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Yes, thank you!\x07These are my favorite foods to serve during comedy shows.\x07They\'re absolutely the Wurst, and everyone knows they\'re the Wurst!'},
+ 1025: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Oh good, I was getting hungry.\x07I just needed a quick meal for my lunch break.\x07Let\'s have a bite...\x07Blech. Yep. Still terrible. These are the Wurst.\x07Thanks.'},
+ 1026: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Greetings, my friend! How do you do?\x07You have my sausages! I knew Brad wouldn\'t fall through.\x07When it comes to sausages, this choice is my first.\x07But as far as the taste--these are awful, just the Wurst!',
+        COMPLETE: 'Excellent work! That saves me a lot of time.\x07Maybe I should hire you as my new delivery toon...'},
+ 1027: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'I\'m afraid there\'s not much we can do until we receive a new lead on the manager Cog.\x07As we await a new message, you should keep defeating Cogs on this street.\x07You seem to be a good fighter, and defeating any Cogs will help alleviate our problem.',
+        COMPLETE: 'Good work, _avName_.\x07Funny Farm owes you a debt of gratitude for fighting off those pests.'}
 }
 CutsceneDialogDict = {
  1001: 'Hmm... It doesn\'t look like Flippy is in here.\x07Maybe you should check back outside.',
