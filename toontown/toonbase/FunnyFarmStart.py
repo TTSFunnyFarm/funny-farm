@@ -112,7 +112,6 @@ class FunnyFarmStart:
 
         self.notify.info('Initializing AI Repository...')
         base.air = FFAIRepository()
-        base.air.preloadAvatars()
         base.air.createManagers()
         loader.loadingScreen.load()
 
@@ -128,11 +127,15 @@ class FunnyFarmStart:
         base.initNametagGlobals()
         base.startShow(cr)
         # Can't start a new thread right away otherwise we'll crash panda
-        taskMgr.doMethodLater(0.1, self.startAI, 'startAI')
+        taskMgr.doMethodLater(0.1, self.startAIThread, 'startAI')
 
-    def startAI(self, task):
-        threading.Thread(target=base.air.createSafeZones).start()
+    def startAIThread(self, task):
+        threading.Thread(target=self.startAI).start()
         return task.done
+
+    def startAI(self):
+        base.air.preloadAvatars()
+        base.air.createSafeZones()
 
 __builtin__.start = FunnyFarmStart()
 
