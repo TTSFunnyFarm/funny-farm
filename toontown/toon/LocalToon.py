@@ -126,6 +126,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             self.quests = []
             self.questHistory = []
             self.experienceBar = None
+            self.hoodsVisited = []
+            self.teleportAccess = []
 
     def generate(self):
         self.walkDoneEvent = 'walkDone'
@@ -534,7 +536,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
     def setQuestHistory(self, history):
         self.questHistory = history  
 
-    def getQuestHistory(self, history):
+    def getQuestHistory(self):
         return self.questHistory
 
     def addQuestHistory(self, quest):
@@ -572,6 +574,22 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def getTrackProgress(self):
         return [self.trackProgressId, self.trackProgress]
+
+    def setHoodsVisited(self, hoodList):
+        self.hoodsVisited = hoodList
+        base.avatarData.setHoodsVisited = self.hoodsVisited
+        dataMgr.saveToonData(base.avatarData)
+
+    def getHoodsVisited(self):
+        return self.hoodsVisited
+
+    def setTeleportAccess(self, hoodList):
+        self.teleportAccess = hoodList
+        base.avatarData.setTeleportAccess = self.teleportAccess
+        dataMgr.saveToonData(base.avatarData)
+
+    def getTeleportAccess(self):
+        return self.teleportAccess
 
     def setLevel(self, level):
         self.level = level
@@ -809,15 +827,23 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         else:
             zoneId = currZone.zoneId
         for questDesc in self.quests:
-            if questDesc[0] in Quests.Cutscenes:
+            if questDesc[0] in Quests.Cutscenes and not self.hasQuestHistory(questDesc[0]):
                 if zoneId == Quests.getToNpcLocation(questDesc[0]) and questDesc[1] == 0:
                     base.cr.cutsceneMgr.enterCutscene(questDesc[0])
                     return True
             # Special cases
+            # "Ride the trolley" info bubble
             if questDesc[0] == 1007 and not self.hasQuestHistory(1):
                 if zoneId == FunnyFarmGlobals.FunnyFarm:
                     base.cr.cutsceneMgr.enterCutscene(1007)
                     return True
+            # Carry 2 ToonTasks info bubble
+            if questDesc[0] == 1014 and not self.hasQuestHistory(4):
+                if zoneId == FunnyFarmGlobals.FunnyFarm:
+                    # base.cr.cutsceneMgr.enterCutscene(1014)
+                    # return True
+                    pass
+
         return False
 
     def showInfoBubble(self, index, doneEvent):
@@ -1545,12 +1571,12 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
                 self.hpText.setBillboardAxis()
                 offset = 0
                 if carryIndex:
-                    if carryIndex == 5:
+                    if carryIndex == 6:
                         self.HpTextGenerator.setText(TTLocalizer.RewardCarryToonTasksText % carryAmount)
-                    elif carryIndex == 6:
-                        self.HpTextGenerator.setText(TTLocalizer.RewardCarryJellybeansText % carryAmount)
                     elif carryIndex == 7:
-                        self.HpTextGenerator.setText(TTLocalizer.RewardCarryGagsText % carryAmount)
+                        self.HpTextGenerator.setText(TTLocalizer.RewardCarryGagsText % carryAmount)  
+                    elif carryIndex == 8:
+                        self.HpTextGenerator.setText(TTLocalizer.RewardCarryJellybeansText % carryAmount)
                     self.HpTextGenerator.setTextColor(Vec4(0.9, 0.6, 0, 1))
                     self.auxText = self.attachNewNode(self.HpTextGenerator.generate())
                     self.auxText.setScale(scale * 0.7)

@@ -3,6 +3,7 @@ from toontown.toon import Toon, ToonHead
 from toontown.toon import NPCToons
 from toontown.hood import FFHoodAI
 from toontown.hood import SSHoodAI
+from toontown.quest import Quests
 from HolidayManagerAI import HolidayManagerAI
 
 class FFAIRepository(DirectObject):
@@ -25,6 +26,7 @@ class FFAIRepository(DirectObject):
         Toon.loadDialog()
         NPCToons.generateZone2NpcDict()
         ToonHead.preloadToonHeads()
+        Quests.createQuestLists()
 
     def createManagers(self):
         self.notify.info('Creating managers...')

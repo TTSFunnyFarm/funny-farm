@@ -28,6 +28,7 @@ INCOMPLETE_WRONG_NPC = 4
 COMPLETE = 5
 LEAVING = 6
 Any = 1
+Start = 2
 Cont = 0
 Finish = 1
 Anywhere = 1
@@ -51,15 +52,27 @@ QuestRewardXP = 1
 QuestRewardGagTraining = 2
 QuestRewardTrackFrame = 3
 QuestRewardNewGag = 4
-QuestRewardCarryToonTasks = 5
-QuestRewardCarryJellybeans = 6
+QuestRewardTeleportAccess = 5
+QuestRewardCarryToonTasks = 6
 QuestRewardCarryGags = 7
-QuestRewardJellybeans = 8
-QuestRewardCheesyEffect = 9
+QuestRewardCarryJellybeans = 8
+QuestRewardJellybeans = 9
+QuestRewardCheesyEffect = 10
+SpecialRewards = (QuestRewardTeleportAccess,
+ QuestRewardCarryGags,
+ QuestRewardCarryJellybeans)
 FF_TIER = 0
 SS_TIER = 2
 CV_TIER = 4
 MM_TIER = 6
+QuestRandGen = random.Random()
+Session = id(QuestRandGen)
+
+def seedRandomGen(npcId, avId, tier):
+    QuestRandGen.seed(Session + npcId + avId + tier)
+
+def seededRandomChoice(seq):
+    return QuestRandGen.choice(seq)
 
 def getCompleteStatusWithNpc(questComplete, toNpcId, npc):
     if questComplete:
@@ -284,6 +297,9 @@ class Quest:
             return TTLocalizer.QuestsRecoverItemQuestHeadline
         elif self.getType() == QuestTypeDeliver or self.getType() == QuestTypeDeliverGag:
             return TTLocalizer.QuestsDeliverItemQuestHeadline
+
+    def getDefaultQuestDialog(self):
+        return self.getString() + TTLocalizer.Period
 
     def getProgressString(self):
         if self.getCompletionStatus() == COMPLETE:
@@ -514,12 +530,27 @@ DefaultDialog = {GREETING: DefaultGreeting,
  COMPLETE: DefaultComplete,
  LEAVING: DefaultLeaving}
 
+RewardDialog = {QuestRewardNone: '',
+ QuestRewardXP: '',
+ QuestRewardGagTraining: TTLocalizer.QuestsTrackTrainingReward,
+ QuestRewardTrackFrame: '',
+ QuestRewardNewGag: '',
+ QuestRewardTeleportAccess: TTLocalizer.QuestsTeleportReward,
+ QuestRewardCarryToonTasks: '',
+ QuestRewardCarryGags: '',
+ QuestRewardCarryJellybeans: '',
+ QuestRewardJellybeans: TTLocalizer.QuestsMoneyRewardPlural,
+ QuestRewardCheesyEffect: {'i': TTLocalizer.CheesyEffectIndefinite,
+  'm': TTLocalizer.CheesyEffectMinutes,
+  'h': TTLocalizer.CheesyEffectHours,
+  'd': TTLocalizer.CheesyEffectDays}}
+
 QuestDict = {
  # These first few quests are kind of weird because I'm
  # trying to plan out how cutscenes will fit in and stuff
  1001: (FF_TIER,
         MainQuest,
-        Cont,
+        Start,
         (QuestTypeGoTo,),
         NA,
         1001,
@@ -541,7 +572,7 @@ QuestDict = {
         DefaultDialog),
  1003: (FF_TIER,          # Quest tier
         MainQuest,        # Quest category
-        Finish,           # Whether the quest is finished or continuing
+        Finish,           # Quest status: Start, Cont, or Finish
         (QuestTypeGoTo,), # Quest type (& info)
         NA,               # From npc id
         1001,             # To npc id
@@ -552,7 +583,7 @@ QuestDict = {
         TTLocalizer.QuestDialogDict[1003]), # Dialog dict
  1004: (FF_TIER,
         MainQuest,
-        Cont,
+        Start,
         (QuestTypeGoTo,),
         NA,
         NA,
@@ -600,7 +631,7 @@ QuestDict = {
         TTLocalizer.QuestDialogDict[1007]),
  1008: (FF_TIER,
         MainQuest,
-        Cont,
+        Start,
         (QuestTypeGoTo,),
         1001,
         1107,
@@ -631,7 +662,7 @@ QuestDict = {
         TTLocalizer.QuestDialogDict[1009]),
  1010: (FF_TIER,
         MainQuest,
-        Cont,
+        Start,
         (QuestTypeGoTo,),
         1107,
         1112,
@@ -662,13 +693,15 @@ QuestDict = {
         TTLocalizer.QuestDialogDict[1011]),
  1012: (FF_TIER,
         MainQuest,
-        Cont,
+        Start,
         (QuestTypeGoTo,),
         1112,
         1001,
         1514,
         (QuestRewardXP,
-         30),
+         30,
+         QuestRewardCarryToonTasks,
+         2),
         1013,
         TTLocalizer.QuestDialogDict[1012]),
  1013: (FF_TIER,
@@ -685,12 +718,14 @@ QuestDict = {
         Same,
         1514,
         (QuestRewardXP,
-         30),
+         30,
+         QuestRewardCarryToonTasks,
+         2),
         1014,
         TTLocalizer.QuestDialogDict[1013]),
  1014: (FF_TIER,
         MainQuest,
-        Cont,
+        Start,
         (QuestTypeGoTo,),
         1001,
         1108,
@@ -735,7 +770,7 @@ QuestDict = {
         TTLocalizer.QuestDialogDict[1016]),
  1017: (FF_TIER,
         MainQuest,
-        Cont,
+        Start,
         (QuestTypeGoTo,),
         1108,
         1001,
@@ -804,7 +839,7 @@ QuestDict = {
         TTLocalizer.QuestDialogDict[1021]),
  1022: (FF_TIER,
         MainQuest,
-        Cont,
+        Start,
         (QuestTypeGoTo,),
         1114,
         1111,
@@ -855,7 +890,7 @@ QuestDict = {
         (QuestTypeDeliver,
          4),
         1111,
-        1111,
+        Same,
         1616,
         (QuestRewardXP,
          50),
@@ -878,14 +913,395 @@ QuestDict = {
          QuestRewardTrackFrame,
          6),
         NA,
-        TTLocalizer.QuestDialogDict[1027])
+        TTLocalizer.QuestDialogDict[1027]),
+ 1040: (FF_TIER,
+        MainQuest,
+        Start,
+        (QuestTypeGoTo,),
+        ToonHQ,
+        1106,
+        1611,
+        (QuestRewardXP,
+         40,
+         QuestRewardTeleportAccess,
+         FunnyFarmGlobals.FunnyFarm),
+        1041,
+        TTLocalizer.QuestDialogDict[1040]),
+ 1041: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeDeliver,
+         5),
+        1106,
+        1107,
+        1612,
+        (QuestRewardXP,
+         40,
+         QuestRewardTeleportAccess,
+         FunnyFarmGlobals.FunnyFarm),
+        1042,
+        TTLocalizer.QuestDialogDict[1041]),
+ 1042: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeDeliver,
+         5),
+        1106,
+        1110,
+        1615,
+        (QuestRewardXP,
+         40,
+         QuestRewardTeleportAccess,
+         FunnyFarmGlobals.FunnyFarm),
+        1043,
+        TTLocalizer.QuestDialogDict[1042]),
+ 1043: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeDeliver,
+         5),
+        1106,
+        1113,
+        1618,
+        (QuestRewardXP,
+         40,
+         QuestRewardTeleportAccess,
+         FunnyFarmGlobals.FunnyFarm),
+        1044,
+        TTLocalizer.QuestDialogDict[1043]),
+ 1044: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeDeliver,
+         5),
+        1106,
+        Same,
+        1611,
+        (QuestRewardXP,
+         40,
+         QuestRewardTeleportAccess,
+         FunnyFarmGlobals.FunnyFarm),
+        1045,
+        TTLocalizer.QuestDialogDict[1044]),
+ 1045: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeDefeatCog,
+         3,
+         2,
+         's',
+         Any,
+         FunnyFarmGlobals.RicketyRoad),
+        1106,
+        Same,
+        1611,
+        (QuestRewardXP,
+         40,
+         QuestRewardTeleportAccess,
+         FunnyFarmGlobals.FunnyFarm),
+        1046,
+        TTLocalizer.QuestDialogDict[1045]),
+ 1046: (FF_TIER,
+        MainQuest,
+        Finish,
+        (QuestTypeDefeatCog,
+         3,
+         2,
+         'm',
+         Any,
+         FunnyFarmGlobals.RicketyRoad),
+        1106,
+        Same,
+        1611,
+        (QuestRewardXP,
+         40,
+         QuestRewardTeleportAccess,
+         FunnyFarmGlobals.FunnyFarm),
+        NA,
+        TTLocalizer.QuestDialogDict[1046]),
+
+ 1060: (FF_TIER,
+        JustForFun,
+        Finish,
+        (QuestTypeDefeatCog,
+         6,
+         Any,
+         Any,
+         Any,
+         Anywhere),
+        ToonHQ,
+        Same,
+        NA,
+        (QuestRewardCheesyEffect,
+         ToontownGlobals.CEBigHead),
+        NA,
+        DefaultDialog),
+ 1061: (FF_TIER,
+        JustForFun,
+        Finish,
+        (QuestTypeDefeatCog,
+         5,
+         Any,
+         's',
+         Any,
+         Anywhere),
+        ToonHQ,
+        Same,
+        NA,
+        (QuestRewardJellybeans,
+         40),
+        NA,
+        DefaultDialog),
+ 1062: (FF_TIER,
+        JustForFun,
+        Finish,
+        (QuestTypeDefeatCog,
+         5,
+         Any,
+         'm',
+         Any,
+         Anywhere),
+        ToonHQ,
+        Same,
+        NA,
+        (QuestRewardCheesyEffect,
+         ToontownGlobals.CEBigToon),
+        NA,
+        DefaultDialog),
+ 1063: (FF_TIER,
+        JustForFun,
+        Finish,
+        (QuestTypeDefeatCog,
+         5,
+         Any,
+         'l',
+         Any,
+         Anywhere),
+        ToonHQ,
+        Same,
+        NA,
+        (QuestRewardCheesyEffect,
+         ToontownGlobals.CESmallHead),
+        NA,
+        DefaultDialog),
+ 1064: (FF_TIER,
+        JustForFun,
+        Finish,
+        (QuestTypeDefeatCog,
+         5,
+         Any,
+         'c',
+         Any,
+         Anywhere),
+        ToonHQ,
+        Same,
+        NA,
+        (QuestRewardCheesyEffect,
+         ToontownGlobals.CESmallToon),
+        NA,
+        DefaultDialog),
+ 1065: (FF_TIER,
+        JustForFun,
+        Finish,
+        (QuestTypeDefeatCog,
+         4,
+         Any,
+         Any,
+         'cc',
+         Anywhere),
+        ToonHQ,
+        Same,
+        NA,
+        (QuestRewardJellybeans,
+         30),
+        NA,
+        DefaultDialog),
+ 1066: (FF_TIER,
+        JustForFun,
+        Finish,
+        (QuestTypeDefeatCog,
+         4,
+         Any,
+         Any,
+         'bf',
+         Anywhere),
+        ToonHQ,
+        Same,
+        NA,
+        (QuestRewardCheesyEffect,
+         ToontownGlobals.CEBigHead),
+        NA,
+        DefaultDialog),
+ 1067: (FF_TIER,
+        JustForFun,
+        Finish,
+        (QuestTypeDefeatCog,
+         4,
+         Any,
+         Any,
+         'pp',
+         Anywhere),
+        ToonHQ,
+        Same,
+        NA,
+        (QuestRewardJellybeans,
+         40),
+        NA,
+        DefaultDialog),
+ 1068: (FF_TIER,
+        JustForFun,
+        Finish,
+        (QuestTypeDefeatCog,
+         4,
+         Any,
+         Any,
+         'p',
+         Anywhere),
+        ToonHQ,
+        Same,
+        NA,
+        (QuestRewardCheesyEffect,
+         ToontownGlobals.CESmallToon),
+        NA,
+        DefaultDialog),
+ 1069: (FF_TIER,
+        JustForFun,
+        Finish,
+        (QuestTypeDefeatCog,
+         3,
+         Any,
+         Any,
+         'nd',
+         Anywhere),
+        ToonHQ,
+        Same,
+        NA,
+        (QuestRewardCheesyEffect,
+         ToontownGlobals.CESmallHead),
+        NA,
+        DefaultDialog),
+ 1070: (FF_TIER,
+        JustForFun,
+        Finish,
+        (QuestTypeDefeatCog,
+         3,
+         Any,
+         Any,
+         'tw',
+         Anywhere),
+        ToonHQ,
+        Same,
+        NA,
+        (QuestRewardCheesyEffect,
+         ToontownGlobals.CEBigToon),
+        NA,
+        DefaultDialog),
+ 1071: (FF_TIER,
+        JustForFun,
+        Finish,
+        (QuestTypeDefeatCog,
+         3,
+         Any,
+         Any,
+         'dt',
+         Anywhere),
+        ToonHQ,
+        Same,
+        NA,
+        (QuestRewardJellybeans,
+         50),
+        NA,
+        DefaultDialog),
+ 1072: (FF_TIER,
+        JustForFun,
+        Finish,
+        (QuestTypeDefeatCog,
+         3,
+         Any,
+         Any,
+         'ym',
+         Anywhere),
+        ToonHQ,
+        Same,
+        NA,
+        (QuestRewardJellybeans,
+         50),
+        NA,
+        DefaultDialog)
 }
 
 Cutscenes = (1,
  1001,
  1002,
  1004)
-ImportantQuests = (1004,)
+ImportantQuests = (1004,
+ 1031,
+ 1040,
+ 1046)
+ffMainQuests = []
+ffSideQuests = []
+ffJustForFunQuests = []
+ssMainQuests = []
+ssSideQuests = []
+ssJustForFunQuests = []
+cvMainQuests = []
+cvSideQuests = []
+cvJustForFunQuests = []
+mmMainQuests = []
+mmSideQuests = []
+mmJustForFunQuests = []
+mainQuestTiers = {}
+justForFunTiers = {}
+
+def createQuestLists():
+    for questId in QuestDict.keys():
+        quest = QuestDict[questId]
+        if quest[0] == FF_TIER or quest[0] == FF_TIER + 1:
+            if quest[1] == MainQuest:
+                ffMainQuests.append(questId)
+            elif quest[1] == SideQuest:
+                ffSideQuests.append(questId)
+            else:
+                ffJustForFunQuests.append(questId)
+        elif quest[0] == SS_TIER or quest[0] == SS_TIER + 1:
+            if quest[1] == MainQuest:
+                ssMainQuests.append(questId)
+            elif quest[1] == SideQuest:
+                ssSideQuests.append(questId)
+            else:
+                ssJustForFunQuests.append(questId)
+        elif quest[0] == CV_TIER or quest[0] == CV_TIER + 1:
+            if quest[1] == MainQuest:
+                cvMainQuests.append(questId)
+            elif quest[1] == SideQuest:
+                cvSideQuests.append(questId)
+            else:
+                cvJustForFunQuests.append(questId)
+        elif quest[0] == MM_TIER or quest[0] == MM_TIER + 1:
+            if quest[1] == MainQuest:
+                mmMainQuests.append(questId)
+            elif quest[1] == SideQuest:
+                mmSideQuests.append(questId)
+            else:
+                mmJustForFunQuests.append(questId)
+    global mainQuestTiers
+    global justForFunTiers
+    mainQuestTiers = {FF_TIER: ffMainQuests,
+     FF_TIER + 1: ffMainQuests,
+     SS_TIER: ssMainQuests,
+     SS_TIER + 1: ssMainQuests,
+     CV_TIER: cvMainQuests,
+     CV_TIER + 1: cvMainQuests,
+     MM_TIER: mmMainQuests,
+     MM_TIER + 1: mmMainQuests}
+    justForFunTiers = {FF_TIER: ffJustForFunQuests,
+     FF_TIER + 1: ffJustForFunQuests,
+     SS_TIER: ssJustForFunQuests,
+     SS_TIER + 1: ssJustForFunQuests,
+     CV_TIER: cvJustForFunQuests,
+     CV_TIER + 1: cvJustForFunQuests,
+     MM_TIER: mmJustForFunQuests,
+     MM_TIER + 1: mmJustForFunQuests}
 
 def getItemName(itemId):
     return ItemDict[itemId][0]
@@ -895,6 +1311,9 @@ def getPluralItemName(itemId):
 
 def getQuest(id):
     return Quest(id)
+
+def getQuestTier(id):
+    return QuestDict.get(id)[0]
 
 def getQuestFinished(id):
     return QuestDict.get(id)[2]
@@ -937,20 +1356,58 @@ def chooseQuestDialog(id, status):
     if questDialog == None:
         if status == QUEST:
             quest = getQuest(id)
-            questDialog = quest.getRewardString()
+            questDialog = quest.getDefaultQuestDialog()
         else:
             questDialog = DefaultDialog[status]
     if type(questDialog) == type(()):
-        return random.choice(questDialog)
-    else:
-        return questDialog
-    return
+        questDialog = random.choice(questDialog)
+    if getQuestFinished(id) == Finish and status == COMPLETE:
+        reward = getReward(id)
+        rewardDialog = RewardDialog[reward[0]]
+        if rewardDialog:
+            if reward[0] == QuestRewardJellybeans:
+                rewardDialog = rewardDialog % str(reward[1])
+            elif reward[0] == QuestRewardCheesyEffect:
+                effect = TTLocalizer.CheesyEffectDescriptions[reward[1]][1]
+                # todo determine the correct lengths of time for cheesy effects.
+                # right now they're permanent.
+                rewardDialog = rewardDialog['i'] % {'effectName': effect, 'whileIn': ''}
+            questDialog += '\x07' + rewardDialog
+    return questDialog
 
 def chooseQuestDialogReject():
     return random.choice(DefaultReject)
 
 def chooseQuestDialogTierNotDone():
     return random.choice(DefaultTierNotDone)
+
+def chooseJustForFunQuest(tier):
+    if tier == FF_TIER or tier == FF_TIER + 1:
+        return seededRandomChoice(ffJustForFunQuests)
+    elif tier == SS_TIER or tier == SS_TIER + 1:
+        return seededRandomChoice(ssJustForFunQuests)
+    elif tier == CV_TIER or tier == CV_TIER + 1:
+        return seededRandomChoice(cvJustForFunQuests)
+    elif tier == MM_TIER or tier == MM_TIER + 1:
+        return seededRandomChoice(mmJustForFunQuests)
+
+def chooseBestQuests(tier, npc, av):
+    seedRandomGen(npc.getNpcId(), av.getDoId(), tier)
+    bestQuests = []
+    flatAvQuests = []
+    total = 3
+    for questDesc in av.quests:
+        flatAvQuests.extend(questDesc)
+    if npc.getHq():
+        for questId in mainQuestTiers[tier]:
+            if len(bestQuests) < total and getQuestFinished(questId) == Start and getQuestTier(questId) == tier:
+                if len(getReward(questId)) > 2 and getReward(questId)[2] in SpecialRewards and questId not in flatAvQuests and not av.hasQuestHistory(questId):
+                    bestQuests.append(questId)
+    while len(bestQuests) < total:
+        questId = chooseJustForFunQuest(tier)
+        if questId not in bestQuests and questId not in flatAvQuests:
+            bestQuests.append(questId)
+    return bestQuests
 
 def getNpcInfo(npcId):
     npcName = NPCToons.getNPCName(npcId)

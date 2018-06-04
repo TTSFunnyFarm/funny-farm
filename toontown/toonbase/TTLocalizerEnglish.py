@@ -461,10 +461,11 @@ QuestsLargeBag = 'Large Bag'
 QuestsSmallBackpack = 'Small Backpack'
 QuestsMediumBackpack = 'Medium Backpack'
 QuestsLargeBackpack = 'Large Backpack'
-QuestsItemDict = {1: ['Part of a Memo', 'Parts of a Memo', 'a '],
+QuestsItemDict = {1: ['Part of a Memo', 'Parts of a Memo', ''],
  2: ['Gags', 'Gags', ''],
  3: ['Appliance Part', 'Appliance Parts', 'an '],
- 4: ['Sausages', 'Sausages', '']}
+ 4: ['Sausages', 'Sausages', ''],
+ 5: ['Milk', 'Milk', '']}
 QuestsHQOfficerFillin = lHQOfficerM
 QuestsHQWhereFillin = ''
 QuestsHQBuildingNameFillin = lToonHQ
@@ -572,7 +573,28 @@ QuestDialogDict = {
  1027: {GREETING: '',
         LEAVING: '',
         QUEST: 'I\'m afraid there\'s not much we can do until we receive a new lead on the manager Cog.\x07As we await a new message, you should keep defeating Cogs on this street.\x07You seem to be a good fighter, and defeating any Cogs will help alleviate our problem.',
-        COMPLETE: 'Good work, _avName_.\x07Funny Farm owes you a debt of gratitude for fighting off those pests.'}
+        COMPLETE: 'Good work, _avName_.\x07Funny Farm owes you a debt of gratitude for fighting off those pests.'},
+ 1040: {GREETING: '',
+        QUEST: 'Emma\'s dairy store called us for help earlier.\x07She is offering teleport access to anyone who can assist her._where_'},
+ 1041: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Howdy, partner!\x07Can ya lend a hand?\x07The milk man quit on me. Them Cogs must\'a scared him off.\x07But I got milk that needs deliverin\'!\x07Would ya be a sweetheart and take these packages to my customers?'},
+ 1042: {GREETING: 'Greetings!',
+        LEAVING: '',
+        QUEST: 'Thanks for the delivery!\x07I was running low on milk for today\'s cookies.'},
+ 1043: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Hey, I really appreciate this, man.\x07I just got this sudden craving for milk, you know?'},
+ 1044: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Yowza! Thanks for the package, friend!\x07I need the milk for my newest clown car...\x07This invention will forever change the Tooniverse!'},
+ 1045: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Thank ya kindly!\x07Now, I gotta go \'round town and post these help-wanted signs; otherwise I might lose my business!\x07I want you to take out some \'a them Cogs and reduce the threat \'round here.\x07Those bots are spinnin\' the economy outta control!'},
+ 1046: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Hey, that got a few of \'em!\x07But I think them money bots is the real problem.\x07They\'re takin\' our money straight from us!\x07Go out there and give \'em a piece of yer pie, will ya?\x07I got a special little treat for ya when ya get back.',
+        COMPLETE: 'Great work, partner!\x07Here\'s somethin\' that only the major-leaguers get.\x07You\'ll want it when travelin\' from far distances.\x07Ya now have teleport access to Funny Farm.'}
 }
 CutsceneDialogDict = {
  1001: 'Hmm... It doesn\'t look like Flippy is in here.\x07Maybe you should check back outside.',
@@ -598,7 +620,8 @@ InfoBubbleDialog = {
  0: 'You\'ve just received a new ToonTask!\x07When completed, you will gain experience and other rewards for your Toon!\x07Now head through the tunnel to find Flippy.',
  1: 'Remember, in order to defeat the Cogs you must buy gags.\x07You can ride the trolley to play minigames, earn jellybeans, and purchase gags.\x07Or if you already have some jellybeans on hand, head to Goofy\'s Gag Shop to purchase gags quickly!',
  2: MovieTutorialReward1,
- 3: MovieTutorialReward2
+ 3: MovieTutorialReward2,
+ 4: 'You can now carry two ToonTasks!\x07This means you can start working on multiple ToonTasks at the same time, for efficiency!\x07Whenever you see this icon above a Toon HQ, that means the officers have some important tasks for you to complete.\x07Otherwise, the HQ officers will always have "Just for fun!" ToonTasks available if you want some fun rewards.'
 }
 ChatGarblerDog = ['woof', 'arf', 'rruff']
 ChatGarblerCat = ['meow', 'mew']
@@ -5860,6 +5883,7 @@ CatalogCurrentButtonText = 'To Current Items'
 CatalogPastButtonText = 'To Past Items'
 TutorialHQOfficerName = 'HQ Harry'
 NPCToonNames = {20000: 'Tutorial Tom',
+ 1000: lToonHQ,
  1001: Flippy,
  1002: 'Clerk Clark',
  1003: 'Clerk Clara',
