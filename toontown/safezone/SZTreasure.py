@@ -8,3 +8,4 @@ class SZTreasure(Treasure):
 
     def __init__(self, air, treasurePlanner, x, y, z):
         Treasure.__init__(self, air, treasurePlanner, x, y, z)
+        self.healAmount = treasurePlanner.healAmount

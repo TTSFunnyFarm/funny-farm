@@ -8,6 +8,7 @@ class FFTreasurePlannerAI(RegenTreasurePlannerAI):
     notify = DirectNotifyGlobal.directNotify.newCategory('FFTreasurePlannerAI')
 
     def __init__(self, air, zoneId):
+        self.healAmount = 3
         RegenTreasurePlannerAI.__init__(self, air, zoneId, FFTreasure, 'FFTreasurePlanner', 20, 5)
 
     def initSpawnPoints(self):
