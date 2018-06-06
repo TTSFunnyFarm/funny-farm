@@ -14,6 +14,7 @@ class FFAIRepository(DirectObject):
         self.hoods = []
         self.cogHeadquarters = []
         self.modelMap = {}
+        self.treasurePlanners = {}
         self.suitPlanners = {}
         self.buildingManagers = {}
         self.isLoaded = 0
