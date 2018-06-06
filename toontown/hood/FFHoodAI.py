@@ -9,6 +9,6 @@ class FFHoodAI(HoodAI):
         HoodAI.__init__(self, air, FunnyFarmGlobals.FunnyFarm)
 
     def createTreasurePlanner(self):
-        treasurePlanner = FFTreasurePlannerAI(self.zoneId)
+        treasurePlanner = FFTreasurePlannerAI(self.air, self.zoneId)
         self.air.treasurePlanners[self.zoneId] = treasurePlanner
         treasurePlanner.start()
