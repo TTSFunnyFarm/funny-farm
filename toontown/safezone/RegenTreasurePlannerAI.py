@@ -1,3 +1,5 @@
+import random
+
 from direct.directnotify import DirectNotifyGlobal
 
 from toontown.safezone.TreasurePlannerAI import TreasurePlannerAI
@@ -13,4 +15,27 @@ class RegenTreasurePlannerAI(TreasurePlannerAI):
         self.maxTreasures = maxTreasures
 
     def start(self):
-        pass
+        self.preSpawnTreasures()
+        self.startSpawning()
+
+    def preSpawnTreasures(self):
+        for i in xrange(self.maxTreasures):
+            self.placeRandomTreasure()
+
+    def placeRandomTreasure(self):
+        self.notify.debug('Placing a Treasure...')
+        spawnPointIndex = self.nthEmptyIndex(random.randrange(self.countEmptySpawnPoints()))
+        self.placeTreasure(spawnPointIndex)
+
+    def startSpawning(self):
+        self.stopSpawning()
+        taskMgr.doMethodLater(self.spawnInterval, self.upkeepTreasurePopulation, self.taskName)
+
+    def stopSpawning(self):
+        taskMgr.remove(self.taskName)
+
+    def upkeepTreasurePopulation(self, task):
+        if self.numTreasures() < self.maxTreasures:
+            self.placeRandomTreasure()
+        taskMgr.doMethodLater(self.spawnInterval, self.upkeepTreasurePopulation, self.taskName)
+        return task.done

@@ -1,6 +1,6 @@
 from direct.showbase.DirectObject import DirectObject
 
-from HolidayManagerAI import HolidayManagerAI
+from toontown.ai.HolidayManagerAI import HolidayManagerAI
 from toontown.hood import FFHoodAI
 from toontown.quest import Quests
 from toontown.toon import NPCToons
