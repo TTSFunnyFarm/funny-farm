@@ -11,4 +11,27 @@ class FFTreasurePlannerAI(RegenTreasurePlannerAI):
         RegenTreasurePlannerAI.__init__(self, air, zoneId, FFTreasure, 'FFTreasurePlanner', 20, 5)
 
     def initSpawnPoints(self):
-        return [(0, 0, 0)]  # TODO
+        self.spawnPoints = [
+            (0, 0, 0),
+            (0, 0, 0),
+            (0, 0, 0),
+            (0, 0, 0),
+            (0, 0, 0),
+            (0, 0, 0),
+            (0, 0, 0),
+            (0, 0, 0),
+            (0, 0, 0),
+            (0, 0, 0),
+            (0, 0, 0),
+            (0, 0, 0),
+            (0, 0, 0),
+            (0, 0, 0),
+            (0, 0, 0),
+            (0, 0, 0),
+            (0, 0, 0),
+            (0, 0, 0),
+            (0, 0, 0),
+            (0, 0, 0),
+            (0, 0, 0),
+        ]
+        return self.spawnPoints

@@ -43,7 +43,10 @@ class TreasurePlannerAI(DirectObject):
         return counter
 
     def placeTreasure(self, index):
-        pass
+        spawnPoint = self.spawnPoints[index]
+        treasure = self.treasureConstructor(self.air, self, spawnPoint[0], spawnPoint[1], spawnPoint[2])
+        treasure.generate(self.zoneId)
+        self.treasures[index] = treasure
 
     def numTreasures(self):
         counter = 0
