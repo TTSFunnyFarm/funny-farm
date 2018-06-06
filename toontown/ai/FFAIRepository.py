@@ -1,16 +1,18 @@
 from direct.showbase.DirectObject import DirectObject
-from toontown.toon import Toon, ToonHead
-from toontown.toon import NPCToons
-from toontown.hood import FFHoodAI
-from toontown.hood import SSHoodAI
-from toontown.quest import Quests
+
 from HolidayManagerAI import HolidayManagerAI
+from toontown.hood import FFHoodAI
+from toontown.quest import Quests
+from toontown.toon import NPCToons
+from toontown.toon import Toon, ToonHead
+
 
 class FFAIRepository(DirectObject):
     notify = directNotify.newCategory('AIRepository')
     notify.setInfo(True)
 
     def __init__(self):
+        DirectObject.__init__(self)
         self.hoods = []
         self.cogHeadquarters = []
         self.modelMap = {}
@@ -19,6 +21,7 @@ class FFAIRepository(DirectObject):
         self.buildingManagers = {}
         self.isLoaded = 0
         self.currSuitIndex = 2000000
+        self.holidayMgr = None
 
     def preloadAvatars(self):
         self.notify.info('Preloading avatars...')

@@ -1,6 +1,10 @@
-class FFTreasurePlannerAI:
-    def __init__(self, zoneId):
-        self.zoneId = zoneId
+from direct.directnotify import DirectNotifyGlobal
 
-    def start(self):
+from toontown.safezone.RegenTreasurePlannerAI import RegenTreasurePlannerAI
+
+
+class FFTreasurePlannerAI(RegenTreasurePlannerAI):
+    notify = DirectNotifyGlobal.directNotify.newCategory('FFTreasurePlannerAI')
+
+    def __init__(self, zoneId):
         pass
