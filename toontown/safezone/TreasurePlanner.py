@@ -49,4 +49,5 @@ class TreasurePlanner(DirectObject):
         for treasure in self.treasures:
             treasure.disable()
             treasure.delete()
-            self.treasures.remove(treasure)
+
+        self.treasures = []
