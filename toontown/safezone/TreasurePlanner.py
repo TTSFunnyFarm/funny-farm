@@ -33,7 +33,17 @@ class TreasurePlanner(DirectObject):
         pass  # TODO
 
     def loadTreasures(self):
-        pass  # TODO
+        ai = base.air.treasurePlanners.get(self.zoneId)
+        if not ai:
+            return
+
+        currentTreasures = ai.treasures[:]
+        for currentTreasure in currentTreasures:
+            if currentTreasure:
+                treasure = self.treasureConstructor()
+                treasure.announceGenerate()
+                treasure.setPosition(*currentTreasure.getPosition())
+                self.treasures.append(treasure)
 
     def unloadTreasures(self):
         pass  # TODO

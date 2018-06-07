@@ -11,5 +11,8 @@ class TreasureAI(DirectObject):
         self.treasurePlanner = treasurePlanner
         self.pos = (x, y, z)
 
+    def getPosition(self):
+        return self.pos
+
     def generate(self, zoneId):
         pass  # TODO
