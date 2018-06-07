@@ -1,19 +1,18 @@
-from panda3d.core import *
 from direct.actor.Actor import Actor
-from direct.interval.IntervalGlobal import *
-from toontown.toonbase import ToontownGlobals
-from toontown.toonbase import FunnyFarmGlobals
-from toontown.building.Building import Building
-from toontown.building import GagShopInterior
-from toontown.building import PetShopInterior
-from toontown.building import HQInterior
-from toontown.building import ToonHallInterior
-from toontown.building import LoonyLabsInterior
-from toontown.building import ToonInterior
+from panda3d.core import *
+
 from toontown.building import Door
-from toontown.trolley.Trolley import Trolley
+from toontown.building import GagShopInterior
+from toontown.building import HQInterior
+from toontown.building import LoonyLabsInterior
+from toontown.building import PetShopInterior
+from toontown.building import ToonHallInterior
+from toontown.building import ToonInterior
+from toontown.building.Building import Building
+from toontown.hood.Hood import Hood
 from toontown.quest import Quests
-from Hood import Hood
+from toontown.trolley.Trolley import Trolley
+
 
 class ToonHood(Hood):
     Shop2ClassDict = {
@@ -33,6 +32,7 @@ class ToonHood(Hood):
         self.telescope = None
         self.animSeq = None
         self.buildings = []
+        self.treasurePlanner = None
 
     def enter(self, shop=None, tunnel=None, init=0):
         base.localAvatar.setZoneId(self.zoneId)
@@ -47,22 +47,31 @@ class ToonHood(Hood):
             self.acceptOnce('avatarExitDone', self.startActive)
             return
         Hood.enter(self, shop=shop, tunnel=tunnel, init=init)
+        if self.treasurePlanner:
+            self.treasurePlanner.generate()
 
     def exit(self):
         Hood.exit(self)
         if len(self.buildings) > 0:
             self.destroyLandmarkBuildings()
+        if self.treasurePlanner:
+            for treasure in self.treasurePlanner.treasures:
+                treasure.delete()
 
     def load(self):
         Hood.load(self)
         if not self.geom.find('**/fish_origin').isEmpty():
-            self.fish = Actor('phase_4/models/props/exteriorfish-zero', {'chan': 'phase_4/models/props/exteriorfish-swim'})
+            self.fish = Actor('phase_4/models/props/exteriorfish-zero',
+                              {'chan': 'phase_4/models/props/exteriorfish-swim'})
             self.fish.reparentTo(self.geom.find('**/fish_origin'))
             self.fish.setBlend(frameBlend=True)
             self.fish.loop('chan')
         if not self.geom.find('**/*trolley_station*').isEmpty():
             self.trolley = Trolley()
             self.trolley.setup()
+        if self.treasurePlanner:
+            self.treasurePlanner.setZoneId(self.zoneId)
+            self.treasurePlanner.loadTreasures()
 
     def unload(self):
         Hood.unload(self)
@@ -75,6 +84,10 @@ class ToonHood(Hood):
             self.trolley.removeActive()
             self.trolley.delete()
             del self.trolley
+        if self.treasurePlanner:
+            self.treasurePlanner.unloadTreasures()
+            self.treasurePlanner.delete()
+            del self.treasurePlanner
 
     def startActive(self):
         Hood.startActive(self)
@@ -103,7 +116,9 @@ class ToonHood(Hood):
             for questDesc in base.localAvatar.quests:
                 quest = Quests.getQuest(questDesc[0])
                 quest.setQuestProgress(questDesc[1])
-                if quest.getCompletionStatus() == Quests.COMPLETE or quest.getType() in [Quests.QuestTypeGoTo, Quests.QuestTypeChoose, Quests.QuestTypeDeliver]:
+                if quest.getCompletionStatus() == Quests.COMPLETE or quest.getType() in [Quests.QuestTypeGoTo,
+                                                                                         Quests.QuestTypeChoose,
+                                                                                         Quests.QuestTypeDeliver]:
                     if quest.toLocation == building.zoneId:
                         if quest.questCategory == Quests.MainQuest:
                             building.setMainQuest(questDesc[0])
