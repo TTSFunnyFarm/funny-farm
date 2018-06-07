@@ -2,7 +2,7 @@ from direct.directnotify import DirectNotifyGlobal
 from direct.showbase.DirectObject import DirectObject
 
 
-class Treasure(DirectObject):
+class TreasureAI(DirectObject):
     notify = DirectNotifyGlobal.directNotify.newCategory('Treasure')
 
     def __init__(self, air, treasurePlanner, x, y, z):

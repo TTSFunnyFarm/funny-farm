@@ -1,10 +1,10 @@
 from direct.directnotify import DirectNotifyGlobal
 
-from toontown.safezone.SZTreasure import SZTreasure
+from toontown.safezone.SZTreasureAI import SZTreasureAI
 
 
-class FFTreasure(SZTreasure):
+class FFTreasureAI(SZTreasureAI):
     notify = DirectNotifyGlobal.directNotify.newCategory('FFTreasure')
 
     def __init__(self, air, treasurePlanner, x, y, z):
-        SZTreasure.__init__(self, air, treasurePlanner, x, y, z)
+        SZTreasureAI.__init__(self, air, treasurePlanner, x, y, z)
