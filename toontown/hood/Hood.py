@@ -9,7 +9,6 @@ from toontown.toon import NPCToons
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals
-from toontown.safezone.TreasurePlanner import TreasurePlanner
 
 
 class Hood(DirectObject):
@@ -29,7 +28,6 @@ class Hood(DirectObject):
         self.place = None
         self.battle = None
         self.battleCell = None
-        self.treasurePlanner = TreasurePlanner()
 
     def enter(self, shop=None, tunnel=None, init=0):
         if tunnel:
@@ -53,7 +51,6 @@ class Hood(DirectObject):
         base.avatarData.setLastHood = self.zoneId
         dataMgr.saveToonData(base.avatarData)
         self.spawnTitleText()
-        self.treasurePlanner.generate()
 
     def exit(self):
         musicMgr.stopMusic()
@@ -65,8 +62,6 @@ class Hood(DirectObject):
             self.title = None
         for npc in self.npcs:
             npc.removeActive()
-        for treasure in self.treasurePlanner.treasures:
-            treasure.delete()
 
     def load(self):
         if base.air.holidayMgr.isHalloween():
@@ -86,8 +81,6 @@ class Hood(DirectObject):
         self.geom.reparentTo(render)
         self.geom.flattenMedium()
         self.generateNPCs()
-        self.treasurePlanner.setZoneId(self.zoneId)
-        self.treasurePlanner.loadTreasures()
         gsg = base.win.getGsg()
         if gsg:
             self.geom.prepareScene(gsg)
@@ -99,11 +92,8 @@ class Hood(DirectObject):
                 npc.removeActive()
                 npc.delete()
                 del npc
-        self.treasurePlanner.unloadTreasures()
-        self.treasurePlanner.delete()
         self.geom.removeNode()
         self.sky.removeNode()
-        del self.treasurePlanner
         del self.geom
         del self.sky
 

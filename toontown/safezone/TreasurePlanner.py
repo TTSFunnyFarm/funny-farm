@@ -5,8 +5,9 @@ from direct.showbase.DirectObject import DirectObject
 class TreasurePlanner(DirectObject):
     notify = DirectNotifyGlobal.directNotify.newCategory('TreasurePlanner')
 
-    def __init__(self):
+    def __init__(self, treasureConstructor):
         DirectObject.__init__(self)
+        self.treasureConstructor = treasureConstructor
         self.zoneId = 0
         self.treasures = []
 
