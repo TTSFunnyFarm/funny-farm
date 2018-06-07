@@ -13,7 +13,6 @@ class TreasurePlanner(DirectObject):
 
     def generate(self):
         self.accept('generateTreasure', self.generateTreasure)
-        self.accept('removeTreasure', self.removeTreasure)
 
     def delete(self):
         self.ignoreAll()
@@ -27,9 +26,6 @@ class TreasurePlanner(DirectObject):
         return self.zoneId
 
     def generateTreasure(self, requestStatus):
-        pass  # TODO
-
-    def removeTreasure(self, objId):
         pass  # TODO
 
     def loadTreasures(self):
