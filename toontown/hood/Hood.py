@@ -1,19 +1,22 @@
-from panda3d.core import *
-from direct.showbase.DirectObject import DirectObject
-from direct.interval.IntervalGlobal import *
 from direct.gui.DirectGui import *
-from toontown.toonbase import ToontownGlobals
+from direct.interval.IntervalGlobal import *
+from direct.showbase.DirectObject import DirectObject
+from panda3d.core import *
+
+from toontown.hood import ZoneUtil
+from toontown.quest import Quests
+from toontown.toon import NPCToons
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
-from toontown.building import Door
-from toontown.toon import NPCToons
-from toontown.quest import Quests
-import ZoneUtil
+from toontown.toonbase import ToontownGlobals
+from toontown.safezone.TreasurePlanner import TreasurePlanner
+
 
 class Hood(DirectObject):
     notify = directNotify.newCategory('Hood')
 
     def __init__(self):
+        DirectObject.__init__(self)
         self.zoneId = None
         self.hoodFile = None
         self.spookyHoodFile = None
@@ -26,6 +29,7 @@ class Hood(DirectObject):
         self.place = None
         self.battle = None
         self.battleCell = None
+        self.treasurePlanner = TreasurePlanner()
 
     def enter(self, shop=None, tunnel=None, init=0):
         if tunnel:
@@ -49,6 +53,7 @@ class Hood(DirectObject):
         base.avatarData.setLastHood = self.zoneId
         dataMgr.saveToonData(base.avatarData)
         self.spawnTitleText()
+        self.treasurePlanner.generate()
 
     def exit(self):
         musicMgr.stopMusic()
@@ -60,6 +65,8 @@ class Hood(DirectObject):
             self.title = None
         for npc in self.npcs:
             npc.removeActive()
+        for treasure in self.treasurePlanner.treasures:
+            treasure.delete()
 
     def load(self):
         if base.air.holidayMgr.isHalloween():
@@ -79,6 +86,8 @@ class Hood(DirectObject):
         self.geom.reparentTo(render)
         self.geom.flattenMedium()
         self.generateNPCs()
+        self.treasurePlanner.setZoneId(self.zoneId)
+        self.treasurePlanner.loadTreasures()
         gsg = base.win.getGsg()
         if gsg:
             self.geom.prepareScene(gsg)
@@ -90,8 +99,11 @@ class Hood(DirectObject):
                 npc.removeActive()
                 npc.delete()
                 del npc
+        self.treasurePlanner.unloadTreasures()
+        self.treasurePlanner.delete()
         self.geom.removeNode()
         self.sky.removeNode()
+        del self.treasurePlanner
         del self.geom
         del self.sky
 
@@ -104,8 +116,10 @@ class Hood(DirectObject):
         return hoodText
 
     def spawnTitleText(self):
-        self.title = OnscreenText(self.getHoodText(), fg=self.titleColor, font=ToontownGlobals.getSignFont(), pos=(0, -0.5), scale=TTLocalizer.HtitleText, drawOrder=0, mayChange=1)
-        self.titleTrack = Sequence(Wait(0.1), Wait(6.0), self.title.colorScaleInterval(0.5, Vec4(1.0, 1.0, 1.0, 0.0)), Func(self.title.hide))
+        self.title = OnscreenText(self.getHoodText(), fg=self.titleColor, font=ToontownGlobals.getSignFont(),
+                                  pos=(0, -0.5), scale=TTLocalizer.HtitleText, drawOrder=0, mayChange=1)
+        self.titleTrack = Sequence(Wait(0.1), Wait(6.0), self.title.colorScaleInterval(0.5, Vec4(1.0, 1.0, 1.0, 0.0)),
+                                   Func(self.title.hide))
         self.titleTrack.start()
 
     def handleEntered(self):
@@ -135,7 +149,9 @@ class Hood(DirectObject):
             for questDesc in base.localAvatar.quests:
                 quest = Quests.getQuest(questDesc[0])
                 quest.setQuestProgress(questDesc[1])
-                if quest.getCompletionStatus() == Quests.COMPLETE or quest.getType() in [Quests.QuestTypeGoTo, Quests.QuestTypeChoose, Quests.QuestTypeDeliver]:
+                if quest.getCompletionStatus() == Quests.COMPLETE or quest.getType() in [Quests.QuestTypeGoTo,
+                                                                                         Quests.QuestTypeChoose,
+                                                                                         Quests.QuestTypeDeliver]:
                     if quest.toNpc == npc.getNpcId():
                         if quest.questCategory == Quests.MainQuest:
                             npc.setMainQuest(questDesc[0])
@@ -223,7 +239,8 @@ class Hood(DirectObject):
         self.sky.setBin('background', 100)
         self.sky.reparentTo(camera)
         self.sky.setTransparency(TransparencyAttrib.MDual, 1)
-        fadeIn = self.sky.colorScaleInterval(1.5, Vec4(1, 1, 1, 1), startColorScale=Vec4(1, 1, 1, 0.25), blendType='easeInOut')
+        fadeIn = self.sky.colorScaleInterval(1.5, Vec4(1, 1, 1, 1), startColorScale=Vec4(1, 1, 1, 0.25),
+                                             blendType='easeInOut')
         fadeIn.start()
         self.sky.setZ(0.0)
         self.sky.setHpr(0.0, 0.0, 0.0)
@@ -252,7 +269,8 @@ class Hood(DirectObject):
         self.sky.setFogOff()
         self.sky.reparentTo(camera)
         self.sky.setTransparency(TransparencyAttrib.MDual, 1)
-        fadeIn = self.sky.colorScaleInterval(1.5, Vec4(1, 1, 1, 1), startColorScale=Vec4(1, 1, 1, 0.25), blendType='easeInOut')
+        fadeIn = self.sky.colorScaleInterval(1.5, Vec4(1, 1, 1, 1), startColorScale=Vec4(1, 1, 1, 0.25),
+                                             blendType='easeInOut')
         fadeIn.start()
         self.sky.setZ(0.0)
         self.sky.setHpr(0.0, 0.0, 0.0)
