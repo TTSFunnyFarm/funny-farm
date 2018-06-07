@@ -56,7 +56,7 @@ class ToonHood(Hood):
             self.destroyLandmarkBuildings()
         if self.treasurePlanner:
             for treasure in self.treasurePlanner.treasures:
-                treasure.delete()
+                treasure.disable()
 
     def load(self):
         Hood.load(self)

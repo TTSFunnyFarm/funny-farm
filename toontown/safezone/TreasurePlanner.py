@@ -46,4 +46,7 @@ class TreasurePlanner(DirectObject):
                 self.treasures.append(treasure)
 
     def unloadTreasures(self):
-        pass  # TODO
+        for treasure in self.treasures:
+            treasure.disable()
+            treasure.delete()
+            self.treasures.remove(treasure)
