@@ -12,3 +12,10 @@ class SZTreasureAI(TreasureAI):
 
     def validAvatar(self):
         return 0 < base.localAvatar.hp < base.localAvatar.maxHp
+
+    def setGrab(self):
+        TreasureAI.setGrab(self)
+        if base.localAvatar:
+            if self.validAvatar():
+                hp = base.localAvatar.hp + self.healAmount
+                base.localAvatar.setHealth(hp, base.localAvatar.maxHp, showText=1)
