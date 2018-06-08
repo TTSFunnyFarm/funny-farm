@@ -11,6 +11,12 @@ class TreasureAI(DirectObject):
         self.treasurePlanner = treasurePlanner
         self.pos = (x, y, z)
 
+    def delete(self):
+        self.deleteClientTreasure()
+        del self.air
+        del self.treasurePlanner
+        del self.pos
+
     def getPosition(self):
         return self.pos
 
@@ -20,7 +26,7 @@ class TreasureAI(DirectObject):
     def validAvatar(self):
         return 1
 
-    def setReject(self):
+    def getClientTreasure(self):
         if not hasattr(base.cr.playGame.hood, 'treasurePlanner'):
             return
 
@@ -28,14 +34,32 @@ class TreasureAI(DirectObject):
         if not treasurePlanner:
             return
 
-        currentTreasure = None
+        clientTreasure = None
         for treasure in treasurePlanner.treasures:
             if treasure and treasure.getDoId() == self.getDoId():
-                currentTreasure = treasure
+                clientTreasure = treasure
                 break
 
-        if currentTreasure:
-            currentTreasure.setReject()
+        return clientTreasure
+
+    def setReject(self):
+        clientTreasure = self.getClientTreasure()
+        if clientTreasure:
+            clientTreasure.setReject()
+
+    def setGrab(self):
+        clientTreasure = self.getClientTreasure()
+        if clientTreasure:
+            clientTreasure.setGrab()
+
+    def deleteClientTreasure(self):
+        clientTreasure = self.getClientTreasure()
+        if clientTreasure:
+            clientTreasure.disable()
+            clientTreasure.delete()
 
     def generate(self, zoneId):
         pass  # TODO
+
+    def uniqueName(self, idString):
+        return '%s-%s' % (idString, str(id(self)))

@@ -142,7 +142,7 @@ class Treasure(DirectObject):
         if not treasurePlannerAI:
             return
 
-        treasurePlannerAI.grabAttempt(self.doId)
+        treasurePlannerAI.grabAttempt(self.getDoId())
 
     def setReject(self):
         if self.treasureFlyTrack:
@@ -156,6 +156,13 @@ class Treasure(DirectObject):
                                                                 blendType='easeOut'),
                                          name=self.uniqueName('treasureFlyTrack'))
         self.treasureFlyTrack.start()
+
+    def setGrab(self):
+        if not base.localAvatar:
+            return
+
+        if self.fly or self.av != base.localAvatar:
+            self.handleGrab()
 
     def startAnimation(self):
         pass

@@ -80,7 +80,7 @@ class TreasurePlannerAI(DirectObject):
         self.deleteTaskNames.add(taskName)
 
     def __deleteTreasureNow(self, treasure, taskName):
-        treasure.requestDelete()
+        treasure.delete()
         self.deleteTaskNames.remove(taskName)
 
     def numTreasures(self):
