@@ -9,3 +9,6 @@ class SZTreasureAI(TreasureAI):
     def __init__(self, air, treasurePlanner, x, y, z):
         TreasureAI.__init__(self, air, treasurePlanner, x, y, z)
         self.healAmount = treasurePlanner.healAmount
+
+    def validAvatar(self):
+        return 0 < base.localAvatar.hp < base.localAvatar.maxHp

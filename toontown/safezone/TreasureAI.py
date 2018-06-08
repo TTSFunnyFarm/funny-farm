@@ -14,5 +14,28 @@ class TreasureAI(DirectObject):
     def getPosition(self):
         return self.pos
 
+    def getDoId(self):
+        return id(self)
+
+    def validAvatar(self):
+        return 1
+
+    def setReject(self):
+        if not hasattr(base.cr.playGame.hood, 'treasurePlanner'):
+            return
+
+        treasurePlanner = base.cr.playGame.hood.treasurePlanner
+        if not treasurePlanner:
+            return
+
+        currentTreasure = None
+        for treasure in treasurePlanner.treasures:
+            if treasure and treasure.getDoId() == self.getDoId():
+                currentTreasure = treasure
+                break
+
+        if currentTreasure:
+            currentTreasure.setReject()
+
     def generate(self, zoneId):
         pass  # TODO

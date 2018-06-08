@@ -1,6 +1,8 @@
 from direct.directnotify import DirectNotifyGlobal
+from direct.interval.IntervalGlobal import *
 from direct.showbase.DirectObject import DirectObject
 from panda3d.core import *
+from panda3d.direct import *
 
 from toontown.toonbase.ToontownGlobals import WallBitmask
 
@@ -23,6 +25,9 @@ class Treasure(DirectObject):
         self.dropShadow = None
         self.collNodePath = None
         self.zOffset = 0.0
+        self.fly = 1
+        self.av = None
+        self.doId = 0
 
     def disable(self):
         self.ignoreAll()
@@ -84,11 +89,73 @@ class Treasure(DirectObject):
         self.nodePath.setPos(x, y, z + self.zOffset)
         self.collNodePath.unstash()
 
+    def setDoId(self, doId):
+        self.doId = doId
+
+    def getDoId(self):
+        return self.doId
+
     def getParentNodePath(self):
         return render
 
     def handleEnterSphere(self, _=None):
-        pass  # TODO
+        if not self.fly:
+            self.handleGrab()
+        self.requestGrab()
+
+    def handleGrab(self):
+        self.collNodePath.stash()
+        if base.localAvatar:
+            av = base.localAvatar
+            self.av = av
+        else:
+            self.nodePath.detachNode()
+            return
+        if self.av == base.localAvatar:
+            base.playSfx(self.grabSound, node=self.nodePath)
+        if not self.fly:
+            self.nodePath.detachNode()
+            return
+        self.nodePath.wrtReparentTo(av)
+        if self.treasureFlyTrack:
+            self.treasureFlyTrack.finish()
+            self.treasureFlyTrack = None
+        flytime = 1.0
+        track = Sequence(LerpPosInterval(self.nodePath, flytime, pos=Point3(0, 0, 3), startPos=self.nodePath.getPos(),
+                                         blendType='easeInOut'), Func(self.nodePath.detachNode))
+        if self.shadow:
+            self.treasureFlyTrack = Sequence(HideInterval(self.dropShadow), track, ShowInterval(self.dropShadow),
+                                             name=self.uniqueName('treasureFlyTrack'))
+        else:
+            self.treasureFlyTrack = Sequence(track, name=self.uniqueName('treasureFlyTrack'))
+        self.treasureFlyTrack.start()
+
+    def requestGrab(self):
+        if not hasattr(base.cr.playGame.hood, 'treasurePlanner'):
+            return
+
+        treasurePlanner = base.cr.playGame.hood.treasurePlanner
+        if not treasurePlanner:
+            return
+
+        treasurePlannerAI = base.air.treasurePlanners.get(treasurePlanner.zoneId)
+        if not treasurePlannerAI:
+            return
+
+        treasurePlannerAI.grabAttempt(self.doId)
+
+    def setReject(self):
+        if self.treasureFlyTrack:
+            self.treasureFlyTrack.finish()
+            self.treasureFlyTrack = None
+        base.playSfx(self.rejectSound, node=self.nodePath)
+        self.treasureFlyTrack = Sequence(LerpColorScaleInterval(self.nodePath, 0.8, colorScale=VBase4(0, 0, 0, 0),
+                                                                startColorScale=VBase4(1, 1, 1, 1), blendType='easeIn'),
+                                         LerpColorScaleInterval(self.nodePath, 0.2, colorScale=VBase4(1, 1, 1, 1),
+                                                                startColorScale=VBase4(0, 0, 0, 0),
+                                                                blendType='easeOut'),
+                                         name=self.uniqueName('treasureFlyTrack'))
+        self.treasureFlyTrack.start()
 
     def startAnimation(self):
         pass

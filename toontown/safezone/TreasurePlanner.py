@@ -39,6 +39,7 @@ class TreasurePlanner(DirectObject):
                 treasure = self.treasureConstructor()
                 treasure.announceGenerate()
                 treasure.setPosition(*currentTreasure.getPosition())
+                treasure.setDoId(currentTreasure.getDoId())
                 self.treasures.append(treasure)
 
     def unloadTreasures(self):

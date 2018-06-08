@@ -17,9 +17,6 @@ class TreasurePlannerAI(DirectObject):
             self.treasures.append(None)
 
         self.deleteTaskNames = set()
-        self.lastRequestId = None
-        self.requestStartTime = None
-        self.requestCount = None
 
     def initSpawnPoints(self):
         raise NotImplementedError('initSpawnPoints')  # Must be overridden by subclass.
@@ -34,6 +31,17 @@ class TreasurePlannerAI(DirectObject):
 
         return spawnPointCounter
 
+    def findIndexOfTreasureId(self, treasureId):
+        counter = 0
+        for treasure in self.treasures:
+            if treasure is None:
+                pass
+            elif treasureId == treasure.getDoId():
+                return counter
+            counter += 1
+
+        return
+
     def countEmptySpawnPoints(self):
         counter = 0
         for treasure in self.treasures:
@@ -47,6 +55,33 @@ class TreasurePlannerAI(DirectObject):
         treasure = self.treasureConstructor(self.air, self, spawnPoint[0], spawnPoint[1], spawnPoint[2])
         treasure.generate(self.zoneId)
         self.treasures[index] = treasure
+
+    def grabAttempt(self, treasureId):
+        index = self.findIndexOfTreasureId(treasureId)
+        if index is None:
+            pass
+        else:
+            if base.localAvatar is None:
+                self.notify.warning('localAvatar does not exist')
+            else:
+                treasure = self.treasures[index]
+                if treasure.validAvatar():
+                    self.treasures[index] = None
+                    if self.callback:
+                        self.callback()
+                    treasure.setGrab()
+                    self.deleteTreasureSoon(treasure)
+                else:
+                    treasure.setReject()
+
+    def deleteTreasureSoon(self, treasure):
+        taskName = treasure.uniqueName('deletingTreasure')
+        taskMgr.doMethodLater(5, self.__deleteTreasureNow, taskName, extraArgs=(treasure, taskName))
+        self.deleteTaskNames.add(taskName)
+
+    def __deleteTreasureNow(self, treasure, taskName):
+        treasure.requestDelete()
+        self.deleteTaskNames.remove(taskName)
 
     def numTreasures(self):
         counter = 0
