@@ -133,15 +133,24 @@ class Treasure(DirectObject):
         if self.treasureFlyTrack:
             self.treasureFlyTrack.finish()
             self.treasureFlyTrack = None
+        avatarGoneName = self.av.uniqueName('disable')
+        self.accept(avatarGoneName, self.handleUnexpectedExit)
         flytime = 1.0
         track = Sequence(LerpPosInterval(self.nodePath, flytime, pos=Point3(0, 0, 3), startPos=self.nodePath.getPos(),
-                                         blendType='easeInOut'), Func(self.nodePath.detachNode))
+                                         blendType='easeInOut'), Func(self.nodePath.detachNode),
+                         Func(self.ignore, avatarGoneName))
         if self.shadow:
             self.treasureFlyTrack = Sequence(HideInterval(self.dropShadow), track, ShowInterval(self.dropShadow),
                                              name=self.uniqueName('treasureFlyTrack'))
         else:
             self.treasureFlyTrack = Sequence(track, name=self.uniqueName('treasureFlyTrack'))
         self.treasureFlyTrack.start()
+
+    def handleUnexpectedExit(self):
+        self.notify.warning('While getting treasure, ' + str(base.localAvatar.getDoId()) + ' disconnected.')
+        if self.treasureFlyTrack:
+            self.treasureFlyTrack.finish()
+            self.treasureFlyTrack = None
 
     def requestGrab(self):
         if not hasattr(base.cr.playGame.hood, 'treasurePlanner'):
@@ -176,6 +185,9 @@ class Treasure(DirectObject):
 
         if self.fly or self.av != base.localAvatar:
             self.handleGrab()
+
+    def getStareAtNodeAndOffset(self):
+        return self.nodePath, Point3()
 
     def startAnimation(self):
         pass
