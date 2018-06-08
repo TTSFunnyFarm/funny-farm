@@ -57,7 +57,7 @@ class TreasureAI(DirectObject):
         if clientTreasure:
             clientTreasure.cleanup()
 
-    def generate(self, zoneId):
+    def generate(self):
         messenger.send('generateTreasure', [{'pos': self.getPosition(),
                                              'doId': self.getDoId()}])
 

@@ -53,7 +53,7 @@ class TreasurePlannerAI(DirectObject):
     def placeTreasure(self, index):
         spawnPoint = self.spawnPoints[index]
         treasure = self.treasureConstructor(self.air, self, spawnPoint[0], spawnPoint[1], spawnPoint[2])
-        treasure.generate(self.zoneId)
+        treasure.generate()
         self.treasures[index] = treasure
 
     def grabAttempt(self, treasureId):
