@@ -26,7 +26,11 @@ class TreasurePlanner(DirectObject):
         return self.zoneId
 
     def generateTreasure(self, requestStatus):
-        pass  # TODO
+        treasure = self.treasureConstructor()
+        treasure.announceGenerate()
+        treasure.setPosition(*requestStatus['pos'])
+        treasure.setDoId(requestStatus['doId'])
+        self.treasures.append(treasure)
 
     def loadTreasures(self):
         ai = base.air.treasurePlanners.get(self.zoneId)
@@ -36,11 +40,8 @@ class TreasurePlanner(DirectObject):
         currentTreasures = ai.treasures[:]
         for currentTreasure in currentTreasures:
             if currentTreasure:
-                treasure = self.treasureConstructor()
-                treasure.announceGenerate()
-                treasure.setPosition(*currentTreasure.getPosition())
-                treasure.setDoId(currentTreasure.getDoId())
-                self.treasures.append(treasure)
+                self.generateTreasure({'pos': currentTreasure.getPosition(),
+                                       'doId': currentTreasure.getDoId()})
 
     def unloadTreasures(self):
         for treasure in self.treasures:

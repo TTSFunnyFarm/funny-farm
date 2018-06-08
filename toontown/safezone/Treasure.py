@@ -39,6 +39,19 @@ class Treasure(DirectObject):
             self.treasureFlyTrack = None
         self.nodePath.removeNode()
 
+    def cleanup(self):
+        self.disable()
+        self.delete()
+
+        if not hasattr(base.cr.playGame.hood, 'treasurePlanner'):
+            return
+
+        treasurePlanner = base.cr.playGame.hood.treasurePlanner
+        if not treasurePlanner:
+            return
+
+        treasurePlanner.treasures.remove(self)
+
     def announceGenerate(self):
         self.loadModel(self.modelPath, self.modelFindString)
         self.startAnimation()

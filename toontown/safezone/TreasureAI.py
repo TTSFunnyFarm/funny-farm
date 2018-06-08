@@ -55,11 +55,11 @@ class TreasureAI(DirectObject):
     def deleteClientTreasure(self):
         clientTreasure = self.getClientTreasure()
         if clientTreasure:
-            clientTreasure.disable()
-            clientTreasure.delete()
+            clientTreasure.cleanup()
 
     def generate(self, zoneId):
-        pass  # TODO
+        messenger.send('generateTreasure', [{'pos': self.getPosition(),
+                                             'doId': self.getDoId()}])
 
     def uniqueName(self, idString):
         return '%s-%s' % (idString, str(id(self)))
