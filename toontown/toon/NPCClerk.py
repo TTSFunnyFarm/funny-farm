@@ -1,4 +1,4 @@
-from pandac.PandaModules import *
+from panda3d.core import *
 from NPCToonBase import *
 from toontown.minigame import ClerkPurchase
 from toontown.book.PurchaseManagerConstants import *
