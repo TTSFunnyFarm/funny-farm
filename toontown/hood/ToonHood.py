@@ -38,6 +38,8 @@ class ToonHood(Hood):
         base.localAvatar.setZoneId(self.zoneId)
         musicMgr.playCurrentZoneMusic()
         self.setupLandmarkBuildings()
+        if self.treasurePlanner:
+            self.treasurePlanner.loadTreasures()
         if shop:
             building = self.geom.find('**/tb%s:toon_landmark*' % shop[2:])
             if building.isEmpty():
@@ -47,16 +49,13 @@ class ToonHood(Hood):
             self.acceptOnce('avatarExitDone', self.startActive)
             return
         Hood.enter(self, shop=shop, tunnel=tunnel, init=init)
-        if self.treasurePlanner:
-            self.treasurePlanner.generate()
 
     def exit(self):
         Hood.exit(self)
         if len(self.buildings) > 0:
             self.destroyLandmarkBuildings()
         if self.treasurePlanner:
-            for treasure in self.treasurePlanner.treasures:
-                treasure.disable()
+            self.treasurePlanner.unloadTreasures()
 
     def load(self):
         Hood.load(self)
@@ -70,8 +69,8 @@ class ToonHood(Hood):
             self.trolley = Trolley()
             self.trolley.setup()
         if self.treasurePlanner:
+            self.treasurePlanner.generate()
             self.treasurePlanner.setZoneId(self.zoneId)
-            self.treasurePlanner.loadTreasures()
 
     def unload(self):
         Hood.unload(self)
@@ -85,7 +84,6 @@ class ToonHood(Hood):
             self.trolley.delete()
             del self.trolley
         if self.treasurePlanner:
-            self.treasurePlanner.unloadTreasures()
             self.treasurePlanner.delete()
             del self.treasurePlanner
 
