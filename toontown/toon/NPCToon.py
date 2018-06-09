@@ -2,7 +2,7 @@ from panda3d.core import *
 from direct.task.Task import Task
 from NPCToonBase import *
 from toontown.quest import Quests
-# from toontown.quest.QuestChoiceGui import QuestChoiceGui
+from toontown.quest.QuestChoiceGui import QuestChoiceGui
 from toontown.quest.TrackChoiceGui import TrackChoiceGui
 from toontown.toonbase import TTLocalizer
 from toontown.hood import ZoneUtil
@@ -22,6 +22,7 @@ class NPCToon(NPCToonBase):
         self.pendingTracks = None
         self.pendingTrackQuest = None
         self.busy = 0
+        self.canTalk = 1
         return
 
     def getHq(self):
@@ -52,8 +53,11 @@ class NPCToon(NPCToonBase):
     def avatarEnter(self):
         base.cr.questManager.requestInteract(self)
 
+    def setAllowedToTalk(self, canTalk):
+        self.canTalk = canTalk
+
     def allowedToTalk(self):
-        return True
+        return self.canTalk
 
     def handleCollisionSphereEnter(self, collEntry):
         if self.allowedToTalk():
@@ -75,13 +79,21 @@ class NPCToon(NPCToonBase):
             self.setPosHpr(self.origin, 0, 0, 0, 0, 0, 0)
         self.freeAvatar()
         taskMgr.remove(self.uniqueName('clearMovie'))
+        
+        if mode == NPCToons.QUEST_MOVIE_TRACK_CHOICE_CANCEL:
+            self.setMainQuest(1)
+        if mode == NPCToons.QUEST_MOVIE_ASSIGN:
+            questId, toNpcId = quests
+            # More hacks, sorry
+            if questId == 1003:
+                messenger.send('cutscene-done')
         if mode == NPCToons.QUEST_MOVIE_COMPLETE:
             questId, toNpcId = quests
             base.cr.questManager.completeQuest(self, questId)
 
     def setupCamera(self, mode):
-        if camera.getParent() == render:
-            return
+        # if camera.getParent() == render:
+        #     return
         camera.wrtReparentTo(render)
         if mode == NPCToons.QUEST_MOVIE_QUEST_CHOICE or mode == NPCToons.QUEST_MOVIE_TRACK_CHOICE:
             quat = Quat()
@@ -126,6 +138,7 @@ class NPCToon(NPCToonBase):
         fullString = ''
         toNpcId = None
         if mode == NPCToons.QUEST_MOVIE_COMPLETE:
+            self.clearQuestIcon()
             questId, toNpcId = quests
             if isLocalToon:
                 self.setupCamera(mode)
@@ -152,6 +165,7 @@ class NPCToon(NPCToonBase):
             if leavingString:
                 fullString += '\x07' + leavingString
         elif mode == NPCToons.QUEST_MOVIE_ASSIGN:
+            self.clearQuestIcon()
             questId, toNpcId = quests
             if isLocalToon:
                 self.setupCamera(mode)
@@ -166,9 +180,10 @@ class NPCToon(NPCToonBase):
             if isLocalToon:
                 self.acceptOnce('chooseQuest', self.sendChooseQuest)
                 self.questChoiceGui = QuestChoiceGui()
-                self.questChoiceGui.setQuests(quests, npcId, ChoiceTimeout)
+                self.questChoiceGui.setQuests(quests, ChoiceTimeout)
             return
         elif mode == NPCToons.QUEST_MOVIE_TRACK_CHOICE:
+            self.clearQuestIcon()
             if isLocalToon:
                 self.setupCamera(mode)
             tracks = quests
@@ -205,7 +220,7 @@ class NPCToon(NPCToonBase):
             self.cancelChoseQuest(avId)
             return
         for quest in self.pendingQuests:
-            if questId == quest[0]:
+            if questId == quest:
                 self.pendingAvId = None
                 self.pendingQuests = None
                 base.cr.questManager.avatarChoseQuest(self, questId)
@@ -301,20 +316,20 @@ class NPCToon(NPCToonBase):
          self.npcId,
          avId,
          [questId, toNpcId])
-        taskMgr.doMethodLater(60.0, self.sendTimeoutMovie, self.uniqueName('clearMovie'))
+        # taskMgr.doMethodLater(60.0, self.sendTimeoutMovie, self.uniqueName('clearMovie'))
 
     def presentQuestChoice(self, avId, quests):
         self.busy = avId
         self.pendingAvId = avId
         self.pendingQuests = quests
-        flatQuests = []
-        for quest in quests:
-            flatQuests.extend(quest)
+        # flatQuests = []
+        # for quest in quests:
+        #     flatQuests.extend(quest)
 
         self.setMovie(NPCToons.QUEST_MOVIE_QUEST_CHOICE,
          self.npcId,
          avId,
-         flatQuests)
+         quests)
         taskMgr.doMethodLater(60.0, self.sendTimeoutMovie, self.uniqueName('clearMovie'))
 
     def presentTrackChoice(self, avId, questId, tracks):

@@ -13,11 +13,9 @@ class SuitPlanner(DirectObject):
         self.accept('generateSuit', self.createNewSuit)
         self.accept('removeSuit', self.removeSuit)
         self.accept('removeActiveSuit', self.removeActiveSuit)
-        taskMgr.add(self.__checkBattleRange, 'checkBattleRange')
 
     def delete(self):
         self.ignoreAll()
-        taskMgr.remove('checkBattleRange')
         taskMgr.remove('%d-sptCreateSuit' % self.zoneId)
         taskMgr.remove('%d-sptRemoveSuit' % self.zoneId)
         del self.zoneId
@@ -40,6 +38,7 @@ class SuitPlanner(DirectObject):
         newSuit.setLevel(requestStatus['level'])
         newSuit.setElite(requestStatus['elite'])
         newSuit.initializeBodyCollisions('suit')
+        newSuit.enableRaycast(1)
         newSuit.reparentTo(base.cr.playGame.street.geom)
         newSuit.enterFromSky(requestStatus['posA'], requestStatus['posB'])
         newSuit.startUpdatePosition()
@@ -81,6 +80,7 @@ class SuitPlanner(DirectObject):
             suit.setLevel(status['level'])
             suit.setElite(status['elite'])
             suit.initializeBodyCollisions('suit')
+            suit.enableRaycast(1)
             suit.getGeomNode().setName('suit-%d' % suit.doId)
             suit.addActive()
             suit.reparentTo(base.cr.playGame.street.geom)
@@ -95,6 +95,12 @@ class SuitPlanner(DirectObject):
         for doId in self.activeSuits.keys():
             suit = self.activeSuits[doId]
             self.deleteSuit(suit)
+
+    def startCheckBattleRange(self):
+        taskMgr.add(self.__checkBattleRange, 'checkBattleRange')
+
+    def stopCheckBattleRange(self):
+        taskMgr.remove('checkBattleRange')
 
     def __checkBattleRange(self, task):
         # Checks for suits walking into our battle

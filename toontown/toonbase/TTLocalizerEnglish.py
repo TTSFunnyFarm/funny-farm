@@ -461,7 +461,11 @@ QuestsLargeBag = 'Large Bag'
 QuestsSmallBackpack = 'Small Backpack'
 QuestsMediumBackpack = 'Medium Backpack'
 QuestsLargeBackpack = 'Large Backpack'
-QuestsItemDict = {1: ['Part of a Memo', 'Parts of a Memo', 'a ']}
+QuestsItemDict = {1: ['Part of a Memo', 'Parts of a Memo', ''],
+ 2: ['Gags', 'Gags', ''],
+ 3: ['Appliance Part', 'Appliance Parts', 'an '],
+ 4: ['Sausages', 'Sausages', ''],
+ 5: ['Milk', 'Milk', '']}
 QuestsHQOfficerFillin = lHQOfficerM
 QuestsHQWhereFillin = ''
 QuestsHQBuildingNameFillin = lToonHQ
@@ -484,7 +488,7 @@ COMPLETE = 5
 LEAVING = 6
 QuestDialogDict = {
  1003: {GREETING: '',
-        QUEST: '',
+        QUEST: '_avName_, it\'s good to see you!\x07Meet me back at the Toon Hall, so we can discuss some things.',
         COMPLETE: 'Boy, that was scary. This isn\'t good.\x07I\'m going to need your help figuring out this problem.',
         LEAVING: ''},
  1005: {GREETING: '',
@@ -537,16 +541,68 @@ QuestDialogDict = {
         QUEST: 'I bring good news! I\'ve found a piece of paper!\x07It seems to be ripped. Perhaps we\'ll need a stapler.\x07You say you possess the other parts of this letter?\x07Excellent! You should be able to use this better.\x07You could take it to Flippy and settle the rest.\x07Thanks for your help, I wish you the best!'},
  1018: {GREETING: '',
         LEAVING: '',
-        QUEST: 'You found the last piece of the memo! Toontastic!\x07Let\'s see what it says...\x07"Soon the power of the Toons will lie in the hands of the corporation..."\x07"All ground forces are to maintain their current position until further notice."\x07"Signed, Mover & Shaker, Manager."\x07Well, I think it\'s clear we need to hunt down this "manager" and shut down this operation!\x07Go speak to Mr. Wurst.\x07He is the president of the Rickety Road Association.\x07Ask him if he knows anything about a Cog manager in town._where_'}
+        QUEST: 'You found the last piece of the memo!\x07Toontastic! Let\'s see what it says...\x07"Soon the power of the Toons will lie in the hands of the corporation..."\x07"All ground forces are to maintain their current position until further notice."\x07"Signed, Mover & Shaker, Manager."\x07Manager? Hmm.\x07If we can find the manager, we can shut down this operation once and for all!\x07Go speak to Mr. Wurst.\x07He is the president of the Rickety Road Association.\x07Let him know what\'s going on, so he can help us begin a full-fledged search._where_'},
+ 1019: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Hello. What can I help you with?\x07You recovered a letter from the Cogs? Let me read that...\x07Hmm...\x07Ah, OK, and Flippy sent you here so that I could inform all of Rickety Road to search for this "manager".\x07Done. I\'ll get right on that.\x07In the meantime, could you help me out?\x07I sent my assistant to retrieve some parts for one of our appliances, but he hasn\'t returned in a while.\x07Will you go out and look for him?\x07Just help him get back here safely.',
+        COMPLETE: 'Oh, jeez, you scared me.'},
+ 1020: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Ahem, I mean, no I\'m not scared! Those Cogs are no match for me.\x07What\'s that? We weren\'t talking about Cogs. Right.\x07I\'m just enjoying nature over here. Nothing to worry about.\x07Uh oh, Mr. Wurst sent you? He\'s gonna be so mad...\x07Look, I tried fighting some Cogs for some parts, but they took all my gags!\x07They were really strong Cogs. Could you get them back for me?',
+        COMPLETE: 'Oh, thank you so much!\x07I was about to go broke!'},
+ 1021: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'I still have a problem though.\x07I didn\'t get any of the parts Mr. Wurst asked me to get.\x07I hate to bother you, but...\x07Can you collect them for me?\x07There are three different appliance parts I need to get.\x07I don\'t think I\'m ready to take on any more Cogs yet.',
+        COMPLETE: 'Thanks dude! You\'re a legend!'},
+ 1022: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'You can tell Mr. Wurst I\'ll be back soon.\x07And thanks for covering me, man.\x07Without your help I might be out of a job!'},
+ 1023: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Ah, it\'s good to hear he\'ll get back here safely.\x07Now, I spent a lot of time sending out messages to the shopkeepers.\x07As a result, I\'ve fallen behind in my deliveries!\x07Will you do me a favor and deliver these sausages to everyone on my list?\x07I will amply reward you.'},
+ 1024: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Yes, thank you!\x07These are my favorite foods to serve during comedy shows.\x07They\'re absolutely the Wurst, and everyone knows they\'re the Wurst!'},
+ 1025: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Oh good, I was getting hungry.\x07I just needed a quick meal for my lunch break.\x07Let\'s have a bite...\x07Blech. Yep. Still terrible. These are the Wurst.\x07Thanks.'},
+ 1026: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Greetings, my friend! How do you do?\x07You have my sausages! I knew Brad wouldn\'t fall through.\x07When it comes to sausages, this choice is my first.\x07But as far as the taste--these are awful, just the Wurst!',
+        COMPLETE: 'Excellent work! That saves me a lot of time.\x07Maybe I should hire you as my new delivery toon...'},
+ 1027: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'I\'m afraid there\'s not much we can do until we receive a new lead on the manager Cog.\x07As we await a new message, you should keep defeating Cogs on this street.\x07You seem to be a good fighter, and defeating any Cogs will help alleviate our problem.',
+        COMPLETE: 'Good work, _avName_.\x07Funny Farm owes you a debt of gratitude for fighting off those pests.'},
+ 1040: {GREETING: '',
+        QUEST: 'Emma\'s dairy store called us for help earlier.\x07She is offering teleport access to anyone who can assist her._where_'},
+ 1041: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Howdy, partner!\x07Can ya lend a hand?\x07The milk man quit on me. Them Cogs must\'a scared him off.\x07But I got milk that needs deliverin\'!\x07Would ya be a sweetheart and take these packages to my customers?'},
+ 1042: {GREETING: 'Greetings!',
+        LEAVING: '',
+        QUEST: 'Thanks for the delivery!\x07I was running low on milk for today\'s cookies.'},
+ 1043: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Hey, I really appreciate this, man.\x07I just got this sudden craving for milk, you know?'},
+ 1044: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Yowza! Thanks for the package, friend!\x07I need the milk for my newest clown car...\x07This invention will forever change the Tooniverse!'},
+ 1045: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Thank ya kindly!\x07Now, I gotta go \'round town and post these help-wanted signs; otherwise I might lose my business!\x07I want you to take out some \'a them Cogs and reduce the threat \'round here.\x07Those bots are spinnin\' the economy outta control!'},
+ 1046: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Hey, that got a few of \'em!\x07But I think them money bots is the real problem.\x07They\'re takin\' our money straight from us!\x07Go out there and give \'em a piece of yer pie, will ya?\x07I got a special little treat for ya when ya get back.',
+        COMPLETE: 'Great work, partner!\x07Here\'s somethin\' that only the major-leaguers get.\x07You\'ll want it when travelin\' from far distances.\x07Ya now have teleport access to Funny Farm.'}
 }
 CutsceneDialogDict = {
  1001: 'Hmm... It doesn\'t look like Flippy is in here.\x07Maybe you should check back outside.',
- 1002: (('This is a warning.\x07We ask that you cease your operations here and terminate any further lab experiments you may be conducting.',
+ 1002: ('This is a warning.\x07We ask that you cease your operations here and terminate any further lab experiments you may be conducting.',
         'You can\'t stop us from doing anything.\x07We are not backing down this time.',
         'The size of our corporation and the plans we have are beyond the stretch of your imagination.\x07You will face consequences if you do not oblige.',
         'We are stronger than we\'ve ever been before.\x07I suggest YOU terminate your presence in our playground, or you\'ll taste my home-baked wrath!',
         'Suit yourself.'),
-        '%s, it\'s good to see you!\x07Meet me back at the Toon Hall, so we can discuss some things.'),
  1004: ('Flippy! We have a problem!\x07This is urgent. Come quick!',
         'Better go see what\'s going on.\x07Come inside with me.'),
  1005: (('What\'s the matter, guys?',
@@ -564,7 +620,8 @@ InfoBubbleDialog = {
  0: 'You\'ve just received a new ToonTask!\x07When completed, you will gain experience and other rewards for your Toon!\x07Now head through the tunnel to find Flippy.',
  1: 'Remember, in order to defeat the Cogs you must buy gags.\x07You can ride the trolley to play minigames, earn jellybeans, and purchase gags.\x07Or if you already have some jellybeans on hand, head to Goofy\'s Gag Shop to purchase gags quickly!',
  2: MovieTutorialReward1,
- 3: MovieTutorialReward2
+ 3: MovieTutorialReward2,
+ 4: 'You can now carry two ToonTasks!\x07This means you can start working on multiple ToonTasks at the same time, for efficiency!\x07Whenever you see this icon above a Toon HQ, that means the officers have some important tasks for you to complete.\x07Otherwise, the HQ officers will always have "Just for fun!" ToonTasks available if you want some fun rewards.'
 }
 ChatGarblerDog = ['woof', 'arf', 'rruff']
 ChatGarblerCat = ['meow', 'mew']
@@ -5826,6 +5883,7 @@ CatalogCurrentButtonText = 'To Current Items'
 CatalogPastButtonText = 'To Past Items'
 TutorialHQOfficerName = 'HQ Harry'
 NPCToonNames = {20000: 'Tutorial Tom',
+ 1000: lToonHQ,
  1001: Flippy,
  1002: 'Clerk Clark',
  1003: 'Clerk Clara',

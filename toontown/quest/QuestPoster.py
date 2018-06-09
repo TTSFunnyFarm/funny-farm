@@ -83,7 +83,9 @@ class QuestPoster(DirectFrame):
         self.rewardFrame = DirectFrame(parent=self.questFrame, relief=None, pos=(0, 0, -0.23))
         self.expIcon = None
         self.trackIcon = None
-        self.rewardText = DirectLabel(parent=self.questFrame, relief=None, text='', text_fg=self.colors['rewardRed'], text_scale=0.0425, text_align=TextNode.ALeft, text_wordwrap=17.0, textMayChange=1, pos=(-0.36, 0, -0.26))
+        self.taskIcon = None
+        self.teleportIcon = None
+        self.rewardText = DirectLabel(parent=self.questFrame, relief=None, text='', text_fg=self.colors['rewardRed'], text_scale=0.0425, text_align=TextNode.ALeft, text_wordwrap=17.0, textMayChange=1, pos=(-0.35, 0, -0.26))
         self.rewardText.hide()
         self.lPictureFrame = DirectFrame(parent=self.questFrame, relief=None, image=bookModel.find('**/questPictureFrame'), image_scale=IMAGE_SCALE_SMALL, text='', text_pos=(0, -0.11), text_fg=self.normalTextColor, text_scale=TEXT_SCALE, text_align=TextNode.ACenter, text_wordwrap=11.0, textMayChange=1, pos=(0, 0, 0.13))
         self.lPictureFrame.hide()
@@ -201,6 +203,12 @@ class QuestPoster(DirectFrame):
         if self.trackIcon:
             self.trackIcon.removeNode()
             self.trackIcon = None
+        if self.taskIcon:
+            self.taskIcon.removeNode()
+            self.taskIcon = None
+        if self.teleportIcon:
+            self.teleportIcon.removeNode()
+            self.teleportIcon = None
         self.rewardText['text'] = ''
         self.auxText['text'] = ''
         self.auxText['text_fg'] = self.normalTextColor
@@ -220,35 +228,23 @@ class QuestPoster(DirectFrame):
             del self.confirmDeleteButton
         return
 
-    def showChoicePoster(self, questId, fromNpcId, toNpcId, rewardId, callback):
-        self.update((questId,
-         fromNpcId,
-         toNpcId,
-         rewardId,
-         0))
-        quest = Quests.getQuest(questId)
-        self.rewardText.show()
-        self.rewardText.setZ(-0.205)
+    def showChoicePoster(self, questId, callback):
+        self.update((questId, 0))
+        self['image_scale'] = (0.8, 1.0, 0.59)
+        self.questFrame.setZ(0.005)
+        self.rewardFrame.setZ(-0.2)
+        self.rewardText.setZ(-0.21)
         self.questProgress.hide()
         if not hasattr(self, 'chooseButton'):
             guiButton = loader.loadModel('phase_3/models/gui/quit_button')
             self.chooseButton = DirectButton(parent=self.questFrame, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=(0.7, 1, 1), text=TTLocalizer.QuestPageChoose, text_scale=0.06, text_pos=(0, -0.02), pos=(0.285, 0, 0.245), scale=0.65)
             guiButton.removeNode()
-        npcZone = NPCToons.getNPCZone(toNpcId)
-        hoodId = ZoneUtil.getCanonicalHoodId(npcZone)
-        if not base.cr.isPaid() and (questId == 401 or hasattr(quest, 'getLocation') and quest.getLocation() == 1000 or hoodId == 1000):
-
-            def showTeaserPanel():
-                TeaserPanel(pageName='getGags')
-
-            self.chooseButton['command'] = showTeaserPanel
-        else:
-            self.chooseButton['command'] = callback
-            self.chooseButton['extraArgs'] = [questId]
+        self.chooseButton['command'] = callback
+        self.chooseButton['extraArgs'] = [questId]
         self.unbind(DGG.WITHIN)
         self.unbind(DGG.WITHOUT)
-        if not quest.getType() == Quests.TrackChoiceQuest:
-            self.questInfo.setZ(-0.0625)
+        if not Quests.getQuestType(questId)[0] == Quests.QuestTypeChoose:
+            self.questInfo.setZ(-0.06)
         return
 
     def createExpRewardIcon(self, exp):
@@ -271,6 +267,22 @@ class QuestPoster(DirectFrame):
         gagIcon.reparentTo(self.trackIcon)
         gagIcon.setScale(4)
         invModel.removeNode()
+
+    def createTaskRewardIcon(self, tasks):
+        gui = loader.loadModel('phase_3.5/models/gui/stickerbook_gui')
+        self.taskIcon = gui.find('**/summons')
+        self.taskIcon.reparentTo(self.rewardFrame)
+        self.taskIcon.setScale(0.09)
+        # font = ToontownGlobals.getInterfaceFont()
+        # taskText = DirectLabel(parent=self.taskIcon, relief=None, text=str(tasks), text_font=font, pos=(0, 0, -0.2), scale=0.6)
+        gui.removeNode()
+
+    def createTeleportRewardIcon(self):
+        gui = loader.loadModel('phase_3.5/models/gui/sos_textures')
+        self.teleportIcon = gui.find('**/teleportIcon')
+        self.teleportIcon.reparentTo(self.rewardFrame)
+        self.teleportIcon.setScale(0.08)
+        gui.removeNode()
 
     def update(self, questDesc):
         self.clear()
@@ -296,13 +308,15 @@ class QuestPoster(DirectFrame):
                 self.trackIcon.setPos(0.09, 0, 0)
             elif reward[2] == Quests.QuestRewardNewGag:
                 pass # todo
+            elif reward[2] == Quests.QuestRewardTeleportAccess:
+                self.createTeleportRewardIcon()
+                self.teleportIcon.setPos(0.09, 0, -0.01)
             elif reward[2] == Quests.QuestRewardCarryToonTasks:
-                pass # todo
-            elif reward[2] == Quests.QuestRewardCarryJellybeans:
-                pass # todo
+                self.createTaskRewardIcon(reward[3])
+                self.taskIcon.setPos(0.09, 0, -0.01)
             elif reward[2] == Quests.QuestRewardCarryGags:
                 pass # todo
-            elif reward[2] == Quests.QuestRewardJellybeans:
+            elif reward[2] == Quests.QuestRewardCarryJellybeans:
                 pass # todo
         else:
             if reward[0] == Quests.QuestRewardXP:
@@ -310,9 +324,21 @@ class QuestPoster(DirectFrame):
             elif reward[0] == Quests.QuestRewardGagTraining:
                 self.rewardText['text'] = TTLocalizer.QuestsTrackTrainingRewardPoster
                 self.rewardText.show()
+            elif reward[0] == Quests.QuestRewardJellybeans:
+                # todo make this an icon?
+                self.rewardText['text'] = TTLocalizer.QuestsMoneyRewardPosterPlural % str(reward[1])
+                self.rewardText.show()
+            elif reward[0] == Quests.QuestRewardCheesyEffect:
+                effect = TTLocalizer.CheesyEffectDescriptions[reward[1]][0]
+                self.rewardText['text'] = TTLocalizer.QuestsCheesyEffectRewardPoster % effect
+                self.rewardText.show()
             else:
                 self.rewardText['text'] = ''
                 self.rewardText.hide()
+        if Quests.isQuestJustForFun(questId):
+            self.funQuest.show()
+        else:
+            self.funQuest.hide()
         fComplete = quest.getCompletionStatus() == Quests.COMPLETE
         if toNpcId == Quests.ToonHQ:
             toNpcName = TTLocalizer.QuestPosterHQOfficer

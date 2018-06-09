@@ -6,12 +6,14 @@ from toontown.building import Door
 from toontown.suit.SuitPlanner import SuitPlanner
 from toontown.town.TownBattle import TownBattle
 from toontown.battle.Battle import Battle
+from TownLoader import TownLoader
 
 class Street(ToonHood):
     notify = directNotify.newCategory('Street')
 
     def __init__(self):
         ToonHood.__init__(self)
+        self.townLoader = TownLoader(self)
         self.sp = SuitPlanner()
         self.battle = None
         self.battleCell = None
@@ -20,8 +22,8 @@ class Street(ToonHood):
     def enter(self, shop=None, tunnel=None):
         base.localAvatar.setZoneId(self.zoneId)
         musicMgr.playCurrentZoneMusic()
+        self.townLoader.enter()
         self.setupLandmarkBuildings()
-        self.startNametagTask()
         if shop:
             building = self.geom.find('**/tb%s:toon_landmark*' % shop[2:])
             if building.isEmpty():
@@ -35,6 +37,7 @@ class Street(ToonHood):
                 name = linkTunnel.getName().split('_')
                 hoodStr = name[1]
                 if tunnel == hoodStr:
+                    self.townLoader.setCurrentGroup(int(linkTunnel.getAncestor(2).getName()))
                     tunnelOrigin = linkTunnel.find('**/tunnel_origin')
                     base.localAvatar.tunnelIn(tunnelOrigin)
         base.avatarData.setLastHood = FunnyFarmGlobals.getHoodId(self.zoneId)
@@ -45,13 +48,15 @@ class Street(ToonHood):
 
     def exit(self):
         ToonHood.exit(self)
-        self.stopNametagTask()
+        self.townLoader.exit()
         for doId in self.sp.activeSuits.keys():
             suit = self.sp.activeSuits[doId]
             suit.removeActive()
 
     def load(self):
         ToonHood.load(self)
+        self.townLoader.setZoneId(self.zoneId)
+        self.townLoader.load()
         self.sp.setZoneId(self.zoneId)
         self.sp.loadSuits()
         self.battleMusic = base.loader.loadMusic('phase_3.5/audio/bgm/encntr_general_bg.ogg')
@@ -60,10 +65,12 @@ class Street(ToonHood):
 
     def unload(self):
         ToonHood.unload(self)
+        self.townLoader.unload()
         self.sp.unloadSuits()
         self.sp.delete()
         self.townBattle.unload()
         self.townBattle.cleanup()
+        del self.townLoader
         del self.sp
         del self.townBattle
         del self.battleMusic
@@ -90,10 +97,12 @@ class Street(ToonHood):
         self.battle.enter()
         musicMgr.stopMusic()
         base.playMusic(self.battleMusic, looping=1)
+        self.sp.startCheckBattleRange()
         self.accept(self.townBattle.doneEvent, self.exitBattle)
 
     def exitBattle(self, doneStatus):
         self.ignore(self.townBattle.doneEvent)
+        self.sp.stopCheckBattleRange()
         self.battleMusic.stop()
         musicMgr.playCurrentZoneMusic()
         self.battle.cleanupBattle()
@@ -108,32 +117,11 @@ class Street(ToonHood):
             base.localAvatar.died()
 
     def setupLandmarkBuildings(self):
+        # Overrides ToonHood because we don't want to load the nametags right away
         self.buildings = []
         for building in self.geom.findAllMatches('**/tb*toon_landmark*'):
             zoneStr = building.getName().split(':')
             block = int(zoneStr[0][2:])
             zoneId = self.zoneId + 500 + block
             self.buildings.append(Building(zoneId))
-
-    def startNametagTask(self):
-        taskMgr.add(self.__nametagTask, '%d-nametagTask' % self.zoneId)
-
-    def stopNametagTask(self):
-        taskMgr.remove('%d-nametagTask' % self.zoneId)
-
-    def __nametagTask(self, task):
-        for bldg in self.buildings:
-            origin = bldg.getBuildingNodePath().find('**/*door_origin*')
-            dist = (base.localAvatar.getPos(self.geom) - origin.getPos(self.geom)).length()
-            if dist <= 75:
-                bldg.setupNametag()
-            else:
-                bldg.clearNametag()
-        for doId in self.sp.activeSuits.keys():
-            suit = self.sp.activeSuits[doId]
-            dist = (base.localAvatar.getPos() - suit.getPos()).length()
-            if dist <= 150:
-                suit.addActive()
-            else:
-                suit.removeActive()
-        return task.cont
+        self.refreshQuestIcons()

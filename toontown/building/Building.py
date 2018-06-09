@@ -4,6 +4,7 @@ from otp.nametag.NametagGroup import NametagGroup
 from otp.nametag.Nametag import Nametag
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
+from toontown.quest.QuestIcon import *
 
 class Building(DirectObject):
     notify = directNotify.newCategory('Building')
@@ -12,12 +13,17 @@ class Building(DirectObject):
         self.zoneId = zoneId
         self.block = self.getBlock()
         self.nametag = None
+        self.questOffer = None
+        self.mainQuest = None
+        self.sideQuest = None
+        self.questIcon = None
 
     def load(self):
         self.setupNametag()
 
     def unload(self):
         self.clearNametag()
+        self.clearQuestIcon()
 
     def getBlock(self):
         block = str(self.zoneId)
@@ -54,3 +60,68 @@ class Building(DirectObject):
             self.nametag.destroy()
             self.nametag = None
         return
+
+    def setQuestOffer(self, questId):
+        self.questOffer = questId
+        if self.questIcon:
+            self.questIcon.unload()
+        self.questIcon = QuestIcon(typeId=Offer)
+        self.questIcon.reparentTo(self.getBuildingNodePath().find('**/*door_origin*'))
+        self.questIcon.setPos(0, -1, 10)
+        self.questIcon.setScale(3.0)
+        self.questIcon.start()
+
+    def clearQuestOffer(self):
+        self.questOffer = None
+        if self.questIcon:
+            self.questIcon.unload()
+            self.questIcon = None
+
+    def getQuestOffer(self):
+        return self.questOffer
+
+    def setMainQuest(self, questId):
+        self.mainQuest = questId
+        if self.questIcon:
+            self.questIcon.unload()
+        self.questIcon = QuestIcon(typeId=Main)
+        self.questIcon.reparentTo(self.getBuildingNodePath().find('**/*door_origin*'))
+        self.questIcon.setPos(0, -1, 10)
+        self.questIcon.setScale(3.0)
+        self.questIcon.start()
+
+    def clearMainQuest(self):
+        self.mainQuest = None
+        if self.questIcon:
+            self.questIcon.unload()
+            self.questIcon = None
+
+    def getMainQuest(self):
+        return self.mainQuest
+
+    def setSideQuest(self, questId):
+        self.sideQuest = questId
+        if self.questIcon:
+            self.questIcon.unload()
+        self.questIcon = QuestIcon(typeId=Bonus)
+        self.questIcon.reparentTo(self.getBuildingNodePath().find('**/*door_origin*'))
+        self.questIcon.setPos(0, -1, 10)
+        self.questIcon.setScale(3.0)
+        self.questIcon.start()
+
+    def clearSideQuest(self):
+        self.sideQuest = None
+        if self.questIcon:
+            self.questIcon.unload()
+            self.questIcon = None
+
+    def getSideQuest(self):
+        return self.sideQuest
+
+    def clearQuestIcon(self):
+        if self.questOffer:
+            self.clearQuestOffer()
+        elif self.mainQuest:
+            self.clearMainQuest()
+        elif self.sideQuest:
+            self.clearSideQuest()

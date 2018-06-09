@@ -95,7 +95,7 @@ class ChatManager(DirectObject):
         try:
             chat.encode('ascii')
         except UnicodeEncodeError:
-            base.localAvatar.setSystemMessage(0, 'Non-ASCII characters are not supported!')
+            base.localAvatar.setSystemMessage(0, "Toontown's Funny Farm does not support non-ASCII characters.")
             self.closeChatInput()
             return
         if len(chat) > 0:
