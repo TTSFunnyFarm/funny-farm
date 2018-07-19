@@ -23,19 +23,17 @@ class ToonHallInterior(Interior):
         hoodId = ZoneUtil.getCanonicalHoodId(self.zoneId)
         self.colors = ToonInteriorColors.colors[hoodId]
         doorOrigin = self.interior.find('**/door_origin')
-        doorOrigin.setScale(0.8, 0.8, 0.8)
+        # doorOrigin.setScale(0.8, 0.8, 0.8)
         doorOrigin.setPos(doorOrigin, 0, -0.025, 0)
         labDoorOrigin = self.interior.find('**/lab_door_origin')
         labDoorOrigin.setScale(0.8, 0.8, 0.8)
         labDoorOrigin.setPos(labDoorOrigin, 0, -0.025, 0)
-        self.door = self.setupDoor('door_double_round_ur', 'door_origin')
+        self.door = self.setupDoor('barn_door', 'door_origin')
         self.labDoor = self.setupDoor('door_double_round_ur', 'lab_door_origin')
         self.labDoor.find('**/door_double_round_ur_trigger').setName('door_trigger_15')
         doorColor = 0
         self.labDoor.setColor(self.colors['TI_door'][doorColor])
-        if self.zoneId in InteriorStorage.ZoneStyles:
-            doorColor = InteriorStorage.ZoneStyles[self.zoneId].get('TI_door', 0)
-        self.door.setColor(self.colors['TI_door'][doorColor])
+        self.door.setColorScale(1.0, 0.9, 0.9, 1.0)
         del self.colors
         del self.randomGenerator
         self.interior.flattenMedium()

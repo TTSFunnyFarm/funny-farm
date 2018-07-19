@@ -42,6 +42,7 @@ class FFHood(ToonHood):
 
     def load(self):
         ToonHood.load(self)
+        self.sky.setScale(2.0)
         self.waterShader = WaterShader.WaterShader()
         self.waterShader.waterPos = 1.05
         if base.air.holidayMgr.isWinter():

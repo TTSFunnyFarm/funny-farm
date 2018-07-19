@@ -60,6 +60,8 @@ class Interior(DirectObject):
             # todo: display quest offers on toons
 
     def startActive(self):
+        if self.shopId == 'toonhall':
+            self.accept('enterbarn_door_trigger', self.handleDoorTrigger)
         for door in self.interior.findAllMatches('**/door_double_*_ur'):
             if not door.find('**/*_trigger').isEmpty():
                 self.accept('enter%s' % door.find('**/*_trigger').getName(), self.handleDoorTrigger)
@@ -86,13 +88,17 @@ class Interior(DirectObject):
         zone.enter(shop=str(zoneId))
 
     def setupDoor(self, name, parent):
-        door = loader.loadModel('phase_3.5/models/modules/doors_practical').find('**/' + name)
+        if name == 'barn_door':
+            door = loader.loadModel('phase_14/models/modules/FF_barn_doors')
+        else:
+            door = loader.loadModel('phase_3.5/models/modules/doors_practical').find('**/' + name)
         door.reparentTo(self.interior.find('**/' + parent))
         self.fixDoor(door)
         return door
 
     def fixDoor(self, door):
-        door.find('**/door_*_hole_left').setColor(0, 0, 0, 1)
-        door.find('**/door_*_hole_right').setColor(0, 0, 0, 1)
-        door.find('**/door_*_hole_left').setDepthOffset(1)
-        door.find('**/door_*_hole_right').setDepthOffset(1)
+        door.find('**/*door*hole_left').setColor(0, 0, 0, 1)
+        door.find('**/*door*hole_right').setColor(0, 0, 0, 1)
+        if door.getName() != 'barn_door':
+            door.find('**/*door*hole_left').setDepthOffset(1)
+            door.find('**/*door*hole_right').setDepthOffset(1)
