@@ -194,3 +194,27 @@ def scene1007():
     # All info bubbles will be added to quest history so that they only happen once.
     track.append(Func(base.localAvatar.acceptOnce, 'cutscene-done', base.localAvatar.addQuestHistory, [1]))
     return track
+
+def scene1014():
+    for building in base.cr.playGame.getActiveZone().buildings:
+        if 'toon_landmark_hq' in building.getBuildingNodePath().getName():
+            toonHq = building
+    if not toonHq.getQuestOffer():
+        toonHq.setQuestOffer(4, hq=1)
+    camTrack = Sequence()
+    camTrack.append(Func(base.localAvatar.questPage.hideQuestsOnscreen))
+    camTrack.append(Func(camera.wrtReparentTo, render))
+    camTrack.append(LerpPosHprInterval(camera, duration=3.0, pos=Point3(-27, -4, 8), hpr=Vec3(-45, 0, 0), blendType='easeInOut'))
+
+    track = Sequence()
+    track.append(Func(base.localAvatar.questPage.showQuestsOnscreen))
+    track.append(Func(base.localAvatar.showInfoBubble, 4, 'cutscene-done'))
+    track.append(Func(base.localAvatar.acceptOnce, 'nextInfoPage', base.localAvatar.acceptOnce, ['nextInfoPage', camTrack.start]))
+    
+    def sceneDone():
+        if toonHq.getQuestOffer() == 4:
+            toonHq.clearQuestOffer()
+        base.localAvatar.addQuestHistory(4)
+    
+    track.append(Func(base.localAvatar.acceptOnce, 'cutscene-done', sceneDone))
+    return track

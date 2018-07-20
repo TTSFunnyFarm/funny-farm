@@ -840,9 +840,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             # Carry 2 ToonTasks info bubble
             if questDesc[0] == 1014 and not self.hasQuestHistory(4):
                 if zoneId == FunnyFarmGlobals.FunnyFarm:
-                    # base.cr.cutsceneMgr.enterCutscene(1014)
-                    # return True
-                    pass
+                    base.cr.cutsceneMgr.enterCutscene(1014)
+                    return True
 
         return False
 

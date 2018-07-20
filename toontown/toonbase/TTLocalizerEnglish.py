@@ -621,7 +621,7 @@ InfoBubbleDialog = {
  1: 'Remember, in order to defeat the Cogs you must buy gags.\x07You can ride the trolley to play minigames, earn jellybeans, and purchase gags.\x07Or if you already have some jellybeans on hand, head to Goofy\'s Gag Shop to purchase gags quickly!',
  2: MovieTutorialReward1,
  3: MovieTutorialReward2,
- 4: 'You can now carry two ToonTasks!\x07This means you can start working on multiple ToonTasks at the same time, for efficiency!\x07Whenever you see this icon above a Toon HQ, that means the officers have some important tasks for you to complete.\x07Otherwise, the HQ officers will always have "Just for fun!" ToonTasks available if you want some fun rewards.'
+ 4: 'You can now carry two ToonTasks!\x07This means you can start working on multiple ToonTasks at the same time, for efficiency!\x07If you see this icon above a Toon HQ, that means the officers have important tasks for you to do.\x07Otherwise, the HQ officers will always have "Just for fun!" ToonTasks to do if you want some fun rewards.'
 }
 ChatGarblerDog = ['woof', 'arf', 'rruff']
 ChatGarblerCat = ['meow', 'mew']
