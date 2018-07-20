@@ -11,8 +11,8 @@ from toontown.building import ToonInterior
 from toontown.building.Building import Building
 from toontown.hood.Hood import Hood
 from toontown.quest import Quests
+from toontown.toonbase import TTLocalizer
 from toontown.trolley.Trolley import Trolley
-
 
 class ToonHood(Hood):
     Shop2ClassDict = {
@@ -125,7 +125,22 @@ class ToonHood(Hood):
                         break
                     else:
                         building.clearQuestIcon()
-            # todo: display quest offers on buildings
+            if 'toon_landmark_hq' in building.getBuildingNodePath().getName() and len(base.localAvatar.quests) < base.localAvatar.getQuestCarryLimit():
+                if building.getMainQuest() or building.getSideQuest() or building.getQuestOffer():
+                    continue
+                flatAvQuests = []
+                for questDesc in base.localAvatar.quests:
+                    flatAvQuests.extend(questDesc)
+                tier = base.cr.questManager.determineQuestTier(base.localAvatar)
+                for questId in Quests.mainQuestTiers[tier]:
+                    if Quests.getQuestFinished(questId) == Quests.Start \
+                    and Quests.getQuestTier(questId) == tier \
+                    and len(Quests.getReward(questId)) > 2 \
+                    and Quests.getReward(questId)[2] in Quests.SpecialRewards \
+                    and questId not in flatAvQuests \
+                    and not base.localAvatar.hasQuestHistory(questId):
+                        building.setQuestOffer(questId, hq=1)
+                        break
 
     def handleDoorTrigger(self, collEntry):
         building = collEntry.getIntoNodePath().getParent()

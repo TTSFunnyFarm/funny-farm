@@ -17,6 +17,7 @@ class Building(DirectObject):
         self.mainQuest = None
         self.sideQuest = None
         self.questIcon = None
+        self.questIcon2 = None
 
     def load(self):
         self.setupNametag()
@@ -61,21 +62,35 @@ class Building(DirectObject):
             self.nametag = None
         return
 
-    def setQuestOffer(self, questId):
+    def setQuestOffer(self, questId, hq=0):
         self.questOffer = questId
         if self.questIcon:
             self.questIcon.unload()
         self.questIcon = QuestIcon(typeId=Offer)
-        self.questIcon.reparentTo(self.getBuildingNodePath().find('**/*door_origin*'))
-        self.questIcon.setPos(0, -1, 10)
-        self.questIcon.setScale(3.0)
-        self.questIcon.start()
+        if hq:
+            self.questIcon.reparentTo(self.getBuildingNodePath().find('**/door_origin_0'))
+            self.questIcon.setPos(0, -3.5, 10)
+            self.questIcon.setScale(3.0)
+            self.questIcon.start()
+            self.questIcon2 = QuestIcon(typeId=Offer)
+            self.questIcon2.reparentTo(self.getBuildingNodePath().find('**/door_origin_1'))
+            self.questIcon2.setPos(0, -3.5, 10)
+            self.questIcon2.setScale(3.0)
+            self.questIcon2.start()
+        else:
+            self.questIcon.reparentTo(self.getBuildingNodePath().find('**/*door_origin*'))
+            self.questIcon.setPos(0, -1, 10)
+            self.questIcon.setScale(3.0)
+            self.questIcon.start()
 
     def clearQuestOffer(self):
         self.questOffer = None
         if self.questIcon:
             self.questIcon.unload()
             self.questIcon = None
+        if self.questIcon2:
+            self.questIcon2.unload()
+            self.questIcon2 = None
 
     def getQuestOffer(self):
         return self.questOffer
