@@ -1361,7 +1361,7 @@ def chooseQuestDialog(id, status):
             questDialog = DefaultDialog[status]
     if type(questDialog) == type(()):
         questDialog = random.choice(questDialog)
-    if getQuestFinished(id) == Finish and status == COMPLETE:
+    if isQuestJustForFun(id) and getQuestFinished(id) == Finish and status == COMPLETE:
         reward = getReward(id)
         rewardDialog = RewardDialog[reward[0]]
         if rewardDialog:
