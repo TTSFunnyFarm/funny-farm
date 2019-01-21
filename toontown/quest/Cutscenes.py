@@ -28,7 +28,7 @@ def scene1002():
     track.append(Func(base.playMusic, bgm, 1))
     track.append(Func(aspect2d.hide))
     track.append(Func(camera.wrtReparentTo, render))
-    track.append(LerpPosHprInterval(camera, duration=3.0, pos=Point3(-67, -40, 9), hpr=Vec3(30, -10, 0), blendType='easeInOut'))
+    track.append(LerpPosHprInterval(camera, duration=3.0, pos=Point3(-47, -40, 9), hpr=Vec3(30, -10, 0), blendType='easeInOut'))
 
     sceneDialog = TTLocalizer.CutsceneDialogDict[1002]
 
