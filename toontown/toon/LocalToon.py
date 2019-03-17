@@ -845,8 +845,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
         return False
 
-    def showInfoBubble(self, index, doneEvent):
-        self.infoBubble.enter(index, doneEvent)
+    def showInfoBubble(self, index, doneEvent, npcId=0):
+        self.infoBubble.enter(index, doneEvent, npcId)
 
     def b_setTunnelIn(self, endX, tunnelOrigin):
         timestamp = globalClockDelta.getFrameNetworkTime()
