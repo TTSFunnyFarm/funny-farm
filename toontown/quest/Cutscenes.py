@@ -204,7 +204,7 @@ def scene1014():
     camTrack = Sequence()
     camTrack.append(Func(base.localAvatar.questPage.hideQuestsOnscreen))
     camTrack.append(Func(camera.wrtReparentTo, render))
-    camTrack.append(LerpPosHprInterval(camera, duration=3.0, pos=Point3(-27, -4, 8), hpr=Vec3(-45, 0, 0), blendType='easeInOut'))
+    camTrack.append(LerpPosHprInterval(camera, duration=3.0, pos=Point3(-27, -10, 8), hpr=Vec3(-45, 0, 0), blendType='easeInOut'))
 
     track = Sequence()
     track.append(Func(base.localAvatar.questPage.showQuestsOnscreen))
