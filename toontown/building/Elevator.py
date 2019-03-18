@@ -5,6 +5,7 @@ from direct.gui.DirectGui import *
 from direct.task.Task import Task
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
+from toontown.suit import Suit
 from ElevatorConstants import *
 from ElevatorUtils import *
 
@@ -13,42 +14,61 @@ class Elevator(DirectObject):
 
     def __init__(self, type=ELEVATOR_NORMAL):
         self.type = type
-        if self.type == ELEVATOR_NORMAL:
-            self.modelPath = 'phase_5/models/cogdominium/tt_m_ara_csa_elevatorB'
-        else:
-            self.notify.error('Invalid elevator type: ' + self.type)
         self.openSfx = base.loader.loadSfx('phase_5/audio/sfx/elevator_door_open.ogg')
         self.closeSfx = base.loader.loadSfx('phase_5/audio/sfx/elevator_door_close.ogg')
         self.countdownTime = ElevatorData[self.type]['countdown']
         self.exitButton = None
         self.clock = None
 
-    def setup(self, parent):
+    def setup(self, elevatorModel, parent, track, elite=False):
+        self.np = elevatorModel
         self.parent = parent
-        self.np = loader.loadModel(self.modelPath)
+        self.track = track
+        self.elite = elite
         self.np.reparentTo(self.parent)
         self.np.find('**/flashing').setDepthOffset(1)
-        self.leftDoor = self.np.find('**/left_door')
-        self.rightDoor = self.np.find('**/right_door')
+        self.leftDoor = self.np.find('**/left-door')
+        if self.leftDoor.isEmpty():
+            self.leftDoor = self.np.find('**/left_door')
+        self.rightDoor = self.np.find('**/right-door')
+        if self.rightDoor.isEmpty():
+            self.rightDoor = self.np.find('**/right_door')
         self.elevatorSphere = self.np.find('**/door_collisions')
         self.elevatorSphere.setName(self.uniqueName('elevatorSphere'))
-        self.buttonModels = loader.loadModel('phase_3.5/models/gui/inventory_gui')
-        self.upButton = self.buttonModels.find('**//InventoryButtonUp')
-        self.downButton = self.buttonModels.find('**/InventoryButtonDown')
-        self.rolloverButton = self.buttonModels.find('**/InventoryButtonRollover')
+        buttonGui = loader.loadModel('phase_3.5/models/gui/inventory_gui')
+        self.upButton = buttonGui.find('**//InventoryButtonUp')
+        self.downButton = buttonGui.find('**/InventoryButtonDown')
+        self.rolloverButton = buttonGui.find('**/InventoryButtonRollover')
+        buttonGui.removeNode()
+        self.cab = self.np.find('**/elevator')
+        cogIcons = loader.loadModel('phase_3/models/gui/cog_icons')
+        dept = self.track
+        if dept == 'c':
+            corpIcon = cogIcons.find('**/CorpIcon').copyTo(self.cab)
+        elif dept == 's':
+            corpIcon = cogIcons.find('**/SalesIcon').copyTo(self.cab)
+        elif dept == 'l':
+            corpIcon = cogIcons.find('**/LegalIcon').copyTo(self.cab)
+        elif dept == 'm':
+            corpIcon = cogIcons.find('**/MoneyIcon').copyTo(self.cab)
+        corpIcon.setPos(0, 6.79, 6.8)
+        corpIcon.setScale(3)
+        corpIcon.setColor(Suit.Suit.medallionColors[dept])
+        cogIcons.removeNode()
 
     def delete(self):
         self.removeActive()
-        self.np.removeNode()
         del self.np
+        del self.parent
+        del self.track
+        del self.elite
         del self.leftDoor
         del self.rightDoor
         del self.elevatorSphere
-        self.buttonModels.removeNode()
-        del self.buttonModels
         del self.upButton
         del self.downButton
         del self.rolloverButton
+        del self.cab
 
     def uniqueName(self, idString):
         return ('%s-%s' % (idString, str(id(self))))

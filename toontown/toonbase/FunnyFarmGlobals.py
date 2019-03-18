@@ -251,3 +251,53 @@ WaterShaderLevels = [
     [WaterReflectFactorHigh, WaterRefractFactorHigh],
     [WaterReflectFactorUltra, WaterRefractFactorUltra]
 ]
+SuitBuildingMap = {
+    's': 'phase_4/models/modules/suit_landmark_sales',
+    'm': 'phase_4/models/modules/suit_landmark_money',
+    'l': 'phase_4/models/modules/suit_landmark_legal',
+    'c': 'phase_4/models/modules/suit_landmark_corp'
+}
+CheesyEffectDict = {
+    FunnyFarm: {
+        CEBigToon: ('m', 10),
+        CESmallToon: ('m', 10),
+        CEBigHead: ('m', 10),
+        CESmallHead: ('m', 10)
+    },
+    SillySprings: {
+        CEBigToon: ('m', 60),
+        CESmallToon: ('m', 60),
+        CEBigHead: ('m', 60),
+        CESmallHead: ('m', 60),
+        CEBigLegs: ('m', 30),
+        CESmallLegs: ('m', 30),
+        CEFlatPortrait: ('m', 30),
+        CEFlatProfile: ('m', 30)
+    },
+    ChillyVillage: {
+        CEBigToon: ('h', 24),
+        CESmallToon: ('h', 24),
+        CEBigHead: ('h', 24),
+        CESmallHead: ('h', 24),
+        CEBigLegs: ('h', 24),
+        CESmallLegs: ('h', 24),
+        CEFlatPortrait: ('h', 4),
+        CEFlatProfile: ('h', 4),
+        CETransparent: ('h', 2),
+        CENoColor: ('h', 2),
+        CEInvisible: ('h', 2)
+    },
+    MoonlitMeadow: {
+        CEBigToon: ('d', 2),
+        CESmallToon: ('d', 2),
+        CEBigHead: ('h', 24),
+        CESmallHead: ('h', 24),
+        CEBigLegs: ('h', 24),
+        CESmallLegs: ('h', 24),
+        CEFlatPortrait: ('h', 24),
+        CEFlatProfile: ('h', 24),
+        CETransparent: ('h', 24),
+        CENoColor: ('h', 24),
+        CEInvisible: ('h', 24)
+    }
+}

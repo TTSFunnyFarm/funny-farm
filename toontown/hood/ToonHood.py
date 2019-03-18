@@ -105,6 +105,7 @@ class ToonHood(Hood):
     def destroyLandmarkBuildings(self):
         for building in self.buildings:
             building.unload()
+            building.delete()
             del building
         self.buildings = []
 
