@@ -3,13 +3,14 @@ from direct.interval.IntervalGlobal import *
 from direct.showbase.DirectObject import DirectObject
 from panda3d.core import *
 
+from toontown.building.SuitInterior import SuitInterior
+from toontown.building.EliteInterior import EliteInterior
 from toontown.hood import ZoneUtil
 from toontown.quest import Quests
 from toontown.toon import NPCToons
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals
-
 
 class Hood(DirectObject):
     notify = directNotify.newCategory('Hood')
@@ -201,6 +202,31 @@ class Hood(DirectObject):
         pass
 
     def exitPlace(self):
+        pass
+
+    def enterSuitBuilding(self, track, difficulty, numFloors):
+        self.exit()
+        self.geom.reparentTo(hidden)
+        self.geom.stash()
+        self.sky.reparentTo(hidden)
+        self.sky.stash()
+        self.place = SuitInterior(track, difficulty, numFloors)
+        self.place.loadNextFloor()
+
+    def exitSuitBuilding(self):
+        ModelPool.garbageCollect()
+        TexturePool.garbageCollect()
+        self.place.unload()
+        self.place = None
+        self.geom.unstash()
+        self.geom.reparentTo(render)
+        self.sky.unstash()
+        self.sky.reparentTo(camera)
+
+    def enterEliteBuilding(self):
+        pass
+
+    def exitEliteBuilding(self):
         pass
 
     def startSky(self):

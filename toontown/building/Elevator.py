@@ -20,11 +20,28 @@ class Elevator(DirectObject):
         self.exitButton = None
         self.clock = None
 
-    def setup(self, elevatorModel, parent, track, elite=False):
+    def setup(self, elevatorModel, parent, track, difficulty, numFloors, elite=False):
         self.np = elevatorModel
         self.parent = parent
         self.track = track
+        self.difficulty = difficulty
+        self.numFloors = numFloors
         self.elite = elite
+
+        if not self.elite:
+            npc = self.np.findAllMatches('**/floor_light_?;+s')
+            for i in range(npc.getNumPaths()):
+                light = npc.getPath(i)
+                floor = int(light.getName()[-1:]) - 1
+                if floor < self.numFloors:
+                    light.setColor(LIGHT_OFF_COLOR)
+                    if base.cr.playGame.getActiveZone().place:
+                        currFloor = base.cr.playGame.getActiveZone().place.currentFloor
+                        if floor == (currFloor - 1):
+                            light.setColor(LIGHT_ON_COLOR)
+                else:
+                    light.hide()
+
         self.np.reparentTo(self.parent)
         self.np.find('**/flashing').setDepthOffset(1)
         self.leftDoor = self.np.find('**/left-door')
@@ -40,6 +57,25 @@ class Elevator(DirectObject):
         self.downButton = buttonGui.find('**/InventoryButtonDown')
         self.rolloverButton = buttonGui.find('**/InventoryButtonRollover')
         buttonGui.removeNode()
+
+    def delete(self):
+        self.removeActive()
+        del self.np
+        del self.parent
+        del self.track
+        del self.difficulty
+        del self.numFloors
+        del self.elite
+        del self.leftDoor
+        del self.rightDoor
+        del self.elevatorSphere
+        del self.upButton
+        del self.downButton
+        del self.rolloverButton
+        if hasattr(self, 'cab'):
+            del self.cab
+
+    def showCorpIcon(self):
         self.cab = self.np.find('**/elevator')
         cogIcons = loader.loadModel('phase_3/models/gui/cog_icons')
         dept = self.track
@@ -55,20 +91,6 @@ class Elevator(DirectObject):
         corpIcon.setScale(3)
         corpIcon.setColor(Suit.Suit.medallionColors[dept])
         cogIcons.removeNode()
-
-    def delete(self):
-        self.removeActive()
-        del self.np
-        del self.parent
-        del self.track
-        del self.elite
-        del self.leftDoor
-        del self.rightDoor
-        del self.elevatorSphere
-        del self.upButton
-        del self.downButton
-        del self.rolloverButton
-        del self.cab
 
     def uniqueName(self, idString):
         return ('%s-%s' % (idString, str(id(self))))
@@ -114,12 +136,13 @@ class Elevator(DirectObject):
             self.acceptOnce(track.getName(), self.closeDoors, [callback, extraArgs])
         else:
             self.enableExitButton()
-            self.startCountdownClock(self.countdownTime, 0)
+            # self.startCountdownClock(self.countdownTime, 0)
+            self.startCountdownClock(3, 0)
         track.start()
 
     def __handleEnterSphere(self, collEntry):
-        if base.cr.playGame.place:
-            self.board(0, callback=base.cr.playGame.place.loadNextFloor)
+        if base.cr.playGame.getActiveZone().place:
+            self.board(0, callback=base.cr.playGame.getActiveZone().place.loadNextFloor)
         else:
             self.board(0)
 
@@ -137,11 +160,7 @@ class Elevator(DirectObject):
             self.exitWaitCountdown()
 
     def __handleExitSphere(self, closeDoors=False):
-        base.localAvatar.collisionsOn()
-        base.localAvatar.enableAvatarControls()
-        base.localAvatar.setupSmartCamera()
-        base.localAvatar.book.showButton()
-        base.localAvatar.beginAllowPies()
+        base.localAvatar.enable()
         if closeDoors:
             self.closeDoors()
 
@@ -160,7 +179,11 @@ class Elevator(DirectObject):
         if task.time >= task.duration:
             self.disableExitButton()
             self.exitWaitCountdown()
-            self.closeDoors(callback=self.enterEliteBuilding)
+            if self.elite:
+                callbackFunc = self.enterEliteBuilding
+            else:
+                callbackFunc = self.enterSuitBuilding
+            self.closeDoors(callback=callbackFunc)
             return Task.done
         else:
             return Task.cont
@@ -188,7 +211,8 @@ class Elevator(DirectObject):
         del self.clock
         del self.clockNode
 
+    def enterSuitBuilding(self):
+        base.cr.playGame.getActiveZone().enterSuitBuilding(self.track, self.difficulty, self.numFloors)
+
     def enterEliteBuilding(self):
-        zoneId = base.cr.playGame.street.zoneId
-        base.cr.playGame.exitStreet()
-        base.cr.playGame.enterEliteInterior(zoneId)
+        base.cr.playGame.getActiveZone().enterEliteBuilding(self.track, self.difficulty, self.numFloors)

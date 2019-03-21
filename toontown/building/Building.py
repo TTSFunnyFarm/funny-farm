@@ -247,17 +247,14 @@ class Building(DirectObject):
                 np = npc.getPath(i)
                 floor = int(np.getName()[-1:]) - 1
                 self.floorIndicator[floor] = np
-                if floor < self.numFloors:
-                    np.setColor(LIGHT_OFF_COLOR)
-                else:
-                    np.hide()
 
         self.suitDoorOrigin = newNP.find('**/*_door_origin')
         self.elevatorNodePath.reparentTo(self.suitDoorOrigin)
         self.normalizeElevator()
         
         self.elevator = Elevator()
-        self.elevator.setup(self.elevatorModel, self.elevatorNodePath, self.track, elite=cogdo)
+        self.elevator.setup(self.elevatorModel, self.elevatorNodePath, self.track, self.difficulty, self.numFloors, elite=cogdo)
+        self.elevator.showCorpIcon()
         self.leftDoor = self.elevator.leftDoor
         self.rightDoor = self.elevator.rightDoor
         return
@@ -328,6 +325,8 @@ class Building(DirectObject):
                 showTrack.append(self.createBounceTrack(i, 2, 0.65, TO_SUIT_BLDG_TIME - timeForDrop, slowInitBounce=1.0))
                 if not soundPlayed:
                     showTrack.append(Func(base.playSfx, self.cogSettleSound, 0, 1, None, 0.0))
+                showTrack.append(Func(self.elevator.openDoors))
+                showTrack.append(Func(self.elevator.addActive))
                 tracks.append(showTrack)
                 if not soundPlayed:
                     soundPlayed = 1
