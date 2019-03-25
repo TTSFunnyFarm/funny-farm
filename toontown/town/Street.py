@@ -24,6 +24,7 @@ class Street(ToonHood):
         musicMgr.playCurrentZoneMusic()
         self.townLoader.enter()
         self.setupLandmarkBuildings()
+        self.sp.loadBuildings()
         if shop:
             building = self.geom.find('**/tb%s:toon_landmark*' % shop[2:])
             if building.isEmpty():

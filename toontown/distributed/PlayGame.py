@@ -112,10 +112,10 @@ class PlayGame(DirectObject):
 
     def enterRandomMinigame(self):
         if hasattr(self.hood, 'geom'):
-            ModelPool.garbageCollect()
-            TexturePool.garbageCollect()
             self.hood.exit()
             self.hood.unload()
+            ModelPool.garbageCollect()
+            TexturePool.garbageCollect()
         game = random.choice(self.MINIGAMES)()
         if self.lastGame:
             if game.getTitle() == self.lastGame:

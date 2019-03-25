@@ -71,6 +71,7 @@ class SuitPlanner(DirectObject):
             self.activeSuits.pop(doId)
 
     def loadSuits(self):
+        # Loads the current batch of suits active on the AI
         ai = base.air.suitPlanners[self.zoneId]
         suits = ai.requestSuits()
         for status in suits:
@@ -95,6 +96,24 @@ class SuitPlanner(DirectObject):
         for doId in self.activeSuits.keys():
             suit = self.activeSuits[doId]
             self.deleteSuit(suit)
+
+    def loadBuildings(self):
+        # Loads the current batch of suit buildings active on the AI
+        ai = base.air.suitPlanners[self.zoneId]
+        buildings = ai.requestBuildings()
+        townBuildings = base.cr.playGame.getActiveZone().buildings
+        for status in buildings:
+            bldg = None
+            for tb in townBuildings:
+                if status['block'] == tb.getBlock():
+                    bldg = tb
+            bldg.track = status['track']
+            bldg.difficulty = status['difficulty']
+            bldg.numFloors = status['numFloors']
+            if status['elite']:
+                bldg.setToElite()
+            else:
+                bldg.setToSuit()
 
     def startCheckBattleRange(self):
         taskMgr.add(self.__checkBattleRange, 'checkBattleRange')

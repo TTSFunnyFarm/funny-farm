@@ -213,20 +213,7 @@ class Hood(DirectObject):
         self.place = SuitInterior(track, difficulty, numFloors)
         self.place.loadNextFloor()
 
-    def exitSuitBuilding(self):
-        ModelPool.garbageCollect()
-        TexturePool.garbageCollect()
-        self.place.unload()
-        self.place = None
-        self.geom.unstash()
-        self.geom.reparentTo(render)
-        self.sky.unstash()
-        self.sky.reparentTo(camera)
-
     def enterEliteBuilding(self):
-        pass
-
-    def exitEliteBuilding(self):
         pass
 
     def startSky(self):

@@ -73,9 +73,9 @@ class Building(DirectObject):
 
     def getBuildingNodePath(self):
         geom = base.cr.playGame.getActiveZone().geom
-        np = geom.find('**/tb%d:toon_landmark*' % self.block)
+        np = geom.find('**/tb%d:toon_landmark*;+s' % self.block)
         if np.isEmpty():
-            np = geom.find('**/sz%d:toon_landmark*' % self.block)
+            np = geom.find('**/sz%d:toon_landmark*;+s' % self.block)
         return np
 
     def setState(self, state):
@@ -388,6 +388,9 @@ class Building(DirectObject):
         if hasattr(self, 'floorIndicator'):
             del self.floorIndicator
 
+    def setupCogdo(self, nodePath):
+        pass
+
     def adjustColorScale(self, scale, node):
         node.setColorScale(scale, scale, scale, 1)
 
@@ -446,26 +449,26 @@ class Building(DirectObject):
         for i in nodes:
             name = i.getName()
             if name[0] == 's':
-                if name.find('_landmark_') != -1:
-                    i.removeNode()
-                else:
-                    i.unstash()
+                # if name.find('_landmark_') != -1:
+                #     i.removeNode()
+                # else:
+                i.unstash()
             elif name[0] == 't':
-                if name.find('_landmark_') != -1:
-                    i.stash()
-                else:
-                    i.stash()
+                # if name.find('_landmark_') != -1:
+                #     i.stash()
+                # else:
+                i.stash()
             elif name[0] == 'c':
-                if name.find('_landmark_') != -1:
-                    i.removeNode()
-                else:
-                    i.stash()
+                # if name.find('_landmark_') != -1:
+                #     i.removeNode()
+                # else:
+                i.stash()
 
         npc = self.townTopLevel.findAllMatches(self.getSbSearchString())
         for i in range(npc.getNumPaths()):
             nodePath = npc.getPath(i)
-            self.notify.debug('net transform = %s' % str(nodePath.getNetTransform()))
-            self.setupSuitBuilding(nodePath)
+            self.setupSuitBuilding(nodePath).show()
+            self.elevator.addActive()
 
     def setToElite(self):
         self.stopTransition()
@@ -476,20 +479,20 @@ class Building(DirectObject):
         for i in nodes:
             name = i.getName()
             if name[0] == 'c':
-                if name.find('_landmark_') != -1:
-                    i.removeNode()
-                else:
-                    i.unstash()
+                # if name.find('_landmark_') != -1:
+                #     i.removeNode()
+                # else:
+                i.unstash()
             elif name[0] == 't':
-                if name.find('_landmark_') != -1:
-                    i.stash()
-                else:
-                    i.stash()
+                # if name.find('_landmark_') != -1:
+                #     i.stash()
+                # else:
+                i.stash()
             elif name[0] == 's':
-                if name.find('_landmark_') != -1:
-                    i.removeNode()
-                else:
-                    i.stash()
+                # if name.find('_landmark_') != -1:
+                #     i.removeNode()
+                # else:
+                i.stash()
 
         for np in nodes:
             if not np.isEmpty():
@@ -498,7 +501,7 @@ class Building(DirectObject):
         npc = hidden.findAllMatches(self.getSbSearchString())
         for i in range(npc.getNumPaths()):
             nodePath = npc.getPath(i)
-            self.setupCogdo(nodePath)
+            self.setupCogdo(nodePath) #.show()
 
     def setToToon(self):
         self.stopTransition()
@@ -511,17 +514,17 @@ class Building(DirectObject):
             i.clearColorScale()
             name = i.getName()
             if name[0] == 's':
-                if name.find('_landmark_') != -1:
+                if name.find('_landmark__') != -1:
                     i.removeNode()
                 else:
                     i.stash()
             elif name[0] == 't':
-                if name.find('_landmark_') != -1:
-                    i.unstash()
-                else:
-                    i.unstash()
+                # if name.find('_landmark_') != -1:
+                #     i.unstash()
+                # else:
+                i.unstash()
             elif name[0] == 'c':
-                if name.find('_landmark_') != -1:
+                if name.find('_landmark__') != -1:
                     i.removeNode()
                 else:
                     i.stash()

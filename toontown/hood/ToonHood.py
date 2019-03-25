@@ -187,11 +187,11 @@ class ToonHood(Hood):
         door.avatarExit(base.localAvatar)
 
     def exitPlace(self):
-        ModelPool.garbageCollect()
-        TexturePool.garbageCollect()
         self.place.unload()
         self.place = None
         self.geom.unstash()
         self.geom.reparentTo(render)
         self.sky.unstash()
         self.sky.reparentTo(camera)
+        ModelPool.garbageCollect()
+        TexturePool.garbageCollect()

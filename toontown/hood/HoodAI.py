@@ -41,8 +41,8 @@ class HoodAI:
     def createSuitPlanners(self):
         for zoneId in FunnyFarmGlobals.HoodHierarchy.get(self.zoneId, []):
             sp = SuitPlannerAI(zoneId)
-            self.air.suitPlanners[zoneId] = sp
             sp.generate()
+            self.air.suitPlanners[zoneId] = sp
 
     def createBuildingManagers(self):
         pass
