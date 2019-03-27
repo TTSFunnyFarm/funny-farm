@@ -172,6 +172,8 @@ class SuitPlannerAI(DirectObject):
         self.accept('createNewSuit-%d' % self.zoneId, self.createNewSuit)
         self.accept('upkeepPopulation-%d' % self.zoneId, self.upkeepPopulation)
         self.accept('requestBattle-%d' % self.zoneId, self.requestBattle)
+        self.accept('spawnBuilding-%d' % self.zoneId, self.spawnBuilding)
+        self.accept('collapseBuilding-%d' % self.zoneId, self.collapseBuilding)
 
     def setBattlesJoinable(self):
         self.battlesJoinable = 0
@@ -259,9 +261,10 @@ class SuitPlannerAI(DirectObject):
         self.notify.debug('pickLevelTypeAndTrack: %d %d %s' % (level, type, track))
         return (level, type, track)
 
-    def spawnBuilding(self):
+    def spawnBuilding(self, block=None):
         track, difficulty, numFloors = self.pickBuildingStats()
-        block = random.choice(self.toonBuildings)
+        if not block:
+            block = random.choice(self.toonBuildings)
         bldg = self.buildingMap[block]
         if self.SuitHoodInfo[self.zoneId][self.SUIT_HOOD_INFO_ELITE]:
             elite = 0
@@ -273,13 +276,18 @@ class SuitPlannerAI(DirectObject):
                 bldg.suitTakeOver(track, difficulty, numFloors)
         else:
             bldg.suitTakeOver(track, difficulty, numFloors)
-        self.toonBuildings.remove(block)
+        if block in self.toonBuildings:
+            self.toonBuildings.remove(block)
         self.notify.info('spawning suit building in zone %d, block %d' % (self.zoneId, block))
 
     def collapseBuilding(self, block):
         bldg = self.buildingMap[block]
+        if bldg.mode == 'toon':
+            self.notify.warning('Unable to collapse toon building. Block: %d' % block)
+            return
         bldg.toonTakeOver()
-        self.toonBuildings.append(block)
+        if block not in self.toonBuildings:
+            self.toonBuildings.append(block)
 
     def pickBuildingStats(self):
         track = SuitDNA.suitDepts[SuitBattleGlobals.pickFromFreqList(self.SuitHoodInfo[self.zoneId][self.SUIT_HOOD_INFO_TRACK])]

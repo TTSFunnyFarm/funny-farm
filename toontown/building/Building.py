@@ -32,7 +32,7 @@ class Building(DirectObject):
         self.questIcon = None
         self.questIcon2 = None
         self.townTopLevel = base.cr.playGame.getActiveZone().geom
-        self.mode = self.TOON_STATE
+        self.mode = None
         self.suitDoorOrigin = None
         self.elevator = None
         self.elevatorModel = None
@@ -44,6 +44,7 @@ class Building(DirectObject):
         self.cogWeakenSound = None
         self.toonGrowSound = None
         self.toonSettleSound = None
+        self.victor = None
 
     def load(self):
         self.setupNametag()
@@ -223,6 +224,12 @@ class Building(DirectObject):
         self.setState('suit')
         return
 
+    def eliteTakeOver(self, suitTrack):
+        pass
+
+    def toonTakeOver(self):
+        self.setState('toon')
+
     def getNodePaths(self):
         nodePath = []
         npc = self.townTopLevel.findAllMatches('**/?b' + str(self.block) + ':*_DNARoot;+s')
@@ -305,12 +312,12 @@ class Building(DirectObject):
         newNP.stash()
         sideBldgNodes.append(newNP)
         soundPlayed = 0
-        tracks = Parallel(name='toSuitTrack-' + str(self.zoneId))
+        tracks = Parallel(name='toSuitTrack-%d' % self.zoneId)
         for i in sideBldgNodes:
             name = i.getName()
             timeForDrop = TO_SUIT_BLDG_TIME * 0.85
             if name[0] == 's':
-                showTrack = Sequence(name='ToSuitFlatsTrack-' + str(self.zoneId) + '-' + str(sideBldgNodes.index(i)))
+                showTrack = Sequence(name='ToSuitFlatsTrack-%d-%d' % (self.zoneId, sideBldgNodes.index(i)))
                 initPos = Point3(0, 0, self.SUIT_INIT_HEIGHT) + i.getPos()
                 showTrack.append(Func(i.setPos, initPos))
                 showTrack.append(Func(i.unstash))
@@ -319,7 +326,7 @@ class Building(DirectObject):
                     showTrack.append(Func(self.normalizeElevator))
                 if not soundPlayed:
                     showTrack.append(Func(base.playSfx, self.cogDropSound, 0, 1, None, 0.0))
-                showTrack.append(LerpPosInterval(i, timeForDrop, i.getPos(), name='ToSuitAnim-' + str(self.zoneId) + '-' + str(sideBldgNodes.index(i))))
+                showTrack.append(LerpPosInterval(i, timeForDrop, i.getPos(), name='ToSuitAnim-%d-%d' % (self.zoneId, sideBldgNodes.index(i))))
                 if not soundPlayed:
                     showTrack.append(Func(base.playSfx, self.cogLandSound, 0, 1, None, 0.0))
                 showTrack.append(self.createBounceTrack(i, 2, 0.65, TO_SUIT_BLDG_TIME - timeForDrop, slowInitBounce=1.0))
@@ -331,7 +338,7 @@ class Building(DirectObject):
                 if not soundPlayed:
                     soundPlayed = 1
             elif name[0] == 't':
-                hideTrack = Sequence(name='ToSuitToonFlatsTrack-' + str(self.zoneId))
+                hideTrack = Sequence(name='ToSuitToonFlatsTrack-%d' % self.zoneId)
                 timeTillSquish = (self.SUIT_INIT_HEIGHT - 20.0) / self.SUIT_INIT_HEIGHT
                 timeTillSquish *= timeForDrop
                 hideTrack.append(LerpFunctionInterval(self.adjustColorScale, fromData=1, toData=0.25, duration=timeTillSquish, extraArgs=[i]))
@@ -348,7 +355,6 @@ class Building(DirectObject):
         return
 
     def setupSuitBuilding(self, nodePath):
-        level = int(self.difficulty / 2) + 1
         suitNP = loader.loadModel(FunnyFarmGlobals.SuitBuildingMap[self.track])
         newParentNP = self.getBuildingNodePath().getParent()
         suitBuildingNP = suitNP.copyTo(newParentNP)
@@ -401,10 +407,74 @@ class Building(DirectObject):
         pass
 
     def animToToon(self):
-        pass
+        self.stopTransition()
+        if self.mode != 'suit':
+            self.setToSuit()
+        self.loadAnimToToonSfx()
+        suitSoundPlayed = 0
+        toonSoundPlayed = 0
+        bldgNodes = self.getNodePaths()
+        tracks = Parallel()
+        for i in bldgNodes:
+            name = i.getName()
+            if name[0] == 's':
+                hideTrack = Sequence(name='ToToonSuitFlatsTrack-%d' % self.zoneId)
+                if not suitSoundPlayed:
+                    hideTrack.append(Func(base.playSfx, self.cogWeakenSound, 0, 1, None, 0.0))
+                hideTrack.append(self.createBounceTrack(i, 3, 1.2, TO_TOON_BLDG_TIME * 0.05, slowInitBounce=0.0))
+                hideTrack.append(self.createBounceTrack(i, 5, 0.8, TO_TOON_BLDG_TIME * 0.1, slowInitBounce=0.0))
+                hideTrack.append(self.createBounceTrack(i, 7, 1.2, TO_TOON_BLDG_TIME * 0.17, slowInitBounce=0.0))
+                hideTrack.append(self.createBounceTrack(i, 9, 1.2, TO_TOON_BLDG_TIME * 0.18, slowInitBounce=0.0))
+                realScale = i.getScale()
+                hideTrack.append(LerpScaleInterval(i, TO_TOON_BLDG_TIME * 0.1, Vec3(realScale[0], realScale[1], 0.01)))
+                if name.find(':_landmark__') != -1:
+                    hideTrack.append(Func(i.removeNode))
+                elif name.find('_landmark_') != -1:
+                    hideTrack.append(Func(i.stash))
+                    hideTrack.append(Func(i.setScale, Vec3(i.getSx(), i.getSy(), 1.0)))
+                else:
+                    hideTrack.append(Func(i.stash))
+                    hideTrack.append(Func(i.setScale, Vec3(1)))
+                if not suitSoundPlayed:
+                    suitSoundPlayed = 1
+                tracks.append(hideTrack)
+            elif name[0] == 't':
+                hideTrack = Sequence(name='ToToonFlatsTrack-%d' % self.zoneId)
+                hideTrack.append(Wait(TO_TOON_BLDG_TIME * 0.5))
+                if not toonSoundPlayed:
+                    hideTrack.append(Func(base.playSfx, self.toonGrowSound, 0, 1, None, 0.0))
+                hideTrack.append(Func(i.unstash))
+                hideTrack.append(Func(i.setScale, Vec3(1, 1, 0.01)))
+                if not toonSoundPlayed:
+                    hideTrack.append(Func(base.playSfx, self.toonSettleSound, 0, 1, None, 0.0))
+                hideTrack.append(self.createBounceTrack(i, 11, 1.2, TO_TOON_BLDG_TIME * 0.5, slowInitBounce=4.0))
+                tracks.append(hideTrack)
+                if not toonSoundPlayed:
+                    toonSoundPlayed = 1
+
+        self.stopTransition()
+        bldgMTrack = tracks
+        localToonIsVictor = self.localToonIsVictor()
+        if localToonIsVictor:
+            camTrack = self.walkOutCameraTrack()
+        # victoryRunTrack = self.getVictoryRunTrack()
+        trackName = 'toToonTrack-%d' % self.zoneId
+        self._deleteTransitionTrack()
+        if localToonIsVictor:
+            freedomTrack1 = Func(self.cr.playGame.getPlace().setState, 'walk')
+            freedomTrack2 = Func(base.localAvatar.wrtReparentTo, render)
+            self.transitionTrack = Parallel(camTrack, Sequence(victoryRunTrack, bldgMTrack, freedomTrack1, freedomTrack2), name=trackName)
+        else:
+            # self.transitionTrack = Sequence(victoryRunTrack, bldgMTrack, name=trackName)
+            self.transitionTrack = bldgMTrack
+        self.transitionTrack.start()
+        return
 
     def animToToonFromElite(self):
         pass
+
+    def localToonIsVictor(self):
+        return self.victor == base.localAvatar.getDoId()
 
     def createBounceTrack(self, nodeObj, numBounces, startScale, totalTime, slowInitBounce = 0.0):
         if not nodeObj or numBounces < 1 or startScale == 0.0 or totalTime == 0:
@@ -449,20 +519,20 @@ class Building(DirectObject):
         for i in nodes:
             name = i.getName()
             if name[0] == 's':
-                # if name.find('_landmark_') != -1:
-                #     i.removeNode()
-                # else:
-                i.unstash()
+                if name.find(':_landmark__') != -1:
+                    i.removeNode()
+                else:
+                    i.unstash()
             elif name[0] == 't':
-                # if name.find('_landmark_') != -1:
-                #     i.stash()
-                # else:
-                i.stash()
+                if name.find('_landmark_') != -1:
+                    i.stash()
+                else:
+                    i.stash()
             elif name[0] == 'c':
-                # if name.find('_landmark_') != -1:
-                #     i.removeNode()
-                # else:
-                i.stash()
+                if name.find(':_landmark__') != -1:
+                    i.removeNode()
+                else:
+                    i.stash()
 
         npc = self.townTopLevel.findAllMatches(self.getSbSearchString())
         for i in range(npc.getNumPaths()):
@@ -479,26 +549,26 @@ class Building(DirectObject):
         for i in nodes:
             name = i.getName()
             if name[0] == 'c':
-                # if name.find('_landmark_') != -1:
-                #     i.removeNode()
-                # else:
-                i.unstash()
+                if name.find(':_landmark__') != -1:
+                    i.removeNode()
+                else:
+                    i.unstash()
             elif name[0] == 't':
-                # if name.find('_landmark_') != -1:
-                #     i.stash()
-                # else:
-                i.stash()
+                if name.find('_landmark_') != -1:
+                    i.stash()
+                else:
+                    i.stash()
             elif name[0] == 's':
-                # if name.find('_landmark_') != -1:
-                #     i.removeNode()
-                # else:
-                i.stash()
+                if name.find(':_landmark__') != -1:
+                    i.removeNode()
+                else:
+                    i.stash()
 
         for np in nodes:
             if not np.isEmpty():
                 np.setColorScale(0.6, 0.6, 0.6, 1.0)
 
-        npc = hidden.findAllMatches(self.getSbSearchString())
+        npc = self.townTopLevel.findAllMatches(self.getSbSearchString())
         for i in range(npc.getNumPaths()):
             nodePath = npc.getPath(i)
             self.setupCogdo(nodePath) #.show()
@@ -514,17 +584,17 @@ class Building(DirectObject):
             i.clearColorScale()
             name = i.getName()
             if name[0] == 's':
-                if name.find('_landmark__') != -1:
+                if name.find(':_landmark__') != -1:
                     i.removeNode()
                 else:
                     i.stash()
             elif name[0] == 't':
-                # if name.find('_landmark_') != -1:
-                #     i.unstash()
-                # else:
-                i.unstash()
+                if name.find('_landmark_') != -1:
+                    i.unstash()
+                else:
+                    i.unstash()
             elif name[0] == 'c':
-                if name.find('_landmark__') != -1:
+                if name.find(':_landmark__') != -1:
                     i.removeNode()
                 else:
                     i.stash()
@@ -537,5 +607,5 @@ class Building(DirectObject):
 
     def getSbSearchString(self):
         zone = self.getBuildingNodePath().getAncestor(2)
-        result = '**/' + zone.getName() + '/buildings/sb' + str(self.block) + ':*_landmark_*_DNARoot'
+        result = '**/' + zone.getName() + '/buildings/sb' + str(self.block) + ':*_landmark_*_DNARoot;+s'
         return result

@@ -7,8 +7,8 @@ class BuildingAI(DirectObject):
     ELITE_STATE = 'elite'
 
     def __init__(self, zoneId, block):
+        self.zoneId = zoneId
         self.block = block
-        self.zoneId = zoneId + 500 + block
         self.mode = self.TOON_STATE
         self.track = None
         self.difficulty = None
@@ -28,13 +28,23 @@ class BuildingAI(DirectObject):
         self.track = track
         self.difficulty = difficulty
         self.numFloors = numFloors
-        messenger.send('suitTakeOver-%d' % self.zoneId, [track, difficulty, numFloors])
+        messenger.send('suitTakeOver', [{'zoneId': self.zoneId,
+         'block': self.block,
+         'track': self.track,
+         'difficulty': self.difficulty,
+         'numFloors': self.numFloors,
+         'elite': 0}])
 
     def eliteTakeOver(self, track):
         self.mode = self.ELITE_STATE
         self.track = track
-        messenger.send('eliteTakeOver-%d' % self.zoneId, [track])
+        messenger.send('eliteTakeOver', [{'zoneId': self.zoneId,
+         'block': self.block,
+         'track': self.track,
+         'difficulty': self.difficulty,
+         'numFloors': self.numFloors,
+         'elite': 1}])
 
     def toonTakeOver(self):
         self.mode = self.TOON_STATE
-        messenger.send('toonTakeOver-%d' % self.zoneId)
+        messenger.send('toonTakeOver', [{'zoneId': self.zoneId, 'block': self.block}])

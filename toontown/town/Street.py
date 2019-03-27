@@ -125,4 +125,6 @@ class Street(ToonHood):
             block = int(zoneStr[0][2:])
             zoneId = self.zoneId + 500 + block
             self.buildings.append(Building(zoneId))
+        for building in self.buildings:
+            building.setToToon()
         self.refreshQuestIcons()

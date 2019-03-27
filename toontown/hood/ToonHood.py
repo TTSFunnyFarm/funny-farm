@@ -99,6 +99,7 @@ class ToonHood(Hood):
             zoneId = self.zoneId + 500 + block
             self.buildings.append(Building(zoneId))
         for building in self.buildings:
+            building.setToToon()
             building.load()
         self.refreshQuestIcons()
 
