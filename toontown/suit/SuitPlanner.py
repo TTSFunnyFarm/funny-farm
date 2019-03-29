@@ -83,7 +83,7 @@ class SuitPlanner(DirectObject):
                 bldg = tb
                 break
         if bldg:
-            bldg.suitTakeOver(requestStatus['track'], requestStatus['difficulty'], requestStatus['numFloors'])
+            bldg.suitTakeOver(requestStatus['track'], requestStatus['difficulty'], requestStatus['numFloors'] - 1)
 
     def spawnEliteBuilding(self, requestStatus):
         if requestStatus['zoneId'] != self.zoneId:

@@ -5,6 +5,7 @@ from direct.gui.DirectGui import *
 from direct.task.Task import Task
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
+from toontown.toontowngui import TTDialog
 from toontown.suit import Suit
 from ElevatorConstants import *
 from ElevatorUtils import *
@@ -136,15 +137,31 @@ class Elevator(DirectObject):
             self.acceptOnce(track.getName(), self.closeDoors, [callback, extraArgs])
         else:
             self.enableExitButton()
-            # self.startCountdownClock(self.countdownTime, 0)
-            self.startCountdownClock(3, 0)
+            self.startCountdownClock(self.countdownTime, 0)
         track.start()
 
     def __handleEnterSphere(self, collEntry):
-        if base.cr.playGame.getActiveZone().place:
+        base.localAvatar.disable()
+        base.localAvatar.setAnimState('neutral')
+        if base.cr.playGame.street and not base.cr.playGame.street.place:
+            self.dialog = TTDialog.TTDialog(text=TTLocalizer.SuitBuildingDialog, text_align=TextNode.ACenter, style=TTDialog.YesNo, command=self.handleDialog)
+            self.dialog.show()
+            return
+        elif base.cr.playGame.getActiveZone().place:
             self.board(0, callback=base.cr.playGame.getActiveZone().place.loadNextFloor)
         else:
             self.board(0)
+
+    def handleDialog(self, choice):
+        self.dialog.destroy()
+        if choice == 1:
+            if self.elite:
+                callbackFunc = self.enterEliteBuilding
+            else:
+                callbackFunc = self.enterSuitBuilding
+            self.board(0, callback=callbackFunc)
+        else:
+            base.localAvatar.enable()
 
     def hopOff(self, index, closeDoors=False):
         base.localAvatar.setAnimState('run')

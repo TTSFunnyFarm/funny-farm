@@ -54,15 +54,12 @@ class Building(DirectObject):
         self.clearQuestIcon()
 
     def delete(self):
-        if self.elevator:
-            self.elevator.delete()
-            del self.elevator
-        if self.elevatorNodePath:
-            self.elevatorNodePath.removeNode()
-            del self.elevatorNodePath
-            del self.elevatorModel
-            del self.leftDoor
-            del self.rightDoor
+        self.deleteElevator()
+        del self.elevatorNodePath
+        del self.elevatorModel
+        del self.elevator
+        del self.leftDoor
+        del self.rightDoor
         del self.suitDoorOrigin
         self.cleanupSuitBuilding()
         self.unloadSfx()
@@ -228,6 +225,8 @@ class Building(DirectObject):
         pass
 
     def toonTakeOver(self):
+        if self.elevator:
+            self.elevator.removeActive()
         self.setState('toon')
 
     def getNodePaths(self):
@@ -258,13 +257,27 @@ class Building(DirectObject):
         self.suitDoorOrigin = newNP.find('**/*_door_origin')
         self.elevatorNodePath.reparentTo(self.suitDoorOrigin)
         self.normalizeElevator()
-        
+
         self.elevator = Elevator()
         self.elevator.setup(self.elevatorModel, self.elevatorNodePath, self.track, self.difficulty, self.numFloors, elite=cogdo)
         self.elevator.showCorpIcon()
         self.leftDoor = self.elevator.leftDoor
         self.rightDoor = self.elevator.rightDoor
         return
+
+    def deleteElevator(self):
+        if self.elevatorNodePath and not self.elevatorNodePath.isEmpty():
+            self.elevatorNodePath.removeNode()
+        if self.elevatorModel and not self.elevatorModel.isEmpty():
+            self.elevatorModel.removeNode()
+        if self.elevator:
+            self.elevator.delete()
+        self.elevatorNodePath = None
+        self.elevatorModel = None
+        self.elevator = None
+        self.leftDoor = None
+        self.rightDoor = None
+        self.suitDoorOrigin = None
 
     def loadAnimToSuitSfx(self):
         if self.cogDropSound == None:
@@ -429,6 +442,7 @@ class Building(DirectObject):
                 hideTrack.append(LerpScaleInterval(i, TO_TOON_BLDG_TIME * 0.1, Vec3(realScale[0], realScale[1], 0.01)))
                 if name.find(':_landmark__') != -1:
                     hideTrack.append(Func(i.removeNode))
+                    hideTrack.append(Func(self.deleteElevator))
                 elif name.find('_landmark_') != -1:
                     hideTrack.append(Func(i.stash))
                     hideTrack.append(Func(i.setScale, Vec3(i.getSx(), i.getSy(), 1.0)))
@@ -448,6 +462,8 @@ class Building(DirectObject):
                 if not toonSoundPlayed:
                     hideTrack.append(Func(base.playSfx, self.toonSettleSound, 0, 1, None, 0.0))
                 hideTrack.append(self.createBounceTrack(i, 11, 1.2, TO_TOON_BLDG_TIME * 0.5, slowInitBounce=4.0))
+                hideTrack.append(Func(base.cr.playGame.getActiveZone().ignoreAll))
+                hideTrack.append(Func(base.cr.playGame.getActiveZone().startActive))
                 tracks.append(hideTrack)
                 if not toonSoundPlayed:
                     toonSoundPlayed = 1
@@ -521,6 +537,7 @@ class Building(DirectObject):
             if name[0] == 's':
                 if name.find(':_landmark__') != -1:
                     i.removeNode()
+                    self.deleteElevator()
                 else:
                     i.unstash()
             elif name[0] == 't':
@@ -551,6 +568,7 @@ class Building(DirectObject):
             if name[0] == 'c':
                 if name.find(':_landmark__') != -1:
                     i.removeNode()
+                    self.deleteElevator()
                 else:
                     i.unstash()
             elif name[0] == 't':
@@ -586,6 +604,7 @@ class Building(DirectObject):
             if name[0] == 's':
                 if name.find(':_landmark__') != -1:
                     i.removeNode()
+                    self.deleteElevator()
                 else:
                     i.stash()
             elif name[0] == 't':

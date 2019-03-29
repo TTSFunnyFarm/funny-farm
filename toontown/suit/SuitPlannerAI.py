@@ -262,6 +262,8 @@ class SuitPlannerAI(DirectObject):
         return (level, type, track)
 
     def spawnBuilding(self, block=None):
+        # Generates a random suit building on the given block,
+        # or on a random block if not provided.
         track, difficulty, numFloors = self.pickBuildingStats()
         if not block:
             block = random.choice(self.toonBuildings)

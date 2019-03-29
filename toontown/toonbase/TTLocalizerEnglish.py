@@ -4051,6 +4051,7 @@ TrolleyHFAMessage = 'You may not board the trolley until your Laff meter is smil
 TrolleyTFAMessage = 'You may not board the trolley until ' + Mickey + ' says so.'
 TrolleyHopOff = 'Hop off'
 TrolleyDialog = 'Would you like to board the trolley?'
+SuitBuildingDialog = 'Would you like to enter this Cog Building?'
 FishingExit = 'Exit'
 FishingCast = 'Cast'
 FishingAutoReel = 'Auto Reel'
