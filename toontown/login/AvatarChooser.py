@@ -207,7 +207,7 @@ class AvatarChooser:
             nameBalloon = loader.loadModel('phase_3/models/props/chatbox_input')
             okButtonImage = (buttons.find('**/ChtBx_OKBtn_UP'), buttons.find('**/ChtBx_OKBtn_DN'), buttons.find('**/ChtBx_OKBtn_Rllvr'))
             cancelButtonImage = (buttons.find('**/CloseBtn_UP'), buttons.find('**/CloseBtn_DN'), buttons.find('**/CloseBtn_Rllvr'))
-            self.renameFrame = DirectFrame(pos=(0, 0, 0), parent=aspect2dp, relief=None, image=DGG.getDefaultDialogGeom(), image_color=ToontownGlobals.GlobalDialogColor, image_scale=(1.4, 1.0, 1.0), text=deleteText, text_wordwrap=19, text_scale=TTLocalizer.ACdeleteWithPasswordFrame, text_pos=(0, 0.25), textMayChange=1, sortOrder=NO_FADE_SORT_INDEX)
+            self.renameFrame = DirectFrame(pos=(0, 0, 0), parent=aspect2dp, relief=None, image=DGG.getDefaultDialogGeom(), image_color=ToontownGlobals.GlobalDialogColor, image_scale=(1.4, 1.0, 1.0), text=deleteText, text_wordwrap=19, text_scale=TTLocalizer.ACdeleteWithPasswordFrame, text_pos=(0, 0.25), textMayChange=1, sortOrder=DGG.NO_FADE_SORT_INDEX)
             self.renameFrame.hide()
             self.renameEntry = DirectEntry(parent=self.renameFrame, relief=None, image=nameBalloon, image1_color=(0.8, 0.8, 0.8, 1.0), scale=0.064, pos=(-0.3, 0.0, -0.2), width=10, numLines=1, focus=1, cursorKeys=1, autoCapitalize=1, command=self.__handleRenameOK, extraArgs = [index])
             DirectLabel(parent=self.renameFrame, relief=None, pos=(0, 0, 0.35), text=TTLocalizer.AvatarChoiceRenameTitle, textMayChange=0, text_scale=0.08)
