@@ -36,6 +36,12 @@ class TitleScreen(DirectObject):
         gameVersion = config.GetString('game-version', 'no_version_set')
         self.versionText = DirectLabel(parent=base.a2dBottomLeft, relief=None, pos=(0.033, 0, 0.025), text=gameVersion, text_scale=0.06, text_fg=Vec4(1, 1, 1, 1), text_align=TextNode.ALeft, text_font=FunnyFarmGlobals.getMinnieFont(), text_shadow=(0, 0, 0, 1))
         self.versionText.hide()
+        self.pandaLogo = loader.loadModel('phase_3/models/gui/panda3d_logo.bam')
+        self.pandaLogo.reparentTo(base.a2dBottomRight)
+        self.pandaLogo.setPos(-0.22, 0, 0.07)
+        self.pandaLogo.setScale(0.4)
+        self.pandaLogo.hide()
+        pandaText = DirectLabel(parent=self.pandaLogo, relief=None, pos=(0, 0, 0.08), text='Powered by', text_scale=0.1, text_fg=Vec4(1, 1, 1, 1), text_align=TextNode.ACenter, text_font=FunnyFarmGlobals.getMinnieFont(), text_shadow=(0, 0, 0, 1))
         self.ground = loader.loadModel('phase_4/models/minigames/toon_cannon_gameground')
         self.ground.reparentTo(render)
         self.ground.setScale(1.1)
@@ -53,12 +59,14 @@ class TitleScreen(DirectObject):
         self.logo.removeNode()
         self.titleText.destroy()
         self.versionText.destroy()
+        self.pandaLogo.removeNode()
         self.ground.removeNode()
         self.sky.removeNode()
         self.fireworkShow.disable()
         del self.logo
         self.titleText = None
         del self.versionText
+        del self.pandaLogo
         del self.ground
         del self.sky
         del self.fireworkShow
@@ -70,6 +78,8 @@ class TitleScreen(DirectObject):
         self.track.append(self.logo.colorScaleInterval(2.0, colorScale=(1, 1, 1, 1), startColorScale=(1, 1, 1, 0)))
         self.track.append(Func(self.versionText.show))
         self.track.append(self.versionText.colorScaleInterval(1.0, colorScale=(1, 1, 1, 1), startColorScale=(1, 1, 1, 0)))
+        self.track.append(Func(self.pandaLogo.show))
+        self.track.append(self.pandaLogo.colorScaleInterval(1.0, colorScale=(1, 1, 1, 1), startColorScale=(1, 1, 1, 0)))
         self.track.append(Func(self.titleText.show))
         self.track.append(self.titleText.colorScaleInterval(1.0, colorScale=(1, 1, 1, 1), startColorScale=(1, 1, 1, 0)))
         self.titleSeq = Sequence(self.titleText.colorScaleInterval(1.0, (1, 1, 1, 0.2)), self.titleText.colorScaleInterval(1.0, (1, 1, 1, 1)))
