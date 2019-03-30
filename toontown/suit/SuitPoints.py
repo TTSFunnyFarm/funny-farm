@@ -93,3 +93,7 @@ BattleCells = {
         (Point3(145, 210, -0.5), 90)
     ]
 }
+
+BuildingBlocks = {
+    FunnyFarmGlobals.RicketyRoad: xrange(11, 19)
+}

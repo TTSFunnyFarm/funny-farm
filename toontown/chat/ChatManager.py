@@ -92,6 +92,12 @@ class ChatManager(DirectObject):
 
     def sendChat(self):
         chat = self.chatEntry.get()
+        try:
+            chat.encode('ascii')
+        except UnicodeEncodeError:
+            base.localAvatar.setSystemMessage(0, "Toontown's Funny Farm does not support non-ASCII characters.")
+            self.closeChatInput()
+            return
         if len(chat) > 0:
             if chat[0] == '.':
                 base.localAvatar.setChatAbsolute(chat[1:], CFThought)

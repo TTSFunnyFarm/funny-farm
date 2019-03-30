@@ -3,8 +3,6 @@ from otp.otpbase.OTPGlobals import *
 from direct.showbase.PythonUtil import Enum, invertDict
 from panda3d.core import BitMask32, Vec4
 
-# I'm assuming this is deprecated... please edit this comment to be more definite and lmk on the Discord. -Sparkpin
-
 MapHotkeyOn = 'alt'
 MapHotkeyOff = 'alt-up'
 MapHotkey = 'alt'

@@ -194,6 +194,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         p = toon.getPos(self)
         toon.setPos(self, p[0], p[1], 0.0)
         toon.setShadowHeight(0)
+        toon.stopLookAround()
         suit.setState('Battle')
         suitTrack = Sequence()
         toonTrack = Sequence()
@@ -251,7 +252,6 @@ class Battle(DirectObject, NodePath, BattleBase):
 
     def enterFaceOff(self):
         self.notify.debug('enterFaceOff()')
-        
         self.__faceOff('faceoff-%d' % self.doId, self.startCamTrack)
 
     def startCamTrack(self):
@@ -807,11 +807,10 @@ class Battle(DirectObject, NodePath, BattleBase):
             self.removeSuit(suit)
         if len(self.suits) == 0:
             allSuitsDied = 1
-        for toon in self.activeToons:
+        for toon in self.toons:
             if toon.hp <= 0:
-                self.activeToons.remove(toon)
-        if len(self.activeToons) == 0:
-            toonDied = 1
+                self.toons.remove(toon)
+                toonDied = 1
         if toonDied:
             for suit in self.suits:
                 self.removeSuit(suit)
@@ -827,6 +826,12 @@ class Battle(DirectObject, NodePath, BattleBase):
             else:
                 self.startCamTrack()
         else:
+            for toonId in self.activeToonIds:
+                toon = self.getToon(toonId)
+                if toon:
+                    self.toonItems[toonId] = base.cr.questManager.recoverItems(toon, self.suitsKilled, toon.getZoneId())
+                    # Undecided whether we'll have the merits system or not
+                    # self.toonMerits[toonId] = self.air.promotionMgr.recoverMerits(toon, self.suitsKilled, self.zoneId)
             self.setJoinable(0)
             self.setBattleExperience(*self.getBattleExperience())
             self.assignRewards()

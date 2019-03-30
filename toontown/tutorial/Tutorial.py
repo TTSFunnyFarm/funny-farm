@@ -12,6 +12,7 @@ from toontown.suit import SuitDNA
 from toontown.suit import BattleSuit
 from toontown.battle.Battle import Battle
 from toontown.town.TownBattle import TownBattle
+from toontown.shader import WaterShader
 
 class Tutorial(ToonHood):
     notify = directNotify.newCategory('Tutorial')
@@ -36,11 +37,13 @@ class Tutorial(ToonHood):
         self.toon.setZoneId(self.zoneId)
         self.toon.setPos(0, 0, -0.5)
         musicMgr.playCurrentZoneMusic()
+        self.waterShader.start('water', self.geom, self.sky)
         Sequence(Wait(0.3), Func(self.toon.enterTeleportIn, 1, 0, self.__handleEntered)).start()
 
     def exit(self):
         self.spookyMusic.stop()
         self.ignoreAll()
+        self.waterShader.stop()
         # This will always be true unless we're exiting from a crash or deliberate close out of the game
         if base.localAvatar.tutorialAck:
             self.toon.laffMeter.start()
@@ -59,6 +62,9 @@ class Tutorial(ToonHood):
 
     def load(self):
         ToonHood.load(self)
+        self.waterShader = WaterShader.WaterShader()
+        self.waterShader.waterPos = 0
+
         self.spookyMusic = base.loader.loadMusic('phase_12/audio/bgm/Bossbot_Factory_v3.ogg')
         self.battleMusic = base.loader.loadMusic('phase_3.5/audio/bgm/encntr_general_bg.ogg')
 
@@ -69,7 +75,6 @@ class Tutorial(ToonHood):
         self.flippy.reparentTo(render)
         self.flippy.setPosHpr(0, 20, -0.5, 180, 0, 0)
         self.flippy.initializeBodyCollisions('toon')
-        self.flippy.useLOD(1000)
         self.flippy.startBlink()
         self.flippy.addActive()
 
@@ -114,6 +119,8 @@ class Tutorial(ToonHood):
 
     def unload(self):
         ToonHood.unload(self)
+        self.waterShader.stop()
+        self.waterShader = None
         self.townBattle.unload()
         self.townBattle.cleanup()
         self.guiCogs.removeNode()

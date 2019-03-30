@@ -190,7 +190,7 @@ PetShopBearSwimPoints = [
     Point3(-5, 30, 3),
     Point3(0, 35, 3)
 ]
-ToonLevelCap = 10
+ToonLevelCap = 5
 LevelExperience = [
     # FF
     50,
@@ -238,3 +238,74 @@ LevelExperience = [
     21000
 ]
 MaxAvatars = 6
+ShaderOff = 0
+ShaderLow = 1
+ShaderMed = 2
+ShaderHigh = 3
+ShaderUltra = 4
+ShaderCustom = 5
+WaterReflectFactorLow = 0.1
+WaterReflectFactorMed = 0.25
+WaterReflectFactorHigh = 0.5
+WaterReflectFactorUltra = 1.0
+WaterRefractFactorLow = 0.25
+WaterRefractFactorMed = 0.5
+WaterRefractFactorHigh = 0.75
+WaterRefractFactorUltra = 1.0
+WaterShaderLevels = [
+    [0, 0],
+    [WaterReflectFactorLow, WaterRefractFactorLow],
+    [WaterReflectFactorMed, WaterRefractFactorMed],
+    [WaterReflectFactorHigh, WaterRefractFactorHigh],
+    [WaterReflectFactorUltra, WaterRefractFactorUltra]
+]
+SuitBuildingMap = {
+    's': 'phase_4/models/modules/suit_landmark_sales',
+    'm': 'phase_4/models/modules/suit_landmark_money',
+    'l': 'phase_4/models/modules/suit_landmark_legal',
+    'c': 'phase_4/models/modules/suit_landmark_corp'
+}
+CheesyEffectDict = {
+    FunnyFarm: {
+        CEBigToon: ('m', 10),
+        CESmallToon: ('m', 10),
+        CEBigHead: ('m', 10),
+        CESmallHead: ('m', 10)
+    },
+    SillySprings: {
+        CEBigToon: ('m', 60),
+        CESmallToon: ('m', 60),
+        CEBigHead: ('m', 60),
+        CESmallHead: ('m', 60),
+        CEBigLegs: ('m', 30),
+        CESmallLegs: ('m', 30),
+        CEFlatPortrait: ('m', 30),
+        CEFlatProfile: ('m', 30)
+    },
+    ChillyVillage: {
+        CEBigToon: ('h', 24),
+        CESmallToon: ('h', 24),
+        CEBigHead: ('h', 24),
+        CESmallHead: ('h', 24),
+        CEBigLegs: ('h', 24),
+        CESmallLegs: ('h', 24),
+        CEFlatPortrait: ('h', 4),
+        CEFlatProfile: ('h', 4),
+        CETransparent: ('h', 2),
+        CENoColor: ('h', 2),
+        CEInvisible: ('h', 2)
+    },
+    MoonlitMeadow: {
+        CEBigToon: ('d', 2),
+        CESmallToon: ('d', 2),
+        CEBigHead: ('h', 24),
+        CESmallHead: ('h', 24),
+        CEBigLegs: ('h', 24),
+        CESmallLegs: ('h', 24),
+        CEFlatPortrait: ('h', 24),
+        CEFlatProfile: ('h', 24),
+        CETransparent: ('h', 24),
+        CENoColor: ('h', 24),
+        CEInvisible: ('h', 24)
+    }
+}

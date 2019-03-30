@@ -124,7 +124,10 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             self.questCarryLimit = 0
             self.questingZone = 0
             self.quests = []
+            self.questHistory = []
             self.experienceBar = None
+            self.hoodsVisited = []
+            self.teleportAccess = []
 
     def generate(self):
         self.walkDoneEvent = 'walkDone'
@@ -530,6 +533,37 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         base.avatarData.setQuests = self.quests
         dataMgr.saveToonData(base.avatarData)
 
+    def setQuestHistory(self, history):
+        self.questHistory = history  
+
+    def getQuestHistory(self):
+        return self.questHistory
+
+    def addQuestHistory(self, quest):
+        if quest in self.questHistory:
+            return
+        self.questHistory.append(quest)
+        base.avatarData.setQuestHistory = self.questHistory
+        dataMgr.saveToonData(base.avatarData)
+
+    def removeQuestHistory(self, quest):
+        if quest not in self.questHistory:
+            return
+        self.questHistory.remove(quest)
+        base.avatarData.setQuestHistory = self.questHistory
+        dataMgr.saveToonData(base.avatarData)
+
+    def hasQuestHistory(self, quest):
+        if quest in self.questHistory:
+            return True
+        return False
+
+    def clearQuestHistory(self):
+        for quest in self.questHistory:
+            self.questHistory.remove(quest)
+        base.avatarData.setQuestHistory = self.questHistory
+        dataMgr.saveToonData(base.avatarData)
+
     def setTrackProgress(self, trackId, progress):
         self.trackProgressId = trackId
         self.trackProgress = progress
@@ -540,6 +574,22 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def getTrackProgress(self):
         return [self.trackProgressId, self.trackProgress]
+
+    def setHoodsVisited(self, hoodList):
+        self.hoodsVisited = hoodList
+        base.avatarData.setHoodsVisited = self.hoodsVisited
+        dataMgr.saveToonData(base.avatarData)
+
+    def getHoodsVisited(self):
+        return self.hoodsVisited
+
+    def setTeleportAccess(self, hoodList):
+        self.teleportAccess = hoodList
+        base.avatarData.setTeleportAccess = self.teleportAccess
+        dataMgr.saveToonData(base.avatarData)
+
+    def getTeleportAccess(self):
+        return self.teleportAccess
 
     def setLevel(self, level):
         self.level = level
@@ -757,6 +807,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         self.setBankMoney(0)
         self.setLevel(1)
         self.setLevelExp(0)
+        self.setTrackProgress(-1, -1)
+        self.clearQuestHistory()
 
     def setRandomSpawn(self, zoneId):
         if zoneId not in FunnyFarmGlobals.SpawnPoints.keys():
@@ -775,13 +827,26 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         else:
             zoneId = currZone.zoneId
         for questDesc in self.quests:
-            if questDesc[0] in Quests.Cutscenes:
+            if questDesc[0] in Quests.Cutscenes and not self.hasQuestHistory(questDesc[0]):
                 if zoneId == Quests.getToNpcLocation(questDesc[0]) and questDesc[1] == 0:
                     base.cr.cutsceneMgr.enterCutscene(questDesc[0])
-                    return
+                    return True
+            # Special cases
+            # "Ride the trolley" info bubble
+            if questDesc[0] == 1007 and not self.hasQuestHistory(1):
+                if zoneId == FunnyFarmGlobals.FunnyFarm:
+                    base.cr.cutsceneMgr.enterCutscene(1007)
+                    return True
+            # Carry 2 ToonTasks info bubble
+            if questDesc[0] == 1014 and not self.hasQuestHistory(4):
+                if zoneId == FunnyFarmGlobals.FunnyFarm:
+                    base.cr.cutsceneMgr.enterCutscene(1014)
+                    return True
 
-    def showInfoBubble(self, index, doneEvent):
-        self.infoBubble.enter(index, doneEvent)
+        return False
+
+    def showInfoBubble(self, index, doneEvent, npcId=0):
+        self.infoBubble.enter(index, doneEvent, npcId)
 
     def b_setTunnelIn(self, endX, tunnelOrigin):
         timestamp = globalClockDelta.getFrameNetworkTime()
@@ -1331,7 +1396,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         hpLost = oldHp - newHp
         if hpLost >= 0:
             # a little hacky but whatever
-            if base.cr.playGame.getActiveZone().battle:
+            if hasattr(base.cr.playGame.getActiveZone(), 'battle'):
                 if base.cr.playGame.getActiveZone().battle.battleCalc.defenseBoostActive:
                     self.showHpTextBoost(-hpLost, 2)
                 else:
@@ -1340,10 +1405,17 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
                 self.showHpText(-hpLost, bonus)
             self.setHealth(newHp, self.maxHp)
             if self.hp <= 0 and oldHp > 0:
-                self.enable()
-                self.disable()
-                camera.wrtReparentTo(render)
-                self.setAnimState('Died', callback=self.died)
+                if hasattr(base.cr.playGame.getActiveZone(), 'battle'):
+                    # Give the movie some time to switch camera angles if it needs to before we take control of the camera
+                    taskMgr.doMethodLater(0.1, self.goSad, '%d-goSad' % self.doId)
+                else:
+                    self.goSad()
+
+    def goSad(self, *args):
+        self.enable()
+        self.disable()
+        camera.wrtReparentTo(render)
+        self.setAnimState('Died')
 
     def startToonUp(self, healFrequency):
         self.stopToonUp()
@@ -1498,12 +1570,12 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
                 self.hpText.setBillboardAxis()
                 offset = 0
                 if carryIndex:
-                    if carryIndex == 5:
+                    if carryIndex == 6:
                         self.HpTextGenerator.setText(TTLocalizer.RewardCarryToonTasksText % carryAmount)
-                    elif carryIndex == 6:
-                        self.HpTextGenerator.setText(TTLocalizer.RewardCarryJellybeansText % carryAmount)
                     elif carryIndex == 7:
-                        self.HpTextGenerator.setText(TTLocalizer.RewardCarryGagsText % carryAmount)
+                        self.HpTextGenerator.setText(TTLocalizer.RewardCarryGagsText % carryAmount)  
+                    elif carryIndex == 8:
+                        self.HpTextGenerator.setText(TTLocalizer.RewardCarryJellybeansText % carryAmount)
                     self.HpTextGenerator.setTextColor(Vec4(0.9, 0.6, 0, 1))
                     self.auxText = self.attachNewNode(self.HpTextGenerator.generate())
                     self.auxText.setScale(scale * 0.7)
@@ -1552,8 +1624,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         self.sillySurgeText = False
 
     def died(self):
-        base.cr.playGame.exitActiveZone()
         self.reparentTo(render)
+        base.cr.playGame.exitActiveZone()
         self.enable()
         zoneId = self.getZoneId()
         hoodId = FunnyFarmGlobals.getHoodId(zoneId)
@@ -1606,8 +1678,10 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
     def updateReflection(self, task):
         reflectionAnim = self.reflectionAnim
         reflectionRate = self.reflectionRate
-        playingAnim = self.playingAnim
-        playingRate = self.playingRate
+        playingAnim = self.getCurrentAnim()
+        playingRate = self.getPlayRate()
+        if playingAnim == None:
+            playingAnim = self.playingAnim
         if reflectionAnim != playingAnim or reflectionRate != playingRate:
             self.reflectionAnim = playingAnim
             self.reflectionRate = playingRate
@@ -1617,8 +1691,17 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
                 self.reflection.setAnimState('jumpAirborne', 1.0)
             elif playingAnim == 'jump-land' or playingAnim == 'running-jump-land':
                 self.reflection.setAnimState('jumpLand', 1.0)
+            elif playingAnim == 'openBook':
+                self.reflection.enterOpenBook()
+            elif playingAnim == 'readBook':
+                self.reflection.enterReadBook()
+            elif playingAnim == 'closeBook':
+                self.reflection.enterCloseBook()
             else:
-                self.reflection.setAnimState(self.reflectionAnim, self.reflectionRate)
+                if self.reflection.animFSM.getStateNamed(self.reflectionAnim):
+                    self.reflection.setAnimState(self.reflectionAnim, self.reflectionRate)
+                else:
+                    self.reflection.loop(self.reflectionAnim)
         if playingAnim == 'jump-idle' or playingAnim == 'running-jump-idle':
             self.reflection.setZ((-self.getZ() * 2) - 0.15)
         else:

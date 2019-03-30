@@ -7,16 +7,18 @@ from ElevatorUtils import *
 class SuitInteriorBase(DirectObject):
     notify = directNotify.newCategory('SuitInterior')
 
-    def __init__(self, zoneId):
-        self.zoneId = zoneId
+    def __init__(self, track):
+        self.track = track
         self.floorModelA = None
         self.floorModelB = None
         self.floorModelC = None
         self.floor = None
+        self.elevatorFilename = None
+        self.elevatorModel = None
         self.entranceElevator = None
         self.exitElevator = None
         self.numFloors = 0
-        self.currentFloor = 0
+        self.currentFloor = 1
         self.waitMusic = base.loader.loadMusic('phase_7/audio/bgm/encntr_toon_winning_indoor.ogg')
         self.elevatorMusic = base.loader.loadMusic('phase_7/audio/bgm/tt_elevator.ogg')
 
@@ -34,14 +36,17 @@ class SuitInteriorBase(DirectObject):
     def loadFloorA(self):
         self.floor = loader.loadModel(self.floorModelA)
         self.floor.reparentTo(render)
+        self.elevatorModel = loader.loadModel(self.elevatorFilename)
 
     def loadFloorB(self):
         self.floor = loader.loadModel(self.floorModelB)
         self.floor.reparentTo(render)
+        self.elevatorModel = loader.loadModel(self.elevatorFilename)
 
     def loadFloorC(self):
         self.floor = loader.loadModel(self.floorModelC)
         self.floor.reparentTo(render)
+        self.elevatorModel = loader.loadModel(self.elevatorFilename)
 
     def unloadFloor(self):
         self.floor.removeNode()

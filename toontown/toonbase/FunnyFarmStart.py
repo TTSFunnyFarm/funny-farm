@@ -8,7 +8,7 @@ __builtin__.logger = FunnyFarmLogger()
 if __debug__:
     loadPrcFile('config/general.prc')
 
-# This has to be done before ToonBase loads so we can use antialiasing
+# This has to be done before ToonBase loads
 preferencesFilename = ConfigVariableString('preferences-filename', 'preferences.json').getValue()
 dir = os.path.dirname(os.getcwd() + '/' + preferencesFilename)
 if not os.path.exists(dir):
@@ -17,8 +17,11 @@ print('Reading %s...' % preferencesFilename)
 __builtin__.settings = Settings(preferencesFilename)
 if 'antialiasing' not in settings:
     settings['antialiasing'] = 0
+if 'res' not in settings:
+    settings['res'] = [1280, 720]
 loadPrcFileData('Settings: MSAA', 'framebuffer-multisample %s' % (settings['antialiasing'] > 0))
 loadPrcFileData('Settings: MSAA samples', 'multisamples %i' % settings['antialiasing'])
+loadPrcFileData('Settings: res', 'win-size %d %d' % tuple(settings['res']))
 
 import ToonBase
 ToonBase.ToonBase()
@@ -67,7 +70,19 @@ class FunnyFarmStart:
             settings['toonChatSounds'] = True
         if 'drawFps' not in settings:
             settings['drawFps'] = False
-        loadPrcFileData('Settings: res', 'win-size %d %d' % tuple(settings.get('res', (800, 600))))
+        if 'enableLODs' not in settings:
+            settings['enableLODs'] = False
+        if 'waterReflectionScale' not in settings:
+            settings['waterReflectionScale'] = 0.25
+        if 'waterRefractionScale' not in settings:
+            settings['waterRefractionScale'] = 0.5
+        if 'waterShader' not in settings:
+            settings['waterShader'] = True
+        winSize = settings['res'] if not settings['fullscreen'] else [base.pipe.getDisplayWidth(), base.pipe.getDisplayHeight()]
+        # Resolution is set above for windowed mode. This is in case the user is running fullscreen mode.
+        # If we set the windowed resolution down here, the game wouldn't notice.
+        # However, for fullscreen, we refresh the window properties anyway.
+        loadPrcFileData('Settings: res', 'win-size %d %d' % tuple(winSize))
         loadPrcFileData('Settings: fullscreen', 'fullscreen %s' % settings['fullscreen'])
         loadPrcFileData('Settings: music', 'audio-music-active %s' % settings['music'])
         loadPrcFileData('Settings: sfx', 'audio-sfx-active %s' % settings['sfx'])
@@ -75,19 +90,19 @@ class FunnyFarmStart:
         loadPrcFileData('Settings: sfxVol', 'audio-master-sfx-volume %s' % settings['sfxVol'])
         loadPrcFileData('Settings: loadDisplay', 'load-display %s' % settings['loadDisplay'])
         loadPrcFileData('Settings: toonChatSounds', 'toon-chat-sounds %s' % settings['toonChatSounds'])
-        if settings['fullscreen'] == True:
-            properties = WindowProperties()
-            properties.setSize(settings['res'][0], settings['res'][1])
-            properties.setFullscreen(1)
-            properties.setParentWindow(0)
-            base.win.requestProperties(properties)
-        if settings['music'] == False:
+        loadPrcFileData('Settings: enableLODs', 'enable-lods %s' % settings['enableLODs'])
+        if not settings['music']:
             base.enableMusic(0)
-        if settings['sfx'] == False:
+        if not settings['sfx']:
             base.enableSoundEffects(0)
-        if settings['drawFps'] == True:
+        if settings['drawFps']:
             base.setFrameRateMeter(True)
             base.drawFps = 1
+        if settings['fullscreen']:
+            properties = WindowProperties()
+            properties.setSize(*winSize)
+            properties.setFullscreen(settings['fullscreen'])
+            base.win.requestProperties(properties)
 
         self.notify.info('Setting default GUI globals')
         DirectGuiGlobals.setDefaultRolloverSound(base.loader.loadSfx('phase_3/audio/sfx/GUI_rollover.ogg'))
@@ -97,7 +112,6 @@ class FunnyFarmStart:
 
         self.notify.info('Initializing AI Repository...')
         base.air = FFAIRepository()
-        base.air.preloadAvatars()
         base.air.createManagers()
         loader.loadingScreen.load()
 
@@ -105,17 +119,24 @@ class FunnyFarmStart:
         __builtin__.screenshotMgr = ScreenshotManager()
         __builtin__.dataMgr = DataManager()
 
+        if __debug__:
+            Injector.openInjector()
+        
         self.notify.info('Initializing Client Repository...')
         Injector.openInjector()
         cr = FFClientRepository()
         base.initNametagGlobals()
         base.startShow(cr)
         # Can't start a new thread right away otherwise we'll crash panda
-        taskMgr.doMethodLater(0.1, self.startAI, 'startAI')
+        taskMgr.doMethodLater(0.1, self.startAIThread, 'startAI')
 
-    def startAI(self, task):
-        threading.Thread(target=base.air.createSafeZones).start()
+    def startAIThread(self, task):
+        threading.Thread(target=self.startAI).start()
         return task.done
+
+    def startAI(self):
+        base.air.preloadAvatars()
+        base.air.createSafeZones()
 
 __builtin__.start = FunnyFarmStart()
 

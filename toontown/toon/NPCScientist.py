@@ -22,8 +22,9 @@ class NPCScientist(NPCToonBase.NPCToonBase):
         self.setScale(1.0)
 
     def handleCollisionSphereEnter(self, collEntry):
-        self.nametag3d.setDepthTest(0)
-        self.nametag3d.setBin('fixed', 0)
+        pass
+        # self.nametag3d.setDepthTest(0)
+        # self.nametag3d.setBin('fixed', 0)
 
     def setChat(self, topic, partPos, partId, progress, flags):
         msg = TTLocalizer.toontownDialogues[topic][partPos, partId][progress]

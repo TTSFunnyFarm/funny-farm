@@ -128,6 +128,7 @@ class DataManager:
         for questDesc in data.setQuests:
             base.localAvatar.addQuest(questDesc[0])
             base.localAvatar.setQuestProgress(questDesc[0], questDesc[1])
+        base.localAvatar.setQuestHistory(data.setQuestHistory)
         if type(data.setTrackProgress) != list:
             base.localAvatar.setTrackProgress(-1, -1)
         else:

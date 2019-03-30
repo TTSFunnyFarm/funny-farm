@@ -690,6 +690,8 @@ class Toon(Avatar.Avatar, ToonHead):
         self.addLOD(1000, levelOneIn, levelOneOut)
         self.addLOD(500, levelTwoIn, levelTwoOut)
         self.addLOD(250, levelThreeIn, levelThreeOut)
+        if not config.GetBool('enable-lods', False):
+            self.useLOD(1000)
 
     def generateToon(self):
         self.setLODs()

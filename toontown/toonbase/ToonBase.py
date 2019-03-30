@@ -36,6 +36,7 @@ class ToonBase(OTPBase.OTPBase):
         base.debugRunningMultiplier /= OTPGlobals.ToonSpeedFactor
         self.toonChatSounds = self.config.GetBool('toon-chat-sounds', 1)
         self.placeBeforeObjects = config.GetBool('place-before-objects', 1)
+        self.toonChatSounds = self.config.GetBool('enable-lods', True)
         self.endlessQuietZone = False
         self.wantDynamicShadows = 0
         self.exitErrorCode = 0
@@ -148,6 +149,7 @@ class ToonBase(OTPBase.OTPBase):
         self.drawFps = 0
         self.secretAreaFlag = 1
         base.needRestartAntialiasing = False
+        base.needRestartLOD = False
         return
 
     def openMainWindow(self, *args, **kw):

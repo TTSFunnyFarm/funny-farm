@@ -3,6 +3,7 @@ from direct.gui.DirectGui import *
 from direct.interval.IntervalGlobal import *
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
+from toontown.toon import NPCToons, ToonDNA, ToonHead
 
 class InfoBubble(DirectFrame):
     notify = directNotify.newCategory('InfoBubble')
@@ -13,11 +14,13 @@ class InfoBubble(DirectFrame):
         self.icon = None
         self.currText = None
 
-    def enter(self, index, doneEvent):
-        self.showDialog(index)
+    def enter(self, index, doneEvent, npcId=0):
+        self.showDialog(index, npcId)
         self.doneEvent = doneEvent
 
     def exit(self):
+        self.nextButton.hide()
+        self.okButton.hide()
         Sequence(self.bubble.scaleInterval(0.1, (0.16, 1.0, 0.16), blendType='easeInOut'), self.bubble.scaleInterval(0.3, (0.01, 1.0, 0.01), blendType='easeInOut'), Func(self.hideDialog), Func(messenger.send, self.doneEvent)).start()
 
     def load(self):
@@ -50,9 +53,18 @@ class InfoBubble(DirectFrame):
         del self.okButton
         del self.dialog
 
-    def showDialog(self, index):
+    def showDialog(self, index, npcId=0):
         gui = loader.loadModel('phase_6/models/karting/rim_textures.bam')
-        self.icon = gui.find('**/kart_Rim_7')
+        if npcId > 0:
+            self.icon = gui.find('**/kart_Rim_5')
+            head = self.displayHead(npcId)
+            if head:
+                head.reparentTo(self.icon)
+                head.setPos(0, 0, -0.13)
+                head.setHpr(180, 0, 0)
+                head.setScale(0.45, 0.45, 0.45)
+        else:
+            self.icon = gui.find('**/kart_Rim_7')
         self.icon.reparentTo(self.bubble)
         self.icon.setPos(1.5, 0, 2.5)
         self.icon.setScale(1.5)
@@ -88,3 +100,20 @@ class InfoBubble(DirectFrame):
             self.okButton.hide()
             self.nextButton['command'] = self.setPageNumber
             self.nextButton['extraArgs'] = [pageNumber + 1]
+        messenger.send('nextInfoPage')
+
+    def displayHead(self, npcId):
+        if npcId not in NPCToons.NPCToonDict:
+            return None
+        head = hidden.attachNewNode('head')
+        desc = NPCToons.NPCToonDict[npcId]
+        canonicalZoneId, name, dnaType, gender, accessories, protected, type = desc
+        headModel = ToonHead.ToonHead()
+        dna = ToonDNA.ToonDNA()
+        dna.newToonFromProperties(*dnaType)
+        headModel.setupHead(dna, forGui=1)
+        headModel.reparentTo(head)
+        animalStyle = dna.getAnimal()
+        bodyScale = ToontownGlobals.toonBodyScales[animalStyle]
+        headModel.setScale(bodyScale / 0.75)
+        return head

@@ -2,6 +2,7 @@ from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
 from toontown.toon import NPCToons
 from toontown.hood import ZoneUtil
+from toontown.quest import Quests
 import Door
 
 class Interior(DirectObject):
@@ -40,11 +41,31 @@ class Interior(DirectObject):
                 self.npcs[i].addActive()
             else:
                 self.notify.warning('generateNPCs(): Could not find npc_origin_%d' % i)
+        self.refreshQuestIcons()
+    
+    def refreshQuestIcons(self):
+        for npc in self.npcs:
+            for questDesc in base.localAvatar.quests:
+                quest = Quests.getQuest(questDesc[0])
+                quest.setQuestProgress(questDesc[1])
+                if quest.getCompletionStatus() == Quests.COMPLETE or quest.getType() in [Quests.QuestTypeGoTo, Quests.QuestTypeChoose, Quests.QuestTypeDeliver]:
+                    if quest.toNpc == npc.getNpcId():
+                        if quest.questCategory == Quests.MainQuest:
+                            npc.setMainQuest(questDesc[0])
+                        else:
+                            npc.setSideQuest(questDesc[0])
+                        break
+                    else:
+                        npc.clearQuestIcon()
+            # todo: display quest offers on toons
 
     def startActive(self):
+        if self.shopId == 'toonhall':
+            self.accept('enterbarn_door_trigger', self.handleDoorTrigger)
         for door in self.interior.findAllMatches('**/door_double_*_ur'):
             if not door.find('**/*_trigger').isEmpty():
                 self.accept('enter%s' % door.find('**/*_trigger').getName(), self.handleDoorTrigger)
+        self.accept('questsChanged', self.refreshQuestIcons)
 
     def handleDoorTrigger(self, collEntry):
         # goddamn toon HQs
@@ -67,13 +88,17 @@ class Interior(DirectObject):
         zone.enter(shop=str(zoneId))
 
     def setupDoor(self, name, parent):
-        door = loader.loadModel('phase_3.5/models/modules/doors_practical').find('**/' + name)
+        if name == 'barn_door':
+            door = loader.loadModel('phase_14/models/modules/FF_barn_doors')
+        else:
+            door = loader.loadModel('phase_3.5/models/modules/doors_practical').find('**/' + name)
         door.reparentTo(self.interior.find('**/' + parent))
         self.fixDoor(door)
         return door
 
     def fixDoor(self, door):
-        door.find('**/door_*_hole_left').setColor(0, 0, 0, 1)
-        door.find('**/door_*_hole_right').setColor(0, 0, 0, 1)
-        door.find('**/door_*_hole_left').setDepthOffset(1)
-        door.find('**/door_*_hole_right').setDepthOffset(1)
+        door.find('**/*door*hole_left').setColor(0, 0, 0, 1)
+        door.find('**/*door*hole_right').setColor(0, 0, 0, 1)
+        if door.getName() != 'barn_door':
+            door.find('**/*door*hole_left').setDepthOffset(1)
+            door.find('**/*door*hole_right').setDepthOffset(1)

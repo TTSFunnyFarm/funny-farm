@@ -1,5 +1,6 @@
-from toontown.toonbase import FunnyFarmGlobals
 from toontown.suit.SuitPlannerAI import SuitPlannerAI
+from toontown.toonbase import FunnyFarmGlobals
+
 
 class HoodAI:
     notify = directNotify.newCategory('HoodAI')
@@ -15,7 +16,7 @@ class HoodAI:
             model = loader.loadModel(filename)
             self.air.modelMap[zoneId] = model
 
-        self.createTreasurePlanner()
+        #self.createTreasurePlanner()
         self.createSuitPlanners()
         self.createBuildingManagers()
 
@@ -35,13 +36,13 @@ class HoodAI:
         return name
 
     def createTreasurePlanner(self):
-        pass
+        raise NotImplementedError('createTreasurePlanner')  # Must be overridden by subclass.
 
     def createSuitPlanners(self):
         for zoneId in FunnyFarmGlobals.HoodHierarchy.get(self.zoneId, []):
             sp = SuitPlannerAI(zoneId)
-            self.air.suitPlanners[zoneId] = sp
             sp.generate()
+            self.air.suitPlanners[zoneId] = sp
 
     def createBuildingManagers(self):
         pass

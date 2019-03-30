@@ -13,25 +13,27 @@ class ToonHallInterior(Interior):
         self.interiorFile = 'phase_14/models/modules/toonhall_interior'
 
     def load(self):
-        Interior.load(self)
+        # Overrides Interior.load because we don't want to start music here
+        self.interior = loader.loadModel(self.interiorFile)
+        self.interior.reparentTo(render)
+        self.generateNPCs()
+        
         self.randomGenerator = random.Random()
         self.randomGenerator.seed(self.zoneId)
         hoodId = ZoneUtil.getCanonicalHoodId(self.zoneId)
         self.colors = ToonInteriorColors.colors[hoodId]
         doorOrigin = self.interior.find('**/door_origin')
-        doorOrigin.setScale(0.8, 0.8, 0.8)
+        # doorOrigin.setScale(0.8, 0.8, 0.8)
         doorOrigin.setPos(doorOrigin, 0, -0.025, 0)
         labDoorOrigin = self.interior.find('**/lab_door_origin')
         labDoorOrigin.setScale(0.8, 0.8, 0.8)
         labDoorOrigin.setPos(labDoorOrigin, 0, -0.025, 0)
-        self.door = self.setupDoor('door_double_round_ur', 'door_origin')
+        self.door = self.setupDoor('barn_door', 'door_origin')
         self.labDoor = self.setupDoor('door_double_round_ur', 'lab_door_origin')
         self.labDoor.find('**/door_double_round_ur_trigger').setName('door_trigger_15')
         doorColor = 0
         self.labDoor.setColor(self.colors['TI_door'][doorColor])
-        if self.zoneId in InteriorStorage.ZoneStyles:
-            doorColor = InteriorStorage.ZoneStyles[self.zoneId].get('TI_door', 0)
-        self.door.setColor(self.colors['TI_door'][doorColor])
+        self.door.setColorScale(1.0, 0.9, 0.9, 1.0)
         del self.colors
         del self.randomGenerator
         self.interior.flattenMedium()
@@ -39,17 +41,18 @@ class ToonHallInterior(Interior):
         self.acceptOnce('avatarExitDone', self.startActive)
 
     def unload(self):
-        Interior.unload(self)
+        # Overrides Interior.unload because we don't want to stop music here
+        self.ignoreAll()
+        self.interior.removeNode()
+        del self.interior
+        if hasattr(self, 'npcs'):
+            for npc in self.npcs:
+                npc.removeActive()
+                npc.delete()
+                del npc
 
     def generateNPCs(self):
         Interior.generateNPCs(self)
-        self.npcs[0].useLOD(1000)
-        #self.npcs[1].initPos()
-        #self.npcs[2].initPos()
-        #self.npcs[3].initPos()
-        #self.npcs[1].setAnimState('ScientistJealous')
-        #self.npcs[2].setAnimState('ScientistJealous')
-        #self.npcs[3].setAnimState('ScientistEmcee')
 
     def startActive(self):
         base.localAvatar.checkQuestCutscene()

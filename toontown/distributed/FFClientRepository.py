@@ -86,7 +86,6 @@ class FFClientRepository(DirectObject):
         base.localAvatar.reparentTo(render)
         base.localAvatar.generate()
         base.localAvatar.initInterface()
-        base.localAvatar.useLOD(1000)
         if not tutorialFlag:
             base.localAvatar.book.showButton()
             base.localAvatar.laffMeter.start()

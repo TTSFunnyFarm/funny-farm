@@ -1,8 +1,10 @@
 from panda3d.core import *
 from direct.interval.IntervalGlobal import *
 from direct.showbase import Audio3DManager
+from toontown.shader import WaterShader
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.hood import SkyUtil
+from toontown.toon import NPCToons
 from Street import Street
 
 class FFStreet(Street):
@@ -15,28 +17,60 @@ class FFStreet(Street):
         self.winterHoodFile = '%s_winter' % self.hoodFile
         self.skyFile = 'phase_3.5/models/props/TT_sky'
         self.titleColor = (1.0, 0.5, 0.4, 1.0)
+        self.waterShader = None
 
     def enter(self, shop=None, tunnel=None):
+        self.loadQuestChanges()
         Street.enter(self, shop=shop, tunnel=tunnel)
         if self.zoneId == FunnyFarmGlobals.RicketyRoad:
             self.trainSfx.play()
             self.audio3d.attachSoundToObject(self.trainSfx, self.train)
+            self.waterShader.waterPos = -1.5
+            self.waterShader.start('water', self.geom, self.sky)
 
     def exit(self):
         Street.exit(self)
+        self.unloadQuestChanges()
+        self.waterShader.stop()
+        self.waterShader.waterPos = 0
         if self.zoneId == FunnyFarmGlobals.RicketyRoad:
             self.audio3d.detachSound(self.trainSfx)
             self.trainSfx.stop()
 
     def load(self):
         Street.load(self)
+        self.waterShader = WaterShader.WaterShader()
         if self.zoneId == FunnyFarmGlobals.RicketyRoad:
             self.loadTrain()
 
     def unload(self):
         Street.unload(self)
+        self.waterShader = None
         if self.zoneId == FunnyFarmGlobals.RicketyRoad:
             self.unloadTrain()
+
+    def startActive(self):
+        Street.startActive(self)
+        if self.zoneId == FunnyFarmGlobals.RicketyRoad:
+            self.accept('entertrain_collision', self.__handleTrainCollision)
+            self.ignore('entertunnel_trigger_ss_2100') # temporary
+
+    def loadQuestChanges(self):
+        for questDesc in base.localAvatar.quests:
+            if questDesc[0] in range(1019, 1023):
+                self.npcs.append(NPCToons.createLocalNPC(1114, True))
+                origin = self.geom.find('**/npc_origin_1')
+                self.npcs[1].reparentTo(self.geom)
+                self.npcs[1].setPosHpr(origin, 0, 0, 0, 0, 0, 0)
+                self.npcs[1].origin = origin
+                self.npcs[1].initializeBodyCollisions('toon')
+                self.npcs[1].addActive()
+                return
+
+    def unloadQuestChanges(self):
+        if len(self.npcs) > 1:
+            self.npcs[1].delete()
+            del self.npcs[1]
 
     def loadTrain(self):
         self.train = loader.loadModel('phase_5/models/props/train')
@@ -45,7 +79,7 @@ class FFStreet(Street):
         self.trainColl = self.train.attachNewNode(CollisionNode('train_collision'))
         self.trainColl.node().addSolid(cb)
         self.train.setH(90)
-        self.trainLoop = Sequence(self.train.posInterval(32, pos=Point3(445, 45, -0.5), startPos=(-260, 45, -0.5)), Wait(10))
+        self.trainLoop = Sequence(self.train.posInterval(32, pos=Point3(445, 45, -0.5), startPos=(-260, 45, -0.5)), Wait(90))
         self.trainLoop.loop()
         self.audio3d = Audio3DManager.Audio3DManager(base.sfxManagerList[0], camera)
         self.trainSfx = self.audio3d.loadSfx('phase_14/audio/sfx/train_loop.ogg')
@@ -61,12 +95,6 @@ class FFStreet(Street):
         del self.trainLoop
         del self.trainSfx
         del self.audio3d
-
-    def startActive(self):
-        Street.startActive(self)
-        if self.zoneId == FunnyFarmGlobals.RicketyRoad:
-            self.accept('entertrain_collision', self.__handleTrainCollision)
-            self.ignore('entertunnel_trigger_ss_2100') # temporary
 
     def __handleTrainCollision(self, entry):
         base.localAvatar.disable()

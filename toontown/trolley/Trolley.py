@@ -158,7 +158,7 @@ class Trolley(DirectObject):
         base.localAvatar.disable()
         base.localAvatar.experienceBar.hide()
         base.localAvatar.setAnimState('neutral')
-        self.dialog = TTDialog.TTDialog(text=TTLocalizer.TrolleyDialog, style=TTDialog.YesNo, command=self.handleEnterTrolley)
+        self.dialog = TTDialog.TTDialog(text=TTLocalizer.TrolleyDialog, text_align=TextNode.ACenter, style=TTDialog.YesNo, command=self.handleEnterTrolley)
         self.dialog.show()
 
     def handleEnterTrolley(self, choice):

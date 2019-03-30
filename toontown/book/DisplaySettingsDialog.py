@@ -49,9 +49,6 @@ class DisplaySettingsDialog(DirectFrame, StateData.StateData):
          (1600, 900),
          (1920, 1080),
          (2560, 1440))
-         # Maybe one day, Hawkheart.
-         #(4096, 2304),
-         #(8192, 4608))
         guiButton = loader.loadModel('phase_3/models/gui/quit_button')
         gui = loader.loadModel('phase_3.5/models/gui/friendslist_gui')
         nameShopGui = loader.loadModel('phase_3/models/gui/nameshop_gui')
@@ -221,8 +218,11 @@ class DisplaySettingsDialog(DirectFrame, StateData.StateData):
             self.embeddedButton['indicatorValue'] = 1
 
     def updateScreenSize(self):
-        xSize, ySize = self.screenSizes[self.screenSizeIndex]
-        self.screenSizeValueText['text'] = '%s x %s' % (xSize, ySize)
+        if self.displayMode == self.FullscreenMode:
+            xSize, ySize = (base.pipe.getDisplayWidth(), base.pipe.getDisplayHeight())
+        else:
+            xSize, ySize = self.screenSizes[self.screenSizeIndex]
+        self.screenSizeValueText['text'] = '%s x %s' % tuple(self.screenSizes[self.screenSizeIndex])
         if self.screenSizeIndex > 0:
             self.screenSizeLeftArrow.show()
         else:
@@ -289,7 +289,10 @@ class DisplaySettingsDialog(DirectFrame, StateData.StateData):
         self.origProperties = base.win.getProperties()
         pipe = self.apiPipes[self.apiMenu.selectedIndex]
         properties = WindowProperties()
-        xSize, ySize = self.screenSizes[self.screenSizeIndex]
+        if self.displayMode == self.FullscreenMode:
+            xSize, ySize = (base.pipe.getDisplayWidth(), base.pipe.getDisplayHeight())
+        else:
+            xSize, ySize = self.screenSizes[self.screenSizeIndex]
         properties.setSize(xSize, ySize)
         properties.setFullscreen(self.displayMode == self.FullscreenMode)
         fullscreen = self.displayMode == self.FullscreenMode

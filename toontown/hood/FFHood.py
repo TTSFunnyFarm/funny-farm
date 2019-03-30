@@ -1,11 +1,16 @@
 from panda3d.core import *
-from toontown.toonbase import ToontownGlobals
-from toontown.toonbase import FunnyFarmGlobals
+
+from toontown.battle import BattleParticles
+from toontown.hood import SkyUtil
+from toontown.hood.ToonHood import ToonHood
+from toontown.shader import WaterShader
 from toontown.suit.BattleSuit import BattleSuit
 from toontown.suit.SuitDNA import SuitDNA
 from toontown.toon import NPCToons
-from ToonHood import ToonHood
-import SkyUtil
+from toontown.toonbase import FunnyFarmGlobals
+from toontown.toonbase import ToontownGlobals
+from toontown.safezone.FFTreasurePlanner import FFTreasurePlanner
+
 
 class FFHood(ToonHood):
 
@@ -18,20 +23,44 @@ class FFHood(ToonHood):
         self.winterHoodFile = 'phase_14/models/neighborhoods/funny_farm_winter'
         self.skyFile = 'phase_3.5/models/props/TT_sky'
         self.titleColor = (1.0, 0.5, 0.4, 1.0)
+        self.waterShader = None
+        self.treasurePlanner = FFTreasurePlanner()
 
     def enter(self, shop=None, tunnel=None, init=0):
         self.loadQuestChanges()
         ToonHood.enter(self, shop=shop, tunnel=tunnel, init=init)
+        self.waterShader.start('water', self.geom, self.sky)
+        if hasattr(self, 'snow'):
+            self.snow.start(camera, self.snowRender)
 
     def exit(self):
         ToonHood.exit(self)
         self.unloadQuestChanges()
+        self.waterShader.stop()
+        if hasattr(self, 'snow'):
+            self.snow.disable()
 
     def load(self):
         ToonHood.load(self)
+        self.sky.setScale(2.0)
+        self.waterShader = WaterShader.WaterShader()
+        self.waterShader.waterPos = 1.05
+        if base.air.holidayMgr.isWinter():
+            self.snow = BattleParticles.loadParticleFile('snowdisk.ptf')
+            self.snow.setPos(0, 0, 5)
+            self.snowRender = render.attachNewNode('snowRender')
+            self.snowRender.setDepthWrite(0)
+            self.snowRender.setBin('fixed', 1)
 
     def unload(self):
         ToonHood.unload(self)
+        self.waterShader.stop()
+        self.waterShader = None
+        if hasattr(self, 'snow'):
+            self.snow.cleanup()
+            self.snowRender.removeNode()
+            del self.snow
+            del self.snowRender
 
     def skyTrack(self, task):
         return SkyUtil.cloudSkyTrack(task)
@@ -55,16 +84,18 @@ class FFHood(ToonHood):
                     self.suit.setElite(1)
                     self.suit.initializeBodyCollisions('suit')
                     self.suit.reparentTo(self.geom)
-                    self.suit.setPosHpr(-90, -20, 0, 270, 0, 0)
+                    self.suit.setPosHpr(-70, -20, 0, 270, 0, 0)
                     self.suit.addActive()
                     self.suit.loop('neutral')
                 if not hasattr(self, 'flippy'):
-                    self.flippy = NPCToons.createLocalNPC(1001)
+                    self.flippy = NPCToons.createLocalNPC(1001, functional=True)
                     self.flippy.initializeBodyCollisions('toon')
                     self.flippy.reparentTo(self.geom)
-                    self.flippy.setPosHpr(-70, -20, 0, 90, 0, 0)
+                    self.flippy.setPosHpr(-50, -20, 0, 90, 0, 0)
+                    self.flippy.setScale(1, 1, 1)
                     self.flippy.useLOD(1000)
                     self.flippy.addActive()
+                    self.flippy.stopLookAround()
                 return
 
     def unloadQuestChanges(self):

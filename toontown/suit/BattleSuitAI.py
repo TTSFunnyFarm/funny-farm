@@ -62,15 +62,15 @@ class BattleSuitAI(SuitBase):
         self.point = random.choice(self.legList)
         for doId in self.sp.activeSuits:
             suit = self.sp.activeSuits[doId]
-            # If the suit is within 30 units of any other suit, try again.
+            # If the suit is within 40 units of any other suit, try again.
             # We don't want any suits spawning on top of each other.
-            if (self.point[-1] - suit.point[-1]).length() < 30:
+            if (self.point[-1] - suit.point[-1]).length() < 40:
                 self.initializePath()
                 return
         # We don't want suits spawning on top of our battles either!
         if not render.find('**/battleCell').isEmpty():
             cell = render.find('**/battleCell')
-            if (self.point[-1] - cell.getPos()).length() < 12:
+            if (self.point[-1] - cell.getPos()).length() <= 12:
                 self.initializePath()
 
     def nextPoint(self, task):
