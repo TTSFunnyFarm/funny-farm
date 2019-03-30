@@ -1,9 +1,9 @@
 from direct.showbase.DirectObject import DirectObject
 
-from PlayGame import PlayGame
 from otp.nametag import NametagGlobals
 from otp.otpbase import OTPLocalizer
 from toontown.discord.FFDiscordIntegration import FFDiscordIntegration
+from toontown.distributed.PlayGame import PlayGame
 from toontown.login.AvatarChooser import AvatarChooser
 from toontown.makeatoon.MakeAToon import MakeAToon
 from toontown.quest.CutsceneManager import CutsceneManager
