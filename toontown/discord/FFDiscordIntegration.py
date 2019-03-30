@@ -16,14 +16,12 @@ class FFDiscordIntegration:
         self.startTime = int(time.time())
         self.activity = {
             'state': 'In-Game',
-            'assets':
-                {
-                    'large_image': 'ttff-icon-1'
-                },
-            'timestamps':
-                {
-                    'start': self.startTime
-                }
+            'assets': {
+                'large_image': 'ttff-icon-1'
+            },
+            'timestamps': {
+                'start': self.startTime
+            }
         }
 
         self.sendActivity()
@@ -37,7 +35,9 @@ class FFDiscordIntegration:
         self.activity['state'] = 'In-Game'
 
         if 'timestamps' not in self.activity:
-            self.activity['timestamps'] = {'start': self.startTime}
+            self.activity['timestamps'] = {
+                'start': self.startTime
+            }
 
         self.client.setActivity(self.activity)
 
