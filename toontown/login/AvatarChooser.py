@@ -45,6 +45,7 @@ class AvatarChooser:
         if not self.isLoaded:
             return
         self.unload()
+        self.quitButton.hide()
         base.setBackgroundColor(ToontownGlobals.DefaultBackgroundColor)
         musicMgr.stopMusic()
 
@@ -77,7 +78,8 @@ class AvatarChooser:
         trashClsd = trashcanGui.find('**/TrashCan_CLSD')
         trashOpen = trashcanGui.find('**/TrashCan_OPEN')
         trashRlvr = trashcanGui.find('**/TrashCan_RLVR')
-        self.bg = DirectFrame(image=bgImage, relief=None)
+        self.bg = DirectFrame(parent=aspect2d, image=bgImage, relief=None)
+        self.bg.setBin('background', 1)
         self.bg.hide()
         self.title = OnscreenText(TTLocalizer.AvatarChooserPickAToon, scale=TTLocalizer.ACtitle, parent=self.bg, font=ToontownGlobals.getSignFont(), fg=(1, 0.9, 0.1, 1), pos=(0.0, 0.82))
         
@@ -89,7 +91,7 @@ class AvatarChooser:
             button.rename.hide()
             self.buttons.append(button)
 
-        self.quitButton = DirectButton(parent=self.bg, image=(quitHover, quitHover, quitHover), relief=None, text=TTLocalizer.AvatarChooserQuit, text_font=ToontownGlobals.getSignFont(), text_fg=(0.977, 0.816, 0.133, 1), text_pos=TTLocalizer.ACquitButtonPos, text_scale=TTLocalizer.ACquitButton, image_scale=1, image1_scale=1.05, image2_scale=1.05, scale=1.05, pos=(1.08, 0, -0.907), command=base.userExit)
+        self.quitButton = DirectButton(parent=base.a2dBottomRight, image=(quitHover, quitHover, quitHover), relief=None, text=TTLocalizer.AvatarChooserQuit, text_font=ToontownGlobals.getSignFont(), text_fg=(0.977, 0.816, 0.133, 1), text_pos=TTLocalizer.ACquitButtonPos, text_scale=TTLocalizer.ACquitButton, image_scale=1, image1_scale=1.05, image2_scale=1.05, scale=1.05, pos=(-0.253333, 0, 0.093), command=base.userExit)
         self.loadAvatars()
         gui.removeNode()
         quitGui.removeNode()
