@@ -37,7 +37,8 @@ class AvatarChooser:
     def enter(self):
         if not self.isLoaded:
             self.load()
-        self.bg.show()
+        self.bg.setBin('background', 1)
+        self.bg.reparentTo(aspect2d)
         self.title.reparentTo(aspect2d)
         self.quitButton.show()
         base.transitions.fadeIn(1.0)
@@ -45,8 +46,9 @@ class AvatarChooser:
     def exit(self):
         if not self.isLoaded:
             return
-        self.title.reparentTo(hidden)
         self.quitButton.hide()
+        self.title.reparentTo(hidden)
+        self.bg.reparentTo(hidden)
         self.unload()
         base.setBackgroundColor(ToontownGlobals.DefaultBackgroundColor)
         musicMgr.stopMusic()
@@ -80,9 +82,7 @@ class AvatarChooser:
         trashClsd = trashcanGui.find('**/TrashCan_CLSD')
         trashOpen = trashcanGui.find('**/TrashCan_OPEN')
         trashRlvr = trashcanGui.find('**/TrashCan_RLVR')
-        self.bg = DirectFrame(parent=aspect2d, image=bgImage, relief=None)
-        self.bg.setBin('background', 1)
-        self.bg.hide()
+        self.bg = DirectFrame(parent=hidden, image=bgImage, relief=None)
         self.title = OnscreenText(TTLocalizer.AvatarChooserPickAToon, scale=TTLocalizer.ACtitle, parent=hidden, font=ToontownGlobals.getSignFont(), fg=(1, 0.9, 0.1, 1), pos=(0.0, 0.82))
         
         for i in xrange(0, FunnyFarmGlobals.MaxAvatars):
@@ -111,12 +111,12 @@ class AvatarChooser:
             button.delete.destroy()
             button.rename.destroy()
         del self.buttons
-        self.bg.destroy()
-        del self.bg
-        self.title.removeNode()
-        del self.title
         self.quitButton.destroy()
         del self.quitButton
+        self.title.removeNode()
+        del self.title
+        self.bg.destroy()
+        del self.bg
         self.isLoaded = 0
 
     def loadAvatars(self):
