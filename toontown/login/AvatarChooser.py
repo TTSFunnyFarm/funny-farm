@@ -38,14 +38,16 @@ class AvatarChooser:
         if not self.isLoaded:
             self.load()
         self.bg.show()
+        self.title.reparentTo(aspect2d)
         self.quitButton.show()
         base.transitions.fadeIn(1.0)
 
     def exit(self):
         if not self.isLoaded:
             return
-        self.unload()
+        self.title.reparentTo(hidden)
         self.quitButton.hide()
+        self.unload()
         base.setBackgroundColor(ToontownGlobals.DefaultBackgroundColor)
         musicMgr.stopMusic()
 
@@ -81,7 +83,7 @@ class AvatarChooser:
         self.bg = DirectFrame(parent=aspect2d, image=bgImage, relief=None)
         self.bg.setBin('background', 1)
         self.bg.hide()
-        self.title = OnscreenText(TTLocalizer.AvatarChooserPickAToon, scale=TTLocalizer.ACtitle, parent=self.bg, font=ToontownGlobals.getSignFont(), fg=(1, 0.9, 0.1, 1), pos=(0.0, 0.82))
+        self.title = OnscreenText(TTLocalizer.AvatarChooserPickAToon, scale=TTLocalizer.ACtitle, parent=hidden, font=ToontownGlobals.getSignFont(), fg=(1, 0.9, 0.1, 1), pos=(0.0, 0.82))
         
         for i in xrange(0, FunnyFarmGlobals.MaxAvatars):
             button = DirectButton(parent=self.bg, image=btnImages[i], relief=None, pos=POSITIONS[i], scale=1.01, text=(TTLocalizer.AvatarChoiceMakeAToon,), text_scale=0.1, text_font=ToontownGlobals.getSignFont(), text_fg=(0, 1, 0.8, 0.5), text1_scale=TTLocalizer.ACmakeAToon, text1_font=ToontownGlobals.getSignFont(), text1_fg=(0, 1, 0.8, 1), text2_scale=TTLocalizer.ACmakeAToon, text2_font=ToontownGlobals.getSignFont(), text2_fg=(0.3, 1, 0.9, 1), command=self.__handleCreate, extraArgs=[i + 1])
