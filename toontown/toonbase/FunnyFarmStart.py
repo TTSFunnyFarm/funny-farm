@@ -123,7 +123,6 @@ class FunnyFarmStart:
             Injector.openInjector()
         
         self.notify.info('Initializing Client Repository...')
-        Injector.openInjector()
         cr = FFClientRepository()
         base.initNametagGlobals()
         base.startShow(cr)
