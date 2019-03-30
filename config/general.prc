@@ -34,3 +34,4 @@ want-winter #f
 # Misc.
 want-pets #f
 game-version ff-dev
+want-discord-integration true
