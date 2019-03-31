@@ -89,8 +89,12 @@ class InventoryNew(InventoryBase.InventoryBase, DirectFrame):
                 self.tutArrows.arrow2.reparentTo(hidden)
             else:
                 self.tutArrows.arrow2.reparentTo(self.battleFrame, 1)
-            self.tutText.show()
             self.tutText.reparentTo(self.battleFrame, 1)
+            self.tutText.show()
+        # This is an extra check to ensure that it's impossible to show the tutorial stuff whenever we're not in the tutorial
+        elif hasattr(self, 'tutText'):
+            self.tutArrows.arrowsOff()
+            self.tutText.hide()
         DirectFrame.show(self)
 
     def uberGagToggle(self, showSuperGags = 1):
