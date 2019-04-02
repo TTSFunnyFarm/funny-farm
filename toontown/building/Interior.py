@@ -3,7 +3,7 @@ from direct.showbase.DirectObject import DirectObject
 from toontown.toon import NPCToons
 from toontown.hood import ZoneUtil
 from toontown.quest import Quests
-import Door
+from toontown.building import Door
 
 class Interior(DirectObject):
     notify = directNotify.newCategory('Interior')

@@ -4,7 +4,7 @@ from direct.task import Task
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals, FunnyFarmGlobals
 from toontown.toontowngui import TTDialog
-import ShtikerPage
+from toontown.book import ShtikerPage
 
 class OptionsPage(ShtikerPage.ShtikerPage):
     notify = directNotify.newCategory('OptionsPage')

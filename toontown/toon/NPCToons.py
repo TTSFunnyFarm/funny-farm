@@ -3,7 +3,7 @@ from otp.nametag.NametagGroup import *
 from toontown.toonbase import ToontownGlobals
 import random
 from toontown.hood import ZoneUtil
-import ToonDNA
+from toontown.toon import ToonDNA
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownBattleGlobals
 import sys, os

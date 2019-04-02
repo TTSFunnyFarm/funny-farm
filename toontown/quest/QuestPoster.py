@@ -12,7 +12,7 @@ from toontown.suit import Suit
 from toontown.hood import ZoneUtil
 from toontown.toonbase.ToontownBattleGlobals import AvPropsNew
 from toontown.toontowngui import TTDialog
-import Quests
+from toontown.quest import Quests
 import string
 
 IMAGE_SCALE_LARGE = 0.2

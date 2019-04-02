@@ -1,6 +1,6 @@
 from panda3d.core import *
 from toontown.toonbase.ToontownGlobals import *
-import Walk
+from toontown.toon import Walk
 
 class PublicWalk(Walk.Walk):
 

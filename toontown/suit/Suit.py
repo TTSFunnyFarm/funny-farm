@@ -1,6 +1,6 @@
 from direct.actor import Actor
 from otp.avatar import Avatar
-import SuitDNA
+from toontown.suit import SuitDNA
 from toontown.toonbase import ToontownGlobals
 from panda3d.core import *
 from otp.nametag.NametagGroup import NametagGroup
@@ -232,11 +232,11 @@ def loadSuitAnims(suit, flag = 1):
         try:
             animList = globals()[suit]
         except KeyError:
-            print 'still keyError, gg'
+            print('still keyError, gg')
             animList = ()
 
     else:
-        print 'Invalid suit name: ', suit
+        print('Invalid suit name: ', suit)
         return -1
     for anim in animList:
         phase = 'phase_' + str(anim[2])

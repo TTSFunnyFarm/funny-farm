@@ -6,7 +6,7 @@ from toontown.hood import ZoneUtil
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.quest import QuestBookPoster
-import ShtikerPage
+from toontown.book import ShtikerPage
 
 class QuestPage(ShtikerPage.ShtikerPage):
     notify = directNotify.newCategory('QuestPage')

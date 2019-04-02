@@ -21,12 +21,12 @@ from toontown.quest.InfoBubble import InfoBubble
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
-from LaffMeter import LaffMeter
-from PublicWalk import PublicWalk
-from ExperienceBar import ExperienceBar
-import InventoryNew
-import Experience
-import Toon
+from toontown.toon.LaffMeter import LaffMeter
+from toontown.toon.PublicWalk import PublicWalk
+from toontown.toon.ExperienceBar import ExperienceBar
+from toontown.toon import InventoryNew
+from toontown.toon import Experience
+from toontown.toon import Toon
 import random
 import math
 
