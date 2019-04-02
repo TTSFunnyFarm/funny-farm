@@ -213,7 +213,7 @@ class MagicWordDecorator:
 
         name = self.name
         if name is None:
-            name = mw.func_name
+            name = mw.__name__
 
         config_access = config.GetInt('mw-word-' + name.lower(), 0)
         if config_access:

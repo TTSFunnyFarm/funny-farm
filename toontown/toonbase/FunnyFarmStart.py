@@ -1,9 +1,9 @@
 from panda3d.core import *
-import __builtin__, os
+import os
 from otp.settings.Settings import Settings
 from toontown.toonbase.FunnyFarmLogger import FunnyFarmLogger
 
-__builtin__.logger = FunnyFarmLogger()
+__builtins__.logger = FunnyFarmLogger()
 
 if __debug__:
     loadPrcFile('config/general.prc')
@@ -14,7 +14,7 @@ dir = os.path.dirname(os.getcwd() + '/' + preferencesFilename)
 if not os.path.exists(dir):
     os.makedirs(dir)
 print('Reading %s...' % preferencesFilename)
-__builtin__.settings = Settings(preferencesFilename)
+__builtins__.settings = Settings(preferencesFilename)
 if 'antialiasing' not in settings:
     settings['antialiasing'] = 0
 if 'res' not in settings:
@@ -23,14 +23,14 @@ loadPrcFileData('Settings: MSAA', 'framebuffer-multisample %s' % (settings['anti
 loadPrcFileData('Settings: MSAA samples', 'multisamples %i' % settings['antialiasing'])
 loadPrcFileData('Settings: res', 'win-size %d %d' % tuple(settings['res']))
 
-import ToonBase
+from toontown.toonbase import ToonBase
 ToonBase.ToonBase()
 
 class game:
     name = 'toontown'
     process = 'client'
 
-__builtin__.game = game()
+__builtins__.game = game()
 
 from direct.gui import DirectGuiGlobals
 from direct.interval.IntervalGlobal import *
@@ -115,9 +115,9 @@ class FunnyFarmStart:
         base.air.createManagers()
         loader.loadingScreen.load()
 
-        __builtin__.musicMgr = MusicManager()
-        __builtin__.screenshotMgr = ScreenshotManager()
-        __builtin__.dataMgr = DataManager()
+        __builtins__.musicMgr = MusicManager()
+        __builtins__.screenshotMgr = ScreenshotManager()
+        __builtins__.dataMgr = DataManager()
 
         if __debug__:
             Injector.openInjector()
@@ -137,6 +137,6 @@ class FunnyFarmStart:
         base.air.preloadAvatars()
         base.air.createSafeZones()
 
-__builtin__.start = FunnyFarmStart()
+__builtins__.start = FunnyFarmStart()
 
 base.run()

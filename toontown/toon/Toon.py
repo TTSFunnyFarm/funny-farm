@@ -1,10 +1,10 @@
 from otp.avatar import Avatar
 from otp.avatar.Avatar import teleportNotify
-import ToonDNA
+from toontown.toon import ToonDNA
 from direct.task.Task import Task
 from toontown.suit import SuitDNA
 from direct.actor import Actor
-from ToonHead import *
+from toontown.toon.ToonHead import *
 from panda3d.core import *
 from direct.interval.IntervalGlobal import *
 from direct.directnotify import DirectNotifyGlobal
@@ -13,9 +13,9 @@ from otp.otpbase import OTPLocalizer
 from toontown.toonbase import TTLocalizer
 import random
 from toontown.effects import Wake
-import TTEmote
+from toontown.toon import TTEmote
 from otp.avatar import Emote
-import Motion
+from toontown.toon import Motion
 from toontown.hood import ZoneUtil
 from toontown.battle import SuitBattleGlobals
 from otp.otpbase import OTPGlobals
@@ -23,7 +23,7 @@ from toontown.effects import DustCloud, Splash
 from direct.showbase.PythonUtil import Functor
 from toontown.distributed import DelayDelete
 from otp.nametag.NametagConstants import *
-import AccessoryGlobals
+from toontown.toon import AccessoryGlobals
 import types
 
 def teleportDebug(requestStatus, msg, onlyIfToAv = True):

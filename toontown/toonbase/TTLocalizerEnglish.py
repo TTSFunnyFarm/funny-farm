@@ -1,7 +1,7 @@
 from toontown.toonbase.TTLocalizerEnglishProperty import *
 from otp.otpbase import OTPLocalizer as OL
 OL.SpeedChatStaticText = OL.SpeedChatStaticTextToontown.copy()
-for key in OL.SpeedChatStaticTextCommon.iterkeys():
+for key in iter(OL.SpeedChatStaticTextCommon):
     OL.SpeedChatStaticText[key] = OL.SpeedChatStaticTextCommon[key]
 
 commitmantst = 'kptmptest - removable'

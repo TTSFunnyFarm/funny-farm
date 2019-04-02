@@ -1,4 +1,4 @@
-from Nametag import *
+from otp.nametag.Nametag import *
 from otp.margins.MarginPopup import *
 from panda3d.core import *
 import math

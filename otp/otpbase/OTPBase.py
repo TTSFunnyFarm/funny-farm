@@ -1,6 +1,6 @@
 from direct.showbase.ShowBase import ShowBase
 from panda3d.core import Camera, TPLow, VBase4, ColorWriteAttrib, Filename, getModelPath, NodePath, TexturePool, Multifile
-import OTPRender
+from otp.otpbase import OTPRender
 import time
 import math
 import re

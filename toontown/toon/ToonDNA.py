@@ -2006,8 +2006,8 @@ defaultGirlColorList = [1,
  24,
  25,
  26]
-allColorsListApproximations = map(lambda x: VBase4(round(x[0], 3), round(x[1], 3), round(x[2], 3), round(x[3], 3)), allColorsList)
-allowedColors = set(map(lambda x: allColorsListApproximations[x], set([0] + defaultBoyColorList + defaultGirlColorList + [26])))
+allColorsListApproximations = [VBase4(round(x[0], 3), round(x[1], 3), round(x[2], 3), round(x[3], 3)) for x in allColorsList]
+allowedColors = set([allColorsListApproximations[x] for x in set(defaultBoyColorList + defaultGirlColorList + [26])])
 HatModels = [None,
  'phase_4/models/accessories/tt_m_chr_avt_acc_hat_baseball',
  'phase_4/models/accessories/tt_m_chr_avt_acc_hat_safari',

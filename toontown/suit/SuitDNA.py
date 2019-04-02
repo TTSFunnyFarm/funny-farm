@@ -106,7 +106,7 @@ def getSuitBodyType(name):
     elif name in suitCTypes:
         return 'c'
     else:
-        print 'Unknown body type for suit name: ', name
+        print('Unknown body type for suit name: ', name)
 
 
 def getSuitDept(name):
@@ -120,7 +120,7 @@ def getSuitDept(name):
     elif index < suitsPerDept * 4:
         return suitDepts[3]
     else:
-        print 'Unknown dept for suit name: ', name
+        print('Unknown dept for suit name: ', name)
         return None
     return None
 
