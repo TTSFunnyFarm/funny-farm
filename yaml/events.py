@@ -83,3 +83,4 @@ class MappingStartEvent(CollectionStartEvent):
 
 class MappingEndEvent(CollectionEndEvent):
     pass
+
