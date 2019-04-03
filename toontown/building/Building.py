@@ -54,6 +54,7 @@ class Building(DirectObject):
         self.clearQuestIcon()
 
     def delete(self):
+        self.setToToon()
         self.deleteElevator()
         del self.elevatorNodePath
         del self.elevatorModel
@@ -106,11 +107,20 @@ class Building(DirectObject):
             if TTLocalizer.BuildingNametagShadow:
                 self.nametag.setShadow(*TTLocalizer.BuildingNametagShadow)
             self.nametag.setContents(Nametag.CName)
-            self.nametag.setColorCode(NametagGroup.CCToonBuilding)
             self.nametag.setActive(0)
-            self.nametag.setAvatar(self.getBuildingNodePath().find('**/*door_origin*'))
             self.nametag.setObjectCode(self.block)
-            name = TTLocalizer.zone2TitleDict.get(self.zoneId, '')
+            if self.mode != self.TOON_STATE:
+                self.nametag.setColorCode(NametagGroup.CCSuitBuilding)
+                self.nametag.setAvatar(self.suitDoorOrigin)
+                name = TTLocalizer.zone2TitleDict.get(self.zoneId, '')
+                if not name:
+                    name = TTLocalizer.CogsInc
+                else:
+                    name += TTLocalizer.CogsIncExt
+            else:
+                self.nametag.setColorCode(NametagGroup.CCToonBuilding)
+                self.nametag.setAvatar(self.getBuildingNodePath().find('**/*door_origin*'))
+                name = TTLocalizer.zone2TitleDict.get(self.zoneId, '')
             self.nametag.setName(name)
             self.nametag.manage(base.marginManager)
         return
@@ -218,6 +228,8 @@ class Building(DirectObject):
         self.difficulty = difficulty
         self.numFloors = numFloors
         self.becameSuitTime = time.time()
+        base.cr.playGame.getActiveZone().ignore('enterdoor_trigger_%d' % self.block)
+        self.clearNametag()
         self.setState('suit')
         return
 
@@ -227,6 +239,7 @@ class Building(DirectObject):
     def toonTakeOver(self):
         if self.elevator:
             self.elevator.removeActive()
+        self.clearNametag()
         self.setState('toon')
 
     def getNodePaths(self):
@@ -347,6 +360,7 @@ class Building(DirectObject):
                     showTrack.append(Func(base.playSfx, self.cogSettleSound, 0, 1, None, 0.0))
                 showTrack.append(Func(self.elevator.openDoors))
                 showTrack.append(Func(self.elevator.addActive))
+                showTrack.append(Func(self.setupNametag))
                 tracks.append(showTrack)
                 if not soundPlayed:
                     soundPlayed = 1
@@ -462,6 +476,7 @@ class Building(DirectObject):
                 if not toonSoundPlayed:
                     hideTrack.append(Func(base.playSfx, self.toonSettleSound, 0, 1, None, 0.0))
                 hideTrack.append(self.createBounceTrack(i, 11, 1.2, TO_TOON_BLDG_TIME * 0.5, slowInitBounce=4.0))
+                hideTrack.append(Func(self.setupNametag))
                 hideTrack.append(Func(base.cr.playGame.getActiveZone().ignoreAll))
                 hideTrack.append(Func(base.cr.playGame.getActiveZone().startActive))
                 tracks.append(hideTrack)
