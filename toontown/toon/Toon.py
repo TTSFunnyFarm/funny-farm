@@ -1028,7 +1028,7 @@ class Toon(Avatar.Avatar, ToonHead):
                 sleeves.setTexture(sleeveTex, 1)
                 sleeves.setColor(sleeveColor)
                 bottoms = thisPart.findAllMatches('**/torso-bot')
-                for bottomNum in xrange(0, bottoms.getNumPaths()):
+                for bottomNum in range(0, bottoms.getNumPaths()):
                     bottom = bottoms.getPath(bottomNum)
                     bottom.setTexture(bottomTex, 1)
                     bottom.setColor(bottomColor)
@@ -2294,7 +2294,7 @@ class Toon(Avatar.Avatar, ToonHead):
                         pieceNames = (pieceNames,)
                     for pieceName in pieceNames:
                         npc = part.findAllMatches('**/%s;+s' % pieceName)
-                        for i in xrange(npc.getNumPaths()):
+                        for i in range(npc.getNumPaths()):
                             results.append(npc[i])
 
         return results
@@ -2335,7 +2335,7 @@ class Toon(Avatar.Avatar, ToonHead):
         if scale == None:
             scale = ToontownGlobals.toonHeadScales[self.style.getAnimal()]
         track = Parallel()
-        for hi in xrange(self.headParts.getNumPaths()):
+        for hi in range(self.headParts.getNumPaths()):
             head = self.headParts[hi]
             track.append(LerpScaleInterval(head, lerpTime, scale, blendType='easeInOut'))
 
@@ -2348,7 +2348,7 @@ class Toon(Avatar.Avatar, ToonHead):
         else:
             invScale = 1.0 / scale
         track = Parallel()
-        for li in xrange(self.legsParts.getNumPaths()):
+        for li in range(self.legsParts.getNumPaths()):
             legs = self.legsParts[li]
             torso = self.torsoParts[li]
             track.append(LerpScaleInterval(legs, lerpTime, scale, blendType='easeInOut'))
@@ -2462,10 +2462,10 @@ class Toon(Avatar.Avatar, ToonHead):
 
             def hideParts():
                 self.notify.debug('HidePaths')
-                for hi in xrange(self.headParts.getNumPaths()):
+                for hi in range(self.headParts.getNumPaths()):
                     head = self.headParts[hi]
                     parts = head.getChildren()
-                    for pi in xrange(parts.getNumPaths()):
+                    for pi in range(parts.getNumPaths()):
                         p = parts[pi]
                         if not p.isHidden():
                             p.hide()
@@ -2482,10 +2482,10 @@ class Toon(Avatar.Avatar, ToonHead):
 
             def showHiddenParts():
                 self.notify.debug('ShowHiddenPaths')
-                for hi in xrange(self.headParts.getNumPaths()):
+                for hi in range(self.headParts.getNumPaths()):
                     head = self.headParts[hi]
                     parts = head.getChildren()
-                    for pi in xrange(parts.getNumPaths()):
+                    for pi in range(parts.getNumPaths()):
                         p = parts[pi]
                         if not self.snowMen.hasPath(p) and p.getTag('snowman') == 'enabled':
                             p.show()
@@ -2631,7 +2631,7 @@ class Toon(Avatar.Avatar, ToonHead):
 
     def setPartsAdd(self, parts):
         actorCollection = parts
-        for thingIndex in xrange(0, actorCollection.getNumPaths()):
+        for thingIndex in range(0, actorCollection.getNumPaths()):
             thing = actorCollection[thingIndex]
             if thing.getName() not in ('joint_attachMeter', 'joint_nameTag'):
                 thing.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.MAdd))
@@ -2640,7 +2640,7 @@ class Toon(Avatar.Avatar, ToonHead):
 
     def setPartsNormal(self, parts, alpha = 0):
         actorCollection = parts
-        for thingIndex in xrange(0, actorCollection.getNumPaths()):
+        for thingIndex in range(0, actorCollection.getNumPaths()):
             thing = actorCollection[thingIndex]
             if thing.getName() not in ('joint_attachMeter', 'joint_nameTag'):
                 thing.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.MNone))

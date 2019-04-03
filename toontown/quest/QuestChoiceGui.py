@@ -22,7 +22,7 @@ class QuestChoiceGui(DirectFrame):
         base.setCellsAvailable([base.bottomCells[0], base.bottomCells[1]], 0)
 
     def setQuests(self, quests, timeout):
-        for i in xrange(0, len(quests)):
+        for i in range(0, len(quests)):
             questId = quests[i]
             qp = QuestPoster.QuestPoster()
             qp.reparentTo(self)

@@ -281,7 +281,7 @@ class CatchGame(Minigame):
          Toon.Toon(),
          Toon.Toon(),
          Toon.Toon()]
-        for i in xrange(len(self.posts)):
+        for i in range(len(self.posts)):
             toon = self.posts[i]
             toon.setDNA(base.localAvatar.getStyle())
             toon.reparentTo(render)
@@ -305,10 +305,10 @@ class CatchGame(Minigame):
         self.dropMarkers = []
         print('dropRows: %s' % self.DropRows)
         print('dropCols: %s' % self.DropColumns)
-        for row in xrange(self.DropRows):
+        for row in range(self.DropRows):
             self.dropMarkers.append([])
             rowList = self.dropMarkers[row]
-            for column in xrange(self.DropColumns):
+            for column in range(self.DropColumns):
                 toon = Toon.Toon()
                 toon.setDNA(base.localAvatar.getStyle())
                 toon.reparentTo(render)
@@ -472,7 +472,7 @@ class CatchGame(Minigame):
 
         self.scores = [0] * self.numPlayers
         spacing = 0.4
-        for i in xrange(self.numPlayers):
+        for i in range(self.numPlayers):
             avId = self.avIdList[i]
             avName = self.getAvatarName()
             scorePanel = MinigameAvatarScorePanel.MinigameAvatarScorePanel(avId, avName)

@@ -156,10 +156,10 @@ class MagicWord:
 
         usageArgs = []
 
-        for x in xrange(minArgs):
+        for x in range(minArgs):
             usageArgs.append(argnames[x])
 
-        for x in xrange(minArgs, maxArgs):
+        for x in range(minArgs, maxArgs):
             usageArgs.append('[%s]' % argnames[x])
 
         return ' '.join(usageArgs)

@@ -757,7 +757,7 @@ class LocalAvatar(DirectObject):
         camera.setPos(targetCamPos)
         camera.lookAt(targetCamLookAt)
         targetCamHpr = camera.getHpr()
-        for x in xrange(3):
+        for x in range(3):
             # This function is from PythonUtil:
             targetCamHpr[x] = fitDestAngle2Src(curCamHpr[x], targetCamHpr[x])
         hprDone = 0

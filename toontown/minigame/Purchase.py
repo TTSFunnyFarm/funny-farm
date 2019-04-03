@@ -77,7 +77,7 @@ class Purchase(PurchaseBase):
         numAvs = 0
         count = 0
         localToonIndex = 0
-        for index in xrange(len(self.ids)):
+        for index in range(len(self.ids)):
             avId = self.ids[index]
             if avId == base.localAvatar.doId:
                 localToonIndex = index
@@ -301,7 +301,7 @@ class Purchase(PurchaseBase):
         floorNode.addSolid(floor)
         self.collisionFloor = render.attachNewNode(floorNode)
         NametagGlobals.setOnscreenChatForced(1)
-        for index in xrange(len(self.ids)):
+        for index in range(len(self.ids)):
             avId = self.ids[index]
             if self.states[index] != PURCHASE_NO_CLIENT_STATE and self.states[index] != PURCHASE_DISCONNECTED_STATE:
                 numToons += 1
@@ -503,7 +503,7 @@ class Purchase(PurchaseBase):
         totalDelay = 0
         self.convertingVotesToBeansLabel.show()
         counterIndex = 0
-        for index in xrange(len(self.ids)):
+        for index in range(len(self.ids)):
             avId = self.ids[index]
             if self.states[index] != PURCHASE_NO_CLIENT_STATE and self.states[index] != PURCHASE_DISCONNECTED_STATE:
                 self.counters[counterIndex].count = 0
@@ -518,7 +518,7 @@ class Purchase(PurchaseBase):
                 base.playSfx(state.countSound)
             return Task.done
 
-        for count in xrange(0, self.maxVotes):
+        for count in range(0, self.maxVotes):
             for counter in self.counters:
                 index = self.counters.index(counter)
                 if count < counter.max:
@@ -547,7 +547,7 @@ class Purchase(PurchaseBase):
                     base.playSfx(state.overMaxSound)
             return Task.done
 
-        for count in xrange(0, self.maxVotes):
+        for count in range(0, self.maxVotes):
             for counter in self.counters:
                 if count < counter.max:
                     index = self.counters.index(counter)

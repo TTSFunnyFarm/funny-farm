@@ -235,17 +235,17 @@ class TownBattle(StateData.StateData):
             self.cogPanels[0].setX(self.oddPos[1])
             self.cogPanels[0].show()
         elif num == 2:
-            for i in xrange(2):
+            for i in range(2):
                 self.cogPanels[i].setX(self.evenPos[i + 1])
                 self.cogPanels[i].show()
 
         elif num == 3:
-            for i in xrange(3):
+            for i in range(3):
                 self.cogPanels[i].setX(self.oddPos[i])
                 self.cogPanels[i].show()
 
         elif num == 4:
-            for i in xrange(4):
+            for i in range(4):
                 self.cogPanels[i].setX(self.evenPos[i])
                 self.cogPanels[i].show()
 
@@ -288,7 +288,7 @@ class TownBattle(StateData.StateData):
          tracks,
          levels,
          targets))
-        for i in xrange(4):
+        for i in range(4):
             if battleIndices[i] == -1:
                 pass
             else:

@@ -176,7 +176,7 @@ class CogThiefGame(Minigame):
         toonSD.enter()
         toonSD.fsm.request('normal')
         self.stopGameWalk()
-        for cogIndex in xrange(self.getNumCogs()):
+        for cogIndex in range(self.getNumCogs()):
             suit = self.cogInfo[cogIndex]['suit'].suit
             pos = self.cogInfo[cogIndex]['pos']
             suit.reparentTo(self.gameBoard)
@@ -186,12 +186,12 @@ class CogThiefGame(Minigame):
             self.toonHitTracks[avId] = Wait(0.1)
 
         self.toonRNGs = []
-        for i in xrange(self.numPlayers):
+        for i in range(self.numPlayers):
             self.toonRNGs.append(RandomNumGen.RandomNumGen(self.randomNumGen))
 
         self.sndTable = {'hitBySuit': [None] * self.numPlayers,
          'falling': [None] * self.numPlayers}
-        for i in xrange(self.numPlayers):
+        for i in range(self.numPlayers):
             self.sndTable['hitBySuit'][i] = base.loader.loadSfx('phase_4/audio/sfx/MG_Tag_C.ogg')
             self.sndTable['falling'][i] = base.loader.loadSfx('phase_4/audio/sfx/MG_cannon_whizz.ogg')
 
@@ -373,7 +373,7 @@ class CogThiefGame(Minigame):
             base.mouseInterfaceNode.setRotateSpeed(ToontownGlobals.ToonRotateSpeed * 4)
 
     def initCogInfo(self):
-        for cogIndex in xrange(self.getNumCogs()):
+        for cogIndex in range(self.getNumCogs()):
             self.cogInfo[cogIndex] = {'pos': Point3(CTGG.CogStartingPositions[cogIndex]),
              'goal': CTGG.NoGoal,
              'goalId': CTGG.InvalidGoalId,
@@ -383,7 +383,7 @@ class CogThiefGame(Minigame):
         return
 
     def initBarrelInfo(self):
-        for barrelIndex in xrange(CogThiefGameGlobals.NumBarrels):
+        for barrelIndex in range(CogThiefGameGlobals.NumBarrels):
             self.barrelInfo[barrelIndex] = {'pos': Point3(CogThiefGameGlobals.BarrelStartingPositions[barrelIndex]),
              'carriedBy': CTGG.BarrelOnGround,
              'stolen': False}
@@ -393,7 +393,7 @@ class CogThiefGame(Minigame):
          'ac',
          'bc',
          'ms']
-        for suitIndex in xrange(self.getNumCogs()):
+        for suitIndex in range(self.getNumCogs()):
             st = self.randomNumGen.choice(suitTypes)
             suit = CogThief.CogThief(suitIndex, st, self, self.getCogSpeed())
             self.cogInfo[suitIndex]['suit'] = suit
@@ -553,11 +553,11 @@ class CogThiefGame(Minigame):
 
     def startSuitGoals(self):
         delayTimes = []
-        for cogIndex in xrange(self.getNumCogs()):
+        for cogIndex in range(self.getNumCogs()):
             delayTimes.append(cogIndex * 1.0)
 
         random.shuffle(delayTimes)
-        for cogIndex in xrange(self.getNumCogs()):
+        for cogIndex in range(self.getNumCogs()):
             self.doMethodLater(delayTimes[cogIndex], self.chooseSuitGoal, self.uniqueName('choseSuitGoal-%d-' % cogIndex), extraArgs=[cogIndex])
 
     def chooseSuitGoal(self, suitNum):
@@ -584,7 +584,7 @@ class CogThiefGame(Minigame):
     def chooseReturnPos(self, cogIndex, cogPos):
         shortestDistance = 10000
         shortestReturnIndex = -1
-        for retIndex in xrange(len(CTGG.CogReturnPositions)):
+        for retIndex in range(len(CTGG.CogReturnPositions)):
             retPos = CTGG.CogReturnPositions[retIndex]
             distance = (cogPos - retPos).length()
             if distance < shortestDistance:

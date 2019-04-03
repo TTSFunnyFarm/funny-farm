@@ -82,7 +82,7 @@ class AvatarChooser:
         self.bg.hide()
         self.title = OnscreenText(TTLocalizer.AvatarChooserPickAToon, scale=TTLocalizer.ACtitle, parent=self.bg, font=ToontownGlobals.getSignFont(), fg=(1, 0.9, 0.1, 1), pos=(0.0, 0.82))
         
-        for i in xrange(0, FunnyFarmGlobals.MaxAvatars):
+        for i in range(0, FunnyFarmGlobals.MaxAvatars):
             button = DirectButton(parent=self.bg, image=btnImages[i], relief=None, pos=POSITIONS[i], scale=1.01, text=(TTLocalizer.AvatarChoiceMakeAToon,), text_scale=0.1, text_font=ToontownGlobals.getSignFont(), text_fg=(0, 1, 0.8, 0.5), text1_scale=TTLocalizer.ACmakeAToon, text1_font=ToontownGlobals.getSignFont(), text1_fg=(0, 1, 0.8, 1), text2_scale=TTLocalizer.ACmakeAToon, text2_font=ToontownGlobals.getSignFont(), text2_fg=(0.3, 1, 0.9, 1), command=self.__handleCreate, extraArgs=[i + 1])
             button.delete = DirectButton(parent=button, image=(trashcanGui.find('**/TrashCan_CLSD'), trashcanGui.find('**/TrashCan_OPEN'), trashcanGui.find('**/TrashCan_RLVR')), text=('', TTLocalizer.AvatarChoiceDelete, TTLocalizer.AvatarChoiceDelete), text_fg=(1, 1, 1, 1), text_shadow=(0, 0, 0, 1), text_scale=0.15, text_pos=(0, -0.1), text_font=ToontownGlobals.getInterfaceFont(), relief=None, pos=DELETE_POSITIONS[i], scale=0.45, command=self.__handleDelete, extraArgs=[i + 1])
             button.delete.hide()
@@ -118,7 +118,7 @@ class AvatarChooser:
 
     def loadAvatars(self):
         if dataMgr.checkToonFiles():
-            for i in xrange(0, FunnyFarmGlobals.MaxAvatars):
+            for i in range(0, FunnyFarmGlobals.MaxAvatars):
                 data = dataMgr.loadToonData(i + 1)
                 if data != None:
                     self.displayHead(data, self.buttons[i])

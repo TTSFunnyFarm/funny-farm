@@ -122,7 +122,7 @@ class Hood(DirectObject):
 
     def generateNPCs(self):
         self.npcs = NPCToons.createNpcsInZone(self.zoneId)
-        for i in xrange(len(self.npcs)):
+        for i in range(len(self.npcs)):
             origin = self.geom.find('**/npc_origin_%d' % i)
             if not origin.isEmpty():
                 self.npcs[i].reparentTo(self.geom)

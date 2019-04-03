@@ -230,14 +230,14 @@ class MazeSuit(DirectObject):
         curT = globalClock.getFrameTime() - startTime
         curTic = int(curT * float(ticFreq))
         suitUpdates = []
-        for i in xrange(len(suitList)):
+        for i in range(len(suitList)):
             updateTics = suitList[i].getThinkTimestampTics(curTic)
             suitUpdates.extend(zip(updateTics, [i] * len(updateTics)))
 
         suitUpdates.sort(lambda a, b: a[0] - b[0])
         if len(suitUpdates) > 0:
             curTic = 0
-            for i in xrange(len(suitUpdates)):
+            for i in range(len(suitUpdates)):
                 update = suitUpdates[i]
                 tic = update[0]
                 suitIndex = update[1]
@@ -252,10 +252,10 @@ class MazeSuit(DirectObject):
                         j += 1
 
                 unwalkables = []
-                for si in xrange(suitIndex):
+                for si in range(suitIndex):
                     unwalkables.extend(suitList[si].occupiedTiles)
 
-                for si in xrange(suitIndex + 1, len(suitList)):
+                for si in range(suitIndex + 1, len(suitList)):
                     unwalkables.extend(suitList[si].occupiedTiles)
 
                 suit.think(curTic, curT, unwalkables)

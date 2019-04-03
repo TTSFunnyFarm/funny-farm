@@ -144,7 +144,7 @@ class SuitPlannerAI(DirectObject):
     POP_UPKEEP_DELAY = 10
     POP_ADJUST_DELAY = 120
     BLDG_ADJUST_DELAY = 240
-    # for zoneId in SuitHoodInfo.keys():
+    # for zoneId in list(SuitHoodInfo.keys()):
     #     currHoodInfo = SuitHoodInfo[zoneId]
     #     levels = currHoodInfo[SUIT_HOOD_INFO_LVL]
     #     heights = [0,
@@ -184,7 +184,7 @@ class SuitPlannerAI(DirectObject):
         hoodInfo = self.SuitHoodInfo[self.zoneId]
         suitMin = hoodInfo[self.SUIT_HOOD_INFO_MIN]
         suitMax = hoodInfo[self.SUIT_HOOD_INFO_MAX]
-        for i in xrange(0, random.randint(suitMin, suitMax)):
+        for i in range(0, random.randint(suitMin, suitMax)):
             self.createNewSuit()
 
     def createBuildings(self):
@@ -192,15 +192,15 @@ class SuitPlannerAI(DirectObject):
         # Algorithm may be adjusted as I see fit.
         for block in SuitPoints.BuildingBlocks[self.zoneId]:
             self.buildingMap[block] = BuildingAI(self.zoneId, block)
-        self.toonBuildings = self.buildingMap.keys()[:]
+        self.toonBuildings = list(self.buildingMap.keys())[:]
         hoodInfo = self.SuitHoodInfo[self.zoneId]
         bldgMin = hoodInfo[self.SUIT_HOOD_INFO_BMIN]
         bldgMax = hoodInfo[self.SUIT_HOOD_INFO_BMAX]
         bldgRange = [0, 0, 0]
-        bldgRange.extend(xrange(bldgMin, bldgMax + 1))
+        bldgRange.extend(range(bldgMin, bldgMax + 1))
         spawn = random.choice(bldgRange)
         if spawn > 0:
-            for i in xrange(spawn):
+            for i in range(spawn):
                 self.spawnBuilding()
 
     def createNewSuit(self):
@@ -222,7 +222,7 @@ class SuitPlannerAI(DirectObject):
 
     def removeSuitAI(self, doId):
         # Removes only the AI side
-        if doId in self.activeSuits.keys():
+        if doId in list(self.activeSuits.keys()):
             suit = self.activeSuits[doId]
             suit.delete()
             self.activeSuits.pop(doId)
@@ -230,7 +230,7 @@ class SuitPlannerAI(DirectObject):
     def requestSuits(self):
         # SuitPlanner asked what suits are on its street; give it all the info
         suits = []
-        for doId in self.activeSuits.keys():
+        for doId in list(self.activeSuits.keys()):
             suit = self.activeSuits[doId]
             suits.append({'doId': doId,
              'zoneId': suit.zoneId,
@@ -245,7 +245,7 @@ class SuitPlannerAI(DirectObject):
         # Now it requested the task time of a suit's walking task
         # so it can accurately place him in the right spot.
         # * Can't confirm that this is working properly yet; needs some work
-        if doId in self.activeSuits.keys():
+        if doId in list(self.activeSuits.keys()):
             suit = self.activeSuits[doId]
             if taskMgr.hasTaskNamed(suit.uniqueName('move')):
                 task = taskMgr.getTasksNamed(suit.uniqueName('move'))[0]
@@ -299,7 +299,7 @@ class SuitPlannerAI(DirectObject):
 
     def requestBuildings(self):
         buildings = []
-        for block in self.buildingMap.keys():
+        for block in list(self.buildingMap.keys()):
             bldg = self.buildingMap[block]
             if bldg.mode != 'toon':
                 buildings.append({'block': block,
@@ -330,10 +330,10 @@ class SuitPlannerAI(DirectObject):
             # The total is not within the range of suits for this street, try again later.
             self.__waitForNextAdjust()
             return task.done
-        for i in xrange(abs(adjustment)):
+        for i in range(abs(adjustment)):
             if adjustment < 0:
                 # Negative adjustment, take away a suit
-                doId = random.choice(self.activeSuits.keys())
+                doId = random.choice(list(self.activeSuits.keys()))
                 self.notify.info('removing suit %d' % doId)
                 self.removeSuit(doId)
             else:
@@ -358,7 +358,7 @@ class SuitPlannerAI(DirectObject):
         return Task.done
 
     def requestBattle(self, suitId, pos):
-        if suitId not in self.activeSuits.keys():
+        if suitId not in list(self.activeSuits.keys()):
             return
         # Don't need the suit AI anymore, the battle will take it from here
         self.removeSuitAI(suitId)

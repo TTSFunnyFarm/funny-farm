@@ -41,7 +41,7 @@ class Trolley(DirectObject):
         self.numKeys = self.keys.getNumPaths()
         self.keyInit = []
         self.keyRef = []
-        for i in xrange(self.numKeys):
+        for i in range(self.numKeys):
             key = self.keys[i]
             key.setTwoSided(1)
             ref = self.trolleyCar.attachNewNode('key' + str(i) + 'ref')
@@ -53,7 +53,7 @@ class Trolley(DirectObject):
         self.numFrontWheels = self.frontWheels.getNumPaths()
         self.frontWheelInit = []
         self.frontWheelRef = []
-        for i in xrange(self.numFrontWheels):
+        for i in range(self.numFrontWheels):
             wheel = self.frontWheels[i]
             ref = self.trolleyCar.attachNewNode('frontWheel' + str(i) + 'ref')
             ref.setPosHpr(wheel, 0, 0, 0, 0, 0, 0)
@@ -64,7 +64,7 @@ class Trolley(DirectObject):
         self.numBackWheels = self.backWheels.getNumPaths()
         self.backWheelInit = []
         self.backWheelRef = []
-        for i in xrange(self.numBackWheels):
+        for i in range(self.numBackWheels):
             wheel = self.backWheels[i]
             ref = self.trolleyCar.attachNewNode('backWheel' + str(i) + 'ref')
             ref.setPosHpr(wheel, 0, 0, 0, 0, 0, 0)
@@ -260,27 +260,27 @@ class Trolley(DirectObject):
         base.cr.playGame.enterRandomMinigame()
 
     def animateTrolley(self, t, keyAngle, wheelAngle):
-        for i in xrange(self.numKeys):
+        for i in range(self.numKeys):
             key = self.keys[i]
             ref = self.keyRef[i]
             key.setH(ref, t * keyAngle)
 
-        for i in xrange(self.numFrontWheels):
+        for i in range(self.numFrontWheels):
             frontWheel = self.frontWheels[i]
             ref = self.frontWheelRef[i]
             frontWheel.setH(ref, t * wheelAngle)
 
-        for i in xrange(self.numBackWheels):
+        for i in range(self.numBackWheels):
             backWheel = self.backWheels[i]
             ref = self.backWheelRef[i]
             backWheel.setH(ref, t * wheelAngle)
 
     def resetAnimation(self):
-        for i in xrange(self.numKeys):
+        for i in range(self.numKeys):
             self.keys[i].setTransform(self.keyInit[i])
 
-        for i in xrange(self.numFrontWheels):
+        for i in range(self.numFrontWheels):
             self.frontWheels[i].setTransform(self.frontWheelInit[i])
 
-        for i in xrange(self.numBackWheels):
+        for i in range(self.numBackWheels):
             self.backWheels[i].setTransform(self.backWheelInit[i])

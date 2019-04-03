@@ -76,7 +76,7 @@ def createNpcsInZone(zoneId):
     npcs = []
     canonicalZoneId = ZoneUtil.getCanonicalZoneId(zoneId)
     npcIdList = zone2NpcDict.get(canonicalZoneId, [])
-    for i in xrange(len(npcIdList)):
+    for i in range(len(npcIdList)):
         npcId = npcIdList[i]
         npcs.append(createLocalNPC(npcId, True))
 

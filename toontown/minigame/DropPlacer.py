@@ -885,9 +885,9 @@ class RegionDropPlacer(DropPlacer):
         DropPlacer.__init__(self, game, numPlayers, dropTypes, startTime=startTime)
         self.DropRegionTable = self.getDropRegionTable(self.numPlayers)
         self.DropRegion2GridCoordList = {}
-        for row in xrange(len(self.DropRegionTable)):
+        for row in range(len(self.DropRegionTable)):
             rowList = self.DropRegionTable[row]
-            for column in xrange(len(rowList)):
+            for column in range(len(rowList)):
                 region = rowList[column]
                 if region not in self.DropRegion2GridCoordList:
                     self.DropRegion2GridCoordList[region] = []
@@ -949,7 +949,7 @@ class PathDropPlacer(DropPlacer):
          [-1, 0],
          [-1, -1]]
         self.paths = []
-        for i in xrange(self.numPlayers):
+        for i in range(self.numPlayers):
             dir = self.rng.randrange(0, len(self.moves))
             col, row = self.getRandomColRow()
             path = {'direction': dir,

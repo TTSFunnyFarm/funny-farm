@@ -279,15 +279,15 @@ class CannonGame(Minigame):
                 y = yMax
         else:
             y = self.randomNumGen.randint(int(yMin), int(yMax))
-        xRange = TOWER_X_RANGE
+        range = TOWER_X_RANGE
         if self.DEBUG_TOWER_RANGE:
             if self.DEBUG_TOWER_FAR_LEFT:
                 x = 0
             else:
-                x = xRange
+                x = range
         else:
-            x = self.randomNumGen.randint(0, xRange)
-        x = x - int(xRange / 2.0)
+            x = self.randomNumGen.randint(0, range)
+        x = x - int(range / 2.0)
         diff = self.getDifficulty()
         scale = 0.5 + 0.5 * diff
         x *= scale
@@ -305,7 +305,7 @@ class CannonGame(Minigame):
             self.cannonDict[avId] = [cannon, barrel]
 
         numAvs = self.numPlayers
-        for i in xrange(numAvs):
+        for i in range(numAvs):
             avId = self.avIdList[i]
             self.cannonLocationDict[avId] = Point3(i * CANNON_X_SPACING - (numAvs - 1) * CANNON_X_SPACING / 2, CANNON_Y, CANNON_Z)
             if self.DEBUG_TOWER_RANGE:
