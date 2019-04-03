@@ -8,7 +8,7 @@ from panda3d.core import CollisionSphere, CollisionNode
 from toontown.suit import Suit
 from toontown.suit import SuitDNA
 from toontown.toonbase import ToontownGlobals
-import MazeGameGlobals
+from toontown.minigame import MazeGameGlobals
 
 class MazeSuit(DirectObject):
     COLL_SPHERE_NAME = 'MazeSuitSphere'

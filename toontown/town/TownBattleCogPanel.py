@@ -1,4 +1,3 @@
-# Embedded file name: toontown.town.TownBattleCogPanel
 from panda3d.core import *
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase.ToontownBattleGlobals import *

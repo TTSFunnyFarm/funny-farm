@@ -1,7 +1,7 @@
 from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
 from direct.interval.IntervalGlobal import *
-from VisGroups import VisGroups
+from toontown.town.VisGroups import VisGroups
 
 class TownLoader(DirectObject):
 

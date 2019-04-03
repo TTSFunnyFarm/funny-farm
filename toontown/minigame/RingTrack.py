@@ -1,5 +1,5 @@
 from direct.directnotify import DirectNotifyGlobal
-import RingAction
+from toontown.minigame import RingAction
 
 class RingTrack:
     notify = DirectNotifyGlobal.directNotify.newCategory('RingTrack')

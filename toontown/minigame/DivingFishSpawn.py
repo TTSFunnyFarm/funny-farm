@@ -4,7 +4,7 @@ from direct.directnotify import DirectNotifyGlobal
 from direct.interval.IntervalGlobal import *
 from direct.actor import Actor
 import random
-import DivingGameGlobals
+from toontown.minigame import DivingGameGlobals
 
 class DivingFishSpawn(DirectObject):
     RADIUS = 0.7

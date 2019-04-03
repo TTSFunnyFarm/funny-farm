@@ -1,5 +1,5 @@
 from toontown.toonbase import FunnyFarmGlobals
-from HoodAI import HoodAI
+from toontown.hood.HoodAI import HoodAI
 
 class SSHoodAI(HoodAI):
 

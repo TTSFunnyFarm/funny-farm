@@ -1,29 +1,29 @@
 from panda3d.core import *
-from Minigame import *
+from toontown.minigame.Minigame import *
 from direct.interval.IntervalGlobal import *
-from OrthoWalk import *
+from toontown.minigame.OrthoWalk import *
 from direct.showbase.PythonUtil import Functor, bound, lineupPos, lerp
 from direct.fsm import ClassicFSM, State
 from direct.fsm import State
 from toontown.toonbase import TTLocalizer
-import CatchGameGlobals
+from toontown.minigame import CatchGameGlobals
 from direct.task.Task import Task
 from toontown.toon import Toon
 from toontown.suit import Suit
-import MinigameAvatarScorePanel
+from toontown.minigame import MinigameAvatarScorePanel
 from toontown.toonbase import ToontownTimer
 from toontown.toonbase import ToontownGlobals
-import CatchGameToonSD
-import Trajectory
+from toontown.minigame import CatchGameToonSD
+from toontown.minigame import Trajectory
 import math
 from direct.showbase.RandomNumGen import RandomNumGen
-import MinigameGlobals
+from toontown.minigame import MinigameGlobals
 from toontown.toon import ToonDNA
 from toontown.suit import SuitDNA
-from CatchGameGlobals import DropObjectTypes
-from CatchGameGlobals import Name2DropObjectType
-from DropPlacer import *
-from DropScheduler import *
+from toontown.minigame.CatchGameGlobals import DropObjectTypes
+from toontown.minigame.CatchGameGlobals import Name2DropObjectType
+from toontown.minigame.DropPlacer import *
+from toontown.minigame.DropScheduler import *
 
 class CatchGame(Minigame):
     DropTaskName = 'dropSomething'

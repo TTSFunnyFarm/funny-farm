@@ -1,7 +1,7 @@
 from direct.task.Task import Task
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.toonbase import FunnyFarmGlobals
-import Quests
+from toontown.quest import Quests
 
 class QuestManager:
     notify = directNotify.newCategory('QuestManager')

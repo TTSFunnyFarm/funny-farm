@@ -4,12 +4,12 @@ from direct.distributed.ClockDelta import *
 from toontown.toonbase import ToontownGlobals
 from direct.showbase.DirectObject import DirectObject
 from direct.fsm import ClassicFSM, State
-import MinigameRulesPanel
+from toontown.minigame import MinigameRulesPanel
 from toontown.toon import Toon
 from direct.showbase import RandomNumGen
 from toontown.toonbase import TTLocalizer
 import random
-import MinigameGlobals
+from toontown.minigame import MinigameGlobals
 from direct.showbase import PythonUtil
 from toontown.toon import TTEmote
 from otp.avatar import Emote

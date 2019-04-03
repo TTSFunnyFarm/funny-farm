@@ -1,8 +1,8 @@
 from panda3d.core import *
-import Ring
-import RingTrack
-import RingTrackGroup
-import RingGameGlobals
+from toontown.minigame import Ring
+from toontown.minigame import RingTrack
+from toontown.minigame import RingTrackGroup
+from toontown.minigame import RingGameGlobals
 
 class RingGroup(NodePath):
 

@@ -1,25 +1,25 @@
 from direct.showbase.ShowBaseGlobal import *
 from direct.interval.IntervalGlobal import *
 from toontown.toonbase import ToontownTimer
-from Minigame import *
+from toontown.minigame.Minigame import *
 from direct.distributed.ClockDelta import *
 from direct.fsm import ClassicFSM
 from direct.fsm import State
 from direct.task import Task
 from direct.actor import Actor
 from toontown.toon import LaffMeter
-import ArrowKeys
-import Ring
-import RingTrack
-import DivingGameGlobals
-import RingGroup
-import RingTrackGroups
+from toontown.minigame import ArrowKeys
+from toontown.minigame import Ring
+from toontown.minigame import RingTrack
+from toontown.minigame import DivingGameGlobals
+from toontown.minigame import RingGroup
+from toontown.minigame import RingTrackGroups
 import random
-import DivingGameToonSD
-import DivingFishSpawn
-import DivingTreasure
+from toontown.minigame import DivingGameToonSD
+from toontown.minigame import DivingFishSpawn
+from toontown.minigame import DivingTreasure
 import math
-import TreasureScorePanel
+from toontown.minigame import TreasureScorePanel
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
 

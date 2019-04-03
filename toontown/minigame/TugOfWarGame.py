@@ -1,6 +1,6 @@
 from panda3d.core import *
 from direct.interval.IntervalGlobal import *
-from Minigame import *
+from toontown.minigame.Minigame import *
 from direct.gui.DirectGui import *
 from direct.fsm import ClassicFSM, State
 from direct.fsm import State
@@ -9,17 +9,17 @@ from toontown.toon import ToonHead
 from toontown.suit import SuitDNA
 from toontown.suit import Suit
 from toontown.char import Char
-import ArrowKeys
-import random
+from toontown.minigame import ArrowKeys
+from toontown.minigame import random
 from toontown.toonbase import ToontownGlobals
 import string
 from toontown.toonbase import TTLocalizer
-import TugOfWarGameGlobals
+from toontown.minigame import TugOfWarGameGlobals
 from direct.showutil import Rope
 from toontown.effects import Splash
 from toontown.effects import Ripples
 from toontown.toonbase import TTLocalizer
-import MinigamePowerMeter
+from toontown.minigame import MinigamePowerMeter
 from direct.task.Task import Task
 from otp.nametag import NametagGlobals
 import math

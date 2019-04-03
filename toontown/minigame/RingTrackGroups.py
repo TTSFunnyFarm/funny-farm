@@ -1,9 +1,9 @@
 import math
-import RingGameGlobals
-import RingAction
-import RingTracks
-import RingTrack
-import RingTrackGroup
+from toontown.minigame import RingGameGlobals
+from toontown.minigame import RingAction
+from toontown.minigame import RingTracks
+from toontown.minigame import RingTrack
+from toontown.minigame import RingTrackGroup
 from direct.showbase import PythonUtil
 STATIC = 0
 SIMPLE = 1

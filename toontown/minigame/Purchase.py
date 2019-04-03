@@ -1,4 +1,4 @@
-from PurchaseBase import *
+from toontown.minigame.PurchaseBase import *
 from otp.nametag.NametagFloat2d import *
 from otp.nametag import NametagGlobals
 from direct.task.Task import Task
@@ -10,7 +10,7 @@ from direct.showbase.PythonUtil import Functor
 from toontown.minigame import TravelGameGlobals
 from toontown.distributed import DelayDelete
 from toontown.toonbase import ToontownGlobals
-import MinigameGlobals
+from toontown.minigame import MinigameGlobals
 COUNT_UP_RATE = 0.15
 COUNT_UP_DURATION = 0.5
 DELAY_BEFORE_COUNT_UP = 1.0

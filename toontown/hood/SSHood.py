@@ -1,8 +1,8 @@
 from panda3d.core import *
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
-from ToonHood import ToonHood
-import SkyUtil
+from toontown.hood.ToonHood import ToonHood
+from toontown.hood import SkyUtil
 
 class SSHood(ToonHood):
 

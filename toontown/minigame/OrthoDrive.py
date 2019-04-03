@@ -4,7 +4,7 @@ from direct.showbase.PythonUtil import *
 from direct.distributed.ClockDelta import *
 from direct.task.Task import Task
 from otp.otpbase import OTPGlobals
-import ArrowKeys
+from toontown.minigame import ArrowKeys
 
 class OrthoDrive:
     notify = directNotify.newCategory('OrthoDrive')

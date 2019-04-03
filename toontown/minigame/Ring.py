@@ -1,5 +1,5 @@
 from panda3d.core import *
-import RingTrack
+from toontown.minigame import RingTrack
 
 class Ring(NodePath):
 

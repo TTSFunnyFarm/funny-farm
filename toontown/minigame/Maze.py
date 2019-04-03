@@ -1,5 +1,5 @@
-from MazeBase import MazeBase
-import MazeData
+from toontown.minigame.MazeBase import MazeBase
+from toontown.minigame import MazeData
 
 class Maze(MazeBase):
 

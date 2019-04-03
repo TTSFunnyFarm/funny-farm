@@ -1,7 +1,7 @@
 from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
-from BattleSuit import BattleSuit
-import SuitTimings
+from toontown.suit.BattleSuit import BattleSuit
+from toontown.suit import SuitTimings
 
 class SuitPlanner(DirectObject):
 
