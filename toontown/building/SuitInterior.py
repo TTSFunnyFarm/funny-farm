@@ -1,8 +1,8 @@
 from panda3d.core import *
-from ElevatorConstants import *
-from ElevatorUtils import *
-from Elevator import Elevator
-from SuitInteriorBase import SuitInteriorBase
+from toontown.building.ElevatorConstants import *
+from toontown.building.ElevatorUtils import *
+from toontown.building.Elevator import Elevator
+from toontown.building.SuitInteriorBase import SuitInteriorBase
 
 class SuitInterior(SuitInteriorBase):
 

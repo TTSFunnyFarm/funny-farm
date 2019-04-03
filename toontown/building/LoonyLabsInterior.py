@@ -6,11 +6,11 @@ from direct.showbase import Audio3DManager
 from toontown.hood import ZoneUtil
 from toontown.toon import NPCToons
 from toontown.toon.NPCScientist import NPCScientist
-from Interior import Interior
-import ToonInteriorColors
-import InteriorStorage
+from toontown.building.Interior import Interior
+from toontown.building import ToonInteriorColors
+from toontown.building import InteriorStorage
 import random
-import Door
+from toontown.building import Door
 
 class LoonyLabsInterior(Interior):
 

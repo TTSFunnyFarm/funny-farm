@@ -1,7 +1,7 @@
 from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
-from ElevatorConstants import *
-import Elevator
+from toontown.building.ElevatorConstants import *
+from toontown.building import Elevator
 
 class EliteExterior(DirectObject):
 

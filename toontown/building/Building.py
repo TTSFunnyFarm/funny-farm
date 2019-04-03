@@ -8,10 +8,10 @@ from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.quest.QuestIcon import *
 from toontown.suit import Suit, SuitDNA
-from Elevator import Elevator
-from ElevatorConstants import *
-from ElevatorUtils import *
-from SuitBuildingGlobals import *
+from toontown.building.Elevator import Elevator
+from toontown.building.ElevatorConstants import *
+from toontown.building.ElevatorUtils import *
+from toontown.building.SuitBuildingGlobals import *
 import time, random
 
 class Building(DirectObject):

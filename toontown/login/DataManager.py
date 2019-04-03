@@ -7,8 +7,7 @@ from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toontowngui import TTDialog
-import __builtin__
-import yaml.dist as yaml
+import yaml
 import shutil
 import os
 
@@ -106,7 +105,7 @@ class DataManager:
         self.notify.info('================')
         base.localAvatar = LocalToon()
         base.avatarData = data
-        __builtin__.localAvatar = base.localAvatar
+        __builtins__.localAvatar = base.localAvatar
         dna = ToonDNA.ToonDNA()
         dna.newToonFromProperties(*data.setDNA)
         base.localAvatar.setDNA(dna)

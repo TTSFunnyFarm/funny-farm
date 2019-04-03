@@ -1,8 +1,8 @@
 from panda3d.core import *
 from direct.showbase.DirectObject import *
 from direct.interval.IntervalGlobal import *
-from PooledEffect import PooledEffect
-from EffectController import EffectController
+from toontown.effects.PooledEffect import PooledEffect
+from toontown.effects.EffectController import EffectController
 
 class SkullFlash(PooledEffect, EffectController):
 

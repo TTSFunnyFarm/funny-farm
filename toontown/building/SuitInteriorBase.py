@@ -1,8 +1,8 @@
 from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
 from toontown.toonbase import ToontownGlobals
-from ElevatorConstants import *
-from ElevatorUtils import *
+from toontown.building.ElevatorConstants import *
+from toontown.building.ElevatorUtils import *
 
 class SuitInteriorBase(DirectObject):
     notify = directNotify.newCategory('SuitInterior')

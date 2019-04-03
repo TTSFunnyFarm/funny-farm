@@ -1,4 +1,4 @@
-import yaml.dist as yaml
+import yaml
 import binascii
 import ast
 

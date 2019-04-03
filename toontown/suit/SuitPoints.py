@@ -95,5 +95,5 @@ BattleCells = {
 }
 
 BuildingBlocks = {
-    FunnyFarmGlobals.RicketyRoad: xrange(11, 19)
+    FunnyFarmGlobals.RicketyRoad: range(11, 19)
 }

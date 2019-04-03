@@ -4,9 +4,9 @@ from direct.task import Task
 from toontown.building import SuitBuildingGlobals
 from toontown.building.BuildingAI import BuildingAI
 from toontown.battle import SuitBattleGlobals
-from BattleSuitAI import BattleSuitAI
-import SuitPoints
-import SuitDNA
+from toontown.suit.BattleSuitAI import BattleSuitAI
+from toontown.suit import SuitPoints
+from toontown.suit import SuitDNA
 import random
 
 class SuitPlannerAI(DirectObject):
