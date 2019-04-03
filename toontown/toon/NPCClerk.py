@@ -1,8 +1,8 @@
 from panda3d.core import *
-from NPCToonBase import *
+from toontown.toon.NPCToonBase import *
 from toontown.minigame import ClerkPurchase
 from toontown.book.PurchaseManagerConstants import *
-import NPCToons
+from toontown.toon import NPCToons
 from direct.task.Task import Task
 from toontown.toonbase import TTLocalizer
 from toontown.hood import ZoneUtil

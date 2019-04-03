@@ -1,5 +1,5 @@
 from panda3d.core import *
-import NPCToon
+from toontown.toon import NPCToon
 
 class NPCFlippy(NPCToon.NPCToon):
 

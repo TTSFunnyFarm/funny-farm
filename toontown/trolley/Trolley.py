@@ -3,7 +3,7 @@ from direct.task.Task import Task
 from direct.interval.IntervalGlobal import *
 from direct.gui.DirectGui import *
 from direct.showbase.DirectObject import DirectObject
-from TrolleyConstants import *
+from toontown.trolley.TrolleyConstants import *
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toontowngui import TTDialog
@@ -44,7 +44,7 @@ class Trolley(DirectObject):
         for i in xrange(self.numKeys):
             key = self.keys[i]
             key.setTwoSided(1)
-            ref = self.trolleyCar.attachNewNode('key' + `i` + 'ref')
+            ref = self.trolleyCar.attachNewNode('key' + str(i) + 'ref')
             ref.setPosHpr(key, 0, 0, 0, 0, 0, 0)
             self.keyRef.append(ref)
             self.keyInit.append(key.getTransform())
@@ -55,7 +55,7 @@ class Trolley(DirectObject):
         self.frontWheelRef = []
         for i in xrange(self.numFrontWheels):
             wheel = self.frontWheels[i]
-            ref = self.trolleyCar.attachNewNode('frontWheel' + `i` + 'ref')
+            ref = self.trolleyCar.attachNewNode('frontWheel' + str(i) + 'ref')
             ref.setPosHpr(wheel, 0, 0, 0, 0, 0, 0)
             self.frontWheelRef.append(ref)
             self.frontWheelInit.append(wheel.getTransform())
@@ -66,7 +66,7 @@ class Trolley(DirectObject):
         self.backWheelRef = []
         for i in xrange(self.numBackWheels):
             wheel = self.backWheels[i]
-            ref = self.trolleyCar.attachNewNode('backWheel' + `i` + 'ref')
+            ref = self.trolleyCar.attachNewNode('backWheel' + str(i) + 'ref')
             ref.setPosHpr(wheel, 0, 0, 0, 0, 0, 0)
             self.backWheelRef.append(ref)
             self.backWheelInit.append(wheel.getTransform())

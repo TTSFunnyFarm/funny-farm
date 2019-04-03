@@ -5,9 +5,9 @@ from direct.fsm import ClassicFSM
 from direct.fsm import State
 from toontown.toonbase import ToontownGlobals, TTLocalizer
 from toontown.hood import ZoneUtil
-import Toon
+from toontown.toon import Toon
 from direct.distributed import DistributedObject
-import NPCToons
+from toontown.toon import NPCToons
 from toontown.quest import Quests
 from direct.distributed import ClockDelta
 from toontown.quest.QuestIcon import *
