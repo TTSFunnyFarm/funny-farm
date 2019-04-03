@@ -285,11 +285,11 @@ class MakeAToon(StateData.StateData):
         self.musicVolume = base.config.GetFloat('makeatoon-music-volume', 1)
         self.sfxVolume = base.config.GetFloat('makeatoon-sfx-volume', 1)
         self.soundBack = base.loader.loadSfx('phase_3/audio/sfx/GUI_create_toon_back.ogg')
-        self.crashSounds = map(base.loader.loadSfx, ['phase_3/audio/sfx/tt_s_ara_mat_crash_boing.ogg',
+        self.crashSounds = list(map(base.loader.loadSfx, ['phase_3/audio/sfx/tt_s_ara_mat_crash_boing.ogg',
                                               'phase_3/audio/sfx/tt_s_ara_mat_crash_glassBoing.ogg',
                                               'phase_3/audio/sfx/tt_s_ara_mat_crash_wood.ogg',
                                               'phase_3/audio/sfx/tt_s_ara_mat_crash_woodBoing.ogg',
-                                              'phase_3/audio/sfx/tt_s_ara_mat_crash_woodGlass.ogg'])
+                                              'phase_3/audio/sfx/tt_s_ara_mat_crash_woodGlass.ogg']))
 
     def unload(self):
         self.exit()

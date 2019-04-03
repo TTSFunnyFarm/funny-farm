@@ -77,7 +77,7 @@ class DataManager:
         filename = Filename(self.newDir + self.toons[index - 1] + self.fileExt)
         if os.path.exists(filename.toOsSpecific()):
             with open(filename.toOsSpecific(), 'r') as toonData:
-                data = yaml.load(toonData)
+                data = yaml.load(toonData, Loader=yaml.FullLoader)
                 try:
                     data.decrypt()
                 except:
