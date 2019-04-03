@@ -303,8 +303,8 @@ class CatchGame(Minigame):
     def showDropGrid(self):
         self.hideDropGrid()
         self.dropMarkers = []
-        print 'dropRows: %s' % self.DropRows
-        print 'dropCols: %s' % self.DropColumns
+        print('dropRows: %s' % self.DropRows)
+        print('dropCols: %s' % self.DropColumns)
         for row in xrange(self.DropRows):
             self.dropMarkers.append([])
             rowList = self.dropMarkers[row]

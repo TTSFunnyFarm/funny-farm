@@ -775,7 +775,7 @@ class MazeGame(Minigame):
         if self.gameFSM.getCurrentState().getName() not in ['play', 'showScores']:
             self.notify.warning('ignoring msg: av %s hit by suit' % avId)
             return
-        self.notify.debug('avatar ' + `avId` + ' hit by a suit')
+        self.notify.debug('avatar ' + str(avId) + ' hit by a suit')
         if avId != self.localAvId:
             self.__showToonHitBySuit(avId, timestamp)
 
@@ -790,7 +790,7 @@ class MazeGame(Minigame):
             oldTrack.finish()
         toon.setPos(curPos)
         toon.setZ(self.TOON_Z)
-        parentNode = render.attachNewNode('mazeFlyToonParent-' + `avId`)
+        parentNode = render.attachNewNode('mazeFlyToonParent-' + str(avId))
         parentNode.setPos(toon.getPos())
         toon.reparentTo(parentNode)
         toon.setPos(0,0,0)
@@ -832,7 +832,7 @@ class MazeGame(Minigame):
                 camera.setPos(startCamPos + camOffset*u)
                 camera.lookAt(toon)
                 return Task.cont
-            camTaskName = 'mazeToonFlyCam-' + `avId`
+            camTaskName = 'mazeToonFlyCam-' + str(avId)
             taskMgr.add(camTask, camTaskName, priority=20)
             def cleanupCamTask(self = self, toon = toon, camTaskName = camTaskName, startCamPos = startCamPos):
                 taskMgr.remove(camTaskName)
@@ -1012,7 +1012,7 @@ class MazeGame(Minigame):
             fasterTable = self.fasterSuitPeriodsCurve
         fasterPeriods = fasterTable[safeZone][self.numSuits]
         suitPeriods = slowerPeriods + fasterPeriods
-        self.notify.debug('suit periods: ' + `suitPeriods`)
+        self.notify.debug('suit periods: ' + str(suitPeriods))
         self.randomNumGen.shuffle(suitPeriods)
         for i in xrange(self.numSuits):
             self.suits.append(MazeSuit(i, self.maze, self.randomNumGen, suitPeriods[i], self.getDifficulty()))

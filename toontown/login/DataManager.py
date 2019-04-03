@@ -25,7 +25,7 @@ class DataManager:
         self.newDir = Filename.getUserAppdataDirectory() + '/FunnyFarm' + '/database/'
         self.corrupted = 0
         self.toons = []
-        for toonNum in xrange(FunnyFarmGlobals.MaxAvatars):
+        for toonNum in range(FunnyFarmGlobals.MaxAvatars):
             self.toons.append(str(BASE_DB_ID + toonNum))
         self.removeOldData()
         return

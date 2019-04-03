@@ -1,5 +1,5 @@
 from otp.avatar import DistributedAvatar
-import Char
+from toontown.char import Char
 
 class DistributedChar(DistributedAvatar.DistributedAvatar, Char.Char):
 

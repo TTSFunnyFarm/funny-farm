@@ -9,4 +9,4 @@ def choice(condition, ifTrue, ifFalse):
     else:
         return ifFalse
 
-__builtins__.choice = choice
+__builtins__['choice'] = choice

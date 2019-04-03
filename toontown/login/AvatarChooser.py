@@ -224,7 +224,7 @@ class AvatarChooser:
         name = self.renameEntry.get()
         data = dataMgr.loadToonData(index)
         reviewedName = self.reviewName(name, index)
-        print " NAME: {0}, REVIEW: {1}".format(name, reviewedName)
+        print(" NAME: {0}, REVIEW: {1}".format(name, reviewedName))
         if name == reviewedName:
             self.renameFrame.hide()
             base.transitions.noTransitions()

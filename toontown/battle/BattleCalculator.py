@@ -1,7 +1,7 @@
-from BattleBase import *
+from toontown.battle.BattleBase import *
 from toontown.toonbase.ToontownBattleGlobals import *
 import random
-import SuitBattleGlobals
+from toontown.battle import SuitBattleGlobals
 from toontown.toon import NPCToons
 from toontown.pets import PetTricks
 from direct.showbase.PythonUtil import lerp

@@ -1,12 +1,12 @@
 from panda3d.core import *
 from direct.interval.IntervalGlobal import *
-from BattleBase import *
-from BattleProps import *
+from toontown.battle.BattleBase import *
+from toontown.battle.BattleProps import *
 from toontown.toonbase.ToontownBattleGlobals import *
-from SuitBattleGlobals import *
+from toontown.battle.SuitBattleGlobals import *
 from direct.directnotify import DirectNotifyGlobal
 import random
-import MovieUtil
+from toontown.battle import MovieUtil
 notify = DirectNotifyGlobal.directNotify.newCategory('MovieCamera')
 
 def chooseHealShot(heals, attackDuration):
@@ -949,7 +949,7 @@ def chooseFireOpenShot(throws, suitThrowsDict, attackDuration):
         notify.error('Bad number of throws: %s' % numThrows)
     shotChoice = random.choice(shotChoices)
     track = apply(shotChoice, [av, duration])
-    print 'chooseFireOpenShot %s' % shotChoice
+    print('chooseFireOpenShot %s' % shotChoice)
     return track
 
 
@@ -969,7 +969,7 @@ def chooseFireCloseShot(throws, suitThrowsDict, openDuration, openName, attackDu
         notify.error('Bad number of suits: %s' % numSuits)
     shotChoice = random.choice(shotChoices)
     track = apply(shotChoice, [av, duration])
-    print 'chooseFireOpenShot %s' % shotChoice
+    print('chooseFireOpenShot %s' % shotChoice)
     return track
 
 

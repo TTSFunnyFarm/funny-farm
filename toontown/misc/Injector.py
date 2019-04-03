@@ -1,4 +1,4 @@
-from Tkinter import *
+from tkinter import *
 from direct.stdpy import thread
 import os
 
@@ -7,6 +7,7 @@ def inject():
     exec (text.get(1.0, "end"), globals())
 
 def openInjector():
+    return
     global text
 
     root = Tk()

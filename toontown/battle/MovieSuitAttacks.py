@@ -2,14 +2,14 @@ from direct.directnotify import DirectNotifyGlobal
 from direct.interval.IntervalGlobal import *
 from direct.particles import ParticleEffect
 
-from BattleBase import *
-from BattleBase import *
-import BattleParticles
-from BattleProps import *
-from BattleSounds import *
-import MovieCamera
-import MovieUtil
-from SuitBattleGlobals import *
+from toontown.battle.BattleBase import *
+from toontown.battle.BattleBase import *
+from toontown.battle import BattleParticles
+from toontown.battle.BattleProps import *
+from toontown.battle.BattleSounds import *
+from toontown.battle import MovieCamera
+from toontown.battle import MovieUtil
+from toontown.battle.SuitBattleGlobals import *
 from toontown.chat.ChatGlobals import *
 from otp.nametag import NametagGlobals
 from otp.nametag.NametagGlobals import *
@@ -1597,8 +1597,8 @@ def doReOrg(attack):
     partTrack = getPartTrack(sprayEffect, 1.0, 1.9, [sprayEffect, suit, 0])
     if attack['hit'] == 1:
         headParts = toon.getHeadParts()
-        print '***********headParts pos=', headParts[0].getPos()
-        print '***********headParts hpr=', headParts[0].getHpr()
+        print('***********headParts pos=', headParts[0].getPos())
+        print('***********headParts hpr=', headParts[0].getHpr())
         headTracks = Parallel()
         for partNum in xrange(0, headParts.getNumPaths()):
             part = headParts.getPath(partNum)
@@ -1618,7 +1618,7 @@ def doReOrg(attack):
         arms = toon.findAllMatches('**/arms')
         sleeves = toon.findAllMatches('**/sleeves')
         hands = toon.findAllMatches('**/hands')
-        print '*************arms hpr=', arms[0].getHpr()
+        print('*************arms hpr=', arms[0].getHpr())
         for partNum in xrange(0, arms.getNumPaths()):
             chestTracks.append(getChestTrack(arms.getPath(partNum)))
             chestTracks.append(getChestTrack(sleeves.getPath(partNum)))

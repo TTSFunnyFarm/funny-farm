@@ -8,12 +8,12 @@ from direct.interval.IntervalGlobal import *
 from direct.task import Task
 from panda3d.core import *
 import random
-import BodyShop
-import ColorShop
-import GenderShop
-from MakeAToonGlobals import *
-import MakeClothesGUI
-import NameShop
+from toontown.makeatoon import BodyShop
+from toontown.makeatoon import ColorShop
+from toontown.makeatoon import GenderShop
+from toontown.makeatoon.MakeAToonGlobals import *
+from toontown.makeatoon import MakeClothesGUI
+from toontown.makeatoon import NameShop
 from otp.avatar import Avatar
 from toontown.distributed.ToontownMsgTypes import *
 from toontown.toon import LocalToon

@@ -2,7 +2,7 @@ from panda3d.core import *
 from direct.gui.DirectGui import *
 from direct.gui import OnscreenText
 from direct.interval.IntervalGlobal import *
-from MakeAToonGlobals import *
+from toontown.makeatoon.MakeAToonGlobals import *
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase.ToontownGlobals import *
 from toontown.toon.LocalToon import LocalToon
@@ -76,7 +76,7 @@ class NameShop(StateData.StateData):
             try:
                 x.show()
             except:
-                print 'NameShop: Tried to show already removed object'
+                print('NameShop: Tried to show already removed object')
 
     def hideAll(self):
         self.uberhide(self.pickANameGUIElements)
@@ -87,7 +87,7 @@ class NameShop(StateData.StateData):
             try:
                 x.hide()
             except:
-                print 'NameShop: Tried to hide already removed object'
+                print('NameShop: Tried to hide already removed object')
 
     def uberdestroy(self, guiObjectsToDestroy):
         for x in guiObjectsToDestroy:
@@ -95,7 +95,7 @@ class NameShop(StateData.StateData):
                 x.destroy()
                 del x
             except:
-                print 'NameShop: Tried to destroy already removed object'
+                print('NameShop: Tried to destroy already removed object')
 
     def reviewName(self, name):
         blacklistFile = 'resources/phase_4/etc/tblacklist.dat'

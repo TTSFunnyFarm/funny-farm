@@ -482,10 +482,10 @@ class RingGame(Minigame):
                     for difficulty in [0, 1, 2]:
                         numGroupsPerDifficulty = difficultyDistributions[sz]
                         if numGroupsPerDifficulty[difficulty] != pattern.count(difficulty):
-                            print 'safezone:', sz
-                            print 'pattern:', pattern
-                            print 'difficulty:', difficulty
-                            print 'expected %s %ss, found %s' % (numGroupsPerDifficulty[difficulty], difficulty, pattern.count(difficulty))
+                            print('safezone:', sz)
+                            print('pattern:', pattern)
+                            print('difficulty:', difficulty)
+                            print('expected %s %ss, found %s' % (numGroupsPerDifficulty[difficulty], difficulty, pattern.count(difficulty)))
                             return 0
 
             return 1

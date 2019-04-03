@@ -10,7 +10,7 @@ from toontown.suit import SuitDNA
 from toontown.suit import Suit
 from toontown.char import Char
 from toontown.minigame import ArrowKeys
-from toontown.minigame import random
+import random
 from toontown.toonbase import ToontownGlobals
 import string
 from toontown.toonbase import TTLocalizer

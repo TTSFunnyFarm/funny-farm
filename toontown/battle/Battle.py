@@ -11,14 +11,14 @@ from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.suit import Suit
-from BattleCalculator import BattleCalculator
-from BattleBase import *
-from SuitBattleGlobals import *
-import BattleExperienceAI
-import BattleProps
-import BattleParticles
-import Movie
-import MovieUtil
+from toontown.battle.BattleCalculator import BattleCalculator
+from toontown.battle.BattleBase import *
+from toontown.battle.SuitBattleGlobals import *
+from toontown.battle import BattleExperienceAI
+from toontown.battle import BattleProps
+from toontown.battle import BattleParticles
+from toontown.battle import Movie
+from toontown.battle import MovieUtil
 import random
 
 class Battle(DirectObject, NodePath, BattleBase):

@@ -6,7 +6,7 @@ import math
 from panda3d.core import *
 import random
 
-import Fanfare
+from toontown.battle import Fanfare
 from otp.otpbase import OTPGlobals
 from toontown.coghq import CogDisguiseGlobals
 from toontown.quest import Quests

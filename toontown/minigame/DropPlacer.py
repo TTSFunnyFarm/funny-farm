@@ -51,7 +51,7 @@ class DropPlacer:
         return [col, row]
 
     def getNextDrop(self):
-        raise RuntimeError, 'DropPlacer.getNextDrop should never be called'
+        raise RuntimeError('DropPlacer.getNextDrop should never be called')
 
 
 class RandomDropPlacer(DropPlacer):
