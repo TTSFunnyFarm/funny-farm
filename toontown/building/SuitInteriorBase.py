@@ -18,33 +18,18 @@ class SuitInteriorBase(DirectObject):
         self.entranceElevator = None
         self.exitElevator = None
         self.numFloors = 0
-        self.currentFloor = 1
-        self.waitMusic = base.loader.loadMusic('phase_7/audio/bgm/encntr_toon_winning_indoor.ogg')
+        self.currentFloor = 0
         self.elevatorMusic = base.loader.loadMusic('phase_7/audio/bgm/tt_elevator.ogg')
 
     def enter(self):
-        self.entranceElevator.openDoors(callback=self.exitTheElevator)
+        self.entranceElevator.openDoors(callback=self.enterFloor)
 
-    def exitTheElevator(self):
-        # This is where we would normally start the cog battle.
-        base.localAvatar.wrtReparentTo(render)
-        self.entranceElevator.hopOff(0, True)
+    def enterFloor(self):
         self.elevatorMusic.stop()
-        self.exitElevator.openDoors()
-        self.exitElevator.addActive()
+        base.localAvatar.wrtReparentTo(render)
 
-    def loadFloorA(self):
-        self.floor = loader.loadModel(self.floorModelA)
-        self.floor.reparentTo(render)
-        self.elevatorModel = loader.loadModel(self.elevatorFilename)
-
-    def loadFloorB(self):
-        self.floor = loader.loadModel(self.floorModelB)
-        self.floor.reparentTo(render)
-        self.elevatorModel = loader.loadModel(self.elevatorFilename)
-
-    def loadFloorC(self):
-        self.floor = loader.loadModel(self.floorModelC)
+    def loadFloor(self, floorModel):
+        self.floor = loader.loadModel(floorModel)
         self.floor.reparentTo(render)
         self.elevatorModel = loader.loadModel(self.elevatorFilename)
 

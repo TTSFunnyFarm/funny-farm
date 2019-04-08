@@ -36,8 +36,8 @@ class Elevator(DirectObject):
                 floor = int(light.getName()[-1:]) - 1
                 if floor < self.numFloors:
                     light.setColor(LIGHT_OFF_COLOR)
-                    if base.cr.playGame.getActiveZone().place:
-                        currFloor = base.cr.playGame.getActiveZone().place.currentFloor
+                    if base.cr.playGame.street.place:
+                        currFloor = base.cr.playGame.street.place.currentFloor
                         if floor == (currFloor - 1):
                             light.setColor(LIGHT_ON_COLOR)
                 else:
@@ -147,8 +147,8 @@ class Elevator(DirectObject):
             self.dialog = TTDialog.TTDialog(text=TTLocalizer.SuitBuildingDialog, text_align=TextNode.ACenter, style=TTDialog.YesNo, command=self.handleDialog)
             self.dialog.show()
             return
-        elif base.cr.playGame.getActiveZone().place:
-            self.board(0, callback=base.cr.playGame.getActiveZone().place.loadNextFloor)
+        elif base.cr.playGame.street.place:
+            self.board(0, callback=base.cr.playGame.street.place.loadNextFloor)
         else:
             self.board(0)
 

@@ -90,6 +90,7 @@ INTERIOR_ELEVATOR_COUNTDOWN_TIME = 90
 LIGHT_OFF_COLOR = Vec4(0.5, 0.5, 0.5, 1.0)
 LIGHT_ON_COLOR = Vec4(1.0, 1.0, 1.0, 1.0)
 ElevatorPoints = [[0, 5, 0.1],
+ [-1.5, 5, 0.1],
  [1.5, 5, 0.1],
  [-2.5, 3, 0.1],
  [2.5, 3, 0.1],

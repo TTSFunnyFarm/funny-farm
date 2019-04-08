@@ -18,7 +18,6 @@ class HoodAI:
 
         #self.createTreasurePlanner()
         self.createSuitPlanners()
-        self.createBuildingManagers()
 
     def getZoneTable(self):
         zoneTable = [self.zoneId]
@@ -43,6 +42,3 @@ class HoodAI:
             sp = SuitPlannerAI(zoneId)
             sp.generate()
             self.air.suitPlanners[zoneId] = sp
-
-    def createBuildingManagers(self):
-        pass
