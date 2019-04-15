@@ -98,7 +98,7 @@ class BattleBldg(Battle):
         camPos = Point3(0, -6, 4)
         camHpr = Vec3(0, 0, 0)
         camTrack.append(Func(camera.reparentTo, base.localAvatar))
-        camTrack.append(Func(setCamFov, ToontownGlobals.DefaultCameraFov))
+        camTrack.append(Func(setCamFov, self.camFov))
         camTrack.append(Func(camera.setPosHpr, camPos, camHpr))
         mtrack = Parallel(suitTrack, toonTrack, camTrack)
         done = Func(callback)
@@ -117,16 +117,6 @@ class BattleBldg(Battle):
 
     def suitCanJoin(self):
         return self.joinable
-
-    def suitRequestJoin(self, suit):
-        self.notify.debug('suitRequestJoin(%d)' % suit.getDoId())
-        if self.suitCanJoin():
-            self.joinSuit(suit)
-            self.setMembers(*self.getMembers())
-            return 1
-        else:
-            self.notify.warning('suitRequestJoin() - not joinable - joinable state: %s max suits: %d' % (self.isJoinable(), self.maxSuits))
-            return 0
 
     def __playReward(self, callback):
         toonTracks = Parallel()
@@ -199,10 +189,12 @@ class BattleBldg(Battle):
             messenger.send(self.townBattle.doneEvent, [doneStatus])
             return
         if len(self.bldgClass.reserveSuits) > 0:
+            if self.needAdjust:
+                self.requestAdjust()
             self.bldgClass.handleRoundDone(totalHp, totalMaxHp, suitsToRemove)
         elif not allSuitsDied:
-            # if self.needAdjust:
-            #     self.__requestAdjust()
+            if self.needAdjust:
+                self.requestAdjust()
             self.startCamTrack()
         else:
             if self.bossBattle:

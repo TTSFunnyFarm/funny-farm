@@ -3,6 +3,7 @@ from direct.showbase.DirectObject import DirectObject
 from direct.interval.IntervalGlobal import *
 from otp.nametag.NametagGroup import NametagGroup
 from otp.nametag.Nametag import Nametag
+from toontown.hood import ZoneUtil
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
@@ -250,6 +251,24 @@ class Building(DirectObject):
 
         return nodePath
 
+    def enterWaitForVictors(self):
+        if self.mode != 'suit':
+            self.setToSuit()
+        self.acceptOnce('insideVictorElevator', self.exitWaitForVictors)
+        camera.reparentTo(render)
+        camera.setPosHpr(self.elevatorNodePath, 0, -32.5, 9.4, 0, 348, 0)
+        base.camLens.setFov(52.0)
+        closeDoors(self.leftDoor, self.rightDoor)
+        for light in self.floorIndicator:
+            if light != None:
+                light.setColor(LIGHT_OFF_COLOR)
+        return
+
+    def exitWaitForVictors(self):
+        self.ignore('insideVictorElevator')
+        messenger.send('collapseBuilding-%d' % ZoneUtil.getBranchZone(self.zoneId), [self.block])
+        return
+
     def loadElevator(self, newNP, cogdo = False):
         self.floorIndicator = [None,
          None,
@@ -271,7 +290,7 @@ class Building(DirectObject):
         self.elevatorNodePath.reparentTo(self.suitDoorOrigin)
         self.normalizeElevator()
 
-        self.elevator = Elevator()
+        self.elevator = Elevator(self.block)
         self.elevator.setup(self.elevatorModel, self.elevatorNodePath, self.track, self.difficulty, self.numFloors, elite=cogdo)
         self.elevator.showCorpIcon()
         self.leftDoor = self.elevator.leftDoor
@@ -488,21 +507,49 @@ class Building(DirectObject):
         localToonIsVictor = self.localToonIsVictor()
         if localToonIsVictor:
             camTrack = self.walkOutCameraTrack()
-        # victoryRunTrack = self.getVictoryRunTrack()
+            victoryRunTrack = self.getVictoryRunTrack()
         trackName = 'toToonTrack-%d' % self.zoneId
         self._deleteTransitionTrack()
         if localToonIsVictor:
-            freedomTrack1 = Func(self.cr.playGame.getPlace().setState, 'walk')
-            freedomTrack2 = Func(base.localAvatar.wrtReparentTo, render)
+            freedomTrack1 = Func(base.localAvatar.wrtReparentTo, render)
+            freedomTrack2 = Func(base.localAvatar.enable)
             self.transitionTrack = Parallel(camTrack, Sequence(victoryRunTrack, bldgMTrack, freedomTrack1, freedomTrack2), name=trackName)
+            self.victor = None
         else:
-            # self.transitionTrack = Sequence(victoryRunTrack, bldgMTrack, name=trackName)
             self.transitionTrack = bldgMTrack
         self.transitionTrack.start()
         return
 
     def animToToonFromElite(self):
         pass
+
+    def walkOutCameraTrack(self):
+        track = Sequence(Func(camera.reparentTo, render), Func(camera.setPosHpr, self.elevatorNodePath, 0, -32.5, 9.4, 0, 348, 0), Func(base.camLens.setFov, 52.0), Wait(VICTORY_RUN_TIME), Func(camera.setPosHpr, self.elevatorNodePath, 0, -32.5, 17, 0, 347, 0), Func(base.camLens.setFov, 75.0), Wait(TO_TOON_BLDG_TIME), Func(base.camLens.setFov, 52.0))
+        return track
+
+    def getVictoryRunTrack(self):
+        origPosTrack = Sequence()
+        i = 0
+        toon = base.localAvatar
+        toon.wrtReparentTo(hidden)
+        origPosTrack.append(Func(toon.setPosHpr, self.elevatorNodePath, apply(Point3, ElevatorPoints[i]), Point3(180, 0, 0)))
+        origPosTrack.append(Func(toon.wrtReparentTo, render))
+
+        openDoors = Sequence(Func(self.elevator.openDoors), Wait(ElevatorData[ELEVATOR_NORMAL]['openTime']))
+        # TODO:
+        # toonDoorPosHpr = self.cr.playGame.dnaStore.getDoorPosHprFromBlockNumber(self.block)
+        # useFarExitPoints = toonDoorPosHpr.getPos().getZ() > 1.0
+        
+        p0 = Point3(0, 0, 0)
+        p1 = Point3(ElevatorPoints[i][0], ElevatorPoints[i][1] - 5.0, ElevatorPoints[i][2])
+        # if useFarExitPoints:
+        #     p2 = Point3(ElevatorOutPointsFar[i][0], ElevatorOutPointsFar[i][1], ElevatorOutPointsFar[i][2])
+        # else:
+        p2 = Point3(ElevatorOutPoints[i][0], ElevatorOutPoints[i][1], ElevatorOutPoints[i][2])
+        runOut = Sequence(Func(toon.setAnimState, 'run'), LerpPosInterval(toon, TOON_VICTORY_EXIT_TIME * 0.25, p1, other=self.elevatorNodePath), Func(toon.headsUp, self.elevatorNodePath, p2), LerpPosInterval(toon, TOON_VICTORY_EXIT_TIME * 0.5, p2, other=self.elevatorNodePath), LerpHprInterval(toon, TOON_VICTORY_EXIT_TIME * 0.25, Point3(0, 0, 0), other=self.elevatorNodePath), Func(toon.setAnimState, 'neutral'))
+
+        victoryRunTrack = Sequence(origPosTrack, openDoors, runOut)
+        return victoryRunTrack
 
     def localToonIsVictor(self):
         return self.victor == base.localAvatar.getDoId()

@@ -9,8 +9,8 @@ from SuitPlannerInterior import SuitPlannerInterior
 
 class SuitInterior(SuitInteriorBase):
 
-    def __init__(self, track, difficulty, numFloors):
-        SuitInteriorBase.__init__(self, track)
+    def __init__(self, block, track, difficulty, numFloors):
+        SuitInteriorBase.__init__(self, block, track)
         self.difficulty = difficulty
         self.numFloors = numFloors
         self.toons = [base.localAvatar]
@@ -54,7 +54,6 @@ class SuitInterior(SuitInteriorBase):
         self.planner = SuitPlannerInterior(self.numFloors, self.difficulty, self.track)
         self.townBattle = base.cr.playGame.street.townBattle
         self.battle = None
-        self.mtrack = None
         self.toonSkillPtsGained = {}
         self.toonExp = {}
         self.toonOrigQuests = {}
@@ -112,6 +111,34 @@ class SuitInterior(SuitInteriorBase):
 
         self.playElevator()
 
+    def unload(self):
+        SuitInteriorBase.unload(self)
+        del self.battleMusic
+        del self.bossMusic
+        del self.waitMusic
+        del self.planner
+        del self.toons
+        del self.suits
+        del self.activeSuits
+        del self.reserveSuits
+        del self.joiningReserves
+        del self.BottomFloor_SuitPositions
+        del self.BottomFloor_SuitHs
+        del self.Cubicle_SuitPositions
+        del self.Cubicle_SuitHs
+        del self.BossOffice_SuitPositions
+        del self.BossOffice_SuitHs
+        del self.battle
+        del self.toonSkillPtsGained
+        del self.toonExp
+        del self.toonOrigQuests
+        del self.toonItems
+        del self.toonOrigMerits
+        del self.toonMerits
+        del self.toonParts
+        del self.suitsKilled
+        del self.helpfulToons
+
     def enterBattle(self):
         base.localAvatar.disable()
         base.localAvatar.experienceBar.hide()
@@ -144,12 +171,28 @@ class SuitInterior(SuitInteriorBase):
         self.battle = None
         base.localAvatar.experienceBar.show()
         if doneStatus == 'victory':
-            pass # exit building here
+            base.localAvatar.setAnimState('neutral')
+            base.cr.playGame.street.exitPlace()
+            base.cr.playGame.street.enter()
+            zoneId = base.cr.playGame.street.zoneId
+            building = None
+            for tb in base.cr.playGame.getActiveZone().buildings:
+                if self.block == tb.getBlock():
+                    building = tb
+                    break
+            if building:
+                building.victor = base.localAvatar.getDoId()
+                building.enterWaitForVictors()
+                taskMgr.doMethodLater(1.0, self.handleInsideElevator, 'handleInsideElevator')
         elif doneStatus == 'defeat':
             base.localAvatar.died()
         else:
             base.localAvatar.enable()
-            self.enterWait()
+            self.enterResting()
+
+    def handleInsideElevator(self, task):
+        messenger.send('insideVictorElevator')
+        return task.done
 
     def enterResting(self):
         base.playMusic(self.waitMusic, looping=1, volume=0.7)
@@ -175,15 +218,16 @@ class SuitInterior(SuitInteriorBase):
 
             for info in self.joiningReserves:
                 self.reserveSuits.remove(info)
-                # if info[0] in self.battle.suits:
-                #     self.battle.suits.remove(info[0])
+                if info[0] in self.battle.suits:
+                    self.battle.suits.remove(info[0])
+            self.battle.setMembers(*self.battle.getMembers())
 
             if len(self.joiningReserves) > 0:
                 self.enterReservesJoining()
                 return
         self.battle.startCamTrack()
 
-    def __playReservesJoining(self, callback):
+    def __playReservesJoining(self):
         index = 0
         for info in self.joiningReserves:
             suit = info[0]
@@ -194,34 +238,27 @@ class SuitInterior(SuitInteriorBase):
             suit.battleTrap = NO_TRAP
             index += 1
 
-        self.mtrack = Sequence(Func(camera.wrtReparentTo, self.exitElevator.np), Func(camera.setPos, Point3(0, -8, 2)), Func(camera.setHpr, Vec3(0, 10, 0)), Func(self.exitElevator.openDoors), Wait(ElevatorData[ELEVATOR_NORMAL]['openTime']), Wait(SUIT_HOLD_ELEVATOR_TIME), Func(camera.wrtReparentTo, render), Func(callback))
-        self.mtrack.start()
+        track = Sequence(Func(camera.wrtReparentTo, self.exitElevator.np), Func(camera.setPos, Point3(0, -8, 2)), Func(camera.setHpr, Vec3(0, 10, 0)), Func(self.exitElevator.openDoors), Wait(ElevatorData[ELEVATOR_NORMAL]['openTime']), Wait(SUIT_HOLD_ELEVATOR_TIME), Func(camera.wrtReparentTo, render))
+        track.start()
+
+    def __playCloseElevatorOut(self):
+        track = Sequence(Wait(SUIT_LEAVE_ELEVATOR_TIME), Func(self.exitElevator.closeDoors))
+        track.start()
 
     def enterReservesJoining(self):
-        self.__playReservesJoining(self.__handleReserveJoinDone)
+        self.__playReservesJoining()
+        taskMgr.doMethodLater(ElevatorData[ELEVATOR_NORMAL]['openTime'] + SUIT_HOLD_ELEVATOR_TIME, self.exitReservesJoining, 'reservesJoining')
         return None
 
-    def __handleReserveJoinDone(self):
-        self.mtrack.finish()
-        self.mtrack = Sequence()
+    def exitReservesJoining(self, task):
         for info in self.joiningReserves:
-            suit = info[0]
-            self.mtrack.append(Func(self.battle.suitRequestJoin, suit))
-        if len(self.battle.activeSuits) > 0:
-            self.mtrack.append(Func(self.battle.startCamTrack))
+            self.battle.suitRequestJoin(info[0])
+        self.__playCloseElevatorOut()
+        if len(self.battle.activeSuits) == 0:
+            camera.setPos(self.battle, 0, -15, 6)
+            self.acceptOnce('battle-%d-adjustDone' % self.battle.doId, self.battle.startCamTrack)
+            camera.headsUp(self.exitElevator.np)
         else:
-            self.mtrack.append(Func(camera.setPos, 0, -15, 6))
-            self.mtrack.append(Func(camera.headsUp, self.exitElevator.np))
-            self.mtrack.append(Func(self.battle.requestAdjust))
-            # self.mtrack.append(Func(self.acceptOnce, 'battle-%d-adjustDone' % self.battle.doId, self.battle.startCamTrack))
-        self.mtrack.append(Func(self.battle.requestAdjust))
-        self.mtrack.append(Wait(SUIT_LEAVE_ELEVATOR_TIME))
-        self.mtrack.append(Func(self.exitElevator.closeDoors))
-        self.mtrack.append(Func(self.exitReservesJoining))
-        self.mtrack.start()
-
-    def exitReservesJoining(self):
-        self.mtrack.finish()
-        self.mtrack = None
+            self.battle.startCamTrack()
         self.joiningReserves = []
-        return None
+        return task.done

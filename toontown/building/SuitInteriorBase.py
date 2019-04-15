@@ -7,7 +7,8 @@ from ElevatorUtils import *
 class SuitInteriorBase(DirectObject):
     notify = directNotify.newCategory('SuitInterior')
 
-    def __init__(self, track):
+    def __init__(self, block, track):
+        self.block = block
         self.track = track
         self.floorModelA = None
         self.floorModelB = None
@@ -35,14 +36,21 @@ class SuitInteriorBase(DirectObject):
 
     def unloadFloor(self):
         self.floor.removeNode()
-        del self.floor
+        self.floor = None
         self.entranceElevator.delete()
         self.exitElevator.delete()
 
     def unload(self):
         self.unloadFloor()
+        del self.floorModelA
+        del self.floorModelB
+        del self.floorModelC
+        del self.floor
+        del self.elevatorFilename
+        del self.elevatorModel
         del self.entranceElevator
         del self.exitElevator
+        del self.elevatorMusic
 
     def playElevator(self):
         base.camLens.setMinFov(ToontownGlobals.CBElevatorFov/(4./3.))

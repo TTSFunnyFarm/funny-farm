@@ -13,7 +13,8 @@ from ElevatorUtils import *
 class Elevator(DirectObject):
     notify = directNotify.newCategory('Elevator')
 
-    def __init__(self, type=ELEVATOR_NORMAL):
+    def __init__(self, block, type=ELEVATOR_NORMAL):
+        self.block = block
         self.type = type
         self.openSfx = base.loader.loadSfx('phase_5/audio/sfx/elevator_door_open.ogg')
         self.closeSfx = base.loader.loadSfx('phase_5/audio/sfx/elevator_door_close.ogg')
@@ -229,7 +230,7 @@ class Elevator(DirectObject):
         del self.clockNode
 
     def enterSuitBuilding(self):
-        base.cr.playGame.getActiveZone().enterSuitBuilding(self.track, self.difficulty, self.numFloors)
+        base.cr.playGame.getActiveZone().enterSuitBuilding(self.block, self.track, self.difficulty, self.numFloors)
 
     def enterEliteBuilding(self):
-        base.cr.playGame.getActiveZone().enterEliteBuilding(self.track, self.difficulty, self.numFloors)
+        base.cr.playGame.getActiveZone().enterEliteBuilding(self.block, self.track, self.difficulty, self.numFloors)

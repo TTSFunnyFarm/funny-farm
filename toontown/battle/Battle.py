@@ -67,6 +67,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         self.toonParts = {}
         self.suitsKilled = []
         self.joinable = 1
+        self.joinTrack = None
 
     def enter(self):
         self.enterFaceOff()
@@ -897,12 +898,12 @@ class Battle(DirectObject, NodePath, BattleBase):
                 trainTrap.removeNode()
         for s in suitsJoining:
             suit = self.suits[int(s)]
-            if suit != None:
+            if suit != None and self.joiningSuits.count(suit) == 0:
                 self.makeSuitJoin(suit)
 
         for s in suitsPending:
             suit = self.suits[int(s)]
-            if suit != None:
+            if suit != None and self.pendingSuits.count(suit) == 0:
                 self.__makeSuitPending(suit)
 
         oldLuredSuits = self.luredSuits
@@ -1003,6 +1004,7 @@ class Battle(DirectObject, NodePath, BattleBase):
             self.addSuit(suit)
             self.joinSuit(suit)
             self.setMembers(*self.getMembers())
+            self.makeSuitJoin(suit)
             return 1
         else:
             self.notify.warning('suitRequestJoin() - not joinable - joinable state: %s max suits: %d' % (self.isJoinable(), self.maxSuits))
@@ -1010,7 +1012,8 @@ class Battle(DirectObject, NodePath, BattleBase):
 
     def addSuit(self, suit):
         self.notify.debug('addSuit(%d)' % suit.doId)
-        self.suits.append(suit)
+        if suit not in self.suits:
+            self.suits.append(suit)
         suit.battleTrap = NO_TRAP
         if len(self.suits) == self.maxSuits:
             # We've hit the max; no more suits can join this battle, ever.
@@ -1106,6 +1109,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         self.setMembers(*self.getMembers())
         self.needAdjust = 1
         self.requestAdjust()
+        self.joinTrack = None
 
     def __makeSuitPending(self, suit):
         self.notify.debug('__makeSuitPending(%d)' % suit.doId)

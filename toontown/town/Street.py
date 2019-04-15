@@ -41,10 +41,10 @@ class Street(ToonHood):
                     self.townLoader.setCurrentGroup(int(linkTunnel.getAncestor(2).getName()))
                     tunnelOrigin = linkTunnel.find('**/tunnel_origin')
                     base.localAvatar.tunnelIn(tunnelOrigin)
+            self.startActive()
         base.avatarData.setLastHood = FunnyFarmGlobals.getHoodId(self.zoneId)
         dataMgr.saveToonData(base.avatarData)
         self.spawnTitleText()
-        self.startActive()
         self.sp.generate()
 
     def exit(self):
