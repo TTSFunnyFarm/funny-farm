@@ -10,6 +10,7 @@ from toontown.toontowngui import TTDialog
 import yaml
 import shutil
 import os
+import builtins
 
 # NOTE: The encrypt() and decrypt() functions should only be called in THIS FILE to avoid confusion and repitition.
 
@@ -105,7 +106,7 @@ class DataManager:
         self.notify.info('================')
         base.localAvatar = LocalToon()
         base.avatarData = data
-        __builtins__.localAvatar = base.localAvatar
+        builtins.localAvatar = base.localAvatar
         dna = ToonDNA.ToonDNA()
         dna.newToonFromProperties(*data.setDNA)
         base.localAvatar.setDNA(dna)
