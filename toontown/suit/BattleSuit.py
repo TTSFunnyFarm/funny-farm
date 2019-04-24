@@ -49,7 +49,7 @@ class BattleSuit(Suit, SuitBase):
         self.hpText = None
         self.strText = None
         self.hp = None
-        self.maxHp = None
+        self.maxHP = None
         return
 
     def setDoId(self, doId):
@@ -223,7 +223,7 @@ class BattleSuit(Suit, SuitBase):
                 animTrack.append(Func(self.loop, 'neutral'))
             self.attachPropeller()
             propTrack = Parallel(Sequence(ActorInterval(self.prop, 'propeller', constrainedLoop=1, duration=waitTime + spinTime, startTime=0.0, endTime=spinTime), ActorInterval(self.prop, 'propeller', duration=propDur - openTime, startTime=openTime), Func(self.detachPropeller)))
-            if not base.cr.playGame.getActiveZone().place:
+            if hasattr(base.cr.playGame.getActiveZone(), 'place') and not base.cr.playGame.getActiveZone().place:
                 propTrack.append(SoundInterval(self.propInSound, duration=waitTime + dur, node=self))
             return Parallel(lerpPosTrack, shadowTrack, fadeInTrack, animTrack, propTrack, name=self.uniqueName('trackName'))
         else:
@@ -234,7 +234,7 @@ class BattleSuit(Suit, SuitBase):
             self.attachPropeller()
             self.prop.hide()
             propTrack = Parallel(Sequence(Func(self.prop.show), ActorInterval(self.prop, 'propeller', endTime=openTime, startTime=propDur), ActorInterval(self.prop, 'propeller', constrainedLoop=1, duration=propDur - openTime, startTime=spinTime, endTime=0.0), Func(self.detachPropeller)))
-            if not base.cr.playGame.getActiveZone().place:
+            if hasattr(base.cr.playGame.getActiveZone(), 'place') and not base.cr.playGame.getActiveZone().place:
                 propTrack.append(SoundInterval(self.propOutSound, duration=waitTime + dur, node=self))
             return Parallel(ParallelEndTogether(lerpPosTrack, shadowTrack, fadeOutTrack), actInt, propTrack, name=self.uniqueName('trackName'))
         return

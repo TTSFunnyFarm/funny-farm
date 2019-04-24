@@ -39,6 +39,7 @@ class FFAIRepository(DirectObject):
     def createSafeZones(self):
         self.notify.info('Creating safe zones...')
         self.hoods.append(FFHoodAI.FFHoodAI(self))
+        messenger.send('spawnBuilding-1100', [11])
         self.notify.info('Done.')
         self.isLoaded = 1
         messenger.send('ai-done')

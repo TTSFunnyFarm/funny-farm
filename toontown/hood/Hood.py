@@ -204,13 +204,13 @@ class Hood(DirectObject):
     def exitPlace(self):
         pass
 
-    def enterSuitBuilding(self, track, difficulty, numFloors):
+    def enterSuitBuilding(self, block, track, difficulty, numFloors):
         self.exit()
         self.geom.reparentTo(hidden)
         self.geom.stash()
         self.sky.reparentTo(hidden)
         self.sky.stash()
-        self.place = SuitInterior(track, difficulty, numFloors)
+        self.place = SuitInterior(block, track, difficulty, numFloors)
         self.place.loadNextFloor()
 
     def enterEliteBuilding(self):

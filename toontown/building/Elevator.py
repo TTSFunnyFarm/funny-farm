@@ -13,7 +13,8 @@ from toontown.building.ElevatorUtils import *
 class Elevator(DirectObject):
     notify = directNotify.newCategory('Elevator')
 
-    def __init__(self, type=ELEVATOR_NORMAL):
+    def __init__(self, block, type=ELEVATOR_NORMAL):
+        self.block = block
         self.type = type
         self.openSfx = base.loader.loadSfx('phase_5/audio/sfx/elevator_door_open.ogg')
         self.closeSfx = base.loader.loadSfx('phase_5/audio/sfx/elevator_door_close.ogg')
@@ -36,8 +37,8 @@ class Elevator(DirectObject):
                 floor = int(light.getName()[-1:]) - 1
                 if floor < self.numFloors:
                     light.setColor(LIGHT_OFF_COLOR)
-                    if base.cr.playGame.getActiveZone().place:
-                        currFloor = base.cr.playGame.getActiveZone().place.currentFloor
+                    if base.cr.playGame.street.place:
+                        currFloor = base.cr.playGame.street.place.currentFloor
                         if floor == (currFloor - 1):
                             light.setColor(LIGHT_ON_COLOR)
                 else:
@@ -147,8 +148,8 @@ class Elevator(DirectObject):
             self.dialog = TTDialog.TTDialog(text=TTLocalizer.SuitBuildingDialog, text_align=TextNode.ACenter, style=TTDialog.YesNo, command=self.handleDialog)
             self.dialog.show()
             return
-        elif base.cr.playGame.getActiveZone().place:
-            self.board(0, callback=base.cr.playGame.getActiveZone().place.loadNextFloor)
+        elif base.cr.playGame.street.place:
+            self.board(0, callback=base.cr.playGame.street.place.loadNextFloor)
         else:
             self.board(0)
 
@@ -229,7 +230,7 @@ class Elevator(DirectObject):
         del self.clockNode
 
     def enterSuitBuilding(self):
-        base.cr.playGame.getActiveZone().enterSuitBuilding(self.track, self.difficulty, self.numFloors)
+        base.cr.playGame.getActiveZone().enterSuitBuilding(self.block, self.track, self.difficulty, self.numFloors)
 
     def enterEliteBuilding(self):
-        base.cr.playGame.getActiveZone().enterEliteBuilding(self.track, self.difficulty, self.numFloors)
+        base.cr.playGame.getActiveZone().enterEliteBuilding(self.block, self.track, self.difficulty, self.numFloors)

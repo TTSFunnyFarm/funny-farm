@@ -1,6 +1,7 @@
 from panda3d.core import *
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.building.Interior import Interior
+from toontown.building.SuitInteriorBase import SuitInteriorBase
 
 class MusicManager:
     notify = directNotify.newCategory('MusicManager')
@@ -44,6 +45,8 @@ class MusicManager:
         zoneId = FunnyFarmGlobals.getHoodId(base.localAvatar.getZoneId())
         zone = base.cr.playGame.getActiveZone()
         if zone.place:
+            if isinstance(zone.place, SuitInteriorBase):
+                return
             lookupTable = self.activityMusic
             volume = 0.5
         elif base.cr.playGame.hood:
