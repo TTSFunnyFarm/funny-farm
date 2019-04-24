@@ -7,12 +7,10 @@ from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toontowngui import TTDialog
-import yaml
+import json
 import shutil
 import os
 import builtins
-
-# NOTE: The encrypt() and decrypt() functions should only be called in THIS FILE to avoid confusion and repitition.
 
 BASE_DB_ID = 1000001
 
@@ -21,7 +19,7 @@ class DataManager:
     notify.setInfo(1)
 
     def __init__(self):
-        self.fileExt = '.yaml'
+        self.fileExt = '.json'
         self.oldDir = Filename.getUserAppdataDirectory() + '/FunnyFarm/db/'
         self.newDir = Filename.getUserAppdataDirectory() + '/FunnyFarm' + '/database/'
         self.corrupted = 0
@@ -64,12 +62,8 @@ class DataManager:
         if not os.path.exists(filename.toOsSpecific()):
             filename.makeDir()
         with open(filename.toOsSpecific(), 'w') as toonData:
-            data.encrypt()
-            yaml.dump(data, toonData, default_flow_style=False)
-            try:
-                data.decrypt()
-            except:
-                self.handleDataError()
+            print(data.__dict__)
+            json.dump(data.__dict__, toonData, indent=4)
         return
 
     def loadToonData(self, index):
@@ -78,13 +72,9 @@ class DataManager:
         filename = Filename(self.newDir + self.toons[index - 1] + self.fileExt)
         if os.path.exists(filename.toOsSpecific()):
             with open(filename.toOsSpecific(), 'r') as toonData:
-                data = yaml.load(toonData, Loader=yaml.FullLoader)
-                try:
-                    data.decrypt()
-                except:
-                    self.handleDataError()
-                    return None
-            return data
+                data = json.load(toonData)
+                return data
+            return None
         return None
 
     def deleteToonData(self, index):
