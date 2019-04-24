@@ -49,3 +49,11 @@ class ToonData:
         self.setFishCollection = fishCollection
         self.setFishTank = fishTank
         self.setTutorialAck = tutorialAck
+
+    def export(self):
+        toonData = self.__dict__.copy()
+        for key in toonData.keys():
+            if type(toonData[key]) == bytes:
+                toonData[key] = str(toonData[key])
+
+        return toonData

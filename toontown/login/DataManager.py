@@ -62,8 +62,7 @@ class DataManager:
         if not os.path.exists(filename.toOsSpecific()):
             filename.makeDir()
         with open(filename.toOsSpecific(), 'w') as toonData:
-            print(data.__dict__)
-            json.dump(data.__dict__, toonData, indent=4)
+            json.dump(data.export(), toonData, indent=4)
         return
 
     def loadToonData(self, index):
