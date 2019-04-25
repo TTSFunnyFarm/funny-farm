@@ -83,11 +83,11 @@ def createNpcsInZone(zoneId):
     return npcs
 
 def createLocalNPC(npcId, functional = False):
-    import Toon
-    import NPCToon
-    import NPCClerk
-    import NPCScientist
-    import NPCFlippy
+    from toontown.toon import Toon
+    from toontown.toon import NPCToon
+    from toontown.toon import NPCClerk
+    from toontown.toon import NPCScientist
+    from toontown.toon import NPCFlippy
     if npcId not in NPCToonDict:
         return None
     desc = NPCToonDict[npcId]
