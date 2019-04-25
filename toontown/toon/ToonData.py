@@ -52,15 +52,15 @@ class ToonData:
         jsonData = self.__dict__.copy()
         for key in jsonData.keys():
             if type(jsonData[key]) == bytes:
-                jsonData[key] = str(jsonData[key])
+                jsonData[key] = 'bytes-' + str(jsonData[key])
 
         return jsonData
 
     @staticmethod
     def makeFromJsonData(jsonData):
         for key in jsonData.keys():
-            if type(jsonData[key]) == str and jsonData[key].startswith('b\''):
-                jsonData[key] = jsonData[key].encode()
+            if type(jsonData[key]) == str and jsonData[key].startswith('bytes-'):
+                jsonData[key] = jsonData[key][6:].encode()
 
         toonData = ToonData(jsonData.get('index'), jsonData.get('setDNA'), jsonData.get('setName'),
                             jsonData.get('setHp', 20), jsonData.get('setMaxHp', 20), jsonData.get('setMoney', 0),
