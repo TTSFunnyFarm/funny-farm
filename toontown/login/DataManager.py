@@ -1,18 +1,17 @@
+import builtins
+import json
+import os
+import shutil
+
 from panda3d.core import *
-from direct.directnotify import DirectNotifyGlobal
+
 from toontown.toon import ToonDNA
 from toontown.toon.LocalToon import LocalToon
 from toontown.toon.ToonData import ToonData
-from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
-from toontown.toonbase import TTLocalizer
-from toontown.toontowngui import TTDialog
-import json
-import shutil
-import os
-import builtins
 
 BASE_DB_ID = 1000001
+
 
 class DataManager:
     notify = directNotify.newCategory('DataManager')
@@ -49,9 +48,9 @@ class DataManager:
         return False
 
     def createToonData(self, index, dna, name):
-        return ToonData(index, dna, name, 20, 20, 0, 40, 0, 12000, 20, None, None, [0, 0, 0, 0, 1, 1, 0], 
-                        [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000, 1, 0, 
-                        [0, 0, 0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [], [], [], [], [], [], 
+        return ToonData(index, dna, name, 20, 20, 0, 40, 0, 12000, 20, None, None, [0, 0, 0, 0, 1, 1, 0],
+                        [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000, 1, 0,
+                        [0, 0, 0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [], [], [], [], [], [],
                         [], [], 1, 1000, [-1, -1], [], [], 0, [], [], 0)
 
     def saveToonData(self, data):
@@ -71,9 +70,8 @@ class DataManager:
         filename = Filename(self.newDir + self.toons[index - 1] + self.fileExt)
         if os.path.exists(filename.toOsSpecific()):
             with open(filename.toOsSpecific(), 'r') as toonData:
-                data = json.load(toonData)
+                data = ToonData.makeFromJsonData(json.load(toonData))
                 return data
-            return None
         return None
 
     def deleteToonData(self, index):
@@ -85,7 +83,8 @@ class DataManager:
 
     def handleDataError(self):
         self.notify.warning('The database has been corrupted. Notifying user.')
-        base.handleGameError('Your database has been corrupted. Please contact The Toontown\'s Funny Farm Team for assistance.')
+        base.handleGameError(
+            'Your database has been corrupted. Please contact The Toontown\'s Funny Farm Team for assistance.')
         self.corrupted = 1
 
     def createLocalAvatar(self, data):

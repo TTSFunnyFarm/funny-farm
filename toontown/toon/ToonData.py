@@ -1,12 +1,10 @@
-
-
 class ToonData:
 
     def __init__(self, index, dna, name, hp, maxHp, money, maxMoney, bankMoney, maxBankMoney, maxCarry,
-                inventory, experience, trackAccess, hat, glasses, backpack, shoes, nametagStyle, cheesyEffect,
-                lastHood, level, levelExp, damage, defense, accuracy, clothesTopsList, clothesBottomsList,
-                hatList, glassesList, backpackList, shoesList, quests, questHistory, questCarryLimit, questingZone,
-                trackProgress, hoodsVisited, teleportAccess, fishingRod, fishCollection, fishTank, tutorialAck):
+                 inventory, experience, trackAccess, hat, glasses, backpack, shoes, nametagStyle, cheesyEffect,
+                 lastHood, level, levelExp, damage, defense, accuracy, clothesTopsList, clothesBottomsList,
+                 hatList, glassesList, backpackList, shoesList, quests, questHistory, questCarryLimit, questingZone,
+                 trackProgress, hoodsVisited, teleportAccess, fishingRod, fishCollection, fishTank, tutorialAck):
         self.index = index
         self.setDNA = dna
         self.setName = name
@@ -51,9 +49,33 @@ class ToonData:
         self.setTutorialAck = tutorialAck
 
     def export(self):
-        toonData = self.__dict__.copy()
-        for key in toonData.keys():
-            if type(toonData[key]) == bytes:
-                toonData[key] = str(toonData[key])
+        jsonData = self.__dict__.copy()
+        for key in jsonData.keys():
+            if type(jsonData[key]) == bytes:
+                jsonData[key] = str(jsonData[key])
 
+        return jsonData
+
+    @staticmethod
+    def makeFromJsonData(jsonData):
+        toonData = ToonData(jsonData.get('index'), jsonData.get('setDNA'), jsonData.get('setName'),
+                            jsonData.get('setHp', 20), jsonData.get('setMaxHp', 20), jsonData.get('setMoney', 0),
+                            jsonData.get('setMaxMoney', 40), jsonData.get('setBankMoney', 0),
+                            jsonData.get('setMaxBankMoney', 12000), jsonData.get('setMaxCarry', 20),
+                            jsonData.get('setInventory'), jsonData.get('setExperience'),
+                            jsonData.get('setTrackAccess', [0, 0, 0, 0, 1, 1, 0]), jsonData.get('setLastHood', 1000),
+                            jsonData.get('setHat', [0, 0, 0]), jsonData.get('setGlasses', [0, 0, 0]),
+                            jsonData.get('setBackpack', [0, 0, 0]), jsonData.get('setShoes', [0, 0, 0]),
+                            jsonData.get('setNametagStyle', 'Mickey'), jsonData.get('setCheesyEffect', 0),
+                            jsonData.get('setLevel', 1), jsonData.get('setLevelExp', 0),
+                            jsonData.get('setDamage', [0, 0, 0, 0, 0, 0]), jsonData.get('setDefense', [0, 0, 0, 0]),
+                            jsonData.get('setAccuracy', [0, 0, 0, 0, 0, 0]), jsonData.get('setClothesTopsList', []),
+                            jsonData.get('setClothesBottomsList', []), jsonData.get('setHatList', []),
+                            jsonData.get('setGlassesList', []), jsonData.get('setBackpackList', []),
+                            jsonData.get('setShoesList', []), jsonData.get('setQuests', []),
+                            jsonData.get('setQuestHistory', []), jsonData.get('setQuestCarryLimit', 1),
+                            jsonData.get('setQuestingZone', 1000), jsonData.get('setTrackProgress', [-1, -1]),
+                            jsonData.get('setHoodsVisited', []), jsonData.get('setTeleportAccess', []),
+                            jsonData.get('setFishingRod', 0), jsonData.get('setFishCollection', []),
+                            jsonData.get('setFishTank', []), jsonData.get('setTutorialAck', 0))
         return toonData
