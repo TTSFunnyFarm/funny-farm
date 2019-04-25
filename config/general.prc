@@ -5,6 +5,11 @@ win-size 1280 720
 cursor-filename phase_3/etc/toonmono.cur
 icon-filename phase_3/etc/funnyfarm.ico
 
+# Notify
+default-directnotify-level info
+notify-timestamp #t
+notify-integrate #f
+
 # Audio
 audio-library-name p3openal_audio
 

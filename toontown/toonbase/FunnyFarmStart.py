@@ -1,12 +1,13 @@
 from panda3d.core import *
+
+if __debug__:
+    loadPrcFile('config/general.prc')
+
 import os
 from otp.settings.Settings import Settings
 from toontown.toonbase.FunnyFarmLogger import FunnyFarmLogger
 
 __builtins__.logger = FunnyFarmLogger()
-
-if __debug__:
-    loadPrcFile('config/general.prc')
 
 # This has to be done before ToonBase loads
 preferencesFilename = ConfigVariableString('preferences-filename', 'preferences.json').getValue()
