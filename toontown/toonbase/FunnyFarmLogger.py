@@ -24,8 +24,8 @@ class FunnyFarmLogger:
     def __init__(self):
         self.logPrefix = 'funnyfarm-'
 
-        ltime = 1 and time.localtime()
-        logSuffix = '%02d%02d%02d_%02d%02d%02d' % (ltime[0] - 2000,  ltime[1], ltime[2],
+        ltime = time.localtime()
+        logSuffix = '%02d%02d%02d_%02d%02d%02d' % (ltime[0] - 2000, ltime[1], ltime[2],
                                                    ltime[3], ltime[4], ltime[5])
 
         if not os.path.exists('logs/'):
@@ -34,7 +34,7 @@ class FunnyFarmLogger:
         logfile = os.path.join('logs', self.logPrefix + logSuffix + '.log')
 
         log = open(logfile, 'a')
-        logOut = LogAndOutput(sys.stdout, log)
-        logErr = LogAndOutput(sys.stderr, log)
+        logOut = LogAndOutput(sys.__stdout__, log)
+        logErr = LogAndOutput(sys.__stderr__, log)
         sys.stdout = logOut
         sys.stderr = logErr
