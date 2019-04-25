@@ -74,7 +74,7 @@ def getNameFromId(hoodId):
 def getHoodId(zoneId):
     for zones in HoodHierarchy.values():
         if zoneId in zones:
-            return HoodHierarchy.keys()[HoodHierarchy.values().index(zones)]
+            return list(HoodHierarchy.keys())[list(HoodHierarchy.values()).index(zones)]
     return zoneId
 
 phaseMap = {
