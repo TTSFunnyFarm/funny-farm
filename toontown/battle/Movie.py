@@ -3,6 +3,7 @@ from direct.directnotify import DirectNotifyGlobal
 from direct.interval.IntervalGlobal import *
 from direct.showbase import DirectObject
 import random
+import functools
 
 from toontown.battle.BattleBase import *
 from toontown.battle import BattleExperience
@@ -754,7 +755,7 @@ class Movie(DirectObject.DirectObject):
                 return -1
             return 0
 
-        self.toonAttackDicts.sort(compFunc)
+        self.toonAttackDicts.sort(key=functools.cmp_to_key(compFunc))
         return
 
     def __findToonAttack(self, track):

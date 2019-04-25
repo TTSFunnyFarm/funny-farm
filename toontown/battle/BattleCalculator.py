@@ -1125,7 +1125,7 @@ class BattleCalculator:
             if dmgIdx == None:
                 toonId = self.__pickRandomToon(suitId)
             else:
-                toonId = self.SuitAttackers[suitId].keys()[dmgIdx]
+                toonId = list(self.SuitAttackers[suitId].keys())[dmgIdx]
             if toonId == -1 or toonId not in self.battle.activeToonIds:
                 return -1
             self.notify.debug('Suit attacking back at toon ' + str(toonId))

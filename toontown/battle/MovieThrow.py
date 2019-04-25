@@ -7,6 +7,7 @@ from toontown.toon.ToonDNA import *
 from toontown.suit.SuitDNA import *
 from direct.directnotify import DirectNotifyGlobal
 import random
+import functools
 from toontown.battle import MovieCamera
 from toontown.battle import MovieUtil
 from toontown.battle.MovieUtil import calcAvgSuitPos
@@ -40,7 +41,7 @@ def doThrows(throws):
             else:
                 suitThrowsDict[suitId] = [throw]
 
-    suitThrows = suitThrowsDict.values()
+    suitThrows = list(suitThrowsDict.values())
 
     def compFunc(a, b):
         if len(a) > len(b):
@@ -49,7 +50,7 @@ def doThrows(throws):
             return -1
         return 0
 
-    suitThrows.sort(compFunc)
+    suitThrows.sort(key=functools.cmp_to_key(compFunc))
     totalHitDict = {}
     singleHitDict = {}
     groupHitDict = {}
