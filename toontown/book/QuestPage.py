@@ -92,7 +92,7 @@ class QuestPage(ShtikerPage.ShtikerPage):
                 index = self.getLowestUnusedIndex()
                 self.fillQuestFrame(newQuestDesc, index)
 
-        for i, questDesc in self.quests.iteritems():
+        for i, questDesc in self.quests.items():
             if questDesc:
                 if self.canDeleteQuest(questDesc):
                     self.questFrames[i].setDeleteCallback(self.__deleteQuest)
