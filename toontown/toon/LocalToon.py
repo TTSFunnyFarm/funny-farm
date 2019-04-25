@@ -1153,7 +1153,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         return
 
     def localPresentPie(self, time):
-        import TTEmote
+        from toontown.toon import TTEmote
         from otp.avatar import Emote
         self.__stopPresentPie()
         if self.tossTrack:
@@ -1183,7 +1183,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def __stopPresentPie(self):
         if self.__presentingPie:
-            import TTEmote
+            from toontown.toon import TTEmote
             from otp.avatar import Emote
             Emote.globalEmote.releaseBody(self)
             messenger.send('end-pie')
