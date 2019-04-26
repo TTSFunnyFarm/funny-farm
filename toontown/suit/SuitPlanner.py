@@ -167,7 +167,7 @@ class SuitPlanner(DirectObject):
         cell = render.find('**/battleCell')
         if cell.isEmpty():
             return task.cont
-        for doId in self.activeSuits.keys()[:]: # Iterate over a COPY of activeSuits instead of the original since it'll be constantly changing as this task continues.
+        for doId in list(self.activeSuits.keys())[:]: # Iterate over a COPY of activeSuits instead of the original since it'll be constantly changing as this task continues.
             suit = self.activeSuits[doId]
             dist = (suit.getPos() - cell.getPos()).length()
             if dist <= 12:
