@@ -37,7 +37,7 @@ class Elevator(DirectObject):
                 floor = int(light.getName()[-1:]) - 1
                 if floor < self.numFloors:
                     light.setColor(LIGHT_OFF_COLOR)
-                    if base.cr.playGame.street.place:
+                    if base.cr.playGame.street.place and hasattr(base.cr.playGame.street.place, 'currentFloor'):
                         currFloor = base.cr.playGame.street.place.currentFloor
                         if floor == (currFloor - 1):
                             light.setColor(LIGHT_ON_COLOR)
@@ -98,6 +98,7 @@ class Elevator(DirectObject):
         return ('%s-%s' % (idString, str(id(self))))
 
     def addActive(self):
+        self.ignoreAll()
         self.accept('enter' + self.elevatorSphere.getName(), self.__handleEnterSphere)
 
     def removeActive(self):

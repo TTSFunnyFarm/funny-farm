@@ -574,6 +574,18 @@ QuestDialogDict = {
         LEAVING: '',
         QUEST: 'I\'m afraid there\'s not much we can do until we receive a new lead on the manager Cog.\x07As we await a new message, you should keep defeating Cogs on this street.\x07You seem to be a good fighter, and defeating any Cogs will help alleviate our problem.',
         COMPLETE: 'Good work, _avName_.\x07Funny Farm owes you a debt of gratitude for fighting off those pests.'},
+ 1028: {GREETING: '',
+        LEAVING: '',
+        QUEST: '',
+        COMPLETE: ''},
+ 1029: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'I\'m glad you\'re here.\x07Loony Louis\' building has been taken over by the Cogs.\x07I didn\'t think they were strong enough to take over our buildings there.\x07Will you go and win it back for us?\x07It will be challenging, but I think you are strong enough to take it on.\x07I\'m sure Loony Louis will greatly appreciate it, too.\x07Thanks, _avName_. Good luck!',
+        COMPLETE: 'Gee thanks for saving my building, Toon!'},
+ 1030: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Now I\'m just gonna need you to pick up an air pump from Lucy Tires.\x07Just kidding...\x07Go see Flippy and let him know you saved my building.\x07See ya around!',
+        COMPLETE: ''},
  1040: {GREETING: '',
         QUEST: 'Emma\'s dairy store called us for help earlier.\x07She is offering teleport access to anyone who can assist her._where_'},
  1041: {GREETING: '',
@@ -609,7 +621,8 @@ CutsceneDialogDict = {
         'Our Silly Meter readings have plummeted.\x07Ever since you encountered those Cogs, the rates have been decreasing intensely.\x07It\'s almost at zero!',
         'But then that means...',
         'Uh, oh.'),
-        'Oh, this is a disaster!')
+        'Oh, this is a disaster!'),
+ 1028: '_avName_! This is Flippy. Something\'s happened.\x07We\'re gonna need your help. Report to the Toon Hall immediately!'
 }
 MovieTutorialReward1 = 'You received 1 Throw point! When you get 10, you will get a new gag!'
 MovieTutorialReward2 = 'You received 1 Squirt point! When you get 10, you will get a new gag!'

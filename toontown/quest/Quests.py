@@ -176,6 +176,11 @@ class Quest:
             self.holderType = self.questType[5]
         elif self.questType[0] == QuestTypeDeliver:
             self.item = self.questType[1] 
+        elif self.questType[0] == QuestTypeDefeatBuilding:
+            self.numBuildings = self.questType[1]
+            self.numFloors = self.questType[2]
+            self.buildingTrack = self.questType[3]
+            self.buildingLocation = self.questType[4]
         # todo finish quest types
         self.fromNpc = questInfo[4]
         self.toNpc = questInfo[5]
@@ -220,10 +225,13 @@ class Quest:
         return self.cogTrack
 
     def getNumBuildings(self):
-        pass
+        return self.numBuildings
 
     def getNumFloors(self):
-        pass
+        return self.numFloors
+
+    def getBuildingTrack(self):
+        return self.buildingTrack
 
     def getNumItems(self):
         return self.numItems
@@ -912,8 +920,38 @@ QuestDict = {
          50,
          QuestRewardTrackFrame,
          6),
-        NA,
+        1028,
         TTLocalizer.QuestDialogDict[1027]),
+ 1028: (FF_TIER,
+        MainQuest,
+        Start,
+        (QuestTypeGoTo,),
+        1111,
+        1001,
+        1514,
+        (QuestRewardXP,
+         100,
+         QuestRewardTrackFrame,
+         7),
+        1029,
+        TTLocalizer.QuestDialogDict[1028]),
+ 1029: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeDefeatBuilding,
+         1,
+         Any,
+         Any,
+         1100),
+        1001,
+        1113,
+        1618,
+        (QuestRewardXP,
+         100,
+         QuestRewardTrackFrame,
+         7),
+        NA,
+        TTLocalizer.QuestDialogDict[1029]),
  1040: (FF_TIER,
         MainQuest,
         Start,
@@ -1233,8 +1271,10 @@ QuestDict = {
 Cutscenes = (1,
  1001,
  1002,
- 1004)
+ 1004,
+ 1028)
 ImportantQuests = (1004,
+ 1028,
  1031,
  1040,
  1046)

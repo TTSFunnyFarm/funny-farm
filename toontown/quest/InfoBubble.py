@@ -1,6 +1,7 @@
 from panda3d.core import *
 from direct.gui.DirectGui import *
 from direct.interval.IntervalGlobal import *
+from toontown.quest import Quests
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toon import NPCToons, ToonDNA, ToonHead
@@ -73,6 +74,7 @@ class InfoBubble(DirectFrame):
             dialog = TTLocalizer.CutsceneDialogDict[index]
         else:
             dialog = TTLocalizer.InfoBubbleDialog[index]
+        dialog = Quests.fillInQuestNames(dialog, avName=base.avatarData.setName)
         self.currText = dialog
         self.setPageNumber(0)
         self.bubble.setScale(0.01, 0.01, 0.01)

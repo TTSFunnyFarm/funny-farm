@@ -65,7 +65,11 @@ class FFStreet(Street):
                 self.npcs[1].origin = origin
                 self.npcs[1].initializeBodyCollisions('toon')
                 self.npcs[1].addActive()
-                return
+                continue
+            if questDesc[0] in [1028, 1029]:
+                bldg = base.air.suitPlanners[self.zoneId].buildingMap[18]
+                if bldg.mode == 'toon':
+                    messenger.send('spawnBuilding-%d' % self.zoneId, [18])
 
     def unloadQuestChanges(self):
         if len(self.npcs) > 1:

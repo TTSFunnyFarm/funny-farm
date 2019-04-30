@@ -460,6 +460,33 @@ class QuestPoster(DirectFrame):
                  toNpcLocationName)
                 infoZ = -0.02
             invModel.removeNode()
+        elif quest.getType() == Quests.QuestTypeDefeatBuilding:
+            frameBgColor = 'blue'
+            track = quest.getBuildingTrack()
+            numFloors = quest.getNumFloors()
+            if track == 'c':
+                lIconGeom = loader.loadModel('phase_4/models/modules/suit_landmark_corp')
+            elif track == 'l':
+                lIconGeom = loader.loadModel('phase_4/models/modules/suit_landmark_legal')
+            elif track == 'm':
+                lIconGeom = loader.loadModel('phase_4/models/modules/suit_landmark_money')
+            elif track == 's':
+                lIconGeom = loader.loadModel('phase_4/models/modules/suit_landmark_sales')
+            else:
+                bookModel = loader.loadModel('phase_3.5/models/gui/stickerbook_gui')
+                lIconGeom = bookModel.find('**/COG_building')
+                bookModel.removeNode()
+            if lIconGeom and track != Quests.Any:
+                self.loadElevator(lIconGeom, numFloors)
+                lIconGeom.setH(180)
+                self.fitGeometry(lIconGeom, fFlip=0)
+                lIconGeomScale = IMAGE_SCALE_SMALL
+            else:
+                lIconGeomScale = 0.13
+            if not fComplete:
+                infoText = quest.getLocationName()
+                if infoText == '':
+                    infoText = TTLocalizer.QuestPosterAnywhere
         else:
             frameBgColor = 'blue'
             if quest.getType() == Quests.QuestTypeDefeatCog:

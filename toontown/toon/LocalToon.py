@@ -842,7 +842,15 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
                 if zoneId == FunnyFarmGlobals.FunnyFarm:
                     base.cr.cutsceneMgr.enterCutscene(1014)
                     return True
-
+            # Not a cutscene, but this is the easiest way to do this.
+            if questDesc[0] in [1028, 1029]:
+                if zoneId == FunnyFarmGlobals.RicketyRoad:
+                    for bldg in currZone.buildings:
+                        if bldg.mode != 'toon':
+                            if questDesc[0] == 1028:
+                                bldg.elevator.removeActive()
+                            else:
+                                bldg.elevator.addActive()
         return False
 
     def showInfoBubble(self, index, doneEvent, npcId=0):
