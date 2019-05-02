@@ -238,7 +238,7 @@ QuestsDefaultLeaving = ('Bye!',
  'So long, _avName_.',
  'See ya, _avName_!',
  'Good luck!',
- 'Have fun in Toontown!',
+ 'Have fun in Funny Farm!',
  'See you later!')
 QuestsDefaultReject = ('Hello.',
  'Can I help you?',
