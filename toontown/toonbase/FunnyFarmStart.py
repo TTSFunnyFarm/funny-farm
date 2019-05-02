@@ -71,13 +71,13 @@ class FunnyFarmStart:
         if 'drawFps' not in settings:
             settings['drawFps'] = False
         if 'enableLODs' not in settings:
-            settings['enableLODs'] = False
+            settings['enableLODs'] = True
         if 'waterReflectionScale' not in settings:
             settings['waterReflectionScale'] = 0.25
         if 'waterRefractionScale' not in settings:
             settings['waterRefractionScale'] = 0.5
         if 'waterShader' not in settings:
-            settings['waterShader'] = True
+            settings['waterShader'] = False
         winSize = settings['res'] if not settings['fullscreen'] else [base.pipe.getDisplayWidth(), base.pipe.getDisplayHeight()]
         # Resolution is set above for windowed mode. This is in case the user is running fullscreen mode.
         # If we set the windowed resolution down here, the game wouldn't notice.
