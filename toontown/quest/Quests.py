@@ -505,6 +505,14 @@ class Quest:
         else:
             return 0
 
+    def doesBuildingCount(self, track, numFloors, zoneId):
+        if self.getType() == QuestTypeDefeatBuilding:
+            trackCounts = self.buildingTrack is Any or track == self.buildingTrack
+            floorCounts = self.numFloors is Any or numFloors >= self.numFloors
+            return trackCounts and floorCounts and self.isLocationMatch(zoneId)
+        else:
+            return 0
+
     def testRecover(self, progress):
         test = random.random() * 100
         chance = self.getPercentChance()
@@ -950,8 +958,21 @@ QuestDict = {
          100,
          QuestRewardTrackFrame,
          7),
-        NA,
+        1030,
         TTLocalizer.QuestDialogDict[1029]),
+ 1030: (FF_TIER,
+        MainQuest,
+        Finish,
+        (QuestTypeGoTo,),
+        1113,
+        1001,
+        1514,
+        (QuestRewardXP,
+         100,
+         QuestRewardTrackFrame,
+         7),
+        NA,
+        TTLocalizer.QuestDialogDict[1030]),
  1040: (FF_TIER,
         MainQuest,
         Start,
@@ -1275,7 +1296,7 @@ Cutscenes = (1,
  1028)
 ImportantQuests = (1004,
  1028,
- 1031,
+ 1030,
  1040,
  1046)
 ffMainQuests = []

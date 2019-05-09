@@ -580,12 +580,11 @@ QuestDialogDict = {
         COMPLETE: ''},
  1029: {GREETING: '',
         LEAVING: '',
-        QUEST: 'I\'m glad you\'re here.\x07Loony Louis\' building has been taken over by the Cogs.\x07I didn\'t think they were strong enough to take over our buildings there.\x07Will you go and win it back for us?\x07It will be challenging, but I think you are strong enough to take it on.\x07I\'m sure Loony Louis will greatly appreciate it, too.\x07Thanks, _avName_. Good luck!',
-        COMPLETE: 'Gee thanks for saving my building, Toon!'},
+        QUEST: 'I\'m glad you\'re here.\x07Loony Louis\' building has been taken over by the Cogs.\x07I didn\'t think they were strong enough to take over our buildings there.\x07Will you go and win it back for us?\x07It will be challenging, so make sure you\'ve worked up your throw and squirt gags.\x07Check in with Loony Louis after you\'ve finished.\x07Thanks, _avName_. Good luck!'},
  1030: {GREETING: '',
         LEAVING: '',
-        QUEST: 'Now I\'m just gonna need you to pick up an air pump from Lucy Tires.\x07Just kidding...\x07Go see Flippy and let him know you saved my building.\x07See ya around!',
-        COMPLETE: ''},
+        QUEST: 'Gee thanks for saving my building, Toon!\x07Now I\'m just gonna need you to pick up an air pump from Lucy Tires.\x07Just kidding...\x07Go see Flippy and let him know you saved my building.\x07See ya around!',
+        COMPLETE: 'Yes! Great job!\x07You\'ve been an immense help to the Toons of Rickety Road.\x07You are relieved of your duties for now.\x07Remember to keep checking the Toon HQ for important ToonTasks!\x07So long, _avName_.'},
  1040: {GREETING: '',
         QUEST: 'Emma\'s dairy store called us for help earlier.\x07She is offering teleport access to anyone who can assist her._where_'},
  1041: {GREETING: '',
@@ -622,7 +621,7 @@ CutsceneDialogDict = {
         'But then that means...',
         'Uh, oh.'),
         'Oh, this is a disaster!'),
- 1028: '_avName_! This is Flippy. Something\'s happened.\x07We\'re gonna need your help. Report to the Toon Hall immediately!'
+ 1028: '_avName_! This is Flippy. Something\'s happened and we\'re gonna need your help.\x07Report to the Toon Hall immediately!'
 }
 MovieTutorialReward1 = 'You received 1 Throw point! When you get 10, you will get a new gag!'
 MovieTutorialReward2 = 'You received 1 Squirt point! When you get 10, you will get a new gag!'

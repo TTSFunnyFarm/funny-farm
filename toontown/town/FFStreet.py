@@ -1,10 +1,10 @@
 from panda3d.core import *
 from direct.interval.IntervalGlobal import *
 from direct.showbase import Audio3DManager
-from toontown.shader import WaterShader
-from toontown.toonbase import FunnyFarmGlobals
 from toontown.hood import SkyUtil
+from toontown.shader import WaterShader
 from toontown.toon import NPCToons
+from toontown.toonbase import FunnyFarmGlobals
 from Street import Street
 
 class FFStreet(Street):
@@ -66,7 +66,7 @@ class FFStreet(Street):
                 self.npcs[1].initializeBodyCollisions('toon')
                 self.npcs[1].addActive()
                 continue
-            if questDesc[0] in [1028, 1029]:
+            if questDesc[0] in [1028, 1029] and questDesc[1] != 1:
                 bldg = base.air.suitPlanners[self.zoneId].buildingMap[18]
                 if bldg.mode == 'toon':
                     messenger.send('spawnBuilding-%d' % self.zoneId, [18])
