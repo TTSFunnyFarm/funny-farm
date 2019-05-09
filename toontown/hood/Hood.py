@@ -210,7 +210,8 @@ class Hood(DirectObject):
         self.geom.stash()
         self.sky.reparentTo(hidden)
         self.sky.stash()
-        self.place = SuitInterior(block, track, difficulty, numFloors)
+        zone = self.zoneId + 500 + block
+        self.place = SuitInterior(zone, track, difficulty, numFloors)
         self.place.loadNextFloor()
 
     def enterEliteBuilding(self):

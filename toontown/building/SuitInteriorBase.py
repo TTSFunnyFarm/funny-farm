@@ -7,8 +7,9 @@ from ElevatorUtils import *
 class SuitInteriorBase(DirectObject):
     notify = directNotify.newCategory('SuitInterior')
 
-    def __init__(self, block, track):
-        self.block = block
+    def __init__(self, zoneId, track):
+        self.zoneId = zoneId
+        self.block = int(str(self.zoneId)[2:])
         self.track = track
         self.floorModelA = None
         self.floorModelB = None
