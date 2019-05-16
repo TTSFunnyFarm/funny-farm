@@ -76,6 +76,7 @@ class OptionsTabPage(DirectFrame):
     def load(self):
         guiButton = loader.loadModel('phase_3/models/gui/quit_button')
         gui = loader.loadModel('phase_3.5/models/gui/friendslist_gui')
+        matGui = loader.loadModel('phase_3/models/gui/tt_m_gui_mat_mainGui')
         helpGui = loader.loadModel('phase_3.5/models/gui/tt_m_gui_brd_help.bam')
         titleHeight = 0.61
         textStartHeight = 0.45
@@ -89,30 +90,42 @@ class OptionsTabPage(DirectFrame):
         disabled_arrow_color = Vec4(0.6, 0.6, 0.6, 1.0)
         self.speed_chat_scale = 0.055
         
-        self.audioLabel = DirectLabel(parent=self, relief=None, text=TTLocalizer.OptionsPageAudioLabel, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_align=TextNode.ACenter, text_scale=0.07, pos=(-0.5, 0, textStartHeight - 0.03))
-        self.videoLabel = DirectLabel(parent=self, relief=None, text=TTLocalizer.OptionsPageVideoLabel, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_align=TextNode.ACenter, text_scale=0.07, pos=(-0.5, 0, (textStartHeight - textRowHeight * 3) - 0.03))
+        self.audioLabel = DirectLabel(parent=self, relief=None, text=TTLocalizer.OptionsPageAudioLabel, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_align=TextNode.ALeft, text_scale=0.07, pos=(-0.8, 0, textStartHeight - 0.03))
+        self.videoLabel = DirectLabel(parent=self, relief=None, text=TTLocalizer.OptionsPageVideoLabel, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_align=TextNode.ALeft, text_scale=0.07, pos=(-0.8, 0, (textStartHeight - textRowHeight * 3) - 0.03))
 
         self.Music_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, pos=(leftMargin, 0, textStartHeight - textRowHeight))
-        self.SoundFX_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 2))
+        self.SoundFX_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 2))  
         self.Fullscreen_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 4))
-        self.Antialias_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 5))
-        self.LOD_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 6))
+        self.Resolution_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 5))
+        self.Antialias_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 6))
         self.Fps_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 7))
+        self.Smooth_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 5))
+        self.Blend_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 6))
+        self.LOD_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 7))
         self.WaterShader_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 8))
 
         self.Music_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight), command=self.__doToggleMusic)
         self.SoundFX_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 2), command=self.__doToggleSfx)
         self.Fullscreen_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image3_color=Vec4(0.5, 0.5, 0.5, 0.5), image_scale=button_image_scale, text=TTLocalizer.OptionsPageChange, text3_fg=(0.5, 0.5, 0.5, 0.75), text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 4), command=self.__doToggleFullscreen)
-        self.Antialias_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 5), command=self.__doToggleAntialias)
-        self.LOD_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 6), command=self.__doToggleLOD)
+        self.Resolution_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 5), command=self.__doChangeResolution)
+        self.Antialias_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 6), command=self.__doToggleAntialias)
         self.Fps_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 7), command=self.__doToggleFps)
+        self.Smooth_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 5), command=self.__doToggleSmooth)
+        self.Blend_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 6), command=self.__doToggleBlend)
+        self.Blend_tempText = DirectLabel(parent=self, relief=None, text='Coming soon', text_scale=options_text_scale, text_wordwrap=16, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 6))
+        self.Blend_tempText.hide()
+        self.LOD_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 7), command=self.__doToggleLOD)
         self.WaterShader_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 8), command=self.__doChangeWaterShader)
+
+        self.rightArrow = DirectButton(parent=self, relief=None, image=(matGui.find('**/tt_t_gui_mat_nextUp'), matGui.find('**/tt_t_gui_mat_nextDown'), matGui.find('**/tt_t_gui_mat_nextUp'), matGui.find('**/tt_t_gui_mat_nextDisabled')), pos=(-0.05, 0, 0.11), image_scale=(0.18, 0.18, 0.18), image1_scale=(0.21, 0.21, 0.21), image2_scale=(0.21, 0.21, 0.21), image3_scale=(0.18, 0.18, 0.18), command=self.enterAdvancedVideoOptions)
+        self.leftArrow = DirectButton(parent=self, relief=None, image=(matGui.find('**/tt_t_gui_mat_nextUp'), matGui.find('**/tt_t_gui_mat_nextDown'), matGui.find('**/tt_t_gui_mat_nextUp'), matGui.find('**/tt_t_gui_mat_nextDisabled')), pos=(-0.15, 0, 0.11), image_scale=(-0.18, 0.18, 0.18), image1_scale=(-0.21, 0.21, 0.21), image2_scale=(-0.21, 0.21, 0.21), image3_scale=(-0.18, 0.18, 0.18), command=self.enterVideoOptions)
+
         self.exitButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=1.15, text=TTLocalizer.OptionsPageExitToontown, text_scale=options_text_scale, text_pos=button_textpos, textMayChange=0, pos=(0.45, 0, -0.6), command=self.__handleExitShowWithConfirm)
 
-        self.Antialias_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.44, 0, (textStartHeight - textRowHeight * 5) + 0.01), scale=0.45, command=self.enterAntialiasHelp)
-        self.LOD_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.33, 0, (textStartHeight - textRowHeight * 6) + 0.01), scale=0.45, command=self.enterLODHelp)
-        self.Fps_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.42, 0, (textStartHeight - textRowHeight * 7) + 0.01), scale=0.45, command=self.enterFpsHelp)
-        self.WaterShader_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.46, 0, (textStartHeight - textRowHeight * 8) + 0.01), scale=0.45, command=self.enterShaderLevelHelp)
+        # self.Antialias_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.44, 0, (textStartHeight - textRowHeight * 5) + 0.01), scale=0.45, command=self.enterAntialiasHelp)
+        # self.LOD_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.33, 0, (textStartHeight - textRowHeight * 6) + 0.01), scale=0.45, command=self.enterLODHelp)
+        # self.Fps_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.42, 0, (textStartHeight - textRowHeight * 7) + 0.01), scale=0.45, command=self.enterFpsHelp)
+        # self.WaterShader_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.46, 0, (textStartHeight - textRowHeight * 8) + 0.01), scale=0.45, command=self.enterShaderLevelHelp)
 
         guiButton.removeNode()
         gui.removeNode()
@@ -123,12 +136,8 @@ class OptionsTabPage(DirectFrame):
         self.settingsChanged = 0
         self.__setMusicButton()
         self.__setSoundFXButton()
-        self.__setFullscreenButton()
-        self._setAntialiasingButton()
-        self._setLODButton()
-        self.__setFpsButton()
-        self.__setWaterShaderButton()
         self.exitButton.show()
+        self.enterVideoOptions()
 
     def exit(self):
         self.ignore('confirmDone')
@@ -143,10 +152,10 @@ class OptionsTabPage(DirectFrame):
         self.Fps_toggleButton.destroy()
         self.WaterShader_toggleButton.destroy()
         self.exitButton.destroy()
-        self.Antialias_Help.destroy()
-        self.LOD_Help.destroy()
-        self.Fps_Help.destroy()
-        self.WaterShader_Help.destroy()
+        # self.Antialias_Help.destroy()
+        # self.LOD_Help.destroy()
+        # self.Fps_Help.destroy()
+        # self.WaterShader_Help.destroy()
         del self.audioLabel
         del self.videoLabel
         del self.Music_Label
@@ -164,11 +173,64 @@ class OptionsTabPage(DirectFrame):
         del self.Fps_toggleButton
         del self.WaterShader_toggleButton
         del self.exitButton
-        del self.Antialias_Help
-        del self.LOD_Help
-        del self.Fps_Help
-        del self.WaterShader_Help
+        # del self.Antialias_Help
+        # del self.LOD_Help
+        # del self.Fps_Help
+        # del self.WaterShader_Help
         self.currentSizeIndex = None
+
+    def enterVideoOptions(self):
+        self.Smooth_Label.hide()
+        self.Smooth_toggleButton.hide()
+        self.Blend_Label.hide()
+        self.Blend_toggleButton.hide()
+        self.Blend_tempText.hide()
+        self.LOD_Label.hide()
+        self.LOD_toggleButton.hide()
+        self.WaterShader_Label.hide()
+        self.WaterShader_toggleButton.hide()
+        self.Fullscreen_Label.show()
+        self.Fullscreen_toggleButton.show()
+        self.Resolution_Label.show()
+        self.Resolution_toggleButton.show()
+        self.Antialias_Label.show()
+        self.Antialias_toggleButton.show()
+        self.Fps_Label.show()
+        self.Fps_toggleButton.show()
+        self.__setFullscreenButton()
+        self.__setResolutionButton()
+        self._setAntialiasingButton()
+        self.__setFpsButton()
+        self.videoLabel['text'] = TTLocalizer.OptionsPageVideoLabel
+        self.leftArrow['state'] = DGG.DISABLED
+        self.rightArrow['state'] = DGG.NORMAL
+        self.currVideoPage = 1
+
+    def enterAdvancedVideoOptions(self):
+        self.Fullscreen_Label.hide()
+        self.Fullscreen_toggleButton.hide()
+        self.Resolution_Label.hide()
+        self.Resolution_toggleButton.hide()
+        self.Antialias_Label.hide()
+        self.Antialias_toggleButton.hide()
+        self.Fps_Label.hide()
+        self.Fps_toggleButton.hide()
+        self.Smooth_Label.show()
+        self.Smooth_toggleButton.show()
+        self.Blend_Label.show()
+        self.Blend_toggleButton.show()
+        self.LOD_Label.show()
+        self.LOD_toggleButton.show()
+        self.WaterShader_Label.show()
+        self.WaterShader_toggleButton.show()
+        self.__setSmoothingButton()
+        self.__setBlendingButton()
+        self._setLODButton()
+        self.__setWaterShaderButton()
+        self.videoLabel['text'] = TTLocalizer.OptionsPageAdvancedLabel
+        self.leftArrow['state'] = DGG.NORMAL
+        self.rightArrow['state'] = DGG.DISABLED
+        self.currVideoPage = 2
 
     def __doToggleMusic(self):
         messenger.send('wakeup')
@@ -205,57 +267,6 @@ class OptionsTabPage(DirectFrame):
             settings['toonChatSounds'] = True
         self.settingsChanged = 1
         self.__setToonChatSoundsButton()
-
-    def __doToggleAntialias(self):
-        messenger.send('wakeup')
-        if settings['antialiasing']:
-            render.setAntialias(AntialiasAttrib.MNone)
-            settings['antialiasing'] = 0
-        else:
-            render.setAntialias(AntialiasAttrib.MAuto)
-            settings['antialiasing'] = 2
-        loadPrcFileData('Settings: MSAA', 'framebuffer-multisample %s' % (settings['antialiasing'] > 0))
-        loadPrcFileData('Settings: MSAA samples', 'multisamples %i' % settings['antialiasing'])
-        base.needRestartAntialiasing = True
-        self._setAntialiasingButton()
-
-    def __doToggleLOD(self):
-        messenger.send('wakeup')
-        settings['enableLODs'] = not settings['enableLODs']
-        loadPrcFileData('Settings: LODs', 'enable-lods %s' % settings['enableLODs'])
-        base.needRestartLOD = True
-        self._setLODButton()
-
-    def __doToggleFps(self):
-        messenger.send('wakeup')
-        if base.drawFps:
-            base.setFrameRateMeter(False)
-            base.drawFps = False
-            settings['drawFps'] = False
-        else:
-            base.setFrameRateMeter(True)
-            base.drawFps = True
-            settings['drawFps'] = True
-        self.__setFpsButton()
-
-    def __getWaterShaderIndex(self):
-        idx = FunnyFarmGlobals.ShaderCustom
-        for lvl in FunnyFarmGlobals.WaterShaderLevels:
-            if [settings['waterReflectionScale'], settings['waterRefractionScale']] == lvl:
-                idx = FunnyFarmGlobals.WaterShaderLevels.index(lvl)
-        return idx
-
-    def __doChangeWaterShader(self):
-        messenger.send('wakeup')
-        idx = self.__getWaterShaderIndex()
-        if idx == FunnyFarmGlobals.ShaderCustom:
-            idx = 0
-        else:
-            idx = (idx + 1) % len(FunnyFarmGlobals.WaterShaderLevels)
-        settings['waterReflectionScale'], settings['waterRefractionScale'] = FunnyFarmGlobals.WaterShaderLevels[idx]
-        settings['waterShader'] = idx != 0
-        messenger.send('update-shader-settings')
-        self.__setWaterShaderButton()
 
     def __doToggleFullscreen(self):
         messenger.send('wakeup')
@@ -297,6 +308,66 @@ class OptionsTabPage(DirectFrame):
         self.revertDialog = None
         return
 
+    def __doChangeResolution(self):
+        pass # todo
+
+    def __doToggleAntialias(self):
+        messenger.send('wakeup')
+        if settings['antialiasing']:
+            render.setAntialias(AntialiasAttrib.MNone)
+            settings['antialiasing'] = 0
+        else:
+            render.setAntialias(AntialiasAttrib.MAuto)
+            settings['antialiasing'] = 2
+        loadPrcFileData('Settings: MSAA', 'framebuffer-multisample %s' % (settings['antialiasing'] > 0))
+        loadPrcFileData('Settings: MSAA samples', 'multisamples %i' % settings['antialiasing'])
+        base.needRestartAntialiasing = True
+        self._setAntialiasingButton()
+
+    def __doToggleFps(self):
+        messenger.send('wakeup')
+        if base.drawFps:
+            base.setFrameRateMeter(False)
+            base.drawFps = False
+            settings['drawFps'] = False
+        else:
+            base.setFrameRateMeter(True)
+            base.drawFps = True
+            settings['drawFps'] = True
+        self.__setFpsButton()
+
+    def __doToggleSmooth(self):
+        pass # todo
+
+    def __doToggleBlend(self):
+        pass # todo
+
+    def __doToggleLOD(self):
+        messenger.send('wakeup')
+        settings['enableLODs'] = not settings['enableLODs']
+        loadPrcFileData('Settings: LODs', 'enable-lods %s' % settings['enableLODs'])
+        base.needRestartLOD = True
+        self._setLODButton()
+
+    def __getWaterShaderIndex(self):
+        idx = FunnyFarmGlobals.ShaderCustom
+        for lvl in FunnyFarmGlobals.WaterShaderLevels:
+            if [settings['waterReflectionScale'], settings['waterRefractionScale']] == lvl:
+                idx = FunnyFarmGlobals.WaterShaderLevels.index(lvl)
+        return idx
+
+    def __doChangeWaterShader(self):
+        messenger.send('wakeup')
+        idx = self.__getWaterShaderIndex()
+        if idx == FunnyFarmGlobals.ShaderCustom:
+            idx = 0
+        else:
+            idx = (idx + 1) % len(FunnyFarmGlobals.WaterShaderLevels)
+        settings['waterReflectionScale'], settings['waterRefractionScale'] = FunnyFarmGlobals.WaterShaderLevels[idx]
+        settings['waterShader'] = idx != 0
+        messenger.send('update-shader-settings')
+        self.__setWaterShaderButton()
+
     def __setMusicButton(self):
         if base.musicActive:
             self.Music_Label['text'] = TTLocalizer.OptionsPageMusicOnLabel
@@ -313,16 +384,6 @@ class OptionsTabPage(DirectFrame):
             self.SoundFX_Label['text'] = TTLocalizer.OptionsPageSFXOffLabel
             self.SoundFX_toggleButton['text'] = TTLocalizer.OptionsPageToggleOn
 
-    def __setFullscreenButton(self):
-        if settings['fullscreen']:
-            self.Fullscreen_Label['text'] = TTLocalizer.OptionsPageFullscreenOnLabel
-            self.Fullscreen_toggleButton['text'] = TTLocalizer.OptionsPageToggleOff
-        else:
-            self.Fullscreen_Label['text'] = TTLocalizer.OptionsPageFullscreenOffLabel
-            self.Fullscreen_toggleButton['text'] = TTLocalizer.OptionsPageToggleOn
-        if config.GetBool('fullscreen-requires-restart', False):
-            self.Fullscreen_Label['text'] += TTLocalizer.OptionsPageRequiresRestart
-
     def __setToonChatSoundsButton(self):
         if base.toonChatSounds:
             self.ToonChatSounds_Label['text'] = TTLocalizer.OptionsPageToonChatSoundsOnLabel
@@ -337,6 +398,21 @@ class OptionsTabPage(DirectFrame):
             self.ToonChatSounds_Label.setColorScale(0.5, 0.5, 0.5, 0.5)
             self.ToonChatSounds_toggleButton['state'] = DGG.DISABLED
 
+    def __setFullscreenButton(self):
+        if settings['fullscreen']:
+            self.Fullscreen_Label['text'] = TTLocalizer.OptionsPageFullscreenOnLabel
+            self.Fullscreen_toggleButton['text'] = TTLocalizer.OptionsPageToggleOff
+        else:
+            self.Fullscreen_Label['text'] = TTLocalizer.OptionsPageFullscreenOffLabel
+            self.Fullscreen_toggleButton['text'] = TTLocalizer.OptionsPageToggleOn
+        if config.GetBool('fullscreen-requires-restart', False):
+            self.Fullscreen_Label['text'] += TTLocalizer.OptionsPageRequiresRestart
+
+    def __setResolutionButton(self):
+        width, height = (base.pipe.getDisplayWidth(), base.pipe.getDisplayHeight())
+        self.Resolution_Label['text'] = TTLocalizer.OptionsPageResolution % {'screensize': str(width) + 'x' + str(height)}
+        self.Resolution_toggleButton['text'] = TTLocalizer.OptionsPageChange
+
     def _setAntialiasingButton(self):
         if settings['antialiasing']:
             self.Antialias_Label['text'] = TTLocalizer.OptionsPageAntialiasingOnLabel
@@ -347,6 +423,23 @@ class OptionsTabPage(DirectFrame):
         if base.needRestartAntialiasing:
             self.Antialias_Label['text'] += TTLocalizer.OptionsPageRequiresRestart
 
+    def __setFpsButton(self):
+        if base.drawFps:
+            self.Fps_Label['text'] = TTLocalizer.OptionsPageFpsOnLabel
+            self.Fps_toggleButton['text'] = TTLocalizer.OptionsPageToggleOff
+        else:
+            self.Fps_Label['text'] = TTLocalizer.OptionsPageFpsOffLabel
+            self.Fps_toggleButton['text'] = TTLocalizer.OptionsPageToggleOn
+
+    def __setSmoothingButton(self):
+        self.Smooth_Label['text'] = TTLocalizer.OptionsPageSmoothingOnLabel
+        self.Smooth_toggleButton['text'] = TTLocalizer.OptionsPageToggleOff
+
+    def __setBlendingButton(self):
+        self.Blend_Label['text'] = TTLocalizer.OptionsPageBlendingOffLabel
+        self.Blend_toggleButton.hide()
+        self.Blend_tempText.show()
+
     def _setLODButton(self):
         if settings['enableLODs']:
             self.LOD_Label['text'] = TTLocalizer.OptionsPageLODOnLabel
@@ -356,14 +449,6 @@ class OptionsTabPage(DirectFrame):
             self.LOD_toggleButton['text'] = TTLocalizer.OptionsPageToggleOn
         if base.needRestartLOD:
             self.LOD_Label['text'] += TTLocalizer.OptionsPageRequiresRestart
-
-    def __setFpsButton(self):
-        if base.drawFps:
-            self.Fps_Label['text'] = TTLocalizer.OptionsPageFpsOnLabel
-            self.Fps_toggleButton['text'] = TTLocalizer.OptionsPageToggleOff
-        else:
-            self.Fps_Label['text'] = TTLocalizer.OptionsPageFpsOffLabel
-            self.Fps_toggleButton['text'] = TTLocalizer.OptionsPageToggleOn
 
     def __setWaterShaderButton(self):
         idx = self.__getWaterShaderIndex()
