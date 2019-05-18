@@ -130,6 +130,7 @@ class DataManager:
             base.localAvatar.setTrackProgress(-1, -1)
         else:
             base.localAvatar.setTrackProgress(*data.setTrackProgress)
+        base.localAvatar.setHoodsVisited(data.setHoodsVisited)
         base.localAvatar.setNametagFont(FunnyFarmGlobals.getVar(data.setNametagStyle))
         base.localAvatar.setCheesyEffect(data.setCheesyEffect)
         base.localAvatar.setHat(*data.setHat)
