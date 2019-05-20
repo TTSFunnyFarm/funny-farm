@@ -69,9 +69,10 @@ class Battle(DirectObject, NodePath, BattleBase):
         self.joinable = 1
         self.joinTrack = None
 
-    def enter(self):
+    def enter(self, creditMultiplier = 1):
         self.enterFaceOff()
-        self.townBattle.enter(self.localToonBattleEvent, bldg=self.bldg, tutorialFlag=self.tutorialFlag)
+        self.townBattle.enter(self.localToonBattleEvent, bldg=self.bldg, creditMultiplier=creditMultiplier, tutorialFlag=self.tutorialFlag)
+        self.battleCalc.setSkillCreditMultiplier(creditMultiplier)
         self.activeToons = []
         self.activeSuits = []
         self.activeToonIds = [] # for AI functions

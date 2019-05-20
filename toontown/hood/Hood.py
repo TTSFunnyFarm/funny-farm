@@ -11,6 +11,7 @@ from toontown.toon import NPCToons
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals
+import ZoneUtil
 
 class Hood(DirectObject):
     notify = directNotify.newCategory('Hood')
@@ -49,6 +50,10 @@ class Hood(DirectObject):
                     base.localAvatar.setSystemMessage(0, TTLocalizer.WinterHolidayMessage)
             else:
                 base.localAvatar.enterTeleportIn(callback=self.handleEntered)
+        if ZoneUtil.getCanonicalHoodId(self.zoneId) not in base.localAvatar.getHoodsVisited():
+            hoodList = base.localAvatar.getHoodsVisited()
+            hoodList.append(ZoneUtil.getCanonicalHoodId(self.zoneId))
+            base.localAvatar.setHoodsVisited(hoodList)
         base.avatarData.setLastHood = self.zoneId
         dataMgr.saveToonData(base.avatarData)
         self.spawnTitleText()
@@ -210,7 +215,8 @@ class Hood(DirectObject):
         self.geom.stash()
         self.sky.reparentTo(hidden)
         self.sky.stash()
-        self.place = SuitInterior(block, track, difficulty, numFloors)
+        zone = self.zoneId + 500 + block
+        self.place = SuitInterior(zone, track, difficulty, numFloors)
         self.place.loadNextFloor()
 
     def enterEliteBuilding(self):

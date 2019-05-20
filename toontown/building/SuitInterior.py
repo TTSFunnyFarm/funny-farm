@@ -9,8 +9,8 @@ from toontown.building.SuitPlannerInterior import SuitPlannerInterior
 
 class SuitInterior(SuitInteriorBase):
 
-    def __init__(self, block, track, difficulty, numFloors):
-        SuitInteriorBase.__init__(self, block, track)
+    def __init__(self, zoneId, track, difficulty, numFloors):
+        SuitInteriorBase.__init__(self, zoneId, track)
         self.difficulty = difficulty
         self.numFloors = numFloors
         self.toons = [base.localAvatar]
@@ -159,7 +159,7 @@ class SuitInterior(SuitInteriorBase):
         else:
             self.battle.setBossBattle(0)
             music = self.battleMusic
-        self.battle.enter()
+        self.battle.enter(creditMultiplier=2.0)
         base.playMusic(music, looping=1, volume=0.9)
         self.accept(self.townBattle.doneEvent, self.exitBattle)
 

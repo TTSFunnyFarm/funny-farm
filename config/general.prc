@@ -1,7 +1,7 @@
 # Window options
 window-title Toontown's Funny Farm
 win-origin 8 31
-win-size 1280 720
+win-size 800 600
 cursor-filename phase_3/etc/toonmono.cur
 icon-filename phase_3/etc/funnyfarm.ico
 

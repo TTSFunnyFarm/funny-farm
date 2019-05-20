@@ -238,7 +238,7 @@ QuestsDefaultLeaving = ('Bye!',
  'So long, _avName_.',
  'See ya, _avName_!',
  'Good luck!',
- 'Have fun in Toontown!',
+ 'Have fun in Funny Farm!',
  'See you later!')
 QuestsDefaultReject = ('Hello.',
  'Can I help you?',
@@ -574,6 +574,17 @@ QuestDialogDict = {
         LEAVING: '',
         QUEST: 'I\'m afraid there\'s not much we can do until we receive a new lead on the manager Cog.\x07As we await a new message, you should keep defeating Cogs on this street.\x07You seem to be a good fighter, and defeating any Cogs will help alleviate our problem.',
         COMPLETE: 'Good work, _avName_.\x07Funny Farm owes you a debt of gratitude for fighting off those pests.'},
+ 1028: {GREETING: '',
+        LEAVING: '',
+        QUEST: '',
+        COMPLETE: ''},
+ 1029: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'I\'m glad you\'re here.\x07Loony Louis\' building has been taken over by the Cogs.\x07I didn\'t think they were strong enough to take over our buildings there.\x07Will you go and win it back for us?\x07It will be challenging, so make sure you\'ve worked up your throw and squirt gags.\x07Check in with Loony Louis after you\'ve finished.\x07Thanks, _avName_. Good luck!'},
+ 1030: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Gee thanks for saving my building, Toon!\x07Now I\'m just gonna need you to pick up an air pump from Lucy Tires.\x07Just kidding...\x07Go see Flippy and let him know you saved my building.\x07See ya around!',
+        COMPLETE: 'Yes! Great job!\x07You\'ve been an immense help to the Toons of Rickety Road.\x07You are relieved of your duties for now.\x07Remember to keep checking the Toon HQ for important ToonTasks!\x07So long, _avName_.'},
  1040: {GREETING: '',
         QUEST: 'Emma\'s dairy store called us for help earlier.\x07She is offering teleport access to anyone who can assist her._where_'},
  1041: {GREETING: '',
@@ -609,7 +620,8 @@ CutsceneDialogDict = {
         'Our Silly Meter readings have plummeted.\x07Ever since you encountered those Cogs, the rates have been decreasing intensely.\x07It\'s almost at zero!',
         'But then that means...',
         'Uh, oh.'),
-        'Oh, this is a disaster!')
+        'Oh, this is a disaster!'),
+ 1028: '_avName_! This is Flippy. Something\'s happened and we\'re gonna need your help.\x07Report to the Toon Hall immediately!'
 }
 MovieTutorialReward1 = 'You received 1 Throw point! When you get 10, you will get a new gag!'
 MovieTutorialReward2 = 'You received 1 Squirt point! When you get 10, you will get a new gag!'
@@ -3524,6 +3536,7 @@ OptionsPagePurchase = 'Subscribe'
 OptionsPageLogout = 'Logout'
 OptionsPageAudioLabel = 'Audio Options'
 OptionsPageVideoLabel = 'Video Options'
+OptionsPageAdvancedLabel = 'Advanced\nVideo Options'
 OptionsPageExitToontown = 'Exit Funny Farm'
 OptionsPageMusicOnLabel = 'Music is on.'
 OptionsPageMusicOffLabel = 'Music is off.'
@@ -3537,17 +3550,21 @@ OptionsPageWhisperEnabledLabel = 'Allowing whispers from anyone.'
 OptionsPageWhisperDisabledLabel = 'Allowing whispers from friends only.'
 OptionsPageAntialiasingOnLabel = 'Anti-aliasing is on.'
 OptionsPageAntialiasingOffLabel = 'Anti-aliasing is off.'
-OptionsPageLODOnLabel = 'LODs are on.'
-OptionsPageLODOffLabel = 'LODs are off.'
 OptionsPageFpsOnLabel = 'FPS Meter is on.'
 OptionsPageFpsOffLabel = 'FPS Meter is off.'
+OptionsPageSmoothingOnLabel = 'Animation smoothing is on.'
+OptionsPageSmoothingOffLabel = 'Animation smoothing is off.'
+OptionsPageBlendingOnLabel = 'Animation blending is on.'
+OptionsPageBlendingOffLabel = 'Animation blending is off.'
+OptionsPageLODOnLabel = 'LOD Nodes are on.'
+OptionsPageLODOffLabel = 'LOD Nodes are off.'
 OptionsPageRequiresRestart = '\n(Requires game restart)'
 OptionsPageAntialiasingHeading = 'Anti-aliasing'
-OptionsPageAntialiasingHelp = 'Anti-aliasing makes objects in the game look better by smoothing out jagged edges on models. Enabling this can reduce performance.\n\nYou can adjust the strength in your preferences file.'
-OptionsPageLODHeading = 'LOD Nodes'
-OptionsPageLODHelp = 'LOD nodes show lower quality models for characters as you move farther away from them.\n\nTurning on LODs can slightly improve performance.'
+OptionsPageAntialiasingHelp = 'Anti-aliasing makes objects in the game look better by "smoothing out" jagged edges on models. Enabling this can reduce performance.\n\nYou can adjust the strength in your preferences file.'
 OptionsPageFpsHeading = 'FPS Meter'
-OptionsPageFpsHelp = 'If you want to monitor your game\'s performance, you can turn on the FPS meter to see how many frames per second you get.'
+OptionsPageFpsHelp = 'If you want to monitor your game\'s performance, you can turn on the FPS meter to see how many frames per second your game renders.'
+OptionsPageLODHeading = 'LOD Nodes'
+OptionsPageLODHelp = 'LOD (level of detail) nodes show lower quality models for characters as you move farther away from them.\n\nTurning on LOD nodes can slightly improve performance.'
 OptionsPageShaderLevelHeading = 'Shader Level'
 OptionsPageShaderLevelHelp = 'This option adjusts the quality of shaders, at the cost of performance.\n\nIt can also disable the shader to save performance.\nIf you are not satisfied with these levels, you can adjust the shader values to your liking in preferences.json.'
 OptionsPageSpeedChatStyleLabel = 'SpeedChat Color'
@@ -3570,6 +3587,7 @@ OptionsPageSelect = 'Select'
 OptionsPageToggleOn = 'Turn On'
 OptionsPageToggleOff = 'Turn Off'
 OptionsPageChange = 'Change'
+OptionsPageResolution = 'Screen resolution: %(screensize)s'
 OptionsPageDisplaySettings = 'Display: %(screensize)s, %(api)s'
 OptionsPageDisplaySettingsNoApi = 'Display: %(screensize)s'
 OptionsPageExitConfirm = 'Exit Funny Farm?'

@@ -19,7 +19,7 @@ __builtins__.settings = Settings(preferencesFilename)
 if 'antialiasing' not in settings:
     settings['antialiasing'] = 0
 if 'res' not in settings:
-    settings['res'] = [1280, 720]
+    settings['res'] = [800, 600]
 loadPrcFileData('Settings: MSAA', 'framebuffer-multisample %s' % (settings['antialiasing'] > 0))
 loadPrcFileData('Settings: MSAA samples', 'multisamples %i' % settings['antialiasing'])
 loadPrcFileData('Settings: res', 'win-size %d %d' % tuple(settings['res']))
@@ -72,13 +72,13 @@ class FunnyFarmStart:
         if 'drawFps' not in settings:
             settings['drawFps'] = False
         if 'enableLODs' not in settings:
-            settings['enableLODs'] = False
+            settings['enableLODs'] = True
         if 'waterReflectionScale' not in settings:
             settings['waterReflectionScale'] = 0.25
         if 'waterRefractionScale' not in settings:
             settings['waterRefractionScale'] = 0.5
         if 'waterShader' not in settings:
-            settings['waterShader'] = True
+            settings['waterShader'] = False
         winSize = settings['res'] if not settings['fullscreen'] else [base.pipe.getDisplayWidth(), base.pipe.getDisplayHeight()]
         # Resolution is set above for windowed mode. This is in case the user is running fullscreen mode.
         # If we set the windowed resolution down here, the game wouldn't notice.

@@ -1,6 +1,7 @@
 from panda3d.core import *
 from direct.interval.IntervalGlobal import *
 from otp.nametag.NametagConstants import *
+from toontown.quest import Quests
 from toontown.suit import SuitDNA
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
@@ -203,8 +204,13 @@ class BattleBldg(Battle):
                     toon = self.getToon(toonId)
                     if toon:
                         self.toonItems[toonId] = base.cr.questManager.recoverItems(toon, self.suitsKilled, toon.getZoneId())
-                        # Undecided whether we'll have the merits system or not
-                        # self.toonMerits[toonId] = self.air.promotionMgr.recoverMerits(toon, self.suitsKilled, self.zoneId)
+                        # See if they have a quest to defeat a cog building
+                        for questDesc in toon.quests:
+                            quest = Quests.getQuest(questDesc[0])
+                            quest.setQuestProgress(questDesc[1])
+                            if quest.getType() == Quests.QuestTypeDefeatBuilding:
+                                if quest.doesBuildingCount(self.bldgClass.track, self.bldgClass.numFloors, self.bldgClass.zoneId):
+                                    toon.setQuestProgress(questDesc[0], questDesc[1] + 1)
                 self.setJoinable(0)
                 self.setBattleExperience(*self.getBattleExperience())
                 self.assignRewards()
