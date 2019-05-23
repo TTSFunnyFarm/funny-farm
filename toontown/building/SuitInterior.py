@@ -92,14 +92,14 @@ class SuitInterior(SuitInteriorBase):
         self.exitElevator.setup(self.elevatorModel.copyTo(hidden), self.floor.find('**/elevator-out'), self.track, self.difficulty, self.numFloors)
         self.entranceElevator.forceCloseDoors()
         self.exitElevator.forceCloseDoors()
-        
+
         suitHandles = self.planner.genFloorSuits(self.currentFloor - 1)
         self.suits = suitHandles['activeSuits']
         self.activeSuits = []
         for suit in self.suits:
             self.activeSuits.append(suit)
         self.reserveSuits = suitHandles['reserveSuits']
-        
+
         for index in range(len(self.suits)):
             self.suits[index].reparentTo(render)
             self.suits[index].setPos(SuitPositions[index])
