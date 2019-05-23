@@ -1,3 +1,50 @@
+# This is the default data for new Toon objects.
+# Layout goes like this: [field, expectedTypes, defaultValue]
+# We include the expected types for the purpose of sanity checking.
+DefaultData = [
+    # [field, expectedTypes, defaultValue]
+    ['setHp', [int], 20],
+    ['setMaxHp', [int], 20],
+    ['setMoney', [int], 0],
+    ['setMaxMoney', [int], 40],
+    ['setBankMoney', [int], 0],
+    ['setMaxBankMoney', [int], 12000],
+    ['setMaxCarry', [int], 20],
+    ['setInventory', [str, unicode], None],
+    ['setExperience', [str, unicode], None],
+    ['setTrackAccess', [list], [0, 0, 0, 0, 1, 1, 0]],
+    ['setHat', [list], [0, 0, 0]],
+    ['setGlasses', [list], [0, 0, 0]],
+    ['setBackpack', [list], [0, 0, 0]],
+    ['setShoes', [list], [0, 0, 0]],
+    ['setNametagStyle', [str, unicode], 'Mickey'],
+    ['setCheesyEffect', [int], 0],
+    ['setLastHood', [int], 1000],
+    ['setLevel', [int], 1],
+    ['setLevelExp', [int], 0],
+    ['setDamage', [list], [0, 0, 0, 0, 0, 0]],
+    ['setDefense', [list], [0, 0, 0, 0]],
+    ['setAccuracy', [list], [0, 0, 0, 0, 0, 0]],
+    ['setClothesTopsList', [list], []],
+    ['setClothesBottomsList', [list], []],
+    ['setHatList', [list], []],
+    ['setGlassesList', [list], []],
+    ['setBackpackList', [list], []],
+    ['setShoesList', [list], []],
+    ['setQuests', [list], []],
+    ['setQuestHistory', [list], []],
+    ['setQuestCarryLimit', [int], 1],
+    ['setQuestingZone', [int], 1000],
+    ['setTrackProgress', [list], [-1, -1]],
+    ['setHoodsVisited', [list], []],
+    ['setTeleportAccess', [list], []],
+    ['setFishingRod', [int], 0],
+    ['setFishCollection', [list], []],
+    ['setFishTank', [list], []],
+    ['setTutorialAck', [int], 0]
+]
+
+# This is the actual ToonData container class.
 class ToonData:
 
     def __init__(self, index, dna, name, hp, maxHp, money, maxMoney, bankMoney, maxBankMoney, maxCarry,
@@ -53,53 +100,7 @@ class ToonData:
         return jsonData
 
     @staticmethod
-    def verifyToonData(toonData):
-        # This is the default data for new Toon objects.
-        # Layout goes like this: [field, expectedTypes, defaultValue]
-        # We include the expected types for the purpose of sanity checking.
-        defaultData = [
-            # [field, expectedTypes, defaultValue]
-            ['setHp', [int], 20],
-            ['setMaxHp', [int], 20],
-            ['setMoney', [int], 0],
-            ['setMaxMoney', [int], 40],
-            ['setBankMoney', [int], 0],
-            ['setMaxBankMoney', [int], 12000],
-            ['setMaxCarry', [int], 20],
-            ['setInventory', [str, unicode], None],
-            ['setExperience', [str, unicode], None],
-            ['setTrackAccess', [list], [0, 0, 0, 0, 1, 1, 0]],
-            ['setHat', [list], [0, 0, 0]],
-            ['setGlasses', [list], [0, 0, 0]],
-            ['setBackpack', [list], [0, 0, 0]],
-            ['setShoes', [list], [0, 0, 0]],
-            ['setNametagStyle', [str, unicode], 'Mickey'],
-            ['setCheesyEffect', [int], 0],
-            ['setLastHood', [int], 1000],
-            ['setLevel', [int], 1],
-            ['setLevelExp', [int], 0],
-            ['setDamage', [list], [0, 0, 0, 0, 0, 0]],
-            ['setDefense', [list], [0, 0, 0, 0]],
-            ['setAccuracy', [list], [0, 0, 0, 0, 0, 0]],
-            ['setClothesTopsList', [list], []],
-            ['setClothesBottomsList', [list], []],
-            ['setHatList', [list], []],
-            ['setGlassesList', [list], []],
-            ['setBackpackList', [list], []],
-            ['setShoesList', [list], []],
-            ['setQuests', [list], []],
-            ['setQuestHistory', [list], []],
-            ['setQuestCarryLimit', [int], 1],
-            ['setQuestingZone', [int], 1000],
-            ['setTrackProgress', [list], [-1, -1]],
-            ['setHoodsVisited', [list], []],
-            ['setTeleportAccess', [list], []],
-            ['setFishingRod', [int], 0],
-            ['setFishCollection', [list], []],
-            ['setFishTank', [list], []],
-            ['setTutorialAck', [int], 0]
-        ]
-
+    def verifyToonData(toonData, saveToonData=True):
         # If this is an instance of ToonData, we need to convert it into a
         # dict in order to perform any verification on it. Otherwise we
         # assume it is a dict that has been loaded from a JSON object.
@@ -127,14 +128,14 @@ class ToonData:
             return False, 'One or more required database fields contain a value of incorrect type!', None
 
         # Now we check every other field:
-        for field in defaultData:
+        for field in DefaultData:
             if field[0] not in toonData.keys():
                 toonData[field[0]] = field[2]
             else:
-                if toonData[field[0]] is None:
+                if toonData[field[0]] is None and field[0] not in ('setExperience', 'setInventory'):
                     toonData[field[0]] = field[2]
 
-                if type(toonData[field[0]]) not in field[1]:
+                if type(toonData[field[0]]) not in field[1] and field[0] not in ('setExperience', 'setInventory'):
                     # Corrupted!
                     return False, 'Field %s contains a value of incorrect type. Expected: %s, got %s' % (field[0], field[1], type(toonData[field[0]])), None
 
@@ -143,7 +144,8 @@ class ToonData:
             if hasattr(toonDataObj, field):
                 setattr(toonDataObj, field, toonData[field])
 
-        dataMgr.saveToonData(toonDataObj)
+        if saveToonData:
+            dataMgr.saveToonData(toonDataObj)
 
         return True, '', toonDataObj
 
@@ -157,7 +159,12 @@ class ToonData:
 
     @staticmethod
     def getDefaultToonData(index, dna, name):
-        return ToonData(index, dna, name, 20, 20, 0, 40, 0, 12000, 20, None, None, [0, 0, 0, 0, 1, 1, 0],
-                        [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000, 1, 0,
-                        [0, 0, 0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [], [], [], [], [], [],
-                        [], [], 1, 1000, [-1, -1], [], [], 0, [], [], 0)
+        defaultToonData = ToonData(index, dna, name, None, None, None, None, None, None, None, None, None, None,
+                                   None, None, None, None, None, None, None, None, None,
+                                   None, None, None, None, None, None, None, None, None,
+                                   None, None, None, None, None, None, None, None, None, None, None)
+        for field in DefaultData:
+            if hasattr(defaultToonData, field[0]):
+                setattr(defaultToonData, field[0], field[2])
+
+        return defaultToonData

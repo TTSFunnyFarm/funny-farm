@@ -60,8 +60,13 @@ class DataManager:
             filename.makeDir()
 
         with open(filename.toOsSpecific(), 'w') as toonData:
+            valid, _, toonDataObj = ToonData.verifyToonData(data, saveToonData=False)
+            if not valid:
+                self.handleDataError()
+                return
+
             try:
-                jsonData = data.makeJsonData()
+                jsonData = toonDataObj.makeJsonData()
             except:
                 self.handleDataError()
                 return
