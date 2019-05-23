@@ -20,6 +20,7 @@ from toontown.minigame import Trajectory
 from toontown.minigame import Maze
 from toontown.minigame import MinigameAvatarScorePanel
 from toontown.minigame import MinigameGlobals
+import functools
 
 class MazeGame(Minigame):
     notify = directNotify.newCategory('MazeGame')
@@ -1046,7 +1047,7 @@ class MazeGame(Minigame):
             updateTics = self.suits[i].getThinkTimestampTics(curTic)
             suitUpdates.extend(zip(updateTics, [i] * len(updateTics)))
 
-        suitUpdates.sort(lambda a, b: a[0] - b[0])
+        suitUpdates.sort(key=functools.cmp_to_key(lambda a, b: a[0] - b[0]))
         if len(suitUpdates) > 0:
             curTic = 0
             for i in range(len(suitUpdates)):

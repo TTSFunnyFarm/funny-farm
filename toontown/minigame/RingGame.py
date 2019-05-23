@@ -13,6 +13,7 @@ from toontown.minigame import RingGroup
 from toontown.minigame import RingTrackGroups
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
+from functools import reduce
 
 class RingGame(Minigame):
     UPDATE_ENVIRON_TASK = 'RingGameUpdateEnvironTask'

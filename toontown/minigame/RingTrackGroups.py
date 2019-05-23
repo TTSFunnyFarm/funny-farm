@@ -150,7 +150,7 @@ def __get_Slots(numRings, rng, vertical = 1):
             getActionsFunc = RingTracks.getVerticalSlotActions
         else:
             getActionsFunc = RingTracks.getHorizontalSlotActions
-        actions, durations = getActionsFunc(fpTab[i])
+        actions, durations = getActionsFunc(list(fpTab)[i])
         track = RingTrack.RingTrack(actions, durations)
         tracks.append(track)
         tOffsets.append(float(i) / numRings * 0.5)
