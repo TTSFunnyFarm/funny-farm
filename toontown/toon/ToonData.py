@@ -1,15 +1,10 @@
-import yaml.dist as yaml
-import binascii
-import ast
-
-class ToonData(yaml.YAMLObject):
-    yaml_tag = 'LocalToon'
+class ToonData:
 
     def __init__(self, index, dna, name, hp, maxHp, money, maxMoney, bankMoney, maxBankMoney, maxCarry,
-                inventory, experience, trackAccess, hat, glasses, backpack, shoes, nametagStyle, cheesyEffect,
-                lastHood, level, levelExp, damage, defense, accuracy, clothesTopsList, clothesBottomsList,
-                hatList, glassesList, backpackList, shoesList, quests, questHistory, questCarryLimit, questingZone,
-                trackProgress, hoodsVisited, teleportAccess, fishingRod, fishCollection, fishTank, tutorialAck):
+                 inventory, experience, trackAccess, hat, glasses, backpack, shoes, nametagStyle, cheesyEffect,
+                 lastHood, level, levelExp, damage, defense, accuracy, clothesTopsList, clothesBottomsList,
+                 hatList, glassesList, backpackList, shoesList, quests, questHistory, questCarryLimit, questingZone,
+                 trackProgress, hoodsVisited, teleportAccess, fishingRod, fishCollection, fishTank, tutorialAck):
         self.index = index
         self.setDNA = dna
         self.setName = name
@@ -53,101 +48,30 @@ class ToonData(yaml.YAMLObject):
         self.setFishTank = fishTank
         self.setTutorialAck = tutorialAck
 
-    def encrypt(self):
-        self.setDNA = binascii.hexlify(str(self.setDNA))
-        self.setName = binascii.hexlify(self.setName)
-        self.setHp = bin(self.setHp)
-        self.setMaxHp = bin(self.setMaxHp)
-        self.setMoney = bin(self.setMoney)
-        self.setMaxMoney = bin(self.setMaxMoney)
-        self.setBankMoney = bin(self.setBankMoney)
-        self.setMaxBankMoney = bin(self.setMaxBankMoney)
-        self.setMaxCarry = bin(self.setMaxCarry)
-        self.setInventory = binascii.hexlify(str(self.setInventory))
-        self.setExperience = binascii.hexlify(str(self.setExperience))
-        self.setTrackAccess = binascii.hexlify(str(self.setTrackAccess))
-        self.setNametagStyle = binascii.hexlify(self.setNametagStyle)
-        self.setCheesyEffect = bin(self.setCheesyEffect)
-        self.setLastHood = bin(self.setLastHood)
-        self.setHat = binascii.hexlify(str(self.setHat))
-        self.setGlasses = binascii.hexlify(str(self.setGlasses))
-        self.setBackpack = binascii.hexlify(str(self.setBackpack))
-        self.setShoes = binascii.hexlify(str(self.setShoes))
-        self.setLevel = bin(self.setLevel)
-        self.setLevelExp = bin(self.setLevelExp)
-        self.setDamage = binascii.hexlify(str(self.setDamage))
-        self.setDefense = binascii.hexlify(str(self.setDefense))
-        self.setAccuracy = binascii.hexlify(str(self.setAccuracy))
-        self.setClothesTopsList = binascii.hexlify(str(self.setClothesTopsList))
-        self.setClothesBottomsList = binascii.hexlify(str(self.setClothesBottomsList))
-        self.setHatList = binascii.hexlify(str(self.setHatList))
-        self.setGlassesList = binascii.hexlify(str(self.setGlassesList))
-        self.setBackpackList = binascii.hexlify(str(self.setBackpackList))
-        self.setShoesList = binascii.hexlify(str(self.setShoesList))
-        self.setQuests = binascii.hexlify(str(self.setQuests))
-        self.setQuestHistory = binascii.hexlify(str(self.setQuestHistory))
-        self.setQuestCarryLimit = bin(self.setQuestCarryLimit)
-        self.setQuestingZone = bin(self.setQuestingZone)
-        self.setTrackProgress = binascii.hexlify(str(self.setTrackProgress))
-        self.setHoodsVisited = binascii.hexlify(str(self.setHoodsVisited))
-        self.setTeleportAccess = binascii.hexlify(str(self.setTeleportAccess))
-        self.setFishingRod = bin(self.setFishingRod)
-        self.setFishCollection = binascii.hexlify(str(self.setFishCollection))
-        self.setFishTank = binascii.hexlify(str(self.setFishTank))
-        self.setTutorialAck = bin(self.setTutorialAck)
+    def export(self):
+        jsonData = self.__dict__.copy()
+        return jsonData
 
-    def decrypt(self):
-        self.setDNA = ast.literal_eval(binascii.unhexlify(self.setDNA))
-        self.setName = binascii.unhexlify(self.setName)
-        self.setHp = int(self.setHp, 0)
-        self.setMaxHp = int(self.setMaxHp, 0)
-        self.setMoney = int(self.setMoney, 0)
-        self.setMaxMoney = int(self.setMaxMoney, 0)
-        self.setBankMoney = int(self.setBankMoney, 0)
-        self.setMaxBankMoney = int(self.setMaxBankMoney, 0)
-        self.setMaxCarry = int(self.setMaxCarry, 0)
-        if binascii.unhexlify(self.setInventory) == 'None':
-            self.setInventory = ast.literal_eval(binascii.unhexlify(self.setInventory))
-        else:
-            self.setInventory = binascii.unhexlify(self.setInventory)
-        if binascii.unhexlify(self.setExperience) == 'None':
-            self.setExperience = ast.literal_eval(binascii.unhexlify(self.setExperience))
-        else:
-            self.setExperience = binascii.unhexlify(self.setExperience)
-        self.setTrackAccess = ast.literal_eval(binascii.unhexlify(self.setTrackAccess))
-        self.setNametagStyle = binascii.unhexlify(self.setNametagStyle)
-        self.setCheesyEffect = int(self.setCheesyEffect, 0)
-        self.setLastHood = int(self.setLastHood, 0)
-        self.setHat = ast.literal_eval(binascii.unhexlify(self.setHat))
-        self.setGlasses = ast.literal_eval(binascii.unhexlify(self.setGlasses))
-        self.setBackpack = ast.literal_eval(binascii.unhexlify(self.setBackpack))
-        self.setShoes = ast.literal_eval(binascii.unhexlify(self.setShoes))
-        self.setLevel = int(self.setLevel, 0)
-        self.setLevelExp = int(self.setLevelExp, 0)
-        self.setDamage = ast.literal_eval(binascii.unhexlify(self.setDamage))
-        self.setDefense = ast.literal_eval(binascii.unhexlify(self.setDefense))
-        self.setAccuracy = ast.literal_eval(binascii.unhexlify(self.setAccuracy))
-        self.setClothesTopsList = ast.literal_eval(binascii.unhexlify(self.setClothesTopsList))
-        self.setClothesBottomsList = ast.literal_eval(binascii.unhexlify(self.setClothesBottomsList))
-        self.setHatList = ast.literal_eval(binascii.unhexlify(self.setHatList))
-        self.setGlassesList = ast.literal_eval(binascii.unhexlify(self.setGlassesList))
-        self.setBackpackList = ast.literal_eval(binascii.unhexlify(self.setBackpackList))
-        self.setShoesList = ast.literal_eval(binascii.unhexlify(self.setShoesList))
-        self.setQuests = ast.literal_eval(binascii.unhexlify(self.setQuests))
-        self.setQuestHistory = ast.literal_eval(binascii.unhexlify(self.setQuestHistory))
-        self.setQuestCarryLimit = int(self.setQuestCarryLimit, 0)
-        self.setQuestingZone = int(self.setQuestingZone, 0)
-        if len(str(self.setTrackProgress)) == 3:
-            self.setTrackProgress = int(self.setTrackProgress, 0)
-        else:
-            self.setTrackProgress = ast.literal_eval(binascii.unhexlify(self.setTrackProgress))
-        self.setHoodsVisited = ast.literal_eval(binascii.unhexlify(self.setHoodsVisited))
-        self.setTeleportAccess = ast.literal_eval(binascii.unhexlify(self.setTeleportAccess))
-        self.setFishingRod = int(self.setFishingRod, 0)
-        self.setFishCollection = ast.literal_eval(binascii.unhexlify(self.setFishCollection))
-        self.setFishTank = ast.literal_eval(binascii.unhexlify(self.setFishTank))
-        try:
-            self.setTutorialAck = int(self.setTutorialAck, 0)
-        except:
-            self.setTutorialAck = 1
-
+    @staticmethod
+    def makeFromJsonData(jsonData):
+        toonData = ToonData(jsonData.get('index'), jsonData.get('setDNA'), jsonData.get('setName'),
+                            jsonData.get('setHp', 20), jsonData.get('setMaxHp', 20), jsonData.get('setMoney', 0),
+                            jsonData.get('setMaxMoney', 40), jsonData.get('setBankMoney', 0),
+                            jsonData.get('setMaxBankMoney', 12000), jsonData.get('setMaxCarry', 20),
+                            jsonData.get('setInventory'), jsonData.get('setExperience'),
+                            jsonData.get('setTrackAccess', [0, 0, 0, 0, 1, 1, 0]), jsonData.get('setHat', [0, 0, 0]),
+                            jsonData.get('setGlasses', [0, 0, 0]), jsonData.get('setBackpack', [0, 0, 0]),
+                            jsonData.get('setShoes', [0, 0, 0]), jsonData.get('setNametagStyle', 'Mickey'),
+                            jsonData.get('setCheesyEffect', 0), jsonData.get('setLastHood', 1000),
+                            jsonData.get('setLevel', 1), jsonData.get('setLevelExp', 0),
+                            jsonData.get('setDamage', [0, 0, 0, 0, 0, 0]), jsonData.get('setDefense', [0, 0, 0, 0]),
+                            jsonData.get('setAccuracy', [0, 0, 0, 0, 0, 0]), jsonData.get('setClothesTopsList', []),
+                            jsonData.get('setClothesBottomsList', []), jsonData.get('setHatList', []),
+                            jsonData.get('setGlassesList', []), jsonData.get('setBackpackList', []),
+                            jsonData.get('setShoesList', []), jsonData.get('setQuests', []),
+                            jsonData.get('setQuestHistory', []), jsonData.get('setQuestCarryLimit', 1),
+                            jsonData.get('setQuestingZone', 1000), jsonData.get('setTrackProgress', [-1, -1]),
+                            jsonData.get('setHoodsVisited', []), jsonData.get('setTeleportAccess', []),
+                            jsonData.get('setFishingRod', 0), jsonData.get('setFishCollection', []),
+                            jsonData.get('setFishTank', []), jsonData.get('setTutorialAck', 0))
+        return toonData
