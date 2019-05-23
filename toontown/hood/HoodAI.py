@@ -16,7 +16,7 @@ class HoodAI:
             model = loader.loadModel(filename)
             self.air.modelMap[zoneId] = model
 
-        #self.createTreasurePlanner()
+        self.createTreasurePlanner()
         self.createSuitPlanners()
 
     def getZoneTable(self):
