@@ -56,22 +56,42 @@ class DataManager:
     def saveToonData(self, data):
         if self.corrupted:
             return None
+
         index = data.index
         filename = Filename(self.newDir + self.toons[index - 1] + self.fileExt)
         if not os.path.exists(filename.toOsSpecific()):
             filename.makeDir()
+
         with open(filename.toOsSpecific(), 'w') as toonData:
-            json.dump(data.export(), toonData, indent=4)
+            try:
+                jsonData = data.makeJsonData()
+            except:
+                self.handleDataError()
+                return
+
+            try:
+                json.dump(jsonData, toonData, indent=4)
+            except:
+                self.handleDataError()
+                return
+
         return
 
     def loadToonData(self, index):
         if self.corrupted:
             return None
+
         filename = Filename(self.newDir + self.toons[index - 1] + self.fileExt)
         if os.path.exists(filename.toOsSpecific()):
             with open(filename.toOsSpecific(), 'r') as toonData:
-                data = ToonData.makeFromJsonData(json.load(toonData))
+                try:
+                    data = ToonData.makeFromJsonData(json.load(toonData))
+                except:
+                    self.handleDataError()
+                    return None
+
                 return data
+
         return None
 
     def deleteToonData(self, index):

@@ -48,7 +48,7 @@ class ToonData:
         self.setFishTank = fishTank
         self.setTutorialAck = tutorialAck
 
-    def export(self):
+    def makeJsonData(self):
         jsonData = self.__dict__.copy()
         return jsonData
 
