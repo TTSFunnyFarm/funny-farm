@@ -24,6 +24,7 @@ from toontown.minigame.CatchGameGlobals import DropObjectTypes
 from toontown.minigame.CatchGameGlobals import Name2DropObjectType
 from toontown.minigame.DropPlacer import *
 from toontown.minigame.DropScheduler import *
+from functools import reduce
 
 class CatchGame(Minigame):
     DropTaskName = 'dropSomething'

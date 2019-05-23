@@ -893,7 +893,7 @@ class RegionDropPlacer(DropPlacer):
                     self.DropRegion2GridCoordList[region] = []
                 self.DropRegion2GridCoordList[region].append([row, column])
 
-        self.DropRegions = self.DropRegion2GridCoordList.keys()
+        self.DropRegions = list(self.DropRegion2GridCoordList.keys())
         self.DropRegions.sort()
         self.emptyDropRegions = self.DropRegions[:]
         self.fallingObjs = []
