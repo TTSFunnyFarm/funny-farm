@@ -138,10 +138,7 @@ class ToonData:
                     # Corrupted!
                     return False, 'Field %s contains a value of incorrect type. Expected: %s, got %s' % (field[0], field[1], type(toonData[field[0]])), None
 
-        toonDataObj = ToonData(index, setDNA, setName, 20, 20, 0, 40, 0, 12000, 20, None, None, [0, 0, 0, 0, 1, 1, 0],
-                               [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000, 1, 0,
-                               [0, 0, 0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [], [], [], [], [], [],
-                               [], [], 1, 1000, [-1, -1], [], [], 0, [], [], 0)
+        toonDataObj = ToonData.getDefaultToonData(index, setDNA, setName)
         for field in toonData.keys():
             if hasattr(toonDataObj, field):
                 setattr(toonDataObj, field, toonData[field])
@@ -157,3 +154,10 @@ class ToonData:
             raise Exception(response)
 
         return toonData
+
+    @staticmethod
+    def getDefaultToonData(index, dna, name):
+        return ToonData(index, dna, name, 20, 20, 0, 40, 0, 12000, 20, None, None, [0, 0, 0, 0, 1, 1, 0],
+                        [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000, 1, 0,
+                        [0, 0, 0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [], [], [], [], [], [],
+                        [], [], 1, 1000, [-1, -1], [], [], 0, [], [], 0)
