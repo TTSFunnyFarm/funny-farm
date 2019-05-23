@@ -25,7 +25,7 @@ class Settings:
             if not self.settings.get(type):
                 self.settings[type] = {}
             self.settings[type][attribute] = value
-            json.dump(self.settings, file)
+            json.dump(self.settings, file, indent=4)
 
     def getOption(self, type, attribute, default):
         """
