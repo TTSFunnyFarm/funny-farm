@@ -48,10 +48,7 @@ class DataManager:
         return False
 
     def createToonData(self, index, dna, name):
-        return ToonData(index, dna, name, 20, 20, 0, 40, 0, 12000, 20, None, None, [0, 0, 0, 0, 1, 1, 0],
-                        [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000, 1, 0,
-                        [0, 0, 0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [], [], [], [], [], [],
-                        [], [], 1, 1000, [-1, -1], [], [], 0, [], [], 0)
+        return ToonData.getDefaultToonData(index, dna, name)
 
     def saveToonData(self, data):
         if self.corrupted:
