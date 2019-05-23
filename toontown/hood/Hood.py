@@ -11,7 +11,7 @@ from toontown.toon import NPCToons
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals
-import ZoneUtil
+from toontown.hood import ZoneUtil
 
 class Hood(DirectObject):
     notify = directNotify.newCategory('Hood')
