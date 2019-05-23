@@ -1046,6 +1046,8 @@ class TugOfWarGame(Minigame):
         self.moveSuits()
 
     def sendCurrentPosition(self, avIdList, offsetList):
+        avIdList = list(avIdList)
+        offsetList = list(offsetList)
         if not self.hasLocalToon:
             return
         if self.gameFSM.getCurrentState().getName() != 'tug':
