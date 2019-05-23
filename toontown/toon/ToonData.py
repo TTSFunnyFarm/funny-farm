@@ -53,34 +53,90 @@ class ToonData:
         return jsonData
 
     @staticmethod
-    def makeFromJsonData(jsonData):
-        index = jsonData.get('index')
-        setDNA = jsonData.get('setDNA')
-        setName = jsonData.get('setName')
-        if not (index and setDNA and setName):
-            raise Exception('One or more required database fields are missing!')
+    def verifyToonData(toonData):
+        # This is the default data for new Toon objects.
+        # Layout goes like this: [field, type, defaultValue]
+        # We include the type for the purpose of sanity checking.
+        DefaultData = [
+            # [field, type, defaultValue]
+            ['index', int, None],
+            ['setDNA', list, None],
+            ['setName', str, None],
+            ['setHp', int, 20],
+            ['setMaxHp', int, 20],
+            ['setMoney', int, 0],
+            ['setMaxMoney', int, 40],
+            ['setBankMoney', int, 0],
+            ['setMaxBankMoney', int, 12000],
+            ['setMaxCarry', int, 20],
+            ['setInventory', str, None],
+            ['setExperience', str, None],
+            ['setTrackAccess', list, [0, 0, 0, 0, 1, 1, 0]],
+            ['setHat', list, [0, 0, 0]],
+            ['setGlasses', list, [0, 0, 0]],
+            ['setBackpack', list, [0, 0, 0]],
+            ['setShoes', list, [0, 0, 0]],
+            ['setNametagStyle', str, 'Mickey'],
+            ['setCheesyEffect', int, 0],
+            ['setLastHood', int, 1000],
+            ['setLevel', int, 1],
+            ['setLevelExp', int, 0],
+            ['setDamage', list, [0, 0, 0, 0, 0, 0]],
+            ['setDefense', list, [0, 0, 0, 0]],
+            ['setAccuracy', list, [0, 0, 0, 0, 0, 0]],
+            ['setClothesTopsList', list, []],
+            ['setClothesBottomsList', list, []],
+            ['setHatList', list, []],
+            ['setGlassesList', list, []],
+            ['setBackpackList', list, []],
+            ['setShoesList', list, []],
+            ['setQuests', list, []],
+            ['setQuestHistory', list, []],
+            ['setQuestCarryLimit', int, 1],
+            ['setQuestingZone', int, 1000],
+            ['setTrackProgress', list, [-1, -1]],
+            ['setHoodsVisited', list, []],
+            ['setTeleportAccess', list, []],
+            ['setFishingRod', int, 0],
+            ['setFishCollection', list, []],
+            ['setFishTank', list, []],
+            ['setTutorialAck', int, 0]
+        ]
+
+        # If this is an instance of ToonData, we need to convert it into a
+        # dict in order to perform any verification on it. Otherwise we
+        # assume it is a dict that has been loaded from a JSON object.
+        if isinstance(toonData, ToonData):
+            toonData = toonData.__dict__.copy()
+
+        # And if it's not a dict, well, we cannot move forward, so check that:
+        if not isinstance(toonData, dict):
+            # sad!
+            return False, 'toonData is not a dictionary!'
+
+        # index, setDNA, and setName are **absolutely** required.
+        # There are no default values for these, for obvious reasons, so if
+        # they don't exist within the toonData, we will need to stop right
+        # there & throw an error; we cannot possibly continue on without them.
+        index = toonData.get('index')
+        setDNA = toonData.get('setDNA')
+        setName = toonData.get('setName')
+        if index is None or setDNA is None or setName is None:
+            return False, 'One or more required database fields are missing!'
 
         if type(index) != int and type(setDNA) != list and type(setName) != str:
-            raise Exception('One or more required database fields contain a value of incorrect type!')
+            return False, 'One or more required database fields contain a value of incorrect type!'
 
-        toonData = ToonData(index, setDNA, setName,
-                            jsonData.get('setHp', 20), jsonData.get('setMaxHp', 20), jsonData.get('setMoney', 0),
-                            jsonData.get('setMaxMoney', 40), jsonData.get('setBankMoney', 0),
-                            jsonData.get('setMaxBankMoney', 12000), jsonData.get('setMaxCarry', 20),
-                            jsonData.get('setInventory'), jsonData.get('setExperience'),
-                            jsonData.get('setTrackAccess', [0, 0, 0, 0, 1, 1, 0]), jsonData.get('setHat', [0, 0, 0]),
-                            jsonData.get('setGlasses', [0, 0, 0]), jsonData.get('setBackpack', [0, 0, 0]),
-                            jsonData.get('setShoes', [0, 0, 0]), jsonData.get('setNametagStyle', 'Mickey'),
-                            jsonData.get('setCheesyEffect', 0), jsonData.get('setLastHood', 1000),
-                            jsonData.get('setLevel', 1), jsonData.get('setLevelExp', 0),
-                            jsonData.get('setDamage', [0, 0, 0, 0, 0, 0]), jsonData.get('setDefense', [0, 0, 0, 0]),
-                            jsonData.get('setAccuracy', [0, 0, 0, 0, 0, 0]), jsonData.get('setClothesTopsList', []),
-                            jsonData.get('setClothesBottomsList', []), jsonData.get('setHatList', []),
-                            jsonData.get('setGlassesList', []), jsonData.get('setBackpackList', []),
-                            jsonData.get('setShoesList', []), jsonData.get('setQuests', []),
-                            jsonData.get('setQuestHistory', []), jsonData.get('setQuestCarryLimit', 1),
-                            jsonData.get('setQuestingZone', 1000), jsonData.get('setTrackProgress', [-1, -1]),
-                            jsonData.get('setHoodsVisited', []), jsonData.get('setTeleportAccess', []),
-                            jsonData.get('setFishingRod', 0), jsonData.get('setFishCollection', []),
-                            jsonData.get('setFishTank', []), jsonData.get('setTutorialAck', 0))
+        return True, ''
+
+    @staticmethod
+    def makeFromJsonData(jsonData):
+        valid, response = ToonData.verifyToonData(jsonData)
+        if not valid:
+            raise Exception(response)
+
+        toonData = ToonData(index, dna, name, 20, 20, 0, 40, 0, 12000, 20, None, None, [0, 0, 0, 0, 1, 1, 0],
+                            [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000, 1, 0,
+                            [0, 0, 0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [], [], [], [], [], [],
+                            [], [], 1, 1000, [-1, -1], [], [], 0, [], [], 0)
         return toonData
