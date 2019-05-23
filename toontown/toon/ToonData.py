@@ -57,11 +57,8 @@ class ToonData:
         # This is the default data for new Toon objects.
         # Layout goes like this: [field, type, defaultValue]
         # We include the type for the purpose of sanity checking.
-        DefaultData = [
+        defaultData = [
             # [field, type, defaultValue]
-            ['index', int, None],
-            ['setDNA', list, None],
-            ['setName', str, None],
             ['setHp', int, 20],
             ['setMaxHp', int, 20],
             ['setMoney', int, 0],
@@ -112,7 +109,7 @@ class ToonData:
         # And if it's not a dict, well, we cannot move forward, so check that:
         if not isinstance(toonData, dict):
             # sad!
-            return False, 'toonData is not a dictionary!'
+            return False, 'toonData is not a dictionary!', None
 
         # index, setDNA, and setName are **absolutely** required.
         # There are no default values for these, for obvious reasons, so if
@@ -122,21 +119,41 @@ class ToonData:
         setDNA = toonData.get('setDNA')
         setName = toonData.get('setName')
         if index is None or setDNA is None or setName is None:
-            return False, 'One or more required database fields are missing!'
+            return False, 'One or more required database fields are missing!', None
 
+        # They also need to be of the correct type, or else they are considered
+        # to be corrupted and we cannot move forward.
         if type(index) != int and type(setDNA) != list and type(setName) != str:
-            return False, 'One or more required database fields contain a value of incorrect type!'
+            return False, 'One or more required database fields contain a value of incorrect type!', None
 
-        return True, ''
+        # Now we check every other field:
+        for field in defaultData:
+            if field[0] not in toonData.keys():
+                toonData[field[0]] = field[2]
+            else:
+                if toonData[field[0]] is None:
+                    toonData[field[0]] = field[2]
+
+                if type(toonData[field[0]]) != field[1]:
+                    # Corrupted!
+                    return False, 'Field %s contains a value of incorrect type. Expected: %s, got %s' % (field[0], field[1], type(toonData[field[0]])), None
+
+        toonDataObj = ToonData(index, setDNA, setName, 20, 20, 0, 40, 0, 12000, 20, None, None, [0, 0, 0, 0, 1, 1, 0],
+                               [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000, 1, 0,
+                               [0, 0, 0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [], [], [], [], [], [],
+                               [], [], 1, 1000, [-1, -1], [], [], 0, [], [], 0)
+        for field in toonData.keys():
+            if hasattr(toonDataObj, field):
+                setattr(toonDataObj, field, toonData[field])
+
+        dataMgr.saveToonData(toonDataObj)
+
+        return True, '', toonDataObj
 
     @staticmethod
     def makeFromJsonData(jsonData):
-        valid, response = ToonData.verifyToonData(jsonData)
+        valid, response, toonData = ToonData.verifyToonData(jsonData)
         if not valid:
             raise Exception(response)
 
-        toonData = ToonData(index, dna, name, 20, 20, 0, 40, 0, 12000, 20, None, None, [0, 0, 0, 0, 1, 1, 0],
-                            [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000, 1, 0,
-                            [0, 0, 0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [], [], [], [], [], [],
-                            [], [], 1, 1000, [-1, -1], [], [], 0, [], [], 0)
         return toonData
