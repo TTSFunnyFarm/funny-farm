@@ -54,7 +54,16 @@ class ToonData:
 
     @staticmethod
     def makeFromJsonData(jsonData):
-        toonData = ToonData(jsonData.get('index'), jsonData.get('setDNA'), jsonData.get('setName'),
+        index = jsonData.get('index')
+        setDNA = jsonData.get('setDNA')
+        setName = jsonData.get('setName')
+        if not (index and setDNA and setName):
+            raise Exception('One or more required database fields are missing!')
+
+        if type(index) != int and type(setDNA) != list and type(setName) != str:
+            raise Exception('One or more required database fields contain a value of incorrect type!')
+
+        toonData = ToonData(index, setDNA, setName,
                             jsonData.get('setHp', 20), jsonData.get('setMaxHp', 20), jsonData.get('setMoney', 0),
                             jsonData.get('setMaxMoney', 40), jsonData.get('setBankMoney', 0),
                             jsonData.get('setMaxBankMoney', 12000), jsonData.get('setMaxCarry', 20),
