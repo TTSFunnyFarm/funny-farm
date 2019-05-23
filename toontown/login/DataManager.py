@@ -3,6 +3,7 @@ import json
 import os
 import shutil
 
+from cryptography.fernet import Fernet
 from panda3d.core import *
 
 from toontown.toon import ToonDNA
@@ -11,6 +12,7 @@ from toontown.toon.ToonData import ToonData
 from toontown.toonbase import FunnyFarmGlobals
 
 BASE_DB_ID = 1000001
+KEY = 'PU05SWFTMmRGbWRFdW5VQW85ZFNWSkNKakFMYTNwQXpSM1VFSGFyRHpYRGY='
 
 
 class DataManager:
@@ -18,7 +20,7 @@ class DataManager:
     notify.setInfo(1)
 
     def __init__(self):
-        self.fileExt = '.json'
+        self.fileExt = '.dat'
         self.oldDir = Filename.getUserAppdataDirectory() + '/FunnyFarm/db/'
         self.newDir = Filename.getUserAppdataDirectory() + '/FunnyFarm' + '/database/'
         self.corrupted = 0
@@ -62,18 +64,31 @@ class DataManager:
         with open(filename.toOsSpecific(), 'w') as toonData:
             valid, _, toonDataObj = ToonData.verifyToonData(data, saveToonData=False)
             if not valid:
+                toonData.close()
                 self.handleDataError()
                 return
 
             try:
                 jsonData = toonDataObj.makeJsonData()
             except:
+                toonData.close()
                 self.handleDataError()
                 return
 
             try:
-                json.dump(jsonData, toonData, indent=4)
+                fileData = json.dumps(jsonData, indent=4)
             except:
+                toonData.close()
+                self.handleDataError()
+                return
+
+            try:
+                fernet = Fernet(KEY.decode('base64')[::-1])
+                encryptedData = fernet.encrypt(fileData)
+                toonData.write(encryptedData)
+                toonData.close()
+            except:
+                toonData.close()
                 self.handleDataError()
                 return
 
@@ -87,12 +102,23 @@ class DataManager:
         if os.path.exists(filename.toOsSpecific()):
             with open(filename.toOsSpecific(), 'r') as toonData:
                 try:
-                    data = ToonData.makeFromJsonData(json.load(toonData))
+                    fileData = toonData.read()
+                    fernet = Fernet(KEY.decode('base64')[::-1])
+                    decryptedData = fernet.decrypt(fileData)
+                    jsonData = json.loads(decryptedData)
+                    toonData.close()
+                except:
+                    toonData.close()
+                    self.handleDataError()
+                    return None
+
+                try:
+                    toonDataObj = ToonData.makeFromJsonData(jsonData)
                 except:
                     self.handleDataError()
                     return None
 
-                return data
+                return toonDataObj
 
         return None
 
