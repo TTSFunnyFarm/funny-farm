@@ -1,7 +1,6 @@
 import __builtin__
 import json
 import os
-import shutil
 
 from cryptography.fernet import Fernet
 from panda3d.core import *
@@ -21,30 +20,22 @@ class DataManager:
 
     def __init__(self):
         self.fileExt = '.dat'
-        self.oldDir = Filename.getUserAppdataDirectory() + '/FunnyFarm/db/'
-        self.newDir = Filename.getUserAppdataDirectory() + '/FunnyFarm' + '/database/'
+        self.fileDir = Filename.getUserAppdataDirectory() + '/Toontown\'s Funny Farm' + '/database/'
         self.corrupted = 0
         self.toons = []
         for toonNum in xrange(FunnyFarmGlobals.MaxAvatars):
             self.toons.append(str(BASE_DB_ID + toonNum))
-        self.removeOldData()
         return
 
-    def removeOldData(self):
-        filename = Filename(self.oldDir)
-        if os.path.exists(filename.toOsSpecific()):
-            self.notify.warning('Deprecated data found. Removing...')
-            shutil.rmtree(filename.toOsSpecific())
-
     def getToonFilename(self, index):
-        filename = Filename(self.newDir + self.toons[index - 1] + self.fileExt)
+        filename = Filename(self.fileDir + self.toons[index - 1] + self.fileExt)
         if os.path.exists(filename.toOsSpecific()):
             return filename
         return None
 
     def checkToonFiles(self):
         for file in self.toons:
-            filename = Filename(self.newDir + file + self.fileExt)
+            filename = Filename(self.fileDir + file + self.fileExt)
             if os.path.exists(filename.toOsSpecific()):
                 return True
         return False
@@ -57,7 +48,7 @@ class DataManager:
             return None
 
         index = data.index
-        filename = Filename(self.newDir + self.toons[index - 1] + self.fileExt)
+        filename = Filename(self.fileDir + self.toons[index - 1] + self.fileExt)
         if not os.path.exists(filename.toOsSpecific()):
             filename.makeDir()
 
@@ -98,7 +89,7 @@ class DataManager:
         if self.corrupted:
             return None
 
-        filename = Filename(self.newDir + self.toons[index - 1] + self.fileExt)
+        filename = Filename(self.fileDir + self.toons[index - 1] + self.fileExt)
         if os.path.exists(filename.toOsSpecific()):
             with open(filename.toOsSpecific(), 'r') as toonData:
                 try:
@@ -123,7 +114,7 @@ class DataManager:
         return None
 
     def deleteToonData(self, index):
-        filename = Filename(self.newDir + self.toons[index - 1] + self.fileExt)
+        filename = Filename(self.fileDir + self.toons[index - 1] + self.fileExt)
         if os.path.exists(filename.toOsSpecific()):
             os.remove(filename.toOsSpecific())
         else:
