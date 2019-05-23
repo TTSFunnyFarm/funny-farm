@@ -44,6 +44,7 @@ DefaultData = [
     ['setTutorialAck', [int], 0]
 ]
 
+
 # This is the actual ToonData container class.
 class ToonData:
 
@@ -137,7 +138,8 @@ class ToonData:
 
                 if type(toonData[field[0]]) not in field[1] and field[0] not in ('setExperience', 'setInventory'):
                     # Corrupted!
-                    return False, 'Field %s contains a value of incorrect type. Expected: %s, got %s' % (field[0], field[1], type(toonData[field[0]])), None
+                    return False, 'Field %s contains a value of incorrect type. Expected: %s, got %s' % (
+                        field[0], field[1], type(toonData[field[0]])), None
 
         toonDataObj = ToonData.getDefaultToonData(index, setDNA, setName)
         for field in toonData.keys():
@@ -159,10 +161,9 @@ class ToonData:
 
     @staticmethod
     def getDefaultToonData(index, dna, name):
-        defaultToonData = ToonData(index, dna, name, None, None, None, None, None, None, None, None, None, None,
-                                   None, None, None, None, None, None, None, None, None,
-                                   None, None, None, None, None, None, None, None, None,
-                                   None, None, None, None, None, None, None, None, None, None, None)
+        defaultToonData = ToonData(index, dna, name, None, None, None, None, None, None, None, None, None, None, None,
+                                   None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+                                   None, None, None, None, None, None, None, None, None, None, None, None, None, None)
         for field in DefaultData:
             if hasattr(defaultToonData, field[0]):
                 setattr(defaultToonData, field[0], field[2])
