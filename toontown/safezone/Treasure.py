@@ -59,8 +59,8 @@ class Treasure(DirectObject):
         self.accept(self.uniqueName('entertreasureSphere'), self.handleEnterSphere)
 
     def loadModel(self, modelPath, modelFindString=None):
-        self.grabSound = base.loadSfx(self.grabSoundPath)
-        self.rejectSound = base.loadSfx(self.rejectSoundPath)
+        self.grabSound = base.loader.loadSfx(self.grabSoundPath)
+        self.rejectSound = base.loader.loadSfx(self.rejectSoundPath)
         if self.nodePath is None:
             self.makeNodePath()
         else:
