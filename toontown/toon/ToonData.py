@@ -1,15 +1,58 @@
-import yaml.dist as yaml
-import binascii
-import ast
+# This is the default data for new Toon objects.
+# Layout goes like this: [field, expectedTypes, defaultValue]
+# We include the expected types for the purpose of sanity checking.
+DefaultData = [
+    # [field, expectedTypes, defaultValue]
+    ['setHp', [int], 20],
+    ['setMaxHp', [int], 20],
+    ['setMoney', [int], 0],
+    ['setMaxMoney', [int], 40],
+    ['setBankMoney', [int], 0],
+    ['setMaxBankMoney', [int], 12000],
+    ['setMaxCarry', [int], 20],
+    ['setInventory', [str, unicode], None],
+    ['setExperience', [str, unicode], None],
+    ['setTrackAccess', [list], [0, 0, 0, 0, 1, 1, 0]],
+    ['setHat', [list], [0, 0, 0]],
+    ['setGlasses', [list], [0, 0, 0]],
+    ['setBackpack', [list], [0, 0, 0]],
+    ['setShoes', [list], [0, 0, 0]],
+    ['setNametagStyle', [str, unicode], 'Mickey'],
+    ['setCheesyEffect', [int], 0],
+    ['setLastHood', [int], 1000],
+    ['setLevel', [int], 1],
+    ['setLevelExp', [int], 0],
+    ['setDamage', [list], [0, 0, 0, 0, 0, 0]],
+    ['setDefense', [list], [0, 0, 0, 0]],
+    ['setAccuracy', [list], [0, 0, 0, 0, 0, 0]],
+    ['setClothesTopsList', [list], []],
+    ['setClothesBottomsList', [list], []],
+    ['setHatList', [list], []],
+    ['setGlassesList', [list], []],
+    ['setBackpackList', [list], []],
+    ['setShoesList', [list], []],
+    ['setQuests', [list], []],
+    ['setQuestHistory', [list], []],
+    ['setQuestCarryLimit', [int], 1],
+    ['setQuestingZone', [int], 1000],
+    ['setTrackProgress', [list], [-1, -1]],
+    ['setHoodsVisited', [list], []],
+    ['setTeleportAccess', [list], []],
+    ['setFishingRod', [int], 0],
+    ['setFishCollection', [list], []],
+    ['setFishTank', [list], []],
+    ['setTutorialAck', [int], 0]
+]
 
-class ToonData(yaml.YAMLObject):
-    yaml_tag = 'LocalToon'
+
+# This is the actual ToonData container class.
+class ToonData:
 
     def __init__(self, index, dna, name, hp, maxHp, money, maxMoney, bankMoney, maxBankMoney, maxCarry,
-                inventory, experience, trackAccess, hat, glasses, backpack, shoes, nametagStyle, cheesyEffect,
-                lastHood, level, levelExp, damage, defense, accuracy, clothesTopsList, clothesBottomsList,
-                hatList, glassesList, backpackList, shoesList, quests, questHistory, questCarryLimit, questingZone,
-                trackProgress, hoodsVisited, teleportAccess, fishingRod, fishCollection, fishTank, tutorialAck):
+                 inventory, experience, trackAccess, hat, glasses, backpack, shoes, nametagStyle, cheesyEffect,
+                 lastHood, level, levelExp, damage, defense, accuracy, clothesTopsList, clothesBottomsList,
+                 hatList, glassesList, backpackList, shoesList, quests, questHistory, questCarryLimit, questingZone,
+                 trackProgress, hoodsVisited, teleportAccess, fishingRod, fishCollection, fishTank, tutorialAck):
         self.index = index
         self.setDNA = dna
         self.setName = name
@@ -53,101 +96,76 @@ class ToonData(yaml.YAMLObject):
         self.setFishTank = fishTank
         self.setTutorialAck = tutorialAck
 
-    def encrypt(self):
-        self.setDNA = binascii.hexlify(str(self.setDNA))
-        self.setName = binascii.hexlify(self.setName)
-        self.setHp = bin(self.setHp)
-        self.setMaxHp = bin(self.setMaxHp)
-        self.setMoney = bin(self.setMoney)
-        self.setMaxMoney = bin(self.setMaxMoney)
-        self.setBankMoney = bin(self.setBankMoney)
-        self.setMaxBankMoney = bin(self.setMaxBankMoney)
-        self.setMaxCarry = bin(self.setMaxCarry)
-        self.setInventory = binascii.hexlify(str(self.setInventory))
-        self.setExperience = binascii.hexlify(str(self.setExperience))
-        self.setTrackAccess = binascii.hexlify(str(self.setTrackAccess))
-        self.setNametagStyle = binascii.hexlify(self.setNametagStyle)
-        self.setCheesyEffect = bin(self.setCheesyEffect)
-        self.setLastHood = bin(self.setLastHood)
-        self.setHat = binascii.hexlify(str(self.setHat))
-        self.setGlasses = binascii.hexlify(str(self.setGlasses))
-        self.setBackpack = binascii.hexlify(str(self.setBackpack))
-        self.setShoes = binascii.hexlify(str(self.setShoes))
-        self.setLevel = bin(self.setLevel)
-        self.setLevelExp = bin(self.setLevelExp)
-        self.setDamage = binascii.hexlify(str(self.setDamage))
-        self.setDefense = binascii.hexlify(str(self.setDefense))
-        self.setAccuracy = binascii.hexlify(str(self.setAccuracy))
-        self.setClothesTopsList = binascii.hexlify(str(self.setClothesTopsList))
-        self.setClothesBottomsList = binascii.hexlify(str(self.setClothesBottomsList))
-        self.setHatList = binascii.hexlify(str(self.setHatList))
-        self.setGlassesList = binascii.hexlify(str(self.setGlassesList))
-        self.setBackpackList = binascii.hexlify(str(self.setBackpackList))
-        self.setShoesList = binascii.hexlify(str(self.setShoesList))
-        self.setQuests = binascii.hexlify(str(self.setQuests))
-        self.setQuestHistory = binascii.hexlify(str(self.setQuestHistory))
-        self.setQuestCarryLimit = bin(self.setQuestCarryLimit)
-        self.setQuestingZone = bin(self.setQuestingZone)
-        self.setTrackProgress = binascii.hexlify(str(self.setTrackProgress))
-        self.setHoodsVisited = binascii.hexlify(str(self.setHoodsVisited))
-        self.setTeleportAccess = binascii.hexlify(str(self.setTeleportAccess))
-        self.setFishingRod = bin(self.setFishingRod)
-        self.setFishCollection = binascii.hexlify(str(self.setFishCollection))
-        self.setFishTank = binascii.hexlify(str(self.setFishTank))
-        self.setTutorialAck = bin(self.setTutorialAck)
+    def makeJsonData(self):
+        jsonData = self.__dict__.copy()
+        return jsonData
 
-    def decrypt(self):
-        self.setDNA = ast.literal_eval(binascii.unhexlify(self.setDNA))
-        self.setName = binascii.unhexlify(self.setName)
-        self.setHp = int(self.setHp, 0)
-        self.setMaxHp = int(self.setMaxHp, 0)
-        self.setMoney = int(self.setMoney, 0)
-        self.setMaxMoney = int(self.setMaxMoney, 0)
-        self.setBankMoney = int(self.setBankMoney, 0)
-        self.setMaxBankMoney = int(self.setMaxBankMoney, 0)
-        self.setMaxCarry = int(self.setMaxCarry, 0)
-        if binascii.unhexlify(self.setInventory) == 'None':
-            self.setInventory = ast.literal_eval(binascii.unhexlify(self.setInventory))
-        else:
-            self.setInventory = binascii.unhexlify(self.setInventory)
-        if binascii.unhexlify(self.setExperience) == 'None':
-            self.setExperience = ast.literal_eval(binascii.unhexlify(self.setExperience))
-        else:
-            self.setExperience = binascii.unhexlify(self.setExperience)
-        self.setTrackAccess = ast.literal_eval(binascii.unhexlify(self.setTrackAccess))
-        self.setNametagStyle = binascii.unhexlify(self.setNametagStyle)
-        self.setCheesyEffect = int(self.setCheesyEffect, 0)
-        self.setLastHood = int(self.setLastHood, 0)
-        self.setHat = ast.literal_eval(binascii.unhexlify(self.setHat))
-        self.setGlasses = ast.literal_eval(binascii.unhexlify(self.setGlasses))
-        self.setBackpack = ast.literal_eval(binascii.unhexlify(self.setBackpack))
-        self.setShoes = ast.literal_eval(binascii.unhexlify(self.setShoes))
-        self.setLevel = int(self.setLevel, 0)
-        self.setLevelExp = int(self.setLevelExp, 0)
-        self.setDamage = ast.literal_eval(binascii.unhexlify(self.setDamage))
-        self.setDefense = ast.literal_eval(binascii.unhexlify(self.setDefense))
-        self.setAccuracy = ast.literal_eval(binascii.unhexlify(self.setAccuracy))
-        self.setClothesTopsList = ast.literal_eval(binascii.unhexlify(self.setClothesTopsList))
-        self.setClothesBottomsList = ast.literal_eval(binascii.unhexlify(self.setClothesBottomsList))
-        self.setHatList = ast.literal_eval(binascii.unhexlify(self.setHatList))
-        self.setGlassesList = ast.literal_eval(binascii.unhexlify(self.setGlassesList))
-        self.setBackpackList = ast.literal_eval(binascii.unhexlify(self.setBackpackList))
-        self.setShoesList = ast.literal_eval(binascii.unhexlify(self.setShoesList))
-        self.setQuests = ast.literal_eval(binascii.unhexlify(self.setQuests))
-        self.setQuestHistory = ast.literal_eval(binascii.unhexlify(self.setQuestHistory))
-        self.setQuestCarryLimit = int(self.setQuestCarryLimit, 0)
-        self.setQuestingZone = int(self.setQuestingZone, 0)
-        if len(str(self.setTrackProgress)) == 3:
-            self.setTrackProgress = int(self.setTrackProgress, 0)
-        else:
-            self.setTrackProgress = ast.literal_eval(binascii.unhexlify(self.setTrackProgress))
-        self.setHoodsVisited = ast.literal_eval(binascii.unhexlify(self.setHoodsVisited))
-        self.setTeleportAccess = ast.literal_eval(binascii.unhexlify(self.setTeleportAccess))
-        self.setFishingRod = int(self.setFishingRod, 0)
-        self.setFishCollection = ast.literal_eval(binascii.unhexlify(self.setFishCollection))
-        self.setFishTank = ast.literal_eval(binascii.unhexlify(self.setFishTank))
-        try:
-            self.setTutorialAck = int(self.setTutorialAck, 0)
-        except:
-            self.setTutorialAck = 1
+    @staticmethod
+    def verifyToonData(toonData, saveToonData=True):
+        # If this is an instance of ToonData, we need to convert it into a
+        # dict in order to perform any verification on it. Otherwise we
+        # assume it is a dict that has been loaded from a JSON object.
+        if isinstance(toonData, ToonData):
+            toonData = toonData.__dict__.copy()
 
+        # And if it's not a dict, well, we cannot move forward, so check that:
+        if not isinstance(toonData, dict):
+            # sad!
+            return False, 'toonData is not a dictionary!', None
+
+        # index, setDNA, and setName are **absolutely** required.
+        # There are no default values for these, for obvious reasons, so if
+        # they don't exist within the toonData, we will need to stop right
+        # there & throw an error; we cannot possibly continue on without them.
+        index = toonData.get('index')
+        setDNA = toonData.get('setDNA')
+        setName = toonData.get('setName')
+        if index is None or setDNA is None or setName is None:
+            return False, 'One or more required database fields are missing!', None
+
+        # They also need to be of the correct type, or else they are considered
+        # to be corrupted and we cannot move forward.
+        if type(index) != int and type(setDNA) != list and type(setName) != str:
+            return False, 'One or more required database fields contain a value of incorrect type!', None
+
+        # Now we check every other field:
+        for field in DefaultData:
+            if field[0] not in toonData.keys():
+                toonData[field[0]] = field[2]
+            else:
+                if toonData[field[0]] is None and field[0] not in ('setExperience', 'setInventory'):
+                    toonData[field[0]] = field[2]
+
+                if type(toonData[field[0]]) not in field[1] and field[0] not in ('setExperience', 'setInventory'):
+                    # Corrupted!
+                    return False, 'Field %s contains a value of incorrect type. Expected: %s, got %s' % (
+                        field[0], field[1], type(toonData[field[0]])), None
+
+        toonDataObj = ToonData.getDefaultToonData(index, setDNA, setName)
+        for field in toonData.keys():
+            if hasattr(toonDataObj, field):
+                setattr(toonDataObj, field, toonData[field])
+
+        if saveToonData:
+            dataMgr.saveToonData(toonDataObj)
+
+        return True, '', toonDataObj
+
+    @staticmethod
+    def makeFromJsonData(jsonData):
+        valid, response, toonData = ToonData.verifyToonData(jsonData)
+        if not valid:
+            raise Exception(response)
+
+        return toonData
+
+    @staticmethod
+    def getDefaultToonData(index, dna, name):
+        defaultToonData = ToonData(index, dna, name, None, None, None, None, None, None, None, None, None, None, None,
+                                   None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+                                   None, None, None, None, None, None, None, None, None, None, None, None, None, None)
+        for field in DefaultData:
+            if hasattr(defaultToonData, field[0]):
+                setattr(defaultToonData, field[0], field[2])
+
+        return defaultToonData

@@ -1,94 +1,121 @@
+import __builtin__
+import json
+import os
+
+from cryptography.fernet import Fernet
 from panda3d.core import *
-from direct.directnotify import DirectNotifyGlobal
+
 from toontown.toon import ToonDNA
 from toontown.toon.LocalToon import LocalToon
 from toontown.toon.ToonData import ToonData
-from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
-from toontown.toonbase import TTLocalizer
-from toontown.toontowngui import TTDialog
-import __builtin__
-import yaml.dist as yaml
-import shutil
-import os
-
-# NOTE: The encrypt() and decrypt() functions should only be called in THIS FILE to avoid confusion and repitition.
 
 BASE_DB_ID = 1000001
+KEY = 'PU05SWFTMmRGbWRFdW5VQW85ZFNWSkNKakFMYTNwQXpSM1VFSGFyRHpYRGY='
+
 
 class DataManager:
     notify = directNotify.newCategory('DataManager')
     notify.setInfo(1)
 
     def __init__(self):
-        self.fileExt = '.yaml'
-        self.oldDir = Filename.getUserAppdataDirectory() + '/FunnyFarm/db/'
-        self.newDir = Filename.getUserAppdataDirectory() + '/FunnyFarm' + '/database/'
+        self.fileExt = '.dat'
+        # self.fileDir = Filename.getUserAppdataDirectory() + '/Toontown\'s Funny Farm' + '/database/'
+        self.fileDir = os.getcwd() + '/database/'
         self.corrupted = 0
         self.toons = []
         for toonNum in xrange(FunnyFarmGlobals.MaxAvatars):
             self.toons.append(str(BASE_DB_ID + toonNum))
-        self.removeOldData()
         return
 
-    def removeOldData(self):
-        filename = Filename(self.oldDir)
-        if os.path.exists(filename.toOsSpecific()):
-            self.notify.warning('Deprecated data found. Removing...')
-            shutil.rmtree(filename.toOsSpecific())
-
     def getToonFilename(self, index):
-        filename = Filename(self.newDir + self.toons[index - 1] + self.fileExt)
+        filename = Filename(self.fileDir + self.toons[index - 1] + self.fileExt)
         if os.path.exists(filename.toOsSpecific()):
             return filename
         return None
 
     def checkToonFiles(self):
         for file in self.toons:
-            filename = Filename(self.newDir + file + self.fileExt)
+            filename = Filename(self.fileDir + file + self.fileExt)
             if os.path.exists(filename.toOsSpecific()):
                 return True
         return False
 
     def createToonData(self, index, dna, name):
-        return ToonData(index, dna, name, 20, 20, 0, 40, 0, 12000, 20, None, None, [0, 0, 0, 0, 1, 1, 0], 
-                        [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000, 1, 0, 
-                        [0, 0, 0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [], [], [], [], [], [], 
-                        [], [], 1, 1000, [-1, -1], [], [], 0, [], [], 0)
+        return ToonData.getDefaultToonData(index, dna, name)
 
     def saveToonData(self, data):
         if self.corrupted:
             return None
+
         index = data.index
-        filename = Filename(self.newDir + self.toons[index - 1] + self.fileExt)
+        filename = Filename(self.fileDir + self.toons[index - 1] + self.fileExt)
         if not os.path.exists(filename.toOsSpecific()):
             filename.makeDir()
+
         with open(filename.toOsSpecific(), 'w') as toonData:
-            data.encrypt()
-            yaml.dump(data, toonData, default_flow_style=False)
-            try:
-                data.decrypt()
-            except:
+            valid, _, toonDataObj = ToonData.verifyToonData(data, saveToonData=False)
+            if not valid:
+                toonData.close()
                 self.handleDataError()
+                return
+
+            try:
+                jsonData = toonDataObj.makeJsonData()
+            except:
+                toonData.close()
+                self.handleDataError()
+                return
+
+            try:
+                fileData = json.dumps(jsonData, indent=4)
+            except:
+                toonData.close()
+                self.handleDataError()
+                return
+
+            try:
+                fernet = Fernet(KEY.decode('base64')[::-1])
+                encryptedData = fernet.encrypt(fileData)
+                toonData.write(encryptedData)
+                toonData.close()
+            except:
+                toonData.close()
+                self.handleDataError()
+                return
+
         return
 
     def loadToonData(self, index):
         if self.corrupted:
             return None
-        filename = Filename(self.newDir + self.toons[index - 1] + self.fileExt)
+
+        filename = Filename(self.fileDir + self.toons[index - 1] + self.fileExt)
         if os.path.exists(filename.toOsSpecific()):
             with open(filename.toOsSpecific(), 'r') as toonData:
-                data = yaml.load(toonData)
                 try:
-                    data.decrypt()
+                    fileData = toonData.read()
+                    fernet = Fernet(KEY.decode('base64')[::-1])
+                    decryptedData = fernet.decrypt(fileData)
+                    jsonData = json.loads(decryptedData)
+                    toonData.close()
+                except:
+                    toonData.close()
+                    self.handleDataError()
+                    return None
+
+                try:
+                    toonDataObj = ToonData.makeFromJsonData(jsonData)
                 except:
                     self.handleDataError()
                     return None
-            return data
+
+                return toonDataObj
+
         return None
 
     def deleteToonData(self, index):
-        filename = Filename(self.newDir + self.toons[index - 1] + self.fileExt)
+        filename = Filename(self.fileDir + self.toons[index - 1] + self.fileExt)
         if os.path.exists(filename.toOsSpecific()):
             os.remove(filename.toOsSpecific())
         else:
@@ -96,7 +123,8 @@ class DataManager:
 
     def handleDataError(self):
         self.notify.warning('The database has been corrupted. Notifying user.')
-        base.handleGameError('Your database has been corrupted. Please contact The Toontown\'s Funny Farm Team for assistance.')
+        base.handleGameError(
+            'Your database has been corrupted. Please contact The Toontown\'s Funny Farm Team for assistance.')
         self.corrupted = 1
 
     def createLocalAvatar(self, data):
