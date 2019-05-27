@@ -20,7 +20,6 @@ class DataManager:
 
     def __init__(self):
         self.fileExt = '.dat'
-        # self.fileDir = Filename.getUserAppdataDirectory() + '/Toontown\'s Funny Farm' + '/database/'
         self.fileDir = os.getcwd() + '/database/'
         self.corrupted = 0
         self.toons = []

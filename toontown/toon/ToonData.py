@@ -113,6 +113,10 @@ class ToonData:
             # sad!
             return False, 'toonData is not a dictionary!', None
 
+        # Make a copy of the original Toon data, as we'll need it later on for
+        # comparison with the new Toon data.
+        originalToonData = toonData.copy()
+
         # index, setDNA, and setName are **absolutely** required.
         # There are no default values for these, for obvious reasons, so if
         # they don't exist within the toonData, we will need to stop right
@@ -146,7 +150,17 @@ class ToonData:
             if hasattr(toonDataObj, field):
                 setattr(toonDataObj, field, toonData[field])
 
-        if saveToonData:
+        # Now we'll check if any changes have actually been made to the new
+        # Toon data.
+        changesMade = False
+        if toonDataObj.__dict__.copy() != originalToonData:
+            # The new Toon data does not match the original, so some changes
+            # have been made; we want to write these to the database.
+            changesMade = True
+
+        # Check if it is necessary to save this Toon data.
+        if saveToonData and changesMade:
+            # It is, so we will write it to the database.
             dataMgr.saveToonData(toonDataObj)
 
         return True, '', toonDataObj
