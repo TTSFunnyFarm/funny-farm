@@ -98,4 +98,4 @@ class ButterflyAI(DirectObject):
         return self.doId
 
     def uniqueName(self, idString):
-        return idString + str(self.getDoId())
+        return idString + '-' + str(self.getDoId())
