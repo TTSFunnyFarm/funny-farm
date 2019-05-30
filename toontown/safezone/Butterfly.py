@@ -156,7 +156,22 @@ class Butterfly(DirectObject):
         del self.cSphereNodePath
 
     def __handleCollisionSphereEnter(self, collEntry):
-        self.sendUpdate('avatarEnter', [])
+        ourHood = None
+        for hood in base.air.hoods:
+            if hood.zoneId == base.cr.playGame.hood.zoneId:
+                ourHood = hood
+                break
+
+        if not ourHood:
+            return
+
+        serverButterflies = ourHood.butterflies[:]
+        if not serverButterflies:
+            return
+
+        for serverButterfly in serverButterflies:
+            if serverButterfly.getDoId() == self.getDoId():
+                serverButterfly.avatarEnter()
 
     def setArea(self, playground, area):
         self.playground = playground
