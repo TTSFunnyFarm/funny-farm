@@ -1,5 +1,6 @@
 from toontown.safezone import ButterflyGlobals
 from toontown.suit.SuitPlannerAI import SuitPlannerAI
+from toontown.safezone.ButterflyAI import ButterflyAI
 from toontown.toonbase import FunnyFarmGlobals
 
 
@@ -10,6 +11,7 @@ class HoodAI:
     def __init__(self, air, zoneId):
         self.air = air
         self.zoneId = zoneId
+        self.butterflies = []
 
         for zoneId in self.getZoneTable():
             self.notify.info('Creating objects... %s' % self.getLocationName(zoneId))
@@ -48,8 +50,7 @@ class HoodAI:
         ButterflyGlobals.generateIndexes(self.zoneId, playground)
         for i in range(0, ButterflyGlobals.NUM_BUTTERFLY_AREAS[playground]):
             for j in range(0, ButterflyGlobals.NUM_BUTTERFLIES[playground]):
-                # bfly = DistributedButterflyAI.DistributedButterflyAI(self.air, playground, i, self.zoneId)
-                # bfly.generateWithRequired(self.zoneId)
-                # bfly.start()
-                # self.addDistObj(bfly)
-                print 'you would spawn a butterfly here if it worked'
+                bfly = ButterflyAI(self.air, playground, i, self.zoneId)
+                bfly.generate()
+                bfly.start()
+                self.butterflies.append(bfly)
