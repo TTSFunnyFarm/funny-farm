@@ -251,6 +251,9 @@ class Butterfly(DirectObject):
         self.__ignoreAvatars()
         return None
 
+    def setDoId(self, doId):
+        self.doId = doId
+
     def getDoId(self):
         return self.doId
 

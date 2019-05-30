@@ -6,6 +6,7 @@ from panda3d.core import *
 from toontown.building.SuitInterior import SuitInterior
 from toontown.building.EliteInterior import EliteInterior
 from toontown.hood import ZoneUtil
+from toontown.safezone.Butterfly import Butterfly
 from toontown.quest import Quests
 from toontown.toon import NPCToons
 from toontown.toonbase import FunnyFarmGlobals
@@ -30,6 +31,7 @@ class Hood(DirectObject):
         self.place = None
         self.battle = None
         self.battleCell = None
+        self.butterflies = []
 
     def enter(self, shop=None, tunnel=None, init=0):
         if tunnel:
@@ -56,6 +58,7 @@ class Hood(DirectObject):
             base.localAvatar.setHoodsVisited(hoodList)
         base.avatarData.setLastHood = self.zoneId
         dataMgr.saveToonData(base.avatarData)
+        self.accept('generateButterfly', self.generateButterfly)
         self.spawnTitleText()
 
     def exit(self):
@@ -294,3 +297,11 @@ class Hood(DirectObject):
             self.sky.setTag('sky', 'Regular')
             self.sky.setScale(1.0)
             self.startSky()
+
+    def generateButterfly(self, requestStatus):
+        butterfly = Butterfly(base.cr)
+        butterfly.setDoId(requestStatus['doId'])
+        butterfly.setArea(*requestStatus['area'])
+        butterfly.setState(*requestStatus['state'])
+        butterfly.generate()
+        self.butterflies.append(butterfly)

@@ -29,6 +29,11 @@ class ButterflyAI(DirectObject):
             self.playground, self.area, self.ownerId)
         self.stateIndex = 0
 
+    def generate(self):
+        messenger.send('generateButterfly', [{'area': self.getArea(),
+                                              'doId': self.getDoId(),
+                                              'state': self.getState()}])
+
     def delete(self):
         ButterflyGlobals.recycleIndex(self.curIndex, self.playground, self.area, self.ownerId)
         ButterflyGlobals.recycleIndex(self.destIndex, self.playground, self.area, self.ownerId)
