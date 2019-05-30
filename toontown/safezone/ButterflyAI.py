@@ -41,7 +41,9 @@ class ButterflyAI(DirectObject):
         del self.fsm
 
     def d_setState(self, stateIndex, curIndex, destIndex, time):
-        self.sendUpdate('setState', [stateIndex, curIndex, destIndex, time, globalClockDelta.getRealNetworkTime()])
+        clientButterfly = self.getClientButterfly()
+        if clientButterfly:
+            clientButterfly.setState(stateIndex, curIndex, destIndex, time, globalClockDelta.getRealNetworkTime())
 
     def getArea(self):
         return [self.playground, self.area]
@@ -104,3 +106,19 @@ class ButterflyAI(DirectObject):
 
     def uniqueName(self, idString):
         return idString + '-' + str(self.getDoId())
+
+    def getClientButterfly(self):
+        if not hasattr(base.cr.playGame.hood, 'butterflies'):
+            return
+
+        butterflies = base.cr.playGame.hood.butterflies[:]
+        if not butterflies:
+            return
+
+        clientButterfly = None
+        for butterfly in butterflies:
+            if butterfly and butterfly.getDoId() == self.getDoId():
+                clientButterfly = butterfly
+                break
+
+        return clientButterfly

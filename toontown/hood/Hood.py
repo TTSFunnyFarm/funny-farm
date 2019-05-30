@@ -4,15 +4,14 @@ from direct.showbase.DirectObject import DirectObject
 from panda3d.core import *
 
 from toontown.building.SuitInterior import SuitInterior
-from toontown.building.EliteInterior import EliteInterior
 from toontown.hood import ZoneUtil
-from toontown.safezone.Butterfly import Butterfly
 from toontown.quest import Quests
+from toontown.safezone.Butterfly import Butterfly
 from toontown.toon import NPCToons
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals
-import ZoneUtil
+
 
 class Hood(DirectObject):
     notify = directNotify.newCategory('Hood')
@@ -58,7 +57,6 @@ class Hood(DirectObject):
             base.localAvatar.setHoodsVisited(hoodList)
         base.avatarData.setLastHood = self.zoneId
         dataMgr.saveToonData(base.avatarData)
-        self.accept('generateButterfly', self.generateButterfly)
         self.spawnTitleText()
 
     def exit(self):
@@ -90,6 +88,8 @@ class Hood(DirectObject):
         self.geom.reparentTo(render)
         self.geom.flattenMedium()
         self.generateNPCs()
+        self.accept('generateButterfly', self.generateButterfly)
+        self.loadButterflies()
         gsg = base.win.getGsg()
         if gsg:
             self.geom.prepareScene(gsg)
@@ -300,8 +300,25 @@ class Hood(DirectObject):
 
     def generateButterfly(self, requestStatus):
         butterfly = Butterfly(base.cr)
+        butterfly.generate()
         butterfly.setDoId(requestStatus['doId'])
         butterfly.setArea(*requestStatus['area'])
         butterfly.setState(*requestStatus['state'])
-        butterfly.generate()
         self.butterflies.append(butterfly)
+
+    def loadButterflies(self):
+        ourHood = None
+        for hood in base.air.hoods:
+            if hood.zoneId == self.zoneId:
+                ourHood = hood
+                break
+
+        if not ourHood:
+            return
+
+        currentButterflies = ourHood.butterflies[:]
+        for currentButterfly in currentButterflies:
+            if currentButterfly:
+                self.generateButterfly({'area': currentButterfly.getArea(),
+                                        'doId': currentButterfly.getDoId(),
+                                        'state': currentButterfly.getState()})
