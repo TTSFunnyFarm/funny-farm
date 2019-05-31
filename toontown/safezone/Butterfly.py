@@ -65,20 +65,20 @@ class Butterfly(DirectObject):
         self.butterfly.loadAnims({'flutter': 'phase_4/models/props/SZ_butterfly-flutter.bam',
                                   'glide': 'phase_4/models/props/SZ_butterfly-glide.bam',
                                   'land': 'phase_4/models/props/SZ_butterfly-land.bam'})
-        index = self.doId % len(self.wingTypes)
-        chosenType = self.wingTypes[index]
+        chosenType = random.choice(self.wingTypes)
         node = self.butterfly.getGeomNode()
         for type in self.wingTypes:
             wing = node.find('**/' + type)
             if type != chosenType:
                 wing.removeNode()
             else:
+                index = random.randint(0, 5)
                 if index == 0 or index == 1:
-                    color = self.yellowColors[self.doId % len(self.yellowColors)]
+                    color = random.choice(self.yellowColors)
                 elif index == 2 or index == 3:
-                    color = self.whiteColors[self.doId % len(self.whiteColors)]
+                    color = random.choice(self.whiteColors)
                 elif index == 4:
-                    color = self.paleYellowColors[self.doId % len(self.paleYellowColors)]
+                    color = random.choice(self.paleYellowColors)
                 else:
                     color = Vec4(1, 1, 1, 1)
                 wing.setColor(color)

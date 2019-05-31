@@ -205,9 +205,9 @@ class ToonHood(Hood):
 
     def generateButterfly(self, requestStatus):
         butterfly = Butterfly(base.cr)
-        butterfly.generate()
         butterfly.setDoId(requestStatus['doId'])
         butterfly.setArea(*requestStatus['area'])
+        butterfly.generate()
         butterfly.setState(*requestStatus['state'])
         self.butterflies.append(butterfly)
 
