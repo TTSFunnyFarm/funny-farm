@@ -10,7 +10,7 @@ states = {
     FLYING: 'Flying',
     LANDED: 'Landed'
 }
-NUM_BUTTERFLIES = (6,)
+NUM_BUTTERFLIES = (3,)
 NUM_BUTTERFLY_AREAS = (4,)
 BUTTERFLY_SPEED = 2.0
 BUTTERFLY_HEIGHT = (2.2,)
