@@ -39,6 +39,7 @@ class ButterflyAI(DirectObject):
         ButterflyGlobals.recycleIndex(self.destIndex, self.playground, self.area, self.ownerId)
         self.fsm.request('off')
         del self.fsm
+        self.deleteClientButterfly()
 
     def d_setState(self, stateIndex, curIndex, destIndex, time):
         clientButterfly = self.getClientButterfly()
@@ -122,3 +123,8 @@ class ButterflyAI(DirectObject):
                 break
 
         return clientButterfly
+
+    def deleteClientButterfly(self):
+        clientButterfly = self.getClientButterfly()
+        if clientButterfly:
+            clientButterfly.cleanup()

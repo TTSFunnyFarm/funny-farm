@@ -130,6 +130,19 @@ class Butterfly(DirectObject):
         del self.fsm
         return
 
+    def cleanup(self):
+        self.disable()
+        self.delete()
+
+        if not hasattr(base.cr.playGame.hood, 'butterflies'):
+            return
+
+        butterflies = base.cr.playGame.hood.butterflies
+        if not butterflies:
+            return
+
+        butterflies.remove(self)
+
     def uniqueButterflyName(self, name):
         Butterfly.id += 1
         return name + '-%d' % Butterfly.id
