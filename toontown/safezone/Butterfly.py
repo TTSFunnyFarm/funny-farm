@@ -84,7 +84,8 @@ class Butterfly(DirectObject):
                 wing.setColor(color)
 
         self.butterfly2 = Actor.Actor(other=self.butterfly)
-        self.butterfly.enableBlend(blendType=PartBundle.BTLinear)
+        self.butterfly2.setBlend(frameBlend=True)
+        self.butterfly.setBlend(animBlend=True, blendType=PartBundle.BTLinear, frameBlend=True, partName=None)
         self.butterfly.loop('flutter')
         self.butterfly.loop('land')
         self.butterfly.loop('glide')
