@@ -6,7 +6,6 @@ from panda3d.core import *
 from toontown.building.SuitInterior import SuitInterior
 from toontown.hood import ZoneUtil
 from toontown.quest import Quests
-from toontown.safezone.Butterfly import Butterfly
 from toontown.toon import NPCToons
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
@@ -30,7 +29,6 @@ class Hood(DirectObject):
         self.place = None
         self.battle = None
         self.battleCell = None
-        self.butterflies = []
 
     def enter(self, shop=None, tunnel=None, init=0):
         if tunnel:
@@ -88,8 +86,6 @@ class Hood(DirectObject):
         self.geom.reparentTo(render)
         self.geom.flattenMedium()
         self.generateNPCs()
-        self.accept('generateButterfly', self.generateButterfly)
-        self.loadButterflies()
         gsg = base.win.getGsg()
         if gsg:
             self.geom.prepareScene(gsg)
@@ -297,28 +293,3 @@ class Hood(DirectObject):
             self.sky.setTag('sky', 'Regular')
             self.sky.setScale(1.0)
             self.startSky()
-
-    def generateButterfly(self, requestStatus):
-        butterfly = Butterfly(base.cr)
-        butterfly.generate()
-        butterfly.setDoId(requestStatus['doId'])
-        butterfly.setArea(*requestStatus['area'])
-        butterfly.setState(*requestStatus['state'])
-        self.butterflies.append(butterfly)
-
-    def loadButterflies(self):
-        ourHood = None
-        for hood in base.air.hoods:
-            if hood.zoneId == self.zoneId:
-                ourHood = hood
-                break
-
-        if not ourHood:
-            return
-
-        currentButterflies = ourHood.butterflies[:]
-        for currentButterfly in currentButterflies:
-            if currentButterfly:
-                self.generateButterfly({'area': currentButterfly.getArea(),
-                                        'doId': currentButterfly.getDoId(),
-                                        'state': currentButterfly.getState()})
