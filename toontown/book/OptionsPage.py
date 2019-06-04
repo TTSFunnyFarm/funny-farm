@@ -276,7 +276,7 @@ class OptionsTabPage(DirectFrame):
         # and THEN correct the resolution with their actual display size.
         if settings['fullscreen']:
             tempProperties = WindowProperties()
-            tempProperties.setSize(800, 600)
+            tempProperties.setSize(1280, 720)
             tempProperties.setFullscreen(settings['fullscreen'])
             base.win.requestProperties(tempProperties)
             base.graphicsEngine.renderFrame()

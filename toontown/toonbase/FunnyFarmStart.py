@@ -19,7 +19,7 @@ __builtin__.settings = Settings(preferencesFilename)
 if 'antialiasing' not in settings:
     settings['antialiasing'] = 0
 if 'res' not in settings:
-    settings['res'] = [800, 600]
+    settings['res'] = [1280, 720]
 loadPrcFileData('Settings: MSAA', 'framebuffer-multisample %s' % (settings['antialiasing'] > 0))
 loadPrcFileData('Settings: MSAA samples', 'multisamples %i' % settings['antialiasing'])
 loadPrcFileData('Settings: res', 'win-size %d %d' % tuple(settings['res']))
