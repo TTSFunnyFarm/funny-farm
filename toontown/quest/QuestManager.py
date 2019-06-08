@@ -254,7 +254,9 @@ class QuestManager:
         if jellybeans > 0:
             toon.addMoney(jellybeans)
         if cheesyEffect > 0:
-            # todo figure out best way to set the timers on these
+            # If they already have a cheesy effect, we need to cancel it before we apply another one.
+            if toon.getCETimer() != 0.0:
+                toon.cheesyEffectTimeout()
             toon.setCheesyEffect(cheesyEffect)
         levelUp = (toon.levelExp + expGained) >= toon.getMaxLevelExp() and (toon.level + 1) <= FunnyFarmGlobals.ToonLevelCap
         if expGained > 0:

@@ -1430,9 +1430,16 @@ def chooseQuestDialog(id, status):
                 rewardDialog = rewardDialog % str(reward[1])
             elif reward[0] == QuestRewardCheesyEffect:
                 effect = TTLocalizer.CheesyEffectDescriptions[reward[1]][1]
-                # todo determine the correct lengths of time for cheesy effects.
-                # right now they're permanent.
-                rewardDialog = rewardDialog['i'] % {'effectName': effect, 'whileIn': ''}
+                tier = getQuestTier(id)
+                if tier == FF_TIER or tier == FF_TIER + 1:
+                    zoneId = FunnyFarmGlobals.FunnyFarm
+                else:
+                    zoneId = FunnyFarmGlobals.FunnyFarm
+                if reward[1] in FunnyFarmGlobals.CheesyEffectDict[zoneId].keys():
+                    unit, duration = FunnyFarmGlobals.CheesyEffectDict[zoneId][reward[1]]
+                    rewardDialog = rewardDialog[unit] % {'time': duration, 'effectName': effect, 'whileIn': ''}
+                else:
+                    rewardDialog = rewardDialog['i'] % {'effectName': effect, 'whileIn': ''}
             questDialog += '\x07' + rewardDialog
     return questDialog
 

@@ -19,6 +19,7 @@ DefaultData = [
     ['setShoes', [list], [0, 0, 0]],
     ['setNametagStyle', [str, unicode], 'Mickey'],
     ['setCheesyEffect', [int], 0],
+    ['setCETimer', [float], 0.0],
     ['setLastHood', [int], 1000],
     ['setLevel', [int], 1],
     ['setLevelExp', [int], 0],
@@ -50,7 +51,7 @@ class ToonData:
 
     def __init__(self, index, dna, name, hp, maxHp, money, maxMoney, bankMoney, maxBankMoney, maxCarry,
                  inventory, experience, trackAccess, hat, glasses, backpack, shoes, nametagStyle, cheesyEffect,
-                 lastHood, level, levelExp, damage, defense, accuracy, clothesTopsList, clothesBottomsList,
+                 CETimer, lastHood, level, levelExp, damage, defense, accuracy, clothesTopsList, clothesBottomsList,
                  hatList, glassesList, backpackList, shoesList, quests, questHistory, questCarryLimit, questingZone,
                  trackProgress, hoodsVisited, teleportAccess, fishingRod, fishCollection, fishTank, tutorialAck):
         self.index = index
@@ -73,6 +74,7 @@ class ToonData:
         self.setShoes = shoes
         self.setNametagStyle = nametagStyle
         self.setCheesyEffect = cheesyEffect
+        self.setCETimer = CETimer
         self.setLevel = level
         self.setLevelExp = levelExp
         self.setDamage = damage
@@ -177,7 +179,8 @@ class ToonData:
     def getDefaultToonData(index, dna, name):
         defaultToonData = ToonData(index, dna, name, None, None, None, None, None, None, None, None, None, None, None,
                                    None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-                                   None, None, None, None, None, None, None, None, None, None, None, None, None, None)
+                                   None, None, None, None, None, None, None, None, None, None, None, None, None, None, 
+                                   None)
         for field in DefaultData:
             if hasattr(defaultToonData, field[0]):
                 setattr(defaultToonData, field[0], field[2])

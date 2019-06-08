@@ -1,6 +1,7 @@
 from direct.showbase.DirectObject import DirectObject
 
 from toontown.ai.HolidayManagerAI import HolidayManagerAI
+from toontown.ai.CheesyEffectMgrAI import CheesyEffectMgrAI
 from toontown.hood import FFHoodAI
 from toontown.quest import Quests
 from toontown.toon import NPCToons
@@ -22,6 +23,7 @@ class FFAIRepository(DirectObject):
         self.isLoaded = 0
         self.currSuitIndex = 2000000
         self.holidayMgr = None
+        self.cheesyEffectMgr = None
 
     def preloadAvatars(self):
         self.notify.info('Preloading avatars...')
@@ -35,6 +37,7 @@ class FFAIRepository(DirectObject):
     def createManagers(self):
         self.notify.info('Creating managers...')
         self.holidayMgr = HolidayManagerAI()
+        self.cheesyEffectMgr = CheesyEffectMgrAI()
 
     def createSafeZones(self):
         self.notify.info('Creating safe zones...')
