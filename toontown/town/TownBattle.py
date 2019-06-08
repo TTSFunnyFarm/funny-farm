@@ -176,7 +176,7 @@ class TownBattle(StateData.StateData):
         self.numToons = 1
         self.numCogs = 1
         self.toons = [base.localAvatar.doId]
-        self.toonPanels[0].setLaffMeter(base.localAvatar)
+        self.toonPanels[0].setAvatar(base.localAvatar)
         self.bldg = bldg
         self.creditLevel = None
         self.creditMultiplier = creditMultiplier
@@ -226,28 +226,35 @@ class TownBattle(StateData.StateData):
         self.timer.setTime(time)
         return None
 
-    def __cogPanels(self, num):
+    def __enterCogPanels(self, num):
         for panel in self.cogPanels:
             panel.hide()
-            panel.setPos(0, 0, 0.615)
+            panel.setPos(0, 0, 0.62)
 
         if num == 1:
             self.cogPanels[0].setX(self.oddPos[1])
             self.cogPanels[0].show()
         elif num == 2:
-            for i in xrange(2):
-                self.cogPanels[i].setX(self.evenPos[i + 1])
-                self.cogPanels[i].show()
-
+            self.cogPanels[0].setX(self.evenPos[1])
+            self.cogPanels[0].show()
+            self.cogPanels[1].setX(self.evenPos[2])
+            self.cogPanels[1].show()
         elif num == 3:
-            for i in xrange(3):
-                self.cogPanels[i].setX(self.oddPos[i])
-                self.cogPanels[i].show()
-
+            self.cogPanels[0].setX(self.oddPos[0])
+            self.cogPanels[0].show()
+            self.cogPanels[1].setX(self.oddPos[1])
+            self.cogPanels[1].show()
+            self.cogPanels[2].setX(self.oddPos[2])
+            self.cogPanels[2].show()
         elif num == 4:
-            for i in xrange(4):
-                self.cogPanels[i].setX(self.evenPos[i])
-                self.cogPanels[i].show()
+            self.cogPanels[0].setX(self.evenPos[0])
+            self.cogPanels[0].show()
+            self.cogPanels[1].setX(self.evenPos[0])
+            self.cogPanels[1].show()
+            self.cogPanels[2].setX(self.evenPos[0])
+            self.cogPanels[2].show()
+            self.cogPanels[3].setX(self.evenPos[0])
+            self.cogPanels[3].show()
 
     def __enterPanels(self, num, localNum):
         self.notify.debug('enterPanels() num: %d localNum: %d' % (num, localNum))
@@ -353,7 +360,7 @@ class TownBattle(StateData.StateData):
     def exitOff(self):
         if self.isLoaded:
             self.__enterPanels(self.numToons, self.localNum)
-            self.__cogPanels(self.numCogs)
+            self.__enterCogPanels(self.numCogs)
         if not self.tutorialFlag:
             self.timer.show()
         self.track = -1
@@ -470,12 +477,12 @@ class TownBattle(StateData.StateData):
         currStateName = self.fsm.getCurrentState().getName()
         if resetActivateMode:
             self.__enterPanels(self.numToons, self.localNum)
-            self.__cogPanels(self.numCogs)
+            self.__enterCogPanels(self.numCogs)
             for i in range(len(toons)):
-                self.toonPanels[i].setLaffMeter(toons[i])
+                self.toonPanels[i].setAvatar(toons[i])
 
             for i in range(len(cogs)):
-                self.cogPanels[i].setCogInformation(cogs[i])
+                self.cogPanels[i].setAvatar(cogs[i])
 
             if currStateName == 'ChooseCog':
                 self.chooseCogPanel.adjustCogs(self.numCogs, self.luredIndices, self.trappedIndices, self.track)

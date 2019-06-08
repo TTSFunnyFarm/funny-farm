@@ -344,7 +344,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         for toon in self.activeToons:
             self.townBattle.updateLaffMeter(self.activeToons.index(toon), toon.hp)
         for i in range(len(self.activeSuits)):
-            self.townBattle.cogPanels[i].setCogInformation(self.activeSuits[i])
+            self.townBattle.cogPanels[i].setAvatar(self.activeSuits[i])
         
         if not self.tutorialFlag:
             self.startTimer()
