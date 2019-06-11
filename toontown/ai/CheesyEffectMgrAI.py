@@ -35,5 +35,5 @@ class CheesyEffectMgrAI:
     def stopTimer(self):
         if taskMgr.hasTaskNamed('cheesyEffectTimer'):
             taskMgr.remove('cheesyEffectTimer')
-        del self.duration
-        del self.startTime
+        self.duration = None
+        self.startTime = None
