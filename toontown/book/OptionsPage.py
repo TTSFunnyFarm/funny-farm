@@ -4,6 +4,7 @@ from direct.task import Task
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals, FunnyFarmGlobals
 from toontown.toontowngui import TTDialog
+from DisplaySettingsDialog import DisplaySettingsDialog
 import ShtikerPage
 
 class OptionsPage(ShtikerPage.ShtikerPage):
@@ -60,6 +61,9 @@ class OptionsPage(ShtikerPage.ShtikerPage):
 
 class OptionsTabPage(DirectFrame):
     notify = directNotify.newCategory('OptionsTabPage')
+    ChangeDisplaySettings = config.GetBool('change-display-settings', 1)
+    ChangeDisplayAPI = config.GetBool('change-display-api', 0)
+
     def __init__(self, parent = aspect2d):
         self._parent = parent
         self.currentSizeIndex = None
@@ -74,6 +78,11 @@ class OptionsTabPage(DirectFrame):
         DirectFrame.destroy(self)
 
     def load(self):
+        self.displaySettings = None
+        self.displaySettingsChanged = 0
+        self.displaySettingsSize = (None, None)
+        self.displaySettingsApi = None
+        self.displaySettingsApiChanged = 0
         guiButton = loader.loadModel('phase_3/models/gui/quit_button')
         gui = loader.loadModel('phase_3.5/models/gui/friendslist_gui')
         matGui = loader.loadModel('phase_3/models/gui/tt_m_gui_mat_mainGui')
@@ -138,12 +147,18 @@ class OptionsTabPage(DirectFrame):
         self.__setSoundFXButton()
         self.exitButton.show()
         self.enterVideoOptions()
+        self.accept(base.win.getWindowEvent(), self.__handleWindowEvent)
 
     def exit(self):
-        self.ignore('confirmDone')
+        self.ignoreAll()
         self.hide()
 
     def unload(self):
+        self.writeDisplaySettings()
+        if self.displaySettings != None:
+            self.ignore(self.displaySettings.doneEvent)
+            self.displaySettings.unload()
+        self.displaySettings = None
         self.Music_toggleButton.destroy()
         self.SoundFX_toggleButton.destroy()
         self.Fullscreen_toggleButton.destroy()
@@ -232,6 +247,10 @@ class OptionsTabPage(DirectFrame):
         self.rightArrow['state'] = DGG.DISABLED
         self.currVideoPage = 2
 
+    def __handleWindowEvent(self, win):
+        if win == base.win:
+            self.__setResolutionButton()
+
     def __doToggleMusic(self):
         messenger.send('wakeup')
         if base.musicActive:
@@ -276,7 +295,7 @@ class OptionsTabPage(DirectFrame):
         # and THEN correct the resolution with their actual display size.
         if settings['fullscreen']:
             tempProperties = WindowProperties()
-            tempProperties.setSize(1280, 720)
+            tempProperties.setSize(1024, 768)
             tempProperties.setFullscreen(settings['fullscreen'])
             base.win.requestProperties(tempProperties)
             base.graphicsEngine.renderFrame()
@@ -284,8 +303,13 @@ class OptionsTabPage(DirectFrame):
         properties = WindowProperties()
         if settings['fullscreen']:
             width, height = (base.pipe.getDisplayWidth(), base.pipe.getDisplayHeight())
+            # Save their new resolution since we're fullscreened now.
+            settings['res'] = [width, height]
         else:
+            # Set the default res back to 1280x720.
+            settings['res'] = [1280, 720]
             width, height = tuple(settings['res'])
+            
         properties.setSize(width, height)
         properties.setFullscreen(settings['fullscreen'])
         base.win.requestProperties(properties)
@@ -309,7 +333,32 @@ class OptionsTabPage(DirectFrame):
         return
 
     def __doChangeResolution(self):
-        pass # todo
+        if self.displaySettings == None:
+            self.displaySettings = DisplaySettingsDialog()
+            self.displaySettings.load()
+            self.accept(self.displaySettings.doneEvent, self.__doneDisplaySettings)
+        self.displaySettings.enter(self.ChangeDisplaySettings, self.ChangeDisplayAPI)
+
+    def __doneDisplaySettings(self, anyChanged, apiChanged):
+        if anyChanged:
+            properties = base.win.getProperties()
+            self.displaySettingsChanged = 1
+            self.displaySettingsSize = (properties.getXSize(), properties.getYSize())
+            self.displaySettingsApi = base.pipe.getInterfaceName()
+            self.displaySettingsApiChanged = apiChanged
+            self.__setResolutionButton()
+            self.writeDisplaySettings()
+
+    def writeDisplaySettings(self, task=None):
+        if not self.displaySettingsChanged:
+            return
+        # Only save the resolution if we're in fullscreen mode.
+        if settings['fullscreen']:
+            settings['res'] = [self.displaySettingsSize[0], self.displaySettingsSize[1]]
+        # Otherwise, we want the default window size to be 1280x720 (i.e. the starting window size)
+        else:
+            settings['res'] = [1280, 720]
+        return Task.done
 
     def __doToggleAntialias(self):
         messenger.send('wakeup')
@@ -409,8 +458,10 @@ class OptionsTabPage(DirectFrame):
             self.Fullscreen_Label['text'] += TTLocalizer.OptionsPageRequiresRestart
 
     def __setResolutionButton(self):
-        width, height = (base.pipe.getDisplayWidth(), base.pipe.getDisplayHeight())
-        self.Resolution_Label['text'] = TTLocalizer.OptionsPageResolution % {'screensize': str(width) + 'x' + str(height)}
+        properties = base.win.getProperties()
+        screenSizeIndex = DisplaySettingsDialog.chooseClosestScreenSize(properties.getXSize(), properties.getYSize())
+        width, height = DisplaySettingsDialog.screenSizes[screenSizeIndex]
+        self.Resolution_Label['text'] = TTLocalizer.OptionsPageResolution % {'screensize': str(width) + ' x ' + str(height)}
         self.Resolution_toggleButton['text'] = TTLocalizer.OptionsPageChange
 
     def _setAntialiasingButton(self):

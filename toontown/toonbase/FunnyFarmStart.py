@@ -9,13 +9,13 @@ from toontown.toonbase.FunnyFarmLogger import FunnyFarmLogger
 
 __builtin__.logger = FunnyFarmLogger()
 
-# This has to be done before ToonBase loads
 preferencesFilename = ConfigVariableString('preferences-filename', 'preferences.json').getValue()
 dir = os.path.dirname(os.getcwd() + '/' + preferencesFilename)
 if not os.path.exists(dir):
     os.makedirs(dir)
 print('Reading %s...' % preferencesFilename)
 __builtin__.settings = Settings(preferencesFilename)
+# These have to be set before ToonBase loads
 if 'antialiasing' not in settings:
     settings['antialiasing'] = 0
 if 'res' not in settings:
@@ -72,18 +72,17 @@ class FunnyFarmStart:
         if 'drawFps' not in settings:
             settings['drawFps'] = False
         if 'enableLODs' not in settings:
-            settings['enableLODs'] = True
+            settings['enableLODs'] = False
         if 'waterReflectionScale' not in settings:
-            settings['waterReflectionScale'] = 0.25
+            settings['waterReflectionScale'] = 0
         if 'waterRefractionScale' not in settings:
-            settings['waterRefractionScale'] = 0.5
+            settings['waterRefractionScale'] = 0
         if 'waterShader' not in settings:
             settings['waterShader'] = False
-        winSize = settings['res'] if not settings['fullscreen'] else [base.pipe.getDisplayWidth(), base.pipe.getDisplayHeight()]
         # Resolution is set above for windowed mode. This is in case the user is running fullscreen mode.
         # If we set the windowed resolution down here, the game wouldn't notice.
         # However, for fullscreen, we refresh the window properties anyway.
-        loadPrcFileData('Settings: res', 'win-size %d %d' % tuple(winSize))
+        loadPrcFileData('Settings: res', 'win-size %d %d' % tuple(settings['res']))
         loadPrcFileData('Settings: fullscreen', 'fullscreen %s' % settings['fullscreen'])
         loadPrcFileData('Settings: music', 'audio-music-active %s' % settings['music'])
         loadPrcFileData('Settings: sfx', 'audio-sfx-active %s' % settings['sfx'])
@@ -101,7 +100,7 @@ class FunnyFarmStart:
             base.drawFps = 1
         if settings['fullscreen']:
             properties = WindowProperties()
-            properties.setSize(*winSize)
+            properties.setSize(*settings['res'])
             properties.setFullscreen(settings['fullscreen'])
             base.win.requestProperties(properties)
 
