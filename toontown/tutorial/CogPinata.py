@@ -31,7 +31,8 @@ class CogPinata(Actor):
         self.loadModel(self.model)
         self.loadAnims(self.animDict)
         self.reparentTo(self.root)
-        self.setBlend(frameBlend=True)
+        if config.GetBool('smooth-animations', True):
+            self.setBlend(frameBlend=True)
 
         self.head_locator = self.attachNewNode('temphead')
         self.bodyColl = CollisionTube(0, 0, 1, 0, 0, 5.75, 0.75)

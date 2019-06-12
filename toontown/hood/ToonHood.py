@@ -63,7 +63,8 @@ class ToonHood(Hood):
             self.fish = Actor('phase_4/models/props/exteriorfish-zero',
                               {'chan': 'phase_4/models/props/exteriorfish-swim'})
             self.fish.reparentTo(self.geom.find('**/fish_origin'))
-            self.fish.setBlend(frameBlend=True)
+            if config.GetBool('smooth-animations', True):
+                self.fish.setBlend(frameBlend=True)
             self.fish.loop('chan')
         if not self.geom.find('**/*trolley_station*').isEmpty():
             self.trolley = Trolley()

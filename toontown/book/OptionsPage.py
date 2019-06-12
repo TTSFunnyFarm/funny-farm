@@ -386,7 +386,10 @@ class OptionsTabPage(DirectFrame):
         self.__setFpsButton()
 
     def __doToggleSmooth(self):
-        pass # todo
+        settings['smoothAnimations'] = not settings['smoothAnimations']
+        loadPrcFileData('Settings: smoothAnimations', 'smooth-animations %s' % settings['smoothAnimations'])
+        base.needRestartSmoothing = True
+        self.__setSmoothingButton()
 
     def __doToggleBlend(self):
         pass # todo
@@ -394,7 +397,7 @@ class OptionsTabPage(DirectFrame):
     def __doToggleLOD(self):
         messenger.send('wakeup')
         settings['enableLODs'] = not settings['enableLODs']
-        loadPrcFileData('Settings: LODs', 'enable-lods %s' % settings['enableLODs'])
+        loadPrcFileData('Settings: enableLODs', 'enable-lods %s' % settings['enableLODs'])
         base.needRestartLOD = True
         self._setLODButton()
 
@@ -483,8 +486,14 @@ class OptionsTabPage(DirectFrame):
             self.Fps_toggleButton['text'] = TTLocalizer.OptionsPageToggleOn
 
     def __setSmoothingButton(self):
-        self.Smooth_Label['text'] = TTLocalizer.OptionsPageSmoothingOnLabel
-        self.Smooth_toggleButton['text'] = TTLocalizer.OptionsPageToggleOff
+        if settings['smoothAnimations']:
+            self.Smooth_Label['text'] = TTLocalizer.OptionsPageSmoothingOnLabel
+            self.Smooth_toggleButton['text'] = TTLocalizer.OptionsPageToggleOff
+        else:
+            self.Smooth_Label['text'] = TTLocalizer.OptionsPageSmoothingOffLabel
+            self.Smooth_toggleButton['text'] = TTLocalizer.OptionsPageToggleOn
+        if base.needRestartSmoothing:
+            self.Smooth_Label['text'] += TTLocalizer.OptionsPageRequiresRestart
 
     def __setBlendingButton(self):
         self.Blend_Label['text'] = TTLocalizer.OptionsPageBlendingOffLabel

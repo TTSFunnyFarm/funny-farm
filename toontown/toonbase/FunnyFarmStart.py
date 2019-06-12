@@ -19,7 +19,7 @@ print('Reading %s...' % preferencesFilename)
 __builtin__.settings = Settings(preferencesFilename)
 # These have to be set before ToonBase loads
 if 'antialiasing' not in settings:
-    settings['antialiasing'] = 0
+    settings['antialiasing'] = 2
 if 'res' not in settings:
     settings['res'] = [1280, 720]
 loadPrcFileData('Settings: MSAA', 'framebuffer-multisample %s' % (settings['antialiasing'] > 0))
@@ -73,6 +73,8 @@ class FunnyFarmStart:
             settings['toonChatSounds'] = True
         if 'drawFps' not in settings:
             settings['drawFps'] = False
+        if 'smoothAnimations' not in settings:
+            settings['smoothAnimations'] = True
         if 'enableLODs' not in settings:
             settings['enableLODs'] = False
         if 'waterReflectionScale' not in settings:
@@ -93,6 +95,8 @@ class FunnyFarmStart:
         loadPrcFileData('Settings: loadDisplay', 'load-display %s' % settings['loadDisplay'])
         loadPrcFileData('Settings: toonChatSounds', 'toon-chat-sounds %s' % settings['toonChatSounds'])
         loadPrcFileData('Settings: enableLODs', 'enable-lods %s' % settings['enableLODs'])
+        # Panda's interpolate-frames flag isn't very intuitive, so we will create our own variable to do smooth animations on a per-actor basis.
+        loadPrcFileData('Settings: smoothAnimations', 'smooth-animations %s' % settings['smoothAnimations'])
         if not settings['music']:
             base.enableMusic(0)
         if not settings['sfx']:

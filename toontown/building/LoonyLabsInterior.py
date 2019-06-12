@@ -203,7 +203,8 @@ class LoonyLabsInterior(Interior):
          'phaseFourToFive': 'phase_4/models/props/tt_a_ara_ttc_sillyMeter_phaseFourToFive',
          'phaseFive': 'phase_4/models/props/tt_a_ara_ttc_sillyMeter_phaseFive'})
         self.sillyMeter.reparentTo(self.interior)
-        self.sillyMeter.setBlend(frameBlend=True)
+        if config.GetBool('smooth-animations', True):
+            self.sillyMeter.setBlend(frameBlend=True)
         
         # Reflection of the Silly Meter on the floor. Yes, unfortunately this means
         # we have to render everything twice and animate everything twice.
@@ -215,7 +216,8 @@ class LoonyLabsInterior(Interior):
          'phaseFourToFive': 'phase_4/models/props/tt_a_ara_ttc_sillyMeter_phaseFourToFive',
          'phaseFive': 'phase_4/models/props/tt_a_ara_ttc_sillyMeter_phaseFive'})
         self.sillyMeterRef.reparentTo(self.interior)
-        self.sillyMeterRef.setBlend(frameBlend=True)
+        if config.GetBool('smooth-animations', True):
+            self.sillyMeterRef.setBlend(frameBlend=True)
         self.sillyMeterRef.setHpr(0, 0, 180)
         self.sillyMeterRef.setSx(-1)
         self.sillyMeterRef.setAttrib(CullFaceAttrib.make(CullFaceAttrib.MNone))
