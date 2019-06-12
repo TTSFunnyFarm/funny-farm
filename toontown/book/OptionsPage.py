@@ -214,7 +214,7 @@ class OptionsTabPage(DirectFrame):
         self.Fps_toggleButton.show()
         self.__setFullscreenButton()
         self.__setResolutionButton()
-        self._setAntialiasingButton()
+        self.__setAntialiasingButton()
         self.__setFpsButton()
         self.videoLabel['text'] = TTLocalizer.OptionsPageVideoLabel
         self.leftArrow['state'] = DGG.DISABLED
@@ -240,7 +240,7 @@ class OptionsTabPage(DirectFrame):
         self.WaterShader_toggleButton.show()
         self.__setSmoothingButton()
         self.__setBlendingButton()
-        self._setLODButton()
+        self.__setLODButton()
         self.__setWaterShaderButton()
         self.videoLabel['text'] = TTLocalizer.OptionsPageAdvancedLabel
         self.leftArrow['state'] = DGG.NORMAL
@@ -371,7 +371,7 @@ class OptionsTabPage(DirectFrame):
         loadPrcFileData('Settings: MSAA', 'framebuffer-multisample %s' % (settings['antialiasing'] > 0))
         loadPrcFileData('Settings: MSAA samples', 'multisamples %i' % settings['antialiasing'])
         base.needRestartAntialiasing = True
-        self._setAntialiasingButton()
+        self.__setAntialiasingButton()
 
     def __doToggleFps(self):
         messenger.send('wakeup')
@@ -399,7 +399,7 @@ class OptionsTabPage(DirectFrame):
         settings['enableLODs'] = not settings['enableLODs']
         loadPrcFileData('Settings: enableLODs', 'enable-lods %s' % settings['enableLODs'])
         base.needRestartLOD = True
-        self._setLODButton()
+        self.__setLODButton()
 
     def __getWaterShaderIndex(self):
         idx = FunnyFarmGlobals.ShaderCustom
@@ -467,7 +467,7 @@ class OptionsTabPage(DirectFrame):
         self.Resolution_Label['text'] = TTLocalizer.OptionsPageResolution % {'screensize': str(width) + ' x ' + str(height)}
         self.Resolution_toggleButton['text'] = TTLocalizer.OptionsPageChange
 
-    def _setAntialiasingButton(self):
+    def __setAntialiasingButton(self):
         if settings['antialiasing']:
             self.Antialias_Label['text'] = TTLocalizer.OptionsPageAntialiasingOnLabel
             self.Antialias_toggleButton['text'] = TTLocalizer.OptionsPageToggleOff
@@ -500,7 +500,7 @@ class OptionsTabPage(DirectFrame):
         self.Blend_toggleButton.hide()
         self.Blend_tempText.show()
 
-    def _setLODButton(self):
+    def __setLODButton(self):
         if settings['enableLODs']:
             self.LOD_Label['text'] = TTLocalizer.OptionsPageLODOnLabel
             self.LOD_toggleButton['text'] = TTLocalizer.OptionsPageToggleOff

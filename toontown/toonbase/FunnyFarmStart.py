@@ -15,7 +15,7 @@ preferencesFilename = ConfigVariableString('preferences-filename', 'preferences.
 dir = os.path.dirname(os.getcwd() + '/' + preferencesFilename)
 if not os.path.exists(dir):
     os.makedirs(dir)
-print('Reading %s...' % preferencesFilename)
+print 'Reading %s...' % preferencesFilename
 __builtin__.settings = Settings(preferencesFilename)
 # These have to be set before ToonBase loads
 if 'antialiasing' not in settings:
@@ -57,8 +57,6 @@ class FunnyFarmStart:
     def __init__(self):
         self.notify.info('Starting the game.')
 
-        if 'fullscreen' not in settings:
-            settings['fullscreen'] = False
         if 'music' not in settings:
             settings['music'] = True
         if 'sfx' not in settings:
@@ -71,18 +69,20 @@ class FunnyFarmStart:
             settings['loadDisplay'] = 'pandagl'
         if 'toonChatSounds' not in settings:
             settings['toonChatSounds'] = True
+        if 'fullscreen' not in settings:
+            settings['fullscreen'] = False
         if 'drawFps' not in settings:
             settings['drawFps'] = False
         if 'smoothAnimations' not in settings:
             settings['smoothAnimations'] = True
         if 'enableLODs' not in settings:
             settings['enableLODs'] = False
+        if 'waterShader' not in settings:
+            settings['waterShader'] = False
         if 'waterReflectionScale' not in settings:
             settings['waterReflectionScale'] = 0
         if 'waterRefractionScale' not in settings:
             settings['waterRefractionScale'] = 0
-        if 'waterShader' not in settings:
-            settings['waterShader'] = False
         # Resolution is set above for windowed mode. This is in case the user is running fullscreen mode.
         # If we set the windowed resolution down here, the game wouldn't notice.
         # However, for fullscreen, we refresh the window properties anyway.
@@ -101,14 +101,14 @@ class FunnyFarmStart:
             base.enableMusic(0)
         if not settings['sfx']:
             base.enableSoundEffects(0)
-        if settings['drawFps']:
-            base.setFrameRateMeter(True)
-            base.drawFps = 1
         if settings['fullscreen']:
             properties = WindowProperties()
             properties.setSize(*settings['res'])
             properties.setFullscreen(settings['fullscreen'])
             base.win.requestProperties(properties)
+        if settings['drawFps']:
+            base.setFrameRateMeter(True)
+            base.drawFps = 1
 
         self.notify.info('Setting default GUI globals')
         DirectGuiGlobals.setDefaultRolloverSound(base.loader.loadSfx('phase_3/audio/sfx/GUI_rollover.ogg'))
