@@ -371,10 +371,8 @@ class OptionsTabPage(DirectFrame):
     def __doToggleAntialias(self):
         messenger.send('wakeup')
         if settings['antialiasing']:
-            render.setAntialias(AntialiasAttrib.MNone)
             settings['antialiasing'] = 0
         else:
-            render.setAntialias(AntialiasAttrib.MAuto)
             settings['antialiasing'] = 2
         loadPrcFileData('Settings: MSAA', 'framebuffer-multisample %s' % (settings['antialiasing'] > 0))
         loadPrcFileData('Settings: MSAA samples', 'multisamples %i' % settings['antialiasing'])
