@@ -156,8 +156,13 @@ class ToonBase(OTPBase.OTPBase):
 
     def openMainWindow(self, *args, **kw):
         result = OTPBase.OTPBase.openMainWindow(self, *args, **kw)
-        #self.setCursorAndIcon()
+        # self.setCursorAndIcon()
         return result
+
+    def setFrameRateMeter(self, flag):
+        OTPBase.OTPBase.setFrameRateMeter(self, flag)
+        if self.frameRateMeter:
+            self.frameRateMeter.setFont(ToontownGlobals.getSignFont())
 
     def windowEvent(self, win):
         OTPBase.OTPBase.windowEvent(self, win)
