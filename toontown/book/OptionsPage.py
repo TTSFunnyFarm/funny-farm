@@ -131,10 +131,10 @@ class OptionsTabPage(DirectFrame):
 
         self.exitButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=1.15, text=TTLocalizer.OptionsPageExitToontown, text_scale=options_text_scale, text_pos=button_textpos, textMayChange=0, pos=(0.45, 0, -0.6), command=self.__handleExitShowWithConfirm)
 
-        # self.Antialias_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.44, 0, (textStartHeight - textRowHeight * 5) + 0.01), scale=0.45, command=self.enterAntialiasHelp)
-        # self.LOD_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.33, 0, (textStartHeight - textRowHeight * 6) + 0.01), scale=0.45, command=self.enterLODHelp)
-        # self.Fps_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.42, 0, (textStartHeight - textRowHeight * 7) + 0.01), scale=0.45, command=self.enterFpsHelp)
-        # self.WaterShader_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.46, 0, (textStartHeight - textRowHeight * 8) + 0.01), scale=0.45, command=self.enterShaderLevelHelp)
+        self.Antialias_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.45, 0, (textStartHeight - textRowHeight * 6) + 0.01), scale=0.45, command=self.enterAntialiasHelp)
+        self.Fps_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.42, 0, (textStartHeight - textRowHeight * 7) + 0.01), scale=0.45, command=self.enterFpsHelp)
+        self.LOD_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.47, 0, (textStartHeight - textRowHeight * 7) + 0.01), scale=0.45, command=self.enterLODHelp)
+        self.WaterShader_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.47, 0, (textStartHeight - textRowHeight * 8) + 0.01), scale=0.45, command=self.enterShaderLevelHelp)
 
         guiButton.removeNode()
         gui.removeNode()
@@ -167,10 +167,10 @@ class OptionsTabPage(DirectFrame):
         self.Fps_toggleButton.destroy()
         self.WaterShader_toggleButton.destroy()
         self.exitButton.destroy()
-        # self.Antialias_Help.destroy()
-        # self.LOD_Help.destroy()
-        # self.Fps_Help.destroy()
-        # self.WaterShader_Help.destroy()
+        self.Antialias_Help.destroy()
+        self.LOD_Help.destroy()
+        self.Fps_Help.destroy()
+        self.WaterShader_Help.destroy()
         del self.audioLabel
         del self.videoLabel
         del self.Music_Label
@@ -188,10 +188,10 @@ class OptionsTabPage(DirectFrame):
         del self.Fps_toggleButton
         del self.WaterShader_toggleButton
         del self.exitButton
-        # del self.Antialias_Help
-        # del self.LOD_Help
-        # del self.Fps_Help
-        # del self.WaterShader_Help
+        del self.Antialias_Help
+        del self.LOD_Help
+        del self.Fps_Help
+        del self.WaterShader_Help
         self.currentSizeIndex = None
 
     def enterVideoOptions(self):
@@ -202,16 +202,20 @@ class OptionsTabPage(DirectFrame):
         self.Blend_tempText.hide()
         self.LOD_Label.hide()
         self.LOD_toggleButton.hide()
+        self.LOD_Help.hide()
         self.WaterShader_Label.hide()
         self.WaterShader_toggleButton.hide()
+        self.WaterShader_Help.hide()
         self.Fullscreen_Label.show()
         self.Fullscreen_toggleButton.show()
         self.Resolution_Label.show()
         self.Resolution_toggleButton.show()
         self.Antialias_Label.show()
         self.Antialias_toggleButton.show()
+        self.Antialias_Help.show()
         self.Fps_Label.show()
         self.Fps_toggleButton.show()
+        self.Fps_Help.show()
         self.__setFullscreenButton()
         self.__setResolutionButton()
         self.__setAntialiasingButton()
@@ -228,16 +232,20 @@ class OptionsTabPage(DirectFrame):
         self.Resolution_toggleButton.hide()
         self.Antialias_Label.hide()
         self.Antialias_toggleButton.hide()
+        self.Antialias_Help.hide()
         self.Fps_Label.hide()
         self.Fps_toggleButton.hide()
+        self.Fps_Help.hide()
         self.Smooth_Label.show()
         self.Smooth_toggleButton.show()
         self.Blend_Label.show()
         self.Blend_toggleButton.show()
         self.LOD_Label.show()
         self.LOD_toggleButton.show()
+        self.LOD_Help.show()
         self.WaterShader_Label.show()
         self.WaterShader_toggleButton.show()
+        self.WaterShader_Help.show()
         self.__setSmoothingButton()
         self.__setBlendingButton()
         self.__setLODButton()
@@ -590,26 +598,22 @@ class OptionsTabPage(DirectFrame):
 
     def enterAntialiasHelp(self):
         self.help = TTDialog.TTDialog(text=TTLocalizer.OptionsPageAntialiasingHelp, text_wordwrap=13, pos=(0, 0, 0.2), style=TTDialog.Acknowledge, command=self.exitHelp)
-        self.help['text_pos'] = (-0.47, 0.16)
-        self.heading = DirectLabel(parent=self.help, relief=None, text=TTLocalizer.OptionsPageAntialiasingHeading, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_scale=0.07, pos=(-0.19, 0, 0.31))
-        self.help.show()
-
-    def enterLODHelp(self):
-        self.help = TTDialog.TTDialog(text=TTLocalizer.OptionsPageLODHelp, text_wordwrap=14, pos=(0, 0, 0.2), style=TTDialog.Acknowledge, command=self.exitHelp)
-        self.help['text_pos'] = (-0.47, 0.1)
-        self.heading = DirectLabel(parent=self.help, relief=None, text=TTLocalizer.OptionsPageLODHeading, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_scale=0.07, pos=(-0.27, 0, 0.25))
+        self.heading = DirectLabel(parent=self.help, relief=None, text=TTLocalizer.OptionsPageAntialiasingHeading, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_scale=0.07, pos=(-0.165, 0, 0.345))
         self.help.show()
 
     def enterFpsHelp(self):
         self.help = TTDialog.TTDialog(text=TTLocalizer.OptionsPageFpsHelp, text_wordwrap=14, pos=(0, 0, 0.2), style=TTDialog.Acknowledge, command=self.exitHelp)
-        self.help['text_pos'] = (-0.45, 0.07)
-        self.heading = DirectLabel(parent=self.help, relief=None, text=TTLocalizer.OptionsPageFpsHeading, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_scale=0.07, pos=(-0.26, 0, 0.22))
+        self.heading = DirectLabel(parent=self.help, relief=None, text=TTLocalizer.OptionsPageFpsHeading, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_scale=0.07, pos=(-0.245, 0, 0.24))
+        self.help.show()
+
+    def enterLODHelp(self):
+        self.help = TTDialog.TTDialog(text=TTLocalizer.OptionsPageLODHelp, text_wordwrap=14, pos=(0, 0, 0.2), style=TTDialog.Acknowledge, command=self.exitHelp)
+        self.heading = DirectLabel(parent=self.help, relief=None, text=TTLocalizer.OptionsPageLODHeading, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_scale=0.07, pos=(-0.285, 0, 0.345))
         self.help.show()
 
     def enterShaderLevelHelp(self):
         self.help = TTDialog.TTDialog(text=TTLocalizer.OptionsPageShaderLevelHelp, text_wordwrap=14, pos=(0, 0, 0.2), style=TTDialog.Acknowledge, command=self.exitHelp)
-        self.help['text_pos'] = (-0.5, 0.23)
-        self.heading = DirectLabel(parent=self.help, relief=None, text=TTLocalizer.OptionsPageShaderLevelHeading, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_scale=0.07, pos=(-0.21, 0, 0.37))
+        self.heading = DirectLabel(parent=self.help, relief=None, text=TTLocalizer.OptionsPageShaderLevelHeading, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_scale=0.07, pos=(-0.215, 0, 0.345))
         self.help.show()
 
     def exitHelp(self, response):
