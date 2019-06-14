@@ -106,8 +106,9 @@ class OptionsTabPage(DirectFrame):
         self.SoundFX_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 2))  
         self.Fullscreen_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 4))
         self.Resolution_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 5))
-        self.Antialias_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 6))
-        self.Fps_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 7))
+        self.Vsync_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 6))
+        self.Antialias_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 7))
+        self.Fps_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 8))
         self.Smooth_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 5))
         self.Blend_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 6))
         self.LOD_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 7))
@@ -117,8 +118,9 @@ class OptionsTabPage(DirectFrame):
         self.SoundFX_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 2), command=self.__doToggleSfx)
         self.Fullscreen_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image3_color=Vec4(0.5, 0.5, 0.5, 0.5), image_scale=button_image_scale, text=TTLocalizer.OptionsPageChange, text3_fg=(0.5, 0.5, 0.5, 0.75), text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 4), command=self.__doToggleFullscreen)
         self.Resolution_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 5), command=self.__doChangeResolution)
-        self.Antialias_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 6), command=self.__doToggleAntialias)
-        self.Fps_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 7), command=self.__doToggleFps)
+        self.Vsync_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 6), command=self.__doToggleVsync)
+        self.Antialias_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 7), command=self.__doToggleAntialias)
+        self.Fps_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 8), command=self.__doToggleFps)
         self.Smooth_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 5), command=self.__doToggleSmooth)
         self.Blend_toggleButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=button_image_scale, text='', text_scale=options_text_scale, text_pos=button_textpos, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 6), command=self.__doToggleBlend)
         self.Blend_tempText = DirectLabel(parent=self, relief=None, text='Coming soon', text_scale=options_text_scale, text_wordwrap=16, pos=(buttonbase_xcoord, 0.0, buttonbase_ycoord - textRowHeight * 6))
@@ -131,8 +133,8 @@ class OptionsTabPage(DirectFrame):
 
         self.exitButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=1.15, text=TTLocalizer.OptionsPageExitToontown, text_scale=options_text_scale, text_pos=button_textpos, textMayChange=0, pos=(0.45, 0, -0.6), command=self.__handleExitShowWithConfirm)
 
-        self.Antialias_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.45, 0, (textStartHeight - textRowHeight * 6) + 0.01), scale=0.45, command=self.enterAntialiasHelp)
-        self.Fps_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.42, 0, (textStartHeight - textRowHeight * 7) + 0.01), scale=0.45, command=self.enterFpsHelp)
+        self.Antialias_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.45, 0, (textStartHeight - textRowHeight * 7) + 0.01), scale=0.45, command=self.enterAntialiasHelp)
+        self.Fps_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.42, 0, (textStartHeight - textRowHeight * 8) + 0.01), scale=0.45, command=self.enterFpsHelp)
         self.LOD_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.47, 0, (textStartHeight - textRowHeight * 7) + 0.01), scale=0.45, command=self.enterLODHelp)
         self.WaterShader_Help = DirectButton(parent=self, relief=None, image=(helpGui.find('**/tt_t_gui_brd_helpUp'), helpGui.find('**/tt_t_gui_brd_helpDown'), helpGui.find('**/tt_t_gui_brd_helpHover')), pos=(leftMargin + 0.47, 0, (textStartHeight - textRowHeight * 8) + 0.01), scale=0.45, command=self.enterShaderLevelHelp)
 
@@ -162,9 +164,13 @@ class OptionsTabPage(DirectFrame):
         self.Music_toggleButton.destroy()
         self.SoundFX_toggleButton.destroy()
         self.Fullscreen_toggleButton.destroy()
+        self.Resolution_toggleButton.destroy()
+        self.Vsync_toggleButton.destroy()
         self.Antialias_toggleButton.destroy()
-        self.LOD_toggleButton.destroy()
         self.Fps_toggleButton.destroy()
+        self.Smooth_toggleButton.destroy()
+        self.Blend_toggleButton.destroy()
+        self.LOD_toggleButton.destroy()
         self.WaterShader_toggleButton.destroy()
         self.exitButton.destroy()
         self.Antialias_Help.destroy()
@@ -176,21 +182,29 @@ class OptionsTabPage(DirectFrame):
         del self.Music_Label
         del self.SoundFX_Label
         del self.Fullscreen_Label
+        del self.Resolution_Label
+        del self.Vsync_Label
         del self.Antialias_Label
-        del self.LOD_Label
         del self.Fps_Label
+        del self.Smooth_Label
+        del self.Blend_Label
+        del self.LOD_Label
         del self.WaterShader_Label
         del self.Music_toggleButton
         del self.SoundFX_toggleButton
         del self.Fullscreen_toggleButton
+        del self.Resolution_toggleButton
+        del self.Vsync_toggleButton
         del self.Antialias_toggleButton
-        del self.LOD_toggleButton
         del self.Fps_toggleButton
+        del self.Smooth_toggleButton
+        del self.Blend_toggleButton
+        del self.LOD_toggleButton
         del self.WaterShader_toggleButton
         del self.exitButton
         del self.Antialias_Help
-        del self.LOD_Help
         del self.Fps_Help
+        del self.LOD_Help
         del self.WaterShader_Help
         self.currentSizeIndex = None
 
@@ -210,6 +224,8 @@ class OptionsTabPage(DirectFrame):
         self.Fullscreen_toggleButton.show()
         self.Resolution_Label.show()
         self.Resolution_toggleButton.show()
+        self.Vsync_Label.show()
+        self.Vsync_toggleButton.show()
         self.Antialias_Label.show()
         self.Antialias_toggleButton.show()
         self.Antialias_Help.show()
@@ -218,6 +234,7 @@ class OptionsTabPage(DirectFrame):
         self.Fps_Help.show()
         self.__setFullscreenButton()
         self.__setResolutionButton()
+        self.__setVsyncButton()
         self.__setAntialiasingButton()
         self.__setFpsButton()
         self.videoLabel['text'] = TTLocalizer.OptionsPageVideoLabel
@@ -230,6 +247,8 @@ class OptionsTabPage(DirectFrame):
         self.Fullscreen_toggleButton.hide()
         self.Resolution_Label.hide()
         self.Resolution_toggleButton.hide()
+        self.Vsync_Label.hide()
+        self.Vsync_toggleButton.hide()
         self.Antialias_Label.hide()
         self.Antialias_toggleButton.hide()
         self.Antialias_Help.hide()
@@ -364,11 +383,17 @@ class OptionsTabPage(DirectFrame):
             settings['res'] = [1280, 720]
         return Task.done
 
+    def __doToggleVsync(self):
+        settings['vsync'] = not settings['vsync']
+        loadPrcFileData('Settings: vsync', 'sync-video %s' % settings['vsync'])
+        base.needRestartVsync = True
+        self.__setVsyncButton()
+
     def __doToggleAntialias(self):
         if settings['antialiasing']:
             settings['antialiasing'] = 0
         else:
-            settings['antialiasing'] = 2
+            settings['antialiasing'] = 4
         loadPrcFileData('Settings: MSAA', 'framebuffer-multisample %s' % (settings['antialiasing'] > 0))
         loadPrcFileData('Settings: MSAA samples', 'multisamples %i' % settings['antialiasing'])
         base.needRestartAntialiasing = True
@@ -464,6 +489,16 @@ class OptionsTabPage(DirectFrame):
         width, height = DisplaySettingsDialog.screenSizes[screenSizeIndex]
         self.Resolution_Label['text'] = TTLocalizer.OptionsPageResolution % {'screensize': str(width) + ' x ' + str(height)}
         self.Resolution_toggleButton['text'] = TTLocalizer.OptionsPageChange
+
+    def __setVsyncButton(self):
+        if settings['vsync']:
+            self.Vsync_Label['text'] = TTLocalizer.OptionsPageVsyncOnLabel
+            self.Vsync_toggleButton['text'] = TTLocalizer.OptionsPageToggleOff
+        else:
+            self.Vsync_Label['text'] = TTLocalizer.OptionsPageVsyncOffLabel
+            self.Vsync_toggleButton['text'] = TTLocalizer.OptionsPageToggleOn
+        if base.needRestartVsync:
+            self.Vsync_Label['text'] += TTLocalizer.OptionsPageRequiresRestart
 
     def __setAntialiasingButton(self):
         if settings['antialiasing']:

@@ -18,13 +18,16 @@ if not os.path.exists(dir):
 print 'Reading %s...' % preferencesFilename
 __builtin__.settings = Settings(preferencesFilename)
 # These have to be set before ToonBase loads
-if 'antialiasing' not in settings:
-    settings['antialiasing'] = 2
 if 'res' not in settings:
     settings['res'] = [1280, 720]
+if 'vsync' not in settings:
+    settings['vsync'] = False
+if 'antialiasing' not in settings:
+    settings['antialiasing'] = 4
+loadPrcFileData('Settings: res', 'win-size %d %d' % tuple(settings['res']))
+loadPrcFileData('Settings: vsync', 'sync-video %s' % settings['vsync'])
 loadPrcFileData('Settings: MSAA', 'framebuffer-multisample %s' % (settings['antialiasing'] > 0))
 loadPrcFileData('Settings: MSAA samples', 'multisamples %i' % settings['antialiasing'])
-loadPrcFileData('Settings: res', 'win-size %d %d' % tuple(settings['res']))
 
 import ToonBase
 ToonBase.ToonBase()

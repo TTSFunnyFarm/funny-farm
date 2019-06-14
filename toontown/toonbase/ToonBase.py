@@ -148,6 +148,7 @@ class ToonBase(OTPBase.OTPBase):
         self.localAvatarStyle = None
         self.drawFps = 0
         self.secretAreaFlag = 1
+        self.needRestartVsync = False
         self.needRestartAntialiasing = False
         self.needRestartSmoothing = False
         self.needRestartLOD = False
