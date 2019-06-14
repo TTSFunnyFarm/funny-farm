@@ -260,7 +260,6 @@ class OptionsTabPage(DirectFrame):
             self.__setResolutionButton()
 
     def __doToggleMusic(self):
-        messenger.send('wakeup')
         if base.musicActive:
             musicMgr.stopMusic()
             base.enableMusic(0)
@@ -273,7 +272,6 @@ class OptionsTabPage(DirectFrame):
         self.__setMusicButton()
 
     def __doToggleSfx(self):
-        messenger.send('wakeup')
         if base.sfxActive:
             base.enableSoundEffects(0)
             settings['sfx'] = False
@@ -285,7 +283,6 @@ class OptionsTabPage(DirectFrame):
         self.__setSoundFXButton()
 
     def __doToggleToonChatSounds(self):
-        messenger.send('wakeup')
         if base.toonChatSounds:
             base.toonChatSounds = 0
             settings['toonChatSounds'] = False
@@ -296,7 +293,6 @@ class OptionsTabPage(DirectFrame):
         self.__setToonChatSoundsButton()
 
     def __doToggleFullscreen(self):
-        messenger.send('wakeup')
         settings['fullscreen'] = not settings['fullscreen']
         # Hackfix: In order to avoid resolution issues when the user has their window fullscreened 
         # (which most people do), we're gonna first set their resolution to an acceptable size, 
@@ -369,7 +365,6 @@ class OptionsTabPage(DirectFrame):
         return Task.done
 
     def __doToggleAntialias(self):
-        messenger.send('wakeup')
         if settings['antialiasing']:
             settings['antialiasing'] = 0
         else:
@@ -380,7 +375,6 @@ class OptionsTabPage(DirectFrame):
         self.__setAntialiasingButton()
 
     def __doToggleFps(self):
-        messenger.send('wakeup')
         if base.drawFps:
             base.setFrameRateMeter(False)
             base.drawFps = False
@@ -401,7 +395,6 @@ class OptionsTabPage(DirectFrame):
         pass # todo
 
     def __doToggleLOD(self):
-        messenger.send('wakeup')
         settings['enableLODs'] = not settings['enableLODs']
         loadPrcFileData('Settings: enableLODs', 'enable-lods %s' % settings['enableLODs'])
         base.needRestartLOD = True
@@ -415,7 +408,6 @@ class OptionsTabPage(DirectFrame):
         return idx
 
     def __doChangeWaterShader(self):
-        messenger.send('wakeup')
         idx = self.__getWaterShaderIndex()
         if idx == FunnyFarmGlobals.ShaderCustom:
             idx = 0
@@ -524,7 +516,6 @@ class OptionsTabPage(DirectFrame):
         self.WaterShader_toggleButton['text'] = TTLocalizer.OptionsPageShaderLevels[idx]
 
     def __doToggleAcceptFriends(self):
-        messenger.send('wakeup')
         acceptingNewFriends = settings.get('acceptingNewFriends', {})
         if base.localAvatar.acceptingNewFriends:
             base.localAvatar.acceptingNewFriends = 0
@@ -537,7 +528,6 @@ class OptionsTabPage(DirectFrame):
         self.__setAcceptFriendsButton()
 
     def __doToggleAcceptWhispers(self):
-        messenger.send('wakeup')
         acceptingNonFriendWhispers = settings.get('acceptingNonFriendWhispers', {})
         if base.localAvatar.acceptingNonFriendWhispers:
             base.localAvatar.acceptingNonFriendWhispers = 0
