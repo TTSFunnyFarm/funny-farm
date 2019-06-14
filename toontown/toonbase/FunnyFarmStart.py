@@ -112,6 +112,7 @@ class FunnyFarmStart:
         if settings['drawFps']:
             base.setFrameRateMeter(True)
             base.drawFps = 1
+        base.frameRateMeter.setFont(ToontownGlobals.getSignFont())
 
         self.notify.info('Setting default GUI globals')
         DirectGuiGlobals.setDefaultRolloverSound(base.loader.loadSfx('phase_3/audio/sfx/GUI_rollover.ogg'))
