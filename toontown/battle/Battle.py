@@ -1008,7 +1008,7 @@ class Battle(DirectObject, NodePath, BattleBase):
             self.makeSuitJoin(suit)
             return 1
         else:
-            self.notify.warning('suitRequestJoin() - not joinable - joinable state: %s max suits: %d' % (self.isJoinable(), self.maxSuits))
+            self.notify.debug('suitRequestJoin() - not joinable - joinable state: %s max suits: %d' % (self.isJoinable(), self.maxSuits))
             return 0
 
     def addSuit(self, suit):
