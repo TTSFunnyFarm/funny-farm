@@ -95,13 +95,33 @@ class QuestManager:
             toNpcId = quest.toNpc
             completeStatus = quest.getCompletionStatus()
 
-            if completeStatus != Quests.COMPLETE and quest.getType() not in [Quests.QuestTypeGoTo, Quests.QuestTypeChoose, Quests.QuestTypeDeliver]:
+            if completeStatus != Quests.COMPLETE and quest.getType() not in [Quests.QuestTypeGoTo, Quests.QuestTypeChoose, Quests.QuestTypeDeliver, Quests.QuestTypeDeliverGag]:
                 # Quest isn't complete, skip to the next one.
                 continue
             if toNpcId == npc.getNpcId() or toNpcId == Quests.Any or toNpcId == Quests.ToonHQ and npc.getHq():
                 # They made it to the right NPC!
                 if quest.getType() == Quests.QuestTypeChoose:
                     npc.presentTrackChoice(toon.doId, questId, quest.getChoices())
+                elif quest.getType() == Quests.QuestTypeDeliverGag:
+                    track, level = quest.getGagType()
+                    numInvGags = toon.inventory.numItem(track, level)
+                    numQuestGags = quest.getNumGags() - progress
+                    if numInvGags == 0:
+                        # They have zero of the required gags to deliver. Send them off with a default dialog.
+                        npc.incompleteQuest(toon.doId, questId, Quests.INCOMPLETE, toNpcId)
+                    elif numInvGags < numQuestGags:
+                        # They can deliver SOME of the required gags. Take what they have. 
+                        toon.inventory.setItem(track, level, 0)
+                        toon.setQuestProgress(questId, progress + numInvGags)
+                        npc.incompleteQuest(toon.doId, questId, Quests.INCOMPLETE_PROGRESS, toNpcId)
+                    else:
+                        # Awesome! They can deliver the required amount.
+                        toon.inventory.setItem(track, level, numInvGags - numQuestGags)
+                        toon.setQuestProgress(questId, progress + numQuestGags)
+                        if Quests.getQuestFinished(questId) == Quests.Finish:
+                            npc.completeQuest(toon.doId, questId)
+                        else:
+                            self.completeQuest(npc, questId)
                 else:
                     if Quests.getQuestFinished(questId) == Quests.Finish:
                         # They only COMPLETE the quest when the actual quest progression is over.
@@ -248,7 +268,7 @@ class QuestManager:
         if carryToonTasks > 0:
             toon.setQuestCarryLimit(carryToonTasks)
         if carryGags > 0:
-            toon.setMaxCarry(carrygags)
+            toon.setMaxCarry(carryGags)
         if carryJellybeans > 0:
             toon.setMaxMoney(carryJellybeans)
         if jellybeans > 0:

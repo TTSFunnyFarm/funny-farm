@@ -154,6 +154,7 @@ class InventoryBase(DirectObject.DirectObject):
                 if self.totalProps - curAmount + amount <= self.toon.getMaxCarry():
                     self.inventory[track][level] = amount
                     self.totalProps = self.totalProps - curAmount + amount
+                    self.saveInventory()
                     return self.inventory[track][level]
                 else:
                     return -2

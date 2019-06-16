@@ -605,7 +605,19 @@ QuestDialogDict = {
  1046: {GREETING: '',
         LEAVING: '',
         QUEST: 'Hey, that got a few of \'em!\x07But I think them money bots is the real problem.\x07They\'re takin\' our money straight from us!\x07Go out there and give \'em a piece of yer pie, will ya?\x07I got a special little treat for ya when ya get back.',
-        COMPLETE: 'Great work, partner!\x07Here\'s somethin\' that only the major-leaguers get.\x07You\'ll want it when travelin\' from far distances.\x07Ya now have teleport access to Funny Farm.'}
+        COMPLETE: 'Great work, partner!\x07Here\'s somethin\' that only the major-leaguers get.\x07You\'ll want it when travelin\' from far distances.\x07Ya now have teleport access to Funny Farm.'},
+ 1050: {GREETING: '',
+        QUEST: 'The Toon HQ is impressed with the work you\'ve done so far.\x07However, we think it\'s important you have stronger gags for future ToonTasks.\x07If you can show us some progress with your throw and squirt gags, we\'ll give you a larger inventory.\x07Go defeat some stronger Cogs to get more practice, then report back here.'},
+ 1051: {GREETING: '',
+        QUEST: 'Very good, _avName_!\x07You seem to be getting the hang of things around here.\x07The comedy club on Rickety Road requested a few more plates of dessert for an event tonight.\x07Would you help them out and deliver a few of your pie slices?_where_',
+        INCOMPLETE_PROGRESS: 'Hey, thanks for the delivery!\x07We almost have enough pies, but I still need a few more.'},
+ 1052: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Hey, thanks for the delivery!\x07Our dessert is finally ready for tonight!\x07Say... there is one other thing I would like to have for this very special event.\x07Could you bring me some squirt guns?\x07There\'s no time for questions now, I just need the squirt guns.\x07Hurry back!',
+        INCOMPLETE_PROGRESS: 'You brought some squirt guns?\x07Excellent!\x07Just a few more...'},
+ 1053: {GREETING: '',
+        QUEST: 'Toontastic! We have just enough squirt guns now!\x07Thank you for donating your time and jellybeans to us.\x07This event will be spectacular thanks to you!\x07Head back to Toon HQ and let them know we\'re all set.',
+        COMPLETE: 'All finished at the comedy club?\x07Ah, squirt guns, you say?\x07They must have an especially silly event planned tonight.\x07Anyway, you\'ve done a great job training those gags.\x07You\'ve earned this!\x07You can now carry 30 gags.'}
 }
 CutsceneDialogDict = {
  1001: 'Hmm... It doesn\'t look like Flippy is in here.\x07Maybe you should check back outside.',
