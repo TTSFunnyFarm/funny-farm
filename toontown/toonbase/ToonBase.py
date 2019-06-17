@@ -148,14 +148,21 @@ class ToonBase(OTPBase.OTPBase):
         self.localAvatarStyle = None
         self.drawFps = 0
         self.secretAreaFlag = 1
-        base.needRestartAntialiasing = False
-        base.needRestartLOD = False
+        self.needRestartVsync = False
+        self.needRestartAntialiasing = False
+        self.needRestartSmoothing = False
+        self.needRestartLOD = False
         return
 
     def openMainWindow(self, *args, **kw):
         result = OTPBase.OTPBase.openMainWindow(self, *args, **kw)
-        #self.setCursorAndIcon()
+        # self.setCursorAndIcon()
         return result
+
+    def setFrameRateMeter(self, flag):
+        OTPBase.OTPBase.setFrameRateMeter(self, flag)
+        if self.frameRateMeter:
+            self.frameRateMeter.setFont(ToontownGlobals.getSignFont())
 
     def windowEvent(self, win):
         OTPBase.OTPBase.windowEvent(self, win)

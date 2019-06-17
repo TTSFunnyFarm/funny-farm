@@ -149,6 +149,7 @@ class DataManager:
         base.localAvatar.setExperience(data.setExperience)
         base.localAvatar.setInventory(data.setInventory)
         base.localAvatar.setQuestCarryLimit(data.setQuestCarryLimit)
+        base.localAvatar.setQuestingZone(data.setQuestingZone)
         for questDesc in data.setQuests:
             base.localAvatar.addQuest(questDesc[0])
             base.localAvatar.setQuestProgress(questDesc[0], questDesc[1])
@@ -160,6 +161,7 @@ class DataManager:
         base.localAvatar.setHoodsVisited(data.setHoodsVisited)
         base.localAvatar.setTeleportAccess(data.setTeleportAccess)
         base.localAvatar.setNametagFont(FunnyFarmGlobals.getVar(data.setNametagStyle))
+        base.localAvatar.setCETimer(data.setCETimer)
         base.localAvatar.setCheesyEffect(data.setCheesyEffect)
         base.localAvatar.setHat(*data.setHat)
         base.localAvatar.setGlasses(*data.setGlasses)

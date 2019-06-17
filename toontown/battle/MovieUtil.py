@@ -586,7 +586,8 @@ def createSuitStunInterval(suit, before, after):
     stars = globalPropPool.getProp('stun')
     stars.setColor(1, 1, 1, 1)
     stars.adjustAllPriorities(100)
-    stars.setBlend(frameBlend = True)
+    if config.GetBool('smooth-animations', True):
+        stars.setBlend(frameBlend = True)
     head = suit.getHeadParts()[0]
     head.calcTightBounds(p1, p2)
     return Sequence(Wait(before), Func(stars.reparentTo, head), Func(stars.setZ, max(0.0, p2[2] - 1.0)), Func(stars.loop, 'stun'), Wait(after), Func(stars.cleanup), Func(stars.removeNode))

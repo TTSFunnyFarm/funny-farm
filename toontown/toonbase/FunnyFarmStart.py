@@ -2,6 +2,8 @@ from panda3d.core import *
 
 if __debug__:
     loadPrcFile('config/general.prc')
+else:
+    loadPrcFile('config/release.prc')
 
 import __builtin__, os
 from otp.settings.Settings import Settings
@@ -9,20 +11,23 @@ from toontown.toonbase.FunnyFarmLogger import FunnyFarmLogger
 
 __builtin__.logger = FunnyFarmLogger()
 
-# This has to be done before ToonBase loads
 preferencesFilename = ConfigVariableString('preferences-filename', 'preferences.json').getValue()
 dir = os.path.dirname(os.getcwd() + '/' + preferencesFilename)
 if not os.path.exists(dir):
     os.makedirs(dir)
-print('Reading %s...' % preferencesFilename)
+print 'Reading %s...' % preferencesFilename
 __builtin__.settings = Settings(preferencesFilename)
-if 'antialiasing' not in settings:
-    settings['antialiasing'] = 0
+# These have to be set before ToonBase loads
 if 'res' not in settings:
-    settings['res'] = [800, 600]
+    settings['res'] = [1280, 720]
+if 'vsync' not in settings:
+    settings['vsync'] = False
+if 'antialiasing' not in settings:
+    settings['antialiasing'] = 4
+loadPrcFileData('Settings: res', 'win-size %d %d' % tuple(settings['res']))
+loadPrcFileData('Settings: vsync', 'sync-video %s' % settings['vsync'])
 loadPrcFileData('Settings: MSAA', 'framebuffer-multisample %s' % (settings['antialiasing'] > 0))
 loadPrcFileData('Settings: MSAA samples', 'multisamples %i' % settings['antialiasing'])
-loadPrcFileData('Settings: res', 'win-size %d %d' % tuple(settings['res']))
 
 import ToonBase
 ToonBase.ToonBase()
@@ -55,8 +60,6 @@ class FunnyFarmStart:
     def __init__(self):
         self.notify.info('Starting the game.')
 
-        if 'fullscreen' not in settings:
-            settings['fullscreen'] = False
         if 'music' not in settings:
             settings['music'] = True
         if 'sfx' not in settings:
@@ -69,21 +72,24 @@ class FunnyFarmStart:
             settings['loadDisplay'] = 'pandagl'
         if 'toonChatSounds' not in settings:
             settings['toonChatSounds'] = True
+        if 'fullscreen' not in settings:
+            settings['fullscreen'] = False
         if 'drawFps' not in settings:
             settings['drawFps'] = False
+        if 'smoothAnimations' not in settings:
+            settings['smoothAnimations'] = True
         if 'enableLODs' not in settings:
-            settings['enableLODs'] = True
-        if 'waterReflectionScale' not in settings:
-            settings['waterReflectionScale'] = 0.25
-        if 'waterRefractionScale' not in settings:
-            settings['waterRefractionScale'] = 0.5
+            settings['enableLODs'] = False
         if 'waterShader' not in settings:
             settings['waterShader'] = False
-        winSize = settings['res'] if not settings['fullscreen'] else [base.pipe.getDisplayWidth(), base.pipe.getDisplayHeight()]
+        if 'waterReflectionScale' not in settings:
+            settings['waterReflectionScale'] = 0
+        if 'waterRefractionScale' not in settings:
+            settings['waterRefractionScale'] = 0
         # Resolution is set above for windowed mode. This is in case the user is running fullscreen mode.
         # If we set the windowed resolution down here, the game wouldn't notice.
         # However, for fullscreen, we refresh the window properties anyway.
-        loadPrcFileData('Settings: res', 'win-size %d %d' % tuple(winSize))
+        loadPrcFileData('Settings: res', 'win-size %d %d' % tuple(settings['res']))
         loadPrcFileData('Settings: fullscreen', 'fullscreen %s' % settings['fullscreen'])
         loadPrcFileData('Settings: music', 'audio-music-active %s' % settings['music'])
         loadPrcFileData('Settings: sfx', 'audio-sfx-active %s' % settings['sfx'])
@@ -92,18 +98,20 @@ class FunnyFarmStart:
         loadPrcFileData('Settings: loadDisplay', 'load-display %s' % settings['loadDisplay'])
         loadPrcFileData('Settings: toonChatSounds', 'toon-chat-sounds %s' % settings['toonChatSounds'])
         loadPrcFileData('Settings: enableLODs', 'enable-lods %s' % settings['enableLODs'])
+        # Panda's interpolate-frames flag isn't very intuitive, so we will create our own variable to do smooth animations on a per-actor basis.
+        loadPrcFileData('Settings: smoothAnimations', 'smooth-animations %s' % settings['smoothAnimations'])
         if not settings['music']:
             base.enableMusic(0)
         if not settings['sfx']:
             base.enableSoundEffects(0)
+        if settings['fullscreen']:
+            properties = WindowProperties()
+            properties.setSize(*settings['res'])
+            properties.setFullscreen(settings['fullscreen'])
+            base.win.requestProperties(properties)
         if settings['drawFps']:
             base.setFrameRateMeter(True)
             base.drawFps = 1
-        if settings['fullscreen']:
-            properties = WindowProperties()
-            properties.setSize(*winSize)
-            properties.setFullscreen(settings['fullscreen'])
-            base.win.requestProperties(properties)
 
         self.notify.info('Setting default GUI globals')
         DirectGuiGlobals.setDefaultRolloverSound(base.loader.loadSfx('phase_3/audio/sfx/GUI_rollover.ogg'))

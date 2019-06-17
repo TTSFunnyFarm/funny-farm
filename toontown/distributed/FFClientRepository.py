@@ -140,6 +140,7 @@ class FFClientRepository(DirectObject):
     def cleanupGame(self):
         self.playGame.exitActiveZone()
         camera.reparentTo(render)
+        base.air.cheesyEffectMgr.stopTimer()
         # If we're in the tutorial, don't even bother cleaning up localAvatar; too many errors
         if base.localAvatar.tutorialAck:
             base.localAvatar.delete()

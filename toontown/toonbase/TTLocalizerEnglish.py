@@ -605,7 +605,19 @@ QuestDialogDict = {
  1046: {GREETING: '',
         LEAVING: '',
         QUEST: 'Hey, that got a few of \'em!\x07But I think them money bots is the real problem.\x07They\'re takin\' our money straight from us!\x07Go out there and give \'em a piece of yer pie, will ya?\x07I got a special little treat for ya when ya get back.',
-        COMPLETE: 'Great work, partner!\x07Here\'s somethin\' that only the major-leaguers get.\x07You\'ll want it when travelin\' from far distances.\x07Ya now have teleport access to Funny Farm.'}
+        COMPLETE: 'Great work, partner!\x07Here\'s somethin\' that only the major-leaguers get.\x07You\'ll want it when travelin\' from far distances.\x07Ya now have teleport access to Funny Farm.'},
+ 1050: {GREETING: '',
+        QUEST: 'The Toon HQ is impressed with the work you\'ve done so far.\x07However, we think it\'s important you have stronger gags for future ToonTasks.\x07If you can show us some progress with your throw and squirt gags, we\'ll give you a larger inventory.\x07Go defeat some stronger Cogs to get more practice, then report back here.'},
+ 1051: {GREETING: '',
+        QUEST: 'Very good, _avName_!\x07You seem to be getting the hang of things around here.\x07The comedy club on Rickety Road requested a few more plates of dessert for an event tonight.\x07Would you help them out and deliver a few of your pie slices?_where_',
+        INCOMPLETE_PROGRESS: 'Hey, thanks for the delivery!\x07We almost have enough pies, but I still need a few more.'},
+ 1052: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Hey, thanks for the delivery!\x07Our dessert is finally ready for tonight!\x07Say... there is one other thing I would like to have for this very special event.\x07Could you bring me some squirt guns?\x07There\'s no time for questions now, I just need the squirt guns.\x07Hurry back!',
+        INCOMPLETE_PROGRESS: 'You brought some squirt guns?\x07Excellent!\x07Just a few more...'},
+ 1053: {GREETING: '',
+        QUEST: 'Toontastic! We have just enough squirt guns now!\x07Thank you for donating your time and jellybeans to us.\x07This event will be spectacular thanks to you!\x07Head back to Toon HQ and let them know we\'re all set.',
+        COMPLETE: 'All finished at the comedy club?\x07Ah, squirt guns, you say?\x07They must have an especially silly event planned tonight.\x07Anyway, you\'ve done a great job training those gags.\x07You\'ve earned this!\x07You can now carry 30 gags.'}
 }
 CutsceneDialogDict = {
  1001: 'Hmm... It doesn\'t look like Flippy is in here.\x07Maybe you should check back outside.',
@@ -629,8 +641,8 @@ MovieTutorialReward3 = 'Good job! You completed your first ToonTask!'
 MovieTutorialReward4 = 'Go to Toon Headquarters for your reward!'
 MovieTutorialReward5 = 'Have fun!'
 InfoBubbleDialog = {
- 0: 'You\'ve just received a new ToonTask!\x07When completed, you will gain experience and other rewards for your Toon!\x07Now head through the tunnel to find Flippy.',
- 1: 'Remember, in order to defeat the Cogs you must buy gags.\x07You can ride the trolley to play minigames, earn jellybeans, and purchase gags.\x07Or if you already have some jellybeans on hand, head to Goofy\'s Gag Shop to purchase gags quickly!',
+ 0: 'You just received your first ToonTask!\x07When completed, ToonTasks give you experience points and other rewards for your Toon!\x07Check your ToonTask progress by opening the Shticker Book or pressing the "End" key.\x07Now, head through the tunnel to find Flippy!',
+ 1: 'Remember, in order to defeat the Cogs you must buy gags.\x07You can ride the trolley to play minigames, earn jellybeans, and purchase gags.\x07Or if you already have some jellybeans on hand, head to Goofy\'s Gag Shop to purchase gags quickly!\x07Check your gags by opening the Shticker Book or pressing the "Home" key.',
  2: MovieTutorialReward1,
  3: MovieTutorialReward2,
  4: 'You can now carry two ToonTasks!\x07This means you can start working on multiple ToonTasks at the same time, for efficiency!\x07If you see this icon above a Toon HQ, that means the officers have important tasks for you to do.\x07Otherwise, the HQ officers will always have "Just for fun!" ToonTasks to do if you want some fun rewards.'
@@ -3548,25 +3560,29 @@ OptionsPageFriendsEnabledLabel = 'Accepting new friend requests.'
 OptionsPageFriendsDisabledLabel = 'Not accepting friend requests.'
 OptionsPageWhisperEnabledLabel = 'Allowing whispers from anyone.'
 OptionsPageWhisperDisabledLabel = 'Allowing whispers from friends only.'
+OptionsPageVsyncOnLabel = 'V-sync is on.'
+OptionsPageVsyncOffLabel = 'V-sync is off.'
 OptionsPageAntialiasingOnLabel = 'Anti-aliasing is on.'
 OptionsPageAntialiasingOffLabel = 'Anti-aliasing is off.'
-OptionsPageFpsOnLabel = 'FPS Meter is on.'
-OptionsPageFpsOffLabel = 'FPS Meter is off.'
+OptionsPageFpsOnLabel = 'FPS meter is on.'
+OptionsPageFpsOffLabel = 'FPS meter is off.'
 OptionsPageSmoothingOnLabel = 'Animation smoothing is on.'
 OptionsPageSmoothingOffLabel = 'Animation smoothing is off.'
 OptionsPageBlendingOnLabel = 'Animation blending is on.'
 OptionsPageBlendingOffLabel = 'Animation blending is off.'
-OptionsPageLODOnLabel = 'LOD Nodes are on.'
-OptionsPageLODOffLabel = 'LOD Nodes are off.'
+OptionsPageLODOnLabel = 'LOD nodes are on.'
+OptionsPageLODOffLabel = 'LOD nodes are off.'
 OptionsPageRequiresRestart = '\n(Requires game restart)'
+OptionsPageVsyncHeading = 'V-sync'
+OptionsPageVsyncHelp = 'Vertical synchronization caps the game\'s frame rate at your monitor\'s refresh rate for more stability.\n\nV-sync is disabled by default. You can enable it to give your graphics card a lighter load, but you will have a lower frame rate overall.'
 OptionsPageAntialiasingHeading = 'Anti-aliasing'
-OptionsPageAntialiasingHelp = 'Anti-aliasing makes objects in the game look better by "smoothing out" jagged edges on models. Enabling this can reduce performance.\n\nYou can adjust the strength in your preferences file.'
+OptionsPageAntialiasingHelp = 'Anti-aliasing makes objects in the game look better by smoothing out jagged edges on models.\n\nAnti-aliasing is enabled by default, but you can disable it to improve performance.'
 OptionsPageFpsHeading = 'FPS Meter'
-OptionsPageFpsHelp = 'If you want to monitor your game\'s performance, you can turn on the FPS meter to see how many frames per second your game renders.'
+OptionsPageFpsHelp = 'If you want to monitor your game\'s performance, you can turn on the FPS meter to see how many frames per second the game renders.'
 OptionsPageLODHeading = 'LOD Nodes'
-OptionsPageLODHelp = 'LOD (level of detail) nodes show lower quality models for characters as you move farther away from them.\n\nTurning on LOD nodes can slightly improve performance.'
-OptionsPageShaderLevelHeading = 'Shader Level'
-OptionsPageShaderLevelHelp = 'This option adjusts the quality of shaders, at the cost of performance.\n\nIt can also disable the shader to save performance.\nIf you are not satisfied with these levels, you can adjust the shader values to your liking in preferences.json.'
+OptionsPageLODHelp = 'LOD (level of detail) nodes show lower quality models for characters as you move farther away from them.\n\nLODs are disabled by default, but you can enable them to slightly improve performance.'
+OptionsPageShaderLevelHeading = 'Water Shader'
+OptionsPageShaderLevelHelp = 'This option enables reflections and refractions on bodies of water in-game.\n\nNote: this feature is experimental and can reduce performance significantly. Water shaders are disabled by default.'
 OptionsPageSpeedChatStyleLabel = 'SpeedChat Color'
 OptionsPageDisplayWindowed = '%s x %s'
 OptionsPageDisplayFullscreen = 'Fullscreen'
@@ -3587,13 +3603,14 @@ OptionsPageSelect = 'Select'
 OptionsPageToggleOn = 'Turn On'
 OptionsPageToggleOff = 'Turn Off'
 OptionsPageChange = 'Change'
-OptionsPageResolution = 'Screen resolution: %(screensize)s'
+OptionsPageResolution = 'Resolution: %(screensize)s'
 OptionsPageDisplaySettings = 'Display: %(screensize)s, %(api)s'
 OptionsPageDisplaySettingsNoApi = 'Display: %(screensize)s'
 OptionsPageExitConfirm = 'Exit Funny Farm?'
-DisplaySettingsTitle = 'Display Settings'
+DisplaySettingsTitle = 'Change Resolution'
 DisplaySettingsIntro = 'The following settings are used to configure the way Toontown is displayed on your computer.  It is usually unnecessary to adjust these unless you are experiencing a problem.'
 DisplaySettingsIntroSimple = 'You may adjust the screen resolution to a higher value to improve the clarity of text and graphics in Toontown, but depending on your graphics card, some higher values may make the game run less smoothly or may not work at all.'
+DisplaySettingsNote = 'Note: changing the game\'s resolution is usually only necessary in fullscreen mode.'
 DisplaySettingsApi = 'Graphics API:'
 DisplaySettingsResolution = 'Resolution:'
 DisplaySettingsWindowed = 'In a window'
@@ -6211,11 +6228,11 @@ TipDict = {TIP_NONE: ('',),
                #'You can browse the selection at Clothing Stores even without a clothing ticket.',
                'Rewards for some ToonTasks allow you to carry more gags and jellybeans.',
                #'You can have up to 200 friends on your Friends List.',
-               #'Some ToonTask rewards let you teleport to playgrounds in Toontown by using the Map Page in the Shticker Book.',
+               'Some ToonTask rewards let you teleport to playgrounds in Toontown by using the Map Page in the Shticker Book.',
                'Increase your Laff points in the Playgrounds by collecting treasures like stars and ice cream cones.',
                #'To heal quickly after a battle, go to your estate and play with your Doodle.',
                'Change to different views of your Toon by pressing the Tab Key.',
-               #'Sometimes you can find several different ToonTasks offered for the same reward. Shop around!',
+               'Sometimes you can find several different ToonTasks offered for the same reward. Shop around!',
                #'Finding friends with similar ToonTasks is a fun way to progress through the game.',
                'You never need to save your Toontown progress. The game continually saves all the necessary information.'
                #'You can whisper to other Toons either by clicking on them or by selecting them from your Friends List.',
@@ -6261,9 +6278,9 @@ TipDict = {TIP_NONE: ('',),
               #'In battle, gags are used in order from top to bottom as displayed on the Gag Menu.',
               'The row of circular lights over Cog Building elevators show how many floors will be inside.',
               #'Click on a Cog to see more details.',
-              'Using high level gags against low level Cogs will not earn any experience points.',
+              'Using high level gags against low level Cogs will not earn you any experience points.',
               'A gag that will earn experience has a blue background on the Gag Menu in battle.',
-              'Gag experience is multiplied when used inside Cog Buildings. Higher floors have higher multipliers.',
+              #'Gag experience is multiplied when used inside Cog Buildings. Higher floors have higher multipliers.',
               #'When a Cog is defeated, each Toon in that round will get credit for the Cog when the battle is over.',
               'Each street in Toontown has different Cog levels and types.',
               'Sidewalks are safe from Cogs.',

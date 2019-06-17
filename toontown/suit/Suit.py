@@ -622,7 +622,8 @@ class Suit(Avatar.Avatar):
         self.getGeomNode().setScale(self.scale)
         self.generateHealthBar()
         self.generateCorporateMedallion()
-        self.setBlend(frameBlend=True)
+        if config.GetBool('smooth-animations', True):
+            self.setBlend(frameBlend=True)
         return
 
     def generateBody(self):
@@ -963,7 +964,8 @@ class Suit(Avatar.Avatar):
         self.loseActor.setScale(self.scale)
         self.loseActor.setPos(self.getPos())
         self.loseActor.setHpr(self.getH(), 0, 0)
-        self.loseActor.setBlend(frameBlend=True)
+        if config.GetBool('smooth-animations', True):
+            self.loseActor.setBlend(frameBlend=True)
         self.collTube = CollisionTube(0, 0, 0.5, 0, 0, 4, 2)
         self.collNode = CollisionNode('loseActor')
         self.collNode.addSolid(self.collTube)
