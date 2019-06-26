@@ -4,14 +4,13 @@ from direct.showbase.DirectObject import DirectObject
 from panda3d.core import *
 
 from toontown.building.SuitInterior import SuitInterior
-from toontown.building.EliteInterior import EliteInterior
 from toontown.hood import ZoneUtil
 from toontown.quest import Quests
 from toontown.toon import NPCToons
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals
-import ZoneUtil
+
 
 class Hood(DirectObject):
     notify = directNotify.newCategory('Hood')
