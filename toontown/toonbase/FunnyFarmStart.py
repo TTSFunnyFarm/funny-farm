@@ -5,7 +5,7 @@ if __debug__:
 else:
     loadPrcFile('config/release.prc')
 
-import __builtin__, os
+import __builtin__, os, sys
 from otp.settings.Settings import Settings
 from toontown.toonbase.FunnyFarmLogger import FunnyFarmLogger
 
@@ -128,7 +128,7 @@ class FunnyFarmStart:
         __builtin__.screenshotMgr = ScreenshotManager()
         __builtin__.dataMgr = DataManager()
 
-        if __debug__:
+        if __debug__ and sys.platform == 'win32':
             Injector.openInjector()
 
         self.notify.info('Initializing Client Repository...')
