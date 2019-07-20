@@ -85,6 +85,7 @@ class QuestPoster(DirectFrame):
         self.trackIcon = None
         self.taskIcon = None
         self.teleportIcon = None
+        self.carryGagsIcon = None
         self.rewardText = DirectLabel(parent=self.questFrame, relief=None, text='', text_fg=self.colors['rewardRed'], text_scale=0.0425, text_align=TextNode.ALeft, text_wordwrap=17.0, textMayChange=1, pos=(-0.35, 0, -0.26))
         self.rewardText.hide()
         self.lPictureFrame = DirectFrame(parent=self.questFrame, relief=None, image=bookModel.find('**/questPictureFrame'), image_scale=IMAGE_SCALE_SMALL, text='', text_pos=(0, -0.11), text_fg=self.normalTextColor, text_scale=TEXT_SCALE, text_align=TextNode.ACenter, text_wordwrap=11.0, textMayChange=1, pos=(0, 0, 0.13))
@@ -209,6 +210,9 @@ class QuestPoster(DirectFrame):
         if self.teleportIcon:
             self.teleportIcon.removeNode()
             self.teleportIcon = None
+        if self.carryGagsIcon:
+            self.carryGagsIcon.removeNode()
+            self.carryGagsIcon = None
         self.rewardText['text'] = ''
         self.auxText['text'] = ''
         self.auxText['text_fg'] = self.normalTextColor
@@ -284,6 +288,15 @@ class QuestPoster(DirectFrame):
         self.teleportIcon.setScale(0.08)
         gui.removeNode()
 
+    def createCarryGagsRewardIcon(self, numGags):
+        gui = loader.loadModel('phase_3.5/models/gui/inventory_gui')
+        self.carryGagsIcon = gui.find('**/InventoryButtonUp')
+        self.carryGagsIcon.reparentTo(self.rewardFrame)
+        self.carryGagsIcon.setScale(0.5)
+        self.carryGagsIcon.setColor(Vec4(0, 0.6, 1, 1))
+        gagText = DirectLabel(parent=self.carryGagsIcon, relief=None, text=str(numGags), pos=(0, 0, -0.023), scale=0.09)
+        gui.removeNode()
+
     def update(self, questDesc):
         self.clear()
         questId, progress = questDesc
@@ -315,7 +328,8 @@ class QuestPoster(DirectFrame):
                 self.createTaskRewardIcon(reward[3])
                 self.taskIcon.setPos(0.09, 0, -0.01)
             elif reward[2] == Quests.QuestRewardCarryGags:
-                pass # todo
+                self.createCarryGagsRewardIcon(reward[3])
+                self.carryGagsIcon.setPos(0.09, 0, -0.01)
             elif reward[2] == Quests.QuestRewardCarryJellybeans:
                 pass # todo
         else:

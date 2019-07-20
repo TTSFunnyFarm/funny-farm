@@ -176,6 +176,10 @@ class Quest:
             self.holderType = self.questType[5]
         elif self.questType[0] == QuestTypeDeliver:
             self.item = self.questType[1] 
+        elif self.questType[0] == QuestTypeDeliverGag:
+            self.numGags = self.questType[1]
+            self.gagTrack = self.questType[2]
+            self.gagLevel = self.questType[3]
         elif self.questType[0] == QuestTypeDefeatBuilding:
             self.numBuildings = self.questType[1]
             self.numFloors = self.questType[2]
@@ -239,6 +243,12 @@ class Quest:
     def getItem(self):
         return self.item
 
+    def getNumGags(self):
+        return self.numGags
+
+    def getGagType(self):
+        return (self.gagTrack, self.gagLevel)
+
     def getPercentChance(self):
         return self.percentChance
 
@@ -262,12 +272,13 @@ class Quest:
         elif self.questType[0] == QuestTypeDeliver:
             return 1
         elif self.questType[0] == QuestTypeDeliverGag:
-            return self.getNumItems()
+            return self.getNumGags()
 
     def getCompletionStatus(self):
-        questComplete = self.questProgress >= self.getNumQuestItems()
-        if questComplete:
+        if self.questProgress >= self.getNumQuestItems():
             return COMPLETE
+        # elif self.getType() == QuestTypeDeliverGag and self.questProgress == 0:
+        #     return INCOMPLETE
         return INCOMPLETE_PROGRESS
 
     def getLocation(self):
@@ -330,6 +341,12 @@ class Quest:
             else:
                 return TTLocalizer.QuestsRecoverItemQuestProgress % {'progress': self.questProgress,
                  'numItems': self.getNumItems()}
+        elif self.getType() == QuestTypeDeliverGag:
+            if self.numGags == 1:
+                return ''
+            else:
+                return TTLocalizer.QuestsDeliverGagQuestProgress % {'progress': self.questProgress,
+                 'numGags': self.getNumGags()}
         else:
             return ''
 
@@ -726,7 +743,7 @@ QuestDict = {
         (QuestTypeRecover,
          1,
          1,
-         25,
+         30,
          Any,
          Any,
          FunnyFarmGlobals.FunnyFarm),
@@ -1078,7 +1095,69 @@ QuestDict = {
          FunnyFarmGlobals.FunnyFarm),
         NA,
         TTLocalizer.QuestDialogDict[1046]),
-
+ 1050: (FF_TIER,
+        MainQuest,
+        Start,
+        (QuestTypeDefeatCog,
+         4,
+         3,
+         Any,
+         Any,
+         FunnyFarmGlobals.FunnyFarm),
+        ToonHQ,
+        Same,
+        NA,
+        (QuestRewardXP,
+         40,
+         QuestRewardCarryGags,
+         30),
+        1051,
+        TTLocalizer.QuestDialogDict[1050]),
+ 1051: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeDeliverGag,
+         5,
+         4,
+         2),
+        ToonHQ,
+        1109,
+        1614,
+        (QuestRewardXP,
+         40,
+         QuestRewardCarryGags,
+         30),
+        1052,
+        TTLocalizer.QuestDialogDict[1051]),
+ 1052: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeDeliverGag,
+         5,
+         5,
+         2),
+        1109,
+        Same,
+        1614,
+        (QuestRewardXP,
+         40,
+         QuestRewardCarryGags,
+         30),
+        1053,
+        TTLocalizer.QuestDialogDict[1052]),
+ 1053: (FF_TIER,
+        MainQuest,
+        Finish,
+        (QuestTypeGoTo,),
+        1109,
+        ToonHQ,
+        ToonHQ,
+        (QuestRewardXP,
+         40,
+         QuestRewardCarryGags,
+         30),
+        NA,
+        TTLocalizer.QuestDialogDict[1053]),
  1060: (FF_TIER,
         JustForFun,
         Finish,
@@ -1430,9 +1509,16 @@ def chooseQuestDialog(id, status):
                 rewardDialog = rewardDialog % str(reward[1])
             elif reward[0] == QuestRewardCheesyEffect:
                 effect = TTLocalizer.CheesyEffectDescriptions[reward[1]][1]
-                # todo determine the correct lengths of time for cheesy effects.
-                # right now they're permanent.
-                rewardDialog = rewardDialog['i'] % {'effectName': effect, 'whileIn': ''}
+                tier = getQuestTier(id)
+                if tier == FF_TIER or tier == FF_TIER + 1:
+                    zoneId = FunnyFarmGlobals.FunnyFarm
+                else:
+                    zoneId = FunnyFarmGlobals.FunnyFarm
+                if reward[1] in FunnyFarmGlobals.CheesyEffectDict[zoneId].keys():
+                    unit, duration = FunnyFarmGlobals.CheesyEffectDict[zoneId][reward[1]]
+                    rewardDialog = rewardDialog[unit] % {'time': duration, 'effectName': effect, 'whileIn': ''}
+                else:
+                    rewardDialog = rewardDialog['i'] % {'effectName': effect, 'whileIn': ''}
             questDialog += '\x07' + rewardDialog
     return questDialog
 

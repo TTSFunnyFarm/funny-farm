@@ -1,8 +1,57 @@
+# This is the default data for new Toon objects.
+# Layout goes like this: [field, expectedTypes, defaultValue]
+# We include the expected types for the purpose of sanity checking.
+DefaultData = [
+    # [field, expectedTypes, defaultValue]
+    ['setHp', [int], 20],
+    ['setMaxHp', [int], 20],
+    ['setMoney', [int], 0],
+    ['setMaxMoney', [int], 40],
+    ['setBankMoney', [int], 0],
+    ['setMaxBankMoney', [int], 12000],
+    ['setMaxCarry', [int], 20],
+    ['setInventory', [str, unicode], None],
+    ['setExperience', [str, unicode], None],
+    ['setTrackAccess', [list], [0, 0, 0, 0, 1, 1, 0]],
+    ['setHat', [list], [0, 0, 0]],
+    ['setGlasses', [list], [0, 0, 0]],
+    ['setBackpack', [list], [0, 0, 0]],
+    ['setShoes', [list], [0, 0, 0]],
+    ['setNametagStyle', [str, unicode], 'Mickey'],
+    ['setCheesyEffect', [int], 0],
+    ['setCETimer', [float], 0.0],
+    ['setLastHood', [int], 1000],
+    ['setLevel', [int], 1],
+    ['setLevelExp', [int], 0],
+    ['setDamage', [list], [0, 0, 0, 0, 0, 0]],
+    ['setDefense', [list], [0, 0, 0, 0]],
+    ['setAccuracy', [list], [0, 0, 0, 0, 0, 0]],
+    ['setClothesTopsList', [list], []],
+    ['setClothesBottomsList', [list], []],
+    ['setHatList', [list], []],
+    ['setGlassesList', [list], []],
+    ['setBackpackList', [list], []],
+    ['setShoesList', [list], []],
+    ['setQuests', [list], []],
+    ['setQuestHistory', [list], []],
+    ['setQuestCarryLimit', [int], 1],
+    ['setQuestingZone', [int], 1000],
+    ['setTrackProgress', [list], [-1, -1]],
+    ['setHoodsVisited', [list], []],
+    ['setTeleportAccess', [list], []],
+    ['setFishingRod', [int], 0],
+    ['setFishCollection', [list], []],
+    ['setFishTank', [list], []],
+    ['setTutorialAck', [int], 0]
+]
+
+
+# This is the actual ToonData container class.
 class ToonData:
 
     def __init__(self, index, dna, name, hp, maxHp, money, maxMoney, bankMoney, maxBankMoney, maxCarry,
                  inventory, experience, trackAccess, hat, glasses, backpack, shoes, nametagStyle, cheesyEffect,
-                 lastHood, level, levelExp, damage, defense, accuracy, clothesTopsList, clothesBottomsList,
+                 CETimer, lastHood, level, levelExp, damage, defense, accuracy, clothesTopsList, clothesBottomsList,
                  hatList, glassesList, backpackList, shoesList, quests, questHistory, questCarryLimit, questingZone,
                  trackProgress, hoodsVisited, teleportAccess, fishingRod, fishCollection, fishTank, tutorialAck):
         self.index = index
@@ -25,6 +74,7 @@ class ToonData:
         self.setShoes = shoes
         self.setNametagStyle = nametagStyle
         self.setCheesyEffect = cheesyEffect
+        self.setCETimer = CETimer
         self.setLevel = level
         self.setLevelExp = levelExp
         self.setDamage = damage
@@ -48,38 +98,91 @@ class ToonData:
         self.setFishTank = fishTank
         self.setTutorialAck = tutorialAck
 
-    def export(self):
+    def makeJsonData(self):
         jsonData = self.__dict__.copy()
-        for key in jsonData.keys():
-            if type(jsonData[key]) == bytes:
-                jsonData[key] = 'bytes-' + str(jsonData[key])
-
         return jsonData
 
     @staticmethod
-    def makeFromJsonData(jsonData):
-        for key in jsonData.keys():
-            if type(jsonData[key]) == str and jsonData[key].startswith('bytes-'):
-                jsonData[key] = jsonData[key][6:].encode()
+    def verifyToonData(toonData, saveToonData=True):
+        # If this is an instance of ToonData, we need to convert it into a
+        # dict in order to perform any verification on it. Otherwise we
+        # assume it is a dict that has been loaded from a JSON object.
+        if isinstance(toonData, ToonData):
+            toonData = toonData.__dict__.copy()
 
-        toonData = ToonData(jsonData.get('index'), jsonData.get('setDNA'), jsonData.get('setName'),
-                            jsonData.get('setHp', 20), jsonData.get('setMaxHp', 20), jsonData.get('setMoney', 0),
-                            jsonData.get('setMaxMoney', 40), jsonData.get('setBankMoney', 0),
-                            jsonData.get('setMaxBankMoney', 12000), jsonData.get('setMaxCarry', 20),
-                            jsonData.get('setInventory'), jsonData.get('setExperience'),
-                            jsonData.get('setTrackAccess', [0, 0, 0, 0, 1, 1, 0]), jsonData.get('setHat', [0, 0, 0]),
-                            jsonData.get('setGlasses', [0, 0, 0]), jsonData.get('setBackpack', [0, 0, 0]),
-                            jsonData.get('setShoes', [0, 0, 0]), jsonData.get('setNametagStyle', 'Mickey'),
-                            jsonData.get('setCheesyEffect', 0), jsonData.get('setLastHood', 1000),
-                            jsonData.get('setLevel', 1), jsonData.get('setLevelExp', 0),
-                            jsonData.get('setDamage', [0, 0, 0, 0, 0, 0]), jsonData.get('setDefense', [0, 0, 0, 0]),
-                            jsonData.get('setAccuracy', [0, 0, 0, 0, 0, 0]), jsonData.get('setClothesTopsList', []),
-                            jsonData.get('setClothesBottomsList', []), jsonData.get('setHatList', []),
-                            jsonData.get('setGlassesList', []), jsonData.get('setBackpackList', []),
-                            jsonData.get('setShoesList', []), jsonData.get('setQuests', []),
-                            jsonData.get('setQuestHistory', []), jsonData.get('setQuestCarryLimit', 1),
-                            jsonData.get('setQuestingZone', 1000), jsonData.get('setTrackProgress', [-1, -1]),
-                            jsonData.get('setHoodsVisited', []), jsonData.get('setTeleportAccess', []),
-                            jsonData.get('setFishingRod', 0), jsonData.get('setFishCollection', []),
-                            jsonData.get('setFishTank', []), jsonData.get('setTutorialAck', 0))
+        # And if it's not a dict, well, we cannot move forward, so check that:
+        if not isinstance(toonData, dict):
+            # sad!
+            return False, 'toonData is not a dictionary!', None
+
+        # Make a copy of the original Toon data, as we'll need it later on for
+        # comparison with the new Toon data.
+        originalToonData = toonData.copy()
+
+        # index, setDNA, and setName are **absolutely** required.
+        # There are no default values for these, for obvious reasons, so if
+        # they don't exist within the toonData, we will need to stop right
+        # there & throw an error; we cannot possibly continue on without them.
+        index = toonData.get('index')
+        setDNA = toonData.get('setDNA')
+        setName = toonData.get('setName')
+        if index is None or setDNA is None or setName is None:
+            return False, 'One or more required database fields are missing!', None
+
+        # They also need to be of the correct type, or else they are considered
+        # to be corrupted and we cannot move forward.
+        if type(index) != int and type(setDNA) != list and type(setName) != str:
+            return False, 'One or more required database fields contain a value of incorrect type!', None
+
+        # Now we check every other field:
+        for field in DefaultData:
+            if field[0] not in toonData.keys():
+                toonData[field[0]] = field[2]
+            else:
+                if toonData[field[0]] is None and field[0] not in ('setExperience', 'setInventory'):
+                    toonData[field[0]] = field[2]
+
+                if type(toonData[field[0]]) not in field[1] and field[0] not in ('setExperience', 'setInventory'):
+                    # Corrupted!
+                    return False, 'Field %s contains a value of incorrect type. Expected: %s, got %s' % (
+                        field[0], field[1], type(toonData[field[0]])), None
+
+        toonDataObj = ToonData.getDefaultToonData(index, setDNA, setName)
+        for field in toonData.keys():
+            if hasattr(toonDataObj, field):
+                setattr(toonDataObj, field, toonData[field])
+
+        # Now we'll check if any changes have actually been made to the new
+        # Toon data.
+        changesMade = False
+        if toonDataObj.__dict__.copy() != originalToonData:
+            # The new Toon data does not match the original, so some changes
+            # have been made; we want to write these to the database.
+            changesMade = True
+
+        # Check if it is necessary to save this Toon data.
+        if saveToonData and changesMade:
+            # It is, so we will write it to the database.
+            dataMgr.saveToonData(toonDataObj)
+
+        return True, '', toonDataObj
+
+    @staticmethod
+    def makeFromJsonData(jsonData):
+        valid, response, toonData = ToonData.verifyToonData(jsonData)
+        if not valid:
+            raise Exception(response)
+
         return toonData
+
+    @staticmethod
+    def getDefaultToonData(index, dna, name):
+        defaultToonData = ToonData(index, dna, name, None, None, None, None, None, None, None, None, None, None, None,
+                                   None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+                                   None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+                                   None)
+        for field in DefaultData:
+            if hasattr(defaultToonData, field[0]):
+                setattr(defaultToonData, field[0], field[2])
+
+        return defaultToonData

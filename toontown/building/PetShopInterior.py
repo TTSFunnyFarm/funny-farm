@@ -78,7 +78,8 @@ class PetShopInterior(Interior):
             fish.setPos(FunnyFarmGlobals.PetShopFishPositions[FunnyFarmGlobals.PetShopFish.index(fishName)])
             fish.setHpr(FunnyFarmGlobals.PetShopFishRotations[FunnyFarmGlobals.PetShopFish.index(fishName)])
             fish.setScale(FunnyFarmGlobals.PetShopFishScales[FunnyFarmGlobals.PetShopFish.index(fishName)])
-            fish.setBlend(frameBlend=True)
+            if config.GetBool('smooth-animations', True):
+                fish.setBlend(frameBlend=True)
             fish.actorInterval('swim').loop()
             if fishName == 'BearAcuda':
                 self.bearSwim = Parallel(

@@ -703,7 +703,8 @@ class Toon(Avatar.Avatar, ToonHead):
         self.rescaleToon()
         self.resetHeight()
         self.setupToonNodes()
-        self.setBlend(frameBlend=True)
+        if config.GetBool('smooth-animations', True):
+            self.setBlend(frameBlend=True)
 
     def setupToonNodes(self):
         rightHand = NodePath('rightHand')
@@ -755,7 +756,8 @@ class Toon(Avatar.Avatar, ToonHead):
         for bookActor, hand in zip(self.__bookActors, hands):
             bookActor.reparentTo(hand)
             bookActor.hide()
-            bookActor.setBlend(frameBlend = True)
+            if config.GetBool('smooth-animations', True):
+                bookActor.setBlend(frameBlend = True)
 
         return self.__bookActors
 

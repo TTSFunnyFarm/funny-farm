@@ -204,7 +204,7 @@ class SuitPlannerAI(DirectObject):
                 self.spawnBuilding()
 
     def createNewSuit(self):
-        # Currently just generates a random suit based on the hood info. 
+        # Currently just generates a random suit based on the hood info.
         # We can add arguments to create specific suits later, if needed.
         newSuit = BattleSuitAI(self)
         newSuit.setDoId(base.air.getNextSuitIndex())
@@ -213,7 +213,7 @@ class SuitPlannerAI(DirectObject):
         newSuit.setupSuitDNA(level, type, track)
         newSuit.generate()
         self.activeSuits[newSuit.doId] = newSuit
-        self.notify.info('creating suit %d in zone %d' % (newSuit.doId, self.zoneId))
+        self.notify.debug('creating suit %d in zone %d' % (newSuit.doId, self.zoneId))
 
     def removeSuit(self, doId):
         # Removes both AI and client
@@ -280,7 +280,7 @@ class SuitPlannerAI(DirectObject):
             bldg.suitTakeOver(track, difficulty, numFloors)
         if block in self.toonBuildings:
             self.toonBuildings.remove(block)
-        self.notify.info('spawning suit building in zone %d, block %d' % (self.zoneId, block))
+        self.notify.debug('spawning suit building in zone %d, block %d' % (self.zoneId, block))
 
     def collapseBuilding(self, block):
         bldg = self.buildingMap[block]
@@ -323,7 +323,7 @@ class SuitPlannerAI(DirectObject):
         suitCount = len(self.activeSuits)
         # See how many suits we should add / remove
         adjustment = random.choice((-1, -1, 0, 0, 0, 1, 1))
-        self.notify.info('adjustment: %d' % adjustment)
+        self.notify.debug('adjustment: %d' % adjustment)
         # Calculate the total suits we'd have on the street with the adjustment
         suitCount += adjustment
         if suitCount < min or suitCount > max:
@@ -334,7 +334,7 @@ class SuitPlannerAI(DirectObject):
             if adjustment < 0:
                 # Negative adjustment, take away a suit
                 doId = random.choice(list(self.activeSuits.keys()))
-                self.notify.info('removing suit %d' % doId)
+                self.notify.debug('removing suit %d' % doId)
                 self.removeSuit(doId)
             else:
                 # Positive adjustment, create a new suit

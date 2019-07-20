@@ -29,6 +29,7 @@ from toontown.toon import Experience
 from toontown.toon import Toon
 import random
 import math
+import time
 
 class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
     notify = directNotify.newCategory('LocalToon')
@@ -128,6 +129,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             self.experienceBar = None
             self.hoodsVisited = []
             self.teleportAccess = []
+            self.CETimer = 0.0
 
     def generate(self):
         self.walkDoneEvent = 'walkDone'
@@ -372,8 +374,38 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def setCheesyEffect(self, effect):
         Toon.Toon.applyCheesyEffect(self, effect, lerpTime=0.5)
+        if effect != ToontownGlobals.CENormal:
+            # We need to set a timer so the toon isn't stuck like this forever.
+            effectDict = FunnyFarmGlobals.CheesyEffectDict[self.getQuestingZone()]
+            # Make sure the effect is available in our playground.
+            if effect in effectDict.keys():
+                unit, duration = effectDict[effect]
+                # Did we JUST put on the effect, or was this one already active?
+                if self.getCETimer() == 0.0:
+                    # Brand new effect, set the startTime to... right now!
+                    startTime = time.time()
+                    self.setCETimer(startTime)
+                else:
+                    # There must be an active timer already.
+                    startTime = self.getCETimer()
+                # Start the timer, AI will take it from here.
+                base.air.cheesyEffectMgr.startTimer(unit, duration, startTime)
+                self.accept('cheesyEffectTimeout', self.cheesyEffectTimeout)
         base.avatarData.setCheesyEffect = effect
         dataMgr.saveToonData(base.avatarData)
+
+    def cheesyEffectTimeout(self):
+        self.ignore('cheesyEffectTimeout')
+        self.setCheesyEffect(ToontownGlobals.CENormal)
+        self.setCETimer(0.0)
+
+    def setCETimer(self, startTime):
+        self.CETimer = startTime
+        base.avatarData.setCETimer = startTime
+        dataMgr.saveToonData(base.avatarData)
+
+    def getCETimer(self):
+        return self.CETimer
 
     def setAccessLevel(self, level):
         self.accessLevel = level
@@ -505,6 +537,14 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def getQuestCarryLimit(self):
         return self.questCarryLimit
+
+    def setQuestingZone(self, zone):
+        self.questingZone = zone
+        base.avatarData.setQuestingZone = zone
+        dataMgr.saveToonData(base.avatarData)
+
+    def getQuestingZone(self):
+        return self.questingZone
 
     def addQuest(self, questId):
         if len(self.quests) >= self.questCarryLimit:

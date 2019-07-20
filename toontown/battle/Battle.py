@@ -344,7 +344,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         for toon in self.activeToons:
             self.townBattle.updateLaffMeter(self.activeToons.index(toon), toon.hp)
         for i in range(len(self.activeSuits)):
-            self.townBattle.cogPanels[i].setCogInformation(self.activeSuits[i])
+            self.townBattle.cogPanels[i].setAvatar(self.activeSuits[i])
         
         if not self.tutorialFlag:
             self.startTimer()
@@ -1008,7 +1008,7 @@ class Battle(DirectObject, NodePath, BattleBase):
             self.makeSuitJoin(suit)
             return 1
         else:
-            self.notify.warning('suitRequestJoin() - not joinable - joinable state: %s max suits: %d' % (self.isJoinable(), self.maxSuits))
+            self.notify.debug('suitRequestJoin() - not joinable - joinable state: %s max suits: %d' % (self.isJoinable(), self.maxSuits))
             return 0
 
     def addSuit(self, suit):

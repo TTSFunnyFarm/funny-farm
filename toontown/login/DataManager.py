@@ -1,7 +1,8 @@
 import builtins
 import json
 import os
-import shutil
+
+from cryptography.fernet import Fernet
 
 from panda3d.core import *
 
@@ -11,6 +12,8 @@ from toontown.toon.ToonData import ToonData
 from toontown.toonbase import FunnyFarmGlobals
 
 BASE_DB_ID = 1000001
+KEY = 'PU05SWFTMmRGbWRFdW5VQW85ZFNWSkNKakFMYTNwQXpSM1VFSGFyRHpYRGY='
+
 
 
 class DataManager:
@@ -18,64 +21,102 @@ class DataManager:
     notify.setInfo(1)
 
     def __init__(self):
-        self.fileExt = '.json'
-        self.oldDir = Filename.getUserAppdataDirectory() + '/FunnyFarm/db/'
-        self.newDir = Filename.getUserAppdataDirectory() + '/FunnyFarm' + '/database/'
+        self.fileExt = '.dat'
+        self.fileDir = os.getcwd() + '/database/'
         self.corrupted = 0
         self.toons = []
         for toonNum in range(FunnyFarmGlobals.MaxAvatars):
             self.toons.append(str(BASE_DB_ID + toonNum))
-        self.removeOldData()
         return
 
-    def removeOldData(self):
-        filename = Filename(self.oldDir)
-        if os.path.exists(filename.toOsSpecific()):
-            self.notify.warning('Deprecated data found. Removing...')
-            shutil.rmtree(filename.toOsSpecific())
-
     def getToonFilename(self, index):
-        filename = Filename(self.newDir + self.toons[index - 1] + self.fileExt)
+        filename = Filename(self.fileDir + self.toons[index - 1] + self.fileExt)
         if os.path.exists(filename.toOsSpecific()):
             return filename
         return None
 
     def checkToonFiles(self):
         for file in self.toons:
-            filename = Filename(self.newDir + file + self.fileExt)
+            filename = Filename(self.fileDir + file + self.fileExt)
             if os.path.exists(filename.toOsSpecific()):
                 return True
         return False
 
     def createToonData(self, index, dna, name):
-        return ToonData(index, dna, name, 20, 20, 0, 40, 0, 12000, 20, None, None, [0, 0, 0, 0, 1, 1, 0],
-                        [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], 'Mickey', 0, 1000, 1, 0,
-                        [0, 0, 0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [], [], [], [], [], [],
-                        [], [], 1, 1000, [-1, -1], [], [], 0, [], [], 0)
+        return ToonData.getDefaultToonData(index, dna, name)
 
     def saveToonData(self, data):
         if self.corrupted:
             return None
+
         index = data.index
-        filename = Filename(self.newDir + self.toons[index - 1] + self.fileExt)
+        filename = Filename(self.fileDir + self.toons[index - 1] + self.fileExt)
         if not os.path.exists(filename.toOsSpecific()):
             filename.makeDir()
+
         with open(filename.toOsSpecific(), 'w') as toonData:
-            json.dump(data.export(), toonData, indent=4)
+            valid, _, toonDataObj = ToonData.verifyToonData(data, saveToonData=False)
+            if not valid:
+                toonData.close()
+                self.handleDataError()
+                return
+
+            try:
+                jsonData = toonDataObj.makeJsonData()
+            except:
+                toonData.close()
+                self.handleDataError()
+                return
+
+            try:
+                fileData = json.dumps(jsonData, indent=4)
+            except:
+                toonData.close()
+                self.handleDataError()
+                return
+
+            try:
+                fernet = Fernet(KEY.decode('base64')[::-1])
+                encryptedData = fernet.encrypt(fileData)
+                toonData.write(encryptedData)
+                toonData.close()
+            except:
+                toonData.close()
+                self.handleDataError()
+                return
+
         return
 
     def loadToonData(self, index):
         if self.corrupted:
             return None
-        filename = Filename(self.newDir + self.toons[index - 1] + self.fileExt)
+
+        filename = Filename(self.fileDir + self.toons[index - 1] + self.fileExt)
         if os.path.exists(filename.toOsSpecific()):
             with open(filename.toOsSpecific(), 'r') as toonData:
-                data = ToonData.makeFromJsonData(json.load(toonData))
-                return data
+                try:
+                    fileData = toonData.read()
+                    fernet = Fernet(KEY.decode('base64')[::-1])
+                    decryptedData = fernet.decrypt(fileData)
+                    jsonData = json.loads(decryptedData)
+                    toonData.close()
+                except:
+                    toonData.close()
+                    self.handleDataError()
+                    return None
+
+                try:
+                    toonDataObj = ToonData.makeFromJsonData(jsonData)
+                except:
+                    self.handleDataError()
+                    return None
+
+                return toonDataObj
+
         return None
 
     def deleteToonData(self, index):
-        filename = Filename(self.newDir + self.toons[index - 1] + self.fileExt)
+        filename = Filename(self.fileDir + self.toons[index - 1] + self.fileExt)
         if os.path.exists(filename.toOsSpecific()):
             os.remove(filename.toOsSpecific())
         else:
@@ -110,6 +151,7 @@ class DataManager:
         base.localAvatar.setExperience(data.setExperience)
         base.localAvatar.setInventory(data.setInventory)
         base.localAvatar.setQuestCarryLimit(data.setQuestCarryLimit)
+        base.localAvatar.setQuestingZone(data.setQuestingZone)
         for questDesc in data.setQuests:
             base.localAvatar.addQuest(questDesc[0])
             base.localAvatar.setQuestProgress(questDesc[0], questDesc[1])
@@ -121,6 +163,7 @@ class DataManager:
         base.localAvatar.setHoodsVisited(data.setHoodsVisited)
         base.localAvatar.setTeleportAccess(data.setTeleportAccess)
         base.localAvatar.setNametagFont(FunnyFarmGlobals.getVar(data.setNametagStyle))
+        base.localAvatar.setCETimer(data.setCETimer)
         base.localAvatar.setCheesyEffect(data.setCheesyEffect)
         base.localAvatar.setHat(*data.setHat)
         base.localAvatar.setGlasses(*data.setGlasses)

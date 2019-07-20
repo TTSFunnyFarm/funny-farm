@@ -428,7 +428,8 @@ class PropPool:
                 self.storeProp(name, prop)
                 if name in Variants:
                     self.makeVariant(name)
-                prop.setBlend(frameBlend = True)
+                if config.GetBool('smooth-animations', True):
+                    prop.setBlend(frameBlend = True)
             return Actor.Actor(other=self.props[name])
         else:
             if name not in self.props:
