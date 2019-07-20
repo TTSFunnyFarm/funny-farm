@@ -15,7 +15,7 @@ preferencesFilename = ConfigVariableString('preferences-filename', 'preferences.
 dir = os.path.dirname(os.getcwd() + '/' + preferencesFilename)
 if not os.path.exists(dir):
     os.makedirs(dir)
-print 'Reading %s...' % preferencesFilename
+print('Reading %s...' % preferencesFilename)
 __builtins__.settings = Settings(preferencesFilename)
 # These have to be set before ToonBase loads
 if 'res' not in settings:
