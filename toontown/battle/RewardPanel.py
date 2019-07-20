@@ -313,7 +313,7 @@ class RewardPanel(DirectFrame):
     def getRandomCongratsPair(self, toon):
         congratsStrings = TTLocalizer.RewardPanelCongratsStrings
         numStrings = len(congratsStrings)
-        indexList = range(numStrings)
+        indexList = list(range(numStrings))
         index1 = random.choice(indexList)
         indexList.remove(index1)
         index2 = random.choice(indexList)
