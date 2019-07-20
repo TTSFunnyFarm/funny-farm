@@ -1,4 +1,5 @@
 import builtins
+import codecs
 import json
 import os
 
@@ -12,7 +13,7 @@ from toontown.toon.ToonData import ToonData
 from toontown.toonbase import FunnyFarmGlobals
 
 BASE_DB_ID = 1000001
-KEY = 'PU05SWFTMmRGbWRFdW5VQW85ZFNWSkNKakFMYTNwQXpSM1VFSGFyRHpYRGY='
+KEY = b'PU05SWFTMmRGbWRFdW5VQW85ZFNWSkNKakFMYTNwQXpSM1VFSGFyRHpYRGY='
 
 
 
@@ -69,16 +70,16 @@ class DataManager:
                 return
 
             try:
-                fileData = json.dumps(jsonData, indent=4)
+                fileData = json.dumps(jsonData, indent=4).encode()
             except:
                 toonData.close()
                 self.handleDataError()
                 return
 
             try:
-                fernet = Fernet(KEY.decode('base64')[::-1])
+                fernet = Fernet(codecs.decode(KEY, 'base64')[::-1])
                 encryptedData = fernet.encrypt(fileData)
-                toonData.write(encryptedData)
+                toonData.write(encryptedData.decode())
                 toonData.close()
             except:
                 toonData.close()
@@ -96,7 +97,7 @@ class DataManager:
             with open(filename.toOsSpecific(), 'r') as toonData:
                 try:
                     fileData = toonData.read()
-                    fernet = Fernet(KEY.decode('base64')[::-1])
+                    fernet = Fernet(codecs.decode(KEY, 'base64')[::-1])
                     decryptedData = fernet.decrypt(fileData)
                     jsonData = json.loads(decryptedData)
                     toonData.close()
