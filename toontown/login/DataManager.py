@@ -96,7 +96,7 @@ class DataManager:
         if os.path.exists(filename.toOsSpecific()):
             with open(filename.toOsSpecific(), 'r') as toonData:
                 try:
-                    fileData = toonData.read()
+                    fileData = toonData.read().encode()
                     fernet = Fernet(codecs.decode(KEY, 'base64')[::-1])
                     decryptedData = fernet.decrypt(fileData)
                     jsonData = json.loads(decryptedData)
