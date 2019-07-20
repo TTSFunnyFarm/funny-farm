@@ -33,7 +33,7 @@ class Experience:
 
     def makeFromNetString(self, netString):
         dataList = []
-        dg = PyDatagram(netString)
+        dg = PyDatagram(netString.encode())
         dgi = PyDatagramIterator(dg)
         for track in range(0, len(Tracks)):
             dataList.append(dgi.getUint16())

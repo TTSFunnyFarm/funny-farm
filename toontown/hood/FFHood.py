@@ -25,7 +25,7 @@ class FFHood(ToonHood):
         self.winterHoodFile = 'phase_14/models/neighborhoods/funny_farm_winter'
         self.skyFile = 'phase_3.5/models/props/TT_sky'
         self.titleColor = (1.0, 0.5, 0.4, 1.0)
-        self.birdSound = map(base.loader.loadSfx, ['phase_4/audio/sfx/SZ_TC_bird1.ogg', 'phase_4/audio/sfx/SZ_TC_bird2.ogg', 'phase_4/audio/sfx/SZ_TC_bird3.ogg'])
+        self.birdSound = list(map(base.loader.loadSfx, ['phase_4/audio/sfx/SZ_TC_bird1.ogg', 'phase_4/audio/sfx/SZ_TC_bird2.ogg', 'phase_4/audio/sfx/SZ_TC_bird3.ogg']))
         self.waterShader = None
         self.treasurePlanner = FFTreasurePlanner()
 
