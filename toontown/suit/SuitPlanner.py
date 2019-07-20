@@ -58,7 +58,7 @@ class SuitPlanner(DirectObject):
 
     def removeSuit(self, doId):
         # Makes the suit fly away first, then deletes it
-        if doId in self.activeSuits.keys():
+        if doId in list(self.activeSuits.keys()):
             suit = self.activeSuits[doId]
             suit.exitWalk()
             suit.enterToSky()
@@ -70,7 +70,7 @@ class SuitPlanner(DirectObject):
 
     def removeActiveSuit(self, doId):
         # Simply removes the suit from the list of active suits
-        if doId in self.activeSuits.keys():
+        if doId in list(self.activeSuits.keys()):
             self.activeSuits.pop(doId)
 
     def spawnSuitBuilding(self, requestStatus):
@@ -132,7 +132,7 @@ class SuitPlanner(DirectObject):
             suit.enterWalk(status['posA'], status['posB'], time)
 
     def unloadSuits(self):
-        for doId in self.activeSuits.keys():
+        for doId in list(self.activeSuits.keys()):
             suit = self.activeSuits[doId]
             self.deleteSuit(suit)
 
