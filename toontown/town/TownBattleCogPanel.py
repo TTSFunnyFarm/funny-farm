@@ -119,6 +119,5 @@ class TownBattleCogPanel(DirectFrame):
         if self.healthBar:
             self.healthBar.removeNode()
             self.healthBar = None
-        if self.healthCondition == 4 or self.healthCondition == 5:
-            taskMgr.remove(self.uniqueName('blink-task'))
+        taskMgr.remove(self.uniqueName('blink-task'))
         self.healthCondition = 0

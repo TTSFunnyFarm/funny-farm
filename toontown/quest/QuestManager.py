@@ -192,7 +192,7 @@ class QuestManager:
         
         # In this case, 1030 is the final task in tier 1, and they'll also have to have teleport access and carry 30 gags.
         # (I will finish this method as I write the quests.)
-        if avatar.hasQuestHistory(1030) and avatar.hasQuestHistory(1046) and avatar.hasQuestHistory(1055): # just a temp number until I write the quest
+        if avatar.hasQuestHistory(1030) and avatar.hasQuestHistory(1046) and avatar.hasQuestHistory(1053):
             return Quests.FF_TIER + 1
         # else if avatar.hasQuestHistory(finalQuestId):
         #     return Quests.SS_TIER

@@ -1377,7 +1377,9 @@ ImportantQuests = (1004,
  1028,
  1030,
  1040,
- 1046)
+ 1046,
+ 1050,
+ 1053)
 ffMainQuests = []
 ffSideQuests = []
 ffJustForFunQuests = []

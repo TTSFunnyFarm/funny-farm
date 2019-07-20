@@ -249,11 +249,11 @@ class TownBattle(StateData.StateData):
         elif num == 4:
             self.cogPanels[0].setX(self.evenPos[0])
             self.cogPanels[0].show()
-            self.cogPanels[1].setX(self.evenPos[0])
+            self.cogPanels[1].setX(self.evenPos[1])
             self.cogPanels[1].show()
-            self.cogPanels[2].setX(self.evenPos[0])
+            self.cogPanels[2].setX(self.evenPos[2])
             self.cogPanels[2].show()
-            self.cogPanels[3].setX(self.evenPos[0])
+            self.cogPanels[3].setX(self.evenPos[3])
             self.cogPanels[3].show()
 
     def __enterPanels(self, num, localNum):
