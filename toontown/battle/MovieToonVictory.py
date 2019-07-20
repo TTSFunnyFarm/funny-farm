@@ -84,7 +84,7 @@ def doToonVictory(localToonActive, toons, rewardToonIds, rewardDicts, deathList,
     countToons = 0
     uberListNew = []
     for t in toons:
-        if isinstance(t, types.IntType):
+        if isinstance(t, int):
             t = base.localAvatar
         if t:
             toonList.append(t)
