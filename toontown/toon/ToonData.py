@@ -10,14 +10,14 @@ DefaultData = [
     ['setBankMoney', [int], 0],
     ['setMaxBankMoney', [int], 12000],
     ['setMaxCarry', [int], 20],
-    ['setInventory', [str, unicode], None],
-    ['setExperience', [str, unicode], None],
+    ['setInventory', [bytes, str], None],
+    ['setExperience', [bytes, str], None],
     ['setTrackAccess', [list], [0, 0, 0, 0, 1, 1, 0]],
     ['setHat', [list], [0, 0, 0]],
     ['setGlasses', [list], [0, 0, 0]],
     ['setBackpack', [list], [0, 0, 0]],
     ['setShoes', [list], [0, 0, 0]],
-    ['setNametagStyle', [str, unicode], 'Mickey'],
+    ['setNametagStyle', [bytes, str], 'Mickey'],
     ['setCheesyEffect', [int], 0],
     ['setCETimer', [float], 0.0],
     ['setLastHood', [int], 1000],
@@ -131,7 +131,7 @@ class ToonData:
 
         # They also need to be of the correct type, or else they are considered
         # to be corrupted and we cannot move forward.
-        if type(index) != int and type(setDNA) != list and type(setName) != str:
+        if type(index) != int and type(setDNA) != list and type(setName) != bytes:
             return False, 'One or more required database fields contain a value of incorrect type!', None
 
         # Now we check every other field:
