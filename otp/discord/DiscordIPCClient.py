@@ -103,13 +103,13 @@ class DiscordIPCClient:
         self._write(header)
         self._write(dataBytes)
 
-    def _recv(self, size):
+    def _recv(self, size: int) -> bytes:
         if hasattr(self._f, 'recv'):
             _method = self._f.recv
         else:
             _method = self._f.read
 
-        return _method(int(bytes(size)))
+        return _method(size)
 
     def _close(self):
         self._closed = True

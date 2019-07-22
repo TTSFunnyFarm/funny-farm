@@ -16,11 +16,10 @@ class WinDiscordIPCClient(DiscordIPCClient):
         else:
             self._close()
 
-    def _write(self, data):
+    def _write(self, data: bytes):
         if self._closed:
             return
 
-        data = bytes(data)
         self._f.seek(0, 2)
         self._f.write(data)
         self._f.flush()
