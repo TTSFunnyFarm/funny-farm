@@ -1,4 +1,3 @@
-import builtins
 import codecs
 import json
 import os
@@ -134,7 +133,7 @@ class DataManager:
         self.notify.info('================')
         base.localAvatar = LocalToon()
         base.avatarData = data
-        builtins.localAvatar = base.localAvatar
+        __builtins__['localAvatar'] = base.localAvatar
         dna = ToonDNA.ToonDNA()
         dna.newToonFromProperties(*data.setDNA)
         base.localAvatar.setDNA(dna)
