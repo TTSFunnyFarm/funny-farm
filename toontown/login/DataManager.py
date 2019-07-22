@@ -4,7 +4,6 @@ import json
 import os
 
 from cryptography.fernet import Fernet
-
 from panda3d.core import *
 
 from toontown.toon import ToonDNA
@@ -14,7 +13,6 @@ from toontown.toonbase import FunnyFarmGlobals
 
 BASE_DB_ID = 1000001
 KEY = b'PU05SWFTMmRGbWRFdW5VQW85ZFNWSkNKakFMYTNwQXpSM1VFSGFyRHpYRGY='
-
 
 
 class DataManager:
