@@ -44,7 +44,7 @@ class Trolley(DirectObject):
         for i in range(self.numKeys):
             key = self.keys[i]
             key.setTwoSided(1)
-            ref = self.trolleyCar.attachNewNode('key' + str(i) + 'ref')
+            ref = self.trolleyCar.attachNewNode('key' + repr(i) + 'ref')
             ref.setPosHpr(key, 0, 0, 0, 0, 0, 0)
             self.keyRef.append(ref)
             self.keyInit.append(key.getTransform())
@@ -55,7 +55,7 @@ class Trolley(DirectObject):
         self.frontWheelRef = []
         for i in range(self.numFrontWheels):
             wheel = self.frontWheels[i]
-            ref = self.trolleyCar.attachNewNode('frontWheel' + str(i) + 'ref')
+            ref = self.trolleyCar.attachNewNode('frontWheel' + repr(i) + 'ref')
             ref.setPosHpr(wheel, 0, 0, 0, 0, 0, 0)
             self.frontWheelRef.append(ref)
             self.frontWheelInit.append(wheel.getTransform())
@@ -66,7 +66,7 @@ class Trolley(DirectObject):
         self.backWheelRef = []
         for i in range(self.numBackWheels):
             wheel = self.backWheels[i]
-            ref = self.trolleyCar.attachNewNode('backWheel' + str(i) + 'ref')
+            ref = self.trolleyCar.attachNewNode('backWheel' + repr(i) + 'ref')
             ref.setPosHpr(wheel, 0, 0, 0, 0, 0, 0)
             self.backWheelRef.append(ref)
             self.backWheelInit.append(wheel.getTransform())
