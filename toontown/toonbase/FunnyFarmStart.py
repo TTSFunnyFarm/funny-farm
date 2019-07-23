@@ -23,7 +23,7 @@ if 'res' not in settings:
 if 'vsync' not in settings:
     settings['vsync'] = False
 if 'antialiasing' not in settings:
-    settings['antialiasing'] = 4
+    settings['antialiasing'] = 0
 loadPrcFileData('Settings: res', 'win-size %d %d' % tuple(settings['res']))
 loadPrcFileData('Settings: vsync', 'sync-video %s' % settings['vsync'])
 loadPrcFileData('Settings: MSAA', 'framebuffer-multisample %s' % (settings['antialiasing'] > 0))
