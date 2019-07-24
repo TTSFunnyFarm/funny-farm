@@ -1715,7 +1715,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def startUpdateReflection(self):
         self.reflectionAnim = None
-        self.reflectionRate = None
+        self.reflectionRate = 1.0
         taskMgr.add(self.updateReflection, 'ltUpdateReflection')
 
     def stopUpdateReflection(self):
