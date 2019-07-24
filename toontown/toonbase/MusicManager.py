@@ -34,11 +34,11 @@ class MusicManager:
     def stopMusic(self):
         for t in self.pickAToonMusic:
             t.stop()
-        for t in self.safezoneMusic.keys():
+        for t in list(self.safezoneMusic.keys()):
             self.safezoneMusic[t].stop()
-        for t in self.townMusic.keys():
+        for t in list(self.townMusic.keys()):
             self.townMusic[t].stop()
-        for t in self.activityMusic.keys():
+        for t in list(self.activityMusic.keys()):
             self.activityMusic[t].stop()
 
     def playCurrentZoneMusic(self):
@@ -58,7 +58,7 @@ class MusicManager:
         else:
             self.notify.warning('playCurrentZoneMusic(): localAvatar is not currently in a valid zone.')
             return None
-        if zoneId in lookupTable.keys():
+        if zoneId in list(lookupTable.keys()):
             music = lookupTable[zoneId]
         else:
             self.notify.warning('playCurrentZoneMusic(): music for zone %s not in MusicManager.' % str(zoneId))
