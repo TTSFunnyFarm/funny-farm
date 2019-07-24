@@ -857,7 +857,7 @@ QuestDict = {
         (QuestTypeRecover,
          3,
          3,
-         40,
+         50,
          Any,
          Any,
          FunnyFarmGlobals.RicketyRoad),
