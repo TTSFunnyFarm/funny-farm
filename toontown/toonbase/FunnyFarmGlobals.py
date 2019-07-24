@@ -4,8 +4,8 @@ from direct.gui import DirectGuiGlobals
 from otp.margins.MarginManager import MarginManager
 from otp.nametag import NametagGlobals
 from otp.nametag.ChatBalloon import ChatBalloon
-import TTLocalizer
-from ToontownGlobals import *
+from toontown.toonbase import TTLocalizer
+from toontown.toonbase.ToontownGlobals import *
 
 def getVar(var):
     return globals()[var]
@@ -74,7 +74,7 @@ def getNameFromId(hoodId):
 def getHoodId(zoneId):
     for zones in HoodHierarchy.values():
         if zoneId in zones:
-            return HoodHierarchy.keys()[HoodHierarchy.values().index(zones)]
+            return list(HoodHierarchy.keys())[list(HoodHierarchy.values()).index(zones)]
     return zoneId
 
 phaseMap = {

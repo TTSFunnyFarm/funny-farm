@@ -11,14 +11,14 @@ from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.suit import Suit
-from BattleCalculator import BattleCalculator
-from BattleBase import *
-from SuitBattleGlobals import *
-import BattleExperienceAI
-import BattleProps
-import BattleParticles
-import Movie
-import MovieUtil
+from toontown.battle.BattleCalculator import BattleCalculator
+from toontown.battle.BattleBase import *
+from toontown.battle.SuitBattleGlobals import *
+from toontown.battle import BattleExperienceAI
+from toontown.battle import BattleProps
+from toontown.battle import BattleParticles
+from toontown.battle import Movie
+from toontown.battle import MovieUtil
 import random
 
 class Battle(DirectObject, NodePath, BattleBase):
@@ -174,7 +174,7 @@ class Battle(DirectObject, NodePath, BattleBase):
             self.notify.debug('interval: %s already cleared' % name)
 
     def finishInterval(self, name):
-        if self.activeIntervals.has_key(name):
+        if name in self.activeIntervals:
             interval = self.activeIntervals[name]
             interval.finish()
 
@@ -489,9 +489,9 @@ class Battle(DirectObject, NodePath, BattleBase):
             toon = self.getToon(toonId)
             if toon == None:
                 return
-            if toon.NPCFriendsDict.has_key(av):
+            if av in toon.NPCFriendsDict:
                 npcCollision = 0
-                if self.npcAttacks.has_key(av):
+                if av in self.npcAttacks:
                     callingToon = self.npcAttacks[av]
                     if self.activeToonIds.count(callingToon) == 1:
                         self.toonAttacks[toonId] = getToonAttack(toonId, track=PASS)
@@ -509,7 +509,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         elif track == UN_ATTACK:
             self.notify.debug('toon: %d changed its mind' % toonId)
             self.toonAttacks[toonId] = getToonAttack(toonId, track=UN_ATTACK)
-            if self.responses.has_key(toonId):
+            if toonId in self.responses:
                 self.responses[toonId] = 0
             validResponse = 0
         elif track == PASS:
@@ -568,7 +568,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         self.movieHasPlayed = 0
         self.rewardHasPlayed = 0
         for t in self.activeToonIds:
-            if not self.toonAttacks.has_key(t):
+            if t not in self.toonAttacks:
                 self.toonAttacks[t] = getToonAttack(t)
             attack = self.toonAttacks[t]
             if attack[TOON_TRACK_COL] == PASS or attack[TOON_TRACK_COL] == UN_ATTACK:
@@ -615,7 +615,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         p.append(self.activeToonIds)
         p.append(suitIds)
         for t in self.activeToonIds:
-            if self.toonAttacks.has_key(t):
+            if t in self.toonAttacks:
                 ta = self.toonAttacks[t]
                 index = -1
                 id = ta[TOON_ID_COL]

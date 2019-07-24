@@ -6,7 +6,7 @@ from toontown.building import Door
 from toontown.suit.SuitPlanner import SuitPlanner
 from toontown.town.TownBattle import TownBattle
 from toontown.battle.Battle import Battle
-from TownLoader import TownLoader
+from toontown.town.TownLoader import TownLoader
 
 class Street(ToonHood):
     notify = directNotify.newCategory('Street')

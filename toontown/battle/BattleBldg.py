@@ -5,9 +5,9 @@ from toontown.quest import Quests
 from toontown.suit import SuitDNA
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
-from Battle import Battle
-from BattleBase import *
-import SuitBattleGlobals
+from toontown.battle.Battle import Battle
+from toontown.battle.BattleBase import *
+from toontown.battle import SuitBattleGlobals
 import random
 
 class BattleBldg(Battle):

@@ -1,6 +1,6 @@
 import math
-import RingTrack
-import RingAction
+from toontown.minigame import RingTrack
+from toontown.minigame import RingAction
 center = (0, 0)
 up = (0, 1)
 down = (0, -1)

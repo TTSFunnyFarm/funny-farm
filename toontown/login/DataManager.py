@@ -1,4 +1,4 @@
-import __builtin__
+import codecs
 import json
 import os
 
@@ -11,7 +11,7 @@ from toontown.toon.ToonData import ToonData
 from toontown.toonbase import FunnyFarmGlobals
 
 BASE_DB_ID = 1000001
-KEY = 'PU05SWFTMmRGbWRFdW5VQW85ZFNWSkNKakFMYTNwQXpSM1VFSGFyRHpYRGY='
+KEY = b'PU05SWFTMmRGbWRFdW5VQW85ZFNWSkNKakFMYTNwQXpSM1VFSGFyRHpYRGY='
 
 
 class DataManager:
@@ -23,7 +23,7 @@ class DataManager:
         self.fileDir = os.getcwd() + '/database/'
         self.corrupted = 0
         self.toons = []
-        for toonNum in xrange(FunnyFarmGlobals.MaxAvatars):
+        for toonNum in range(FunnyFarmGlobals.MaxAvatars):
             self.toons.append(str(BASE_DB_ID + toonNum))
         return
 
@@ -67,16 +67,16 @@ class DataManager:
                 return
 
             try:
-                fileData = json.dumps(jsonData, indent=4)
+                fileData = json.dumps(jsonData, indent=4).encode()
             except:
                 toonData.close()
                 self.handleDataError()
                 return
 
             try:
-                fernet = Fernet(KEY.decode('base64')[::-1])
+                fernet = Fernet(codecs.decode(KEY, 'base64')[::-1])
                 encryptedData = fernet.encrypt(fileData)
-                toonData.write(encryptedData)
+                toonData.write(encryptedData.decode())
                 toonData.close()
             except:
                 toonData.close()
@@ -93,8 +93,8 @@ class DataManager:
         if os.path.exists(filename.toOsSpecific()):
             with open(filename.toOsSpecific(), 'r') as toonData:
                 try:
-                    fileData = toonData.read()
-                    fernet = Fernet(KEY.decode('base64')[::-1])
+                    fileData = toonData.read().encode()
+                    fernet = Fernet(codecs.decode(KEY, 'base64')[::-1])
                     decryptedData = fernet.decrypt(fileData)
                     jsonData = json.loads(decryptedData)
                     toonData.close()
@@ -133,7 +133,7 @@ class DataManager:
         self.notify.info('================')
         base.localAvatar = LocalToon()
         base.avatarData = data
-        __builtin__.localAvatar = base.localAvatar
+        __builtins__['localAvatar'] = base.localAvatar
         dna = ToonDNA.ToonDNA()
         dna.newToonFromProperties(*data.setDNA)
         base.localAvatar.setDNA(dna)

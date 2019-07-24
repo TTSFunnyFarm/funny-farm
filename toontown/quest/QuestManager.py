@@ -1,7 +1,7 @@
 from direct.task.Task import Task
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.toonbase import FunnyFarmGlobals
-import Quests
+from toontown.quest import Quests
 
 class QuestManager:
     notify = directNotify.newCategory('QuestManager')
@@ -51,7 +51,7 @@ class QuestManager:
         return Task.done
 
     def recoverItems(self, toon, suitsKilled, zoneId):
-        recovered, notRecovered = ([] for i in xrange(2))
+        recovered, notRecovered = ([] for i in range(2))
         for index, questDesc in enumerate(toon.quests):
             quest = Quests.getQuest(questDesc[0])
             quest.setQuestProgress(questDesc[1])

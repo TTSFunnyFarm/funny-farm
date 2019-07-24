@@ -3,7 +3,7 @@ from direct.gui.DirectGui import *
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
-import ShtikerPage
+from toontown.book import ShtikerPage
 
 class MapPage(ShtikerPage.ShtikerPage):
 
@@ -105,7 +105,7 @@ class MapPage(ShtikerPage.ShtikerPage):
             self.labels.append(label)
         cloudModel = loader.loadModel('phase_3.5/models/gui/cloud')
         cloudImage = cloudModel.find('**/cloud')
-        for i in xrange(len(self.cloudScaleList)):
+        for i in range(len(self.cloudScaleList)):
             cloudScale = self.cloudScaleList[i]
             cloudPos = self.cloudPosList[i]
             cloud = DirectFrame(

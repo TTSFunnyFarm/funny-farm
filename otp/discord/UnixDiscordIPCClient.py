@@ -9,7 +9,7 @@ class UnixDiscordIPCClient(DiscordIPCClient):
     def _connect(self):
         self._f = socket.socket(socket.AF_UNIX)
         pipePattern = self._getPipePattern()
-        for i in xrange(10):
+        for i in range(10):
             path = pipePattern.format(i)
             if not os.path.exists(path):
                 continue

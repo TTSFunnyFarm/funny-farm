@@ -3,27 +3,28 @@ from direct.directnotify import DirectNotifyGlobal
 from direct.interval.IntervalGlobal import *
 from direct.showbase import DirectObject
 import random
+import functools
 
-from BattleBase import *
-import BattleExperience
-import BattleParticles
-import MovieDrop
-import MovieFire
-import MoviePowerUp
-import MovieLure
-import MovieNPCSOS
-import MoviePetSOS
-import MovieSOS
-import MovieSound
-import MovieSquirt
-import MovieSuitAttacks
-import MovieThrow
-import MovieToonVictory
-import MovieTrap
-import MovieUtil
-import PlayByPlayText
-import RewardPanel
-from SuitBattleGlobals import *
+from toontown.battle.BattleBase import *
+from toontown.battle import BattleExperience
+from toontown.battle import BattleParticles
+from toontown.battle import MovieDrop
+from toontown.battle import MovieFire
+from toontown.battle import MoviePowerUp
+from toontown.battle import MovieLure
+from toontown.battle import MovieNPCSOS
+from toontown.battle import MoviePetSOS
+from toontown.battle import MovieSOS
+from toontown.battle import MovieSound
+from toontown.battle import MovieSquirt
+from toontown.battle import MovieSuitAttacks
+from toontown.battle import MovieThrow
+from toontown.battle import MovieToonVictory
+from toontown.battle import MovieTrap
+from toontown.battle import MovieUtil
+from toontown.battle import PlayByPlayText
+from toontown.battle import RewardPanel
+from toontown.battle.SuitBattleGlobals import *
 from toontown.chat.ChatGlobals import *
 from toontown.distributed import DelayDelete
 from toontown.toon import NPCToons
@@ -126,14 +127,14 @@ class Movie(DirectObject.DirectObject):
                 legsParts = toon.getLegsParts()
                 partsList = [headParts, torsoParts, legsParts]
                 for parts in partsList:
-                    for partNum in xrange(0, parts.getNumPaths()):
+                    for partNum in range(0, parts.getNumPaths()):
                         nextPart = parts.getPath(partNum)
                         nextPart.clearColorScale()
                         nextPart.clearTransparency()
 
             if self.restoreHips == 1:
                 parts = toon.getHipsParts()
-                for partNum in xrange(0, parts.getNumPaths()):
+                for partNum in range(0, parts.getNumPaths()):
                     nextPart = parts.getPath(partNum)
                     props = nextPart.getChildren()
                     for prop in props:
@@ -148,7 +149,7 @@ class Movie(DirectObject.DirectObject):
             if self.restoreToonScale == 1:
                 toon.setScale(1)
             headParts = toon.getHeadParts()
-            for partNum in xrange(0, headParts.getNumPaths()):
+            for partNum in range(0, headParts.getNumPaths()):
                 part = headParts.getPath(partNum)
                 part.setHpr(0, 0, 0)
                 part.setPos(0, 0, 0)
@@ -156,7 +157,7 @@ class Movie(DirectObject.DirectObject):
             arms = toon.findAllMatches('**/arms')
             sleeves = toon.findAllMatches('**/sleeves')
             hands = toon.findAllMatches('**/hands')
-            for partNum in xrange(0, arms.getNumPaths()):
+            for partNum in range(0, arms.getNumPaths()):
                 armPart = arms.getPath(partNum)
                 sleevePart = sleeves.getPath(partNum)
                 handsPart = hands.getPath(partNum)
@@ -707,7 +708,7 @@ class Movie(DirectObject.DirectObject):
                         else:
                             suitIndex = self.battle.activeSuits.index(target)
                         leftSuits = []
-                        for si in xrange(0, suitIndex):
+                        for si in range(0, suitIndex):
                             asuit = self.battle.activeSuits[si]
                             if self.battle.isSuitLured(asuit) == 0:
                                 leftSuits.append(asuit)
@@ -715,7 +716,7 @@ class Movie(DirectObject.DirectObject):
                         lenSuits = len(self.battle.activeSuits)
                         rightSuits = []
                         if lenSuits > suitIndex + 1:
-                            for si in xrange(suitIndex + 1, lenSuits):
+                            for si in range(suitIndex + 1, lenSuits):
                                 asuit = self.battle.activeSuits[si]
                                 if self.battle.isSuitLured(asuit) == 0:
                                     rightSuits.append(asuit)
@@ -754,7 +755,7 @@ class Movie(DirectObject.DirectObject):
                 return -1
             return 0
 
-        self.toonAttackDicts.sort(compFunc)
+        self.toonAttackDicts.sort(key=functools.cmp_to_key(compFunc))
         return
 
     def __findToonAttack(self, track):
@@ -834,13 +835,13 @@ class Movie(DirectObject.DirectObject):
                     tdict['died'] = toonDied
                     toonIndex = self.battle.activeToons.index(target)
                     rightToons = []
-                    for ti in xrange(0, toonIndex):
+                    for ti in range(0, toonIndex):
                         rightToons.append(self.battle.activeToons[ti])
 
                     lenToons = len(self.battle.activeToons)
                     leftToons = []
                     if lenToons > toonIndex + 1:
-                        for ti in xrange(toonIndex + 1, lenToons):
+                        for ti in range(toonIndex + 1, lenToons):
                             leftToons.append(self.battle.activeToons[ti])
 
                     tdict['leftToons'] = leftToons

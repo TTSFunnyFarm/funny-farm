@@ -12,7 +12,7 @@ from toontown.suit import Suit
 from toontown.hood import ZoneUtil
 from toontown.toonbase.ToontownBattleGlobals import AvPropsNew
 from toontown.toontowngui import TTDialog
-import Quests
+from toontown.quest import Quests
 import string
 
 IMAGE_SCALE_LARGE = 0.2
@@ -381,7 +381,7 @@ class QuestPoster(DirectFrame):
         auxTextPos = Vec3(0, 0, 0.12)
         headlineString = quest.getHeadlineString()
         objectiveStrings = quest.getObjectiveStrings()
-        captions = map(string.capwords, quest.getObjectiveStrings())
+        captions = list(map(string.capwords, quest.getObjectiveStrings()))
         imageColor = Vec4(*self.colors['white'])
         if quest.getType() == Quests.QuestTypeDeliverGag or quest.getType() == Quests.QuestTypeDeliver:
             frameBgColor = 'red'

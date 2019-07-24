@@ -3,7 +3,7 @@ from direct.showbase.DirectObject import DirectObject
 from toontown.toon import NPCToons
 from toontown.hood import ZoneUtil
 from toontown.quest import Quests
-import Door
+from toontown.building import Door
 
 class Interior(DirectObject):
     notify = directNotify.newCategory('Interior')
@@ -32,7 +32,7 @@ class Interior(DirectObject):
 
     def generateNPCs(self):
         self.npcs = NPCToons.createNpcsInZone(self.zoneId)
-        for i in xrange(len(self.npcs)):
+        for i in range(len(self.npcs)):
             origin = self.interior.find('**/npc_origin_%d' % i)
             if not origin.isEmpty():
                 self.npcs[i].reparentTo(render)

@@ -1,7 +1,7 @@
 from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
 from direct.interval.IntervalGlobal import *
-from VisGroups import VisGroups
+from toontown.town.VisGroups import VisGroups
 
 class TownLoader(DirectObject):
 
@@ -109,6 +109,9 @@ class TownLoader(DirectObject):
             for street in self.streets.keys():
                 if not street.find('**/street_*_collisions_*').isEmpty():
                     self.accept('%d-again' % suit.doId + street.find('**/street_*_collisions_*').getName(), self.updateSuit, [self.streets.get(street)])
+        # If shaders are enabled, trigger a shader update to fix potentially broken shaders
+        if settings.get('waterShader', True):
+            messenger.send('update-shader-settings')
 
     def updateSuit(self, group, entry):
         # Updates the visibility of a suit (from a collEntry), based on the avatar's location

@@ -7,8 +7,8 @@ from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toontowngui import TTDialog
 from toontown.suit import Suit
-from ElevatorConstants import *
-from ElevatorUtils import *
+from toontown.building.ElevatorConstants import *
+from toontown.building.ElevatorUtils import *
 
 class Elevator(DirectObject):
     notify = directNotify.newCategory('Elevator')

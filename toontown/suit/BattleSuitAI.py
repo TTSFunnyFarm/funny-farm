@@ -1,9 +1,9 @@
 from panda3d.core import *
 from toontown.toonbase import ToontownGlobals
-from SuitBase import SuitBase
-import SuitDNA
-import SuitPoints
-import SuitTimings
+from toontown.suit.SuitBase import SuitBase
+from toontown.suit import SuitDNA
+from toontown.suit import SuitPoints
+from toontown.suit import SuitTimings
 import random
 
 class BattleSuitAI(SuitBase):

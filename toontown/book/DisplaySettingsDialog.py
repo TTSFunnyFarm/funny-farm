@@ -191,7 +191,7 @@ class DisplaySettingsDialog(DirectFrame, StateData.StateData):
     @staticmethod
     def chooseClosestScreenSize(currentXSize, currentYSize):
         screenSizes = DisplaySettingsDialog.screenSizes
-        for i in xrange(len(screenSizes)):
+        for i in range(len(screenSizes)):
             xSize, ySize = screenSizes[i]
             if currentXSize == xSize and currentYSize == ySize:
                 return i
@@ -199,7 +199,7 @@ class DisplaySettingsDialog(DirectFrame, StateData.StateData):
         currentCount = currentXSize * currentYSize
         bestDiff = None
         bestI = None
-        for i in xrange(len(screenSizes)):
+        for i in range(len(screenSizes)):
             xSize, ySize = screenSizes[i]
             diff = abs(xSize * ySize - currentCount)
             if bestI == None or diff < bestDiff:

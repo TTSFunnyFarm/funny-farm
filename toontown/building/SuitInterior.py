@@ -1,11 +1,11 @@
 from panda3d.core import *
 from toontown.battle.BattleBase import *
 from toontown.battle.BattleBldg import BattleBldg
-from ElevatorConstants import *
-from ElevatorUtils import *
-from Elevator import Elevator
-from SuitInteriorBase import SuitInteriorBase
-from SuitPlannerInterior import SuitPlannerInterior
+from toontown.building.ElevatorConstants import *
+from toontown.building.ElevatorUtils import *
+from toontown.building.Elevator import Elevator
+from toontown.building.SuitInteriorBase import SuitInteriorBase
+from toontown.building.SuitPlannerInterior import SuitPlannerInterior
 
 class SuitInterior(SuitInteriorBase):
 

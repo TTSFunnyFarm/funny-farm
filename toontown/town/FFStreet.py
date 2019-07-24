@@ -5,7 +5,7 @@ from toontown.hood import SkyUtil
 from toontown.shader import WaterShader
 from toontown.toon import NPCToons
 from toontown.toonbase import FunnyFarmGlobals
-from Street import Street
+from toontown.town.Street import Street
 
 class FFStreet(Street):
 

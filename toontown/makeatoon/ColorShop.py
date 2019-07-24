@@ -3,9 +3,9 @@ from toontown.toon import ToonDNA
 from direct.fsm import StateData
 from direct.gui.DirectGui import *
 from panda3d.core import *
-from MakeAToonGlobals import *
+from toontown.makeatoon.MakeAToonGlobals import *
 from toontown.toonbase import TTLocalizer
-import ShuffleButton
+from toontown.makeatoon import ShuffleButton
 import random
 from direct.directnotify import DirectNotifyGlobal
 
@@ -65,7 +65,7 @@ class ColorShop(StateData.StateData):
         try:
             del self.toon
         except:
-            print 'ColorShop: toon not found'
+            print('ColorShop: toon not found')
 
         self.hideButtons()
 

@@ -4,8 +4,8 @@ from direct.task import Task
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals, FunnyFarmGlobals
 from toontown.toontowngui import TTDialog
-from DisplaySettingsDialog import DisplaySettingsDialog
-import ShtikerPage
+from toontown.book.DisplaySettingsDialog import DisplaySettingsDialog
+from toontown.book import ShtikerPage
 
 class OptionsPage(ShtikerPage.ShtikerPage):
     notify = directNotify.newCategory('OptionsPage')
@@ -98,12 +98,12 @@ class OptionsTabPage(DirectFrame):
         options_text_scale = 0.052
         disabled_arrow_color = Vec4(0.6, 0.6, 0.6, 1.0)
         self.speed_chat_scale = 0.055
-        
+
         self.audioLabel = DirectLabel(parent=self, relief=None, text=TTLocalizer.OptionsPageAudioLabel, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_align=TextNode.ALeft, text_scale=0.07, pos=(-0.8, 0, textStartHeight - 0.03))
         self.videoLabel = DirectLabel(parent=self, relief=None, text=TTLocalizer.OptionsPageVideoLabel, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_align=TextNode.ALeft, text_scale=0.07, pos=(-0.8, 0, (textStartHeight - textRowHeight * 3) - 0.03))
 
         self.Music_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, pos=(leftMargin, 0, textStartHeight - textRowHeight))
-        self.SoundFX_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 2))  
+        self.SoundFX_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 2))
         self.Fullscreen_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 4))
         self.Resolution_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 5))
         self.Vsync_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 6))
@@ -319,8 +319,8 @@ class OptionsTabPage(DirectFrame):
 
     def __doToggleFullscreen(self):
         settings['fullscreen'] = not settings['fullscreen']
-        # Hackfix: In order to avoid resolution issues when the user has their window fullscreened 
-        # (which most people do), we're gonna first set their resolution to an acceptable size, 
+        # Hackfix: In order to avoid resolution issues when the user has their window fullscreened
+        # (which most people do), we're gonna first set their resolution to an acceptable size,
         # and THEN correct the resolution with their actual display size.
         if settings['fullscreen']:
             tempProperties = WindowProperties()
@@ -328,7 +328,7 @@ class OptionsTabPage(DirectFrame):
             tempProperties.setFullscreen(settings['fullscreen'])
             base.win.requestProperties(tempProperties)
             base.graphicsEngine.renderFrame()
-        
+
         properties = WindowProperties()
         if settings['fullscreen']:
             width, height = (base.pipe.getDisplayWidth(), base.pipe.getDisplayHeight())
@@ -338,12 +338,12 @@ class OptionsTabPage(DirectFrame):
             # Set the default res back to 1280x720.
             settings['res'] = [1280, 720]
             width, height = tuple(settings['res'])
-            
+
         properties.setSize(width, height)
         properties.setFullscreen(settings['fullscreen'])
         base.win.requestProperties(properties)
         base.graphicsEngine.renderFrame()
-        
+
         newProperties = base.win.getProperties()
         if properties.getFullscreen() and not newProperties.getFullscreen():
             # Either their video card can't display 1024x768 or some other weird problem occurred.

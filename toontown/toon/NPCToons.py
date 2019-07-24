@@ -3,7 +3,7 @@ from otp.nametag.NametagGroup import *
 from toontown.toonbase import ToontownGlobals
 import random
 from toontown.hood import ZoneUtil
-import ToonDNA
+from toontown.toon import ToonDNA
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownBattleGlobals
 import sys, os
@@ -76,18 +76,18 @@ def createNpcsInZone(zoneId):
     npcs = []
     canonicalZoneId = ZoneUtil.getCanonicalZoneId(zoneId)
     npcIdList = zone2NpcDict.get(canonicalZoneId, [])
-    for i in xrange(len(npcIdList)):
+    for i in range(len(npcIdList)):
         npcId = npcIdList[i]
         npcs.append(createLocalNPC(npcId, True))
 
     return npcs
 
 def createLocalNPC(npcId, functional = False):
-    import Toon
-    import NPCToon
-    import NPCClerk
-    import NPCScientist
-    import NPCFlippy
+    from toontown.toon import Toon
+    from toontown.toon import NPCToon
+    from toontown.toon import NPCClerk
+    from toontown.toon import NPCScientist
+    from toontown.toon import NPCFlippy
     if npcId not in NPCToonDict:
         return None
     desc = NPCToonDict[npcId]

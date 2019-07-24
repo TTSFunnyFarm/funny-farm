@@ -5,8 +5,8 @@ from otp.nametag.NametagConstants import *
 from otp.otpbase import OTPGlobals
 from otp.otpbase import OTPLocalizer
 from toontown.toonbase import TTLocalizer
-from ChatBalloon import ChatBalloon
-import ChatGlobals
+from toontown.chat.ChatBalloon import ChatBalloon
+from toontown.chat import ChatGlobals
 
 import string
 AcceptedKeystrokes = string.digits + string.ascii_letters + string.punctuation + ' '

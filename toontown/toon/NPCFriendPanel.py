@@ -1,9 +1,9 @@
 from direct.gui.DirectGui import *
 from direct.directnotify import DirectNotifyGlobal
 from panda3d.core import *
-import NPCToons
-import ToonHead
-import ToonDNA
+from toontown.toon import NPCToons
+from toontown.toon import ToonHead
+from toontown.toon import ToonDNA
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import ToontownBattleGlobals

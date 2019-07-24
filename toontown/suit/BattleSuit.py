@@ -9,10 +9,10 @@ from toontown.toonbase import ToontownGlobals
 from toontown.battle import BattleProps
 from otp.otpbase import OTPGlobals
 from otp.nametag.NametagConstants import *
-from SuitBase import SuitBase
-from Suit import Suit
-import SuitDialog
-import SuitTimings
+from toontown.suit.SuitBase import SuitBase
+from toontown.suit.Suit import Suit
+from toontown.suit import SuitDialog
+from toontown.suit import SuitTimings
 import math
 
 class BattleSuit(Suit, SuitBase):

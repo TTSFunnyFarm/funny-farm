@@ -1,6 +1,6 @@
 from panda3d.core import *
 from toontown.toonbase import TTLocalizer, ToontownGlobals
-import NPCToonBase
+from toontown.toon import NPCToonBase
 
 class NPCScientist(NPCToonBase.NPCToonBase):
 

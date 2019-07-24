@@ -1,4 +1,4 @@
-from ElevatorConstants import *
+from toontown.building.ElevatorConstants import *
 SuitBuildingInfo = (((1, 1),
   (1, 3),
   (4, 4),

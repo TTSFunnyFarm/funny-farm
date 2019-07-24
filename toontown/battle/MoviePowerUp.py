@@ -1,10 +1,10 @@
 from direct.interval.IntervalGlobal import *
 from toontown.toonbase.ToontownBattleGlobals import *
-from BattleBase import *
-from BattleProps import *
-from BattleSounds import *
-import MovieCamera
-import MovieUtil
+from toontown.battle.BattleBase import *
+from toontown.battle.BattleProps import *
+from toontown.battle.BattleSounds import *
+from toontown.battle import MovieCamera
+from toontown.battle import MovieUtil
 
 def doPowerUp(powerUp):
     if len(powerUp) == 0:

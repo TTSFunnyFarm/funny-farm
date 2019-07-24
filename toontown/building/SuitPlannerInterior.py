@@ -1,6 +1,6 @@
 from toontown.suit.BattleSuit import BattleSuit
 from toontown.suit import SuitDNA
-import SuitBuildingGlobals
+from toontown.building import SuitBuildingGlobals
 import random
 import types
 

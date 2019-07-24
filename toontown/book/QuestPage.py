@@ -6,7 +6,7 @@ from toontown.hood import ZoneUtil
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.quest import QuestBookPoster
-import ShtikerPage
+from toontown.book import ShtikerPage
 
 class QuestPage(ShtikerPage.ShtikerPage):
     notify = directNotify.newCategory('QuestPage')
@@ -92,7 +92,7 @@ class QuestPage(ShtikerPage.ShtikerPage):
                 index = self.getLowestUnusedIndex()
                 self.fillQuestFrame(newQuestDesc, index)
 
-        for i, questDesc in self.quests.iteritems():
+        for i, questDesc in self.quests.items():
             if questDesc:
                 if self.canDeleteQuest(questDesc):
                     self.questFrames[i].setDeleteCallback(self.__deleteQuest)

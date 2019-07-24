@@ -1,17 +1,17 @@
 from direct.interval.IntervalGlobal import *
-from BattleBase import *
-from BattleProps import *
-from BattleSounds import *
-import MovieUtil
-import MovieCamera
+from toontown.battle.BattleBase import *
+from toontown.battle.BattleProps import *
+from toontown.battle.BattleSounds import *
+from toontown.battle import MovieUtil
+from toontown.battle import MovieCamera
 from direct.directnotify import DirectNotifyGlobal
 from toontown.toonbase import ToontownBattleGlobals
 from direct.actor import Actor
 from direct.particles import ParticleEffect
-import BattleParticles
-import BattleProps
-import MovieNPCSOS
-from MovieSound import createSuitResetPosTrack
+from toontown.battle import BattleParticles
+from toontown.battle import BattleProps
+from toontown.battle import MovieNPCSOS
+from toontown.battle.MovieSound import createSuitResetPosTrack
 notify = DirectNotifyGlobal.directNotify.newCategory('MovieTrap')
 
 def doTraps(traps):
@@ -47,7 +47,7 @@ def doTraps(traps):
     mtrack = Parallel()
     for trapList in suitTrapLists:
         trapPropList = []
-        for i in xrange(len(trapList)):
+        for i in range(len(trapList)):
             trap = trapList[i]
             level = trap['level']
             if level == 0:
@@ -85,7 +85,7 @@ def doTraps(traps):
                 mtrack.append(ival)
         else:
             subMtrack = Parallel()
-            for i in xrange(len(trapList)):
+            for i in range(len(trapList)):
                 trap = trapList[i]
                 trapProps = trapPropList[i]
                 ival = __doTrapLevel(trap, trapProps, explode=1)

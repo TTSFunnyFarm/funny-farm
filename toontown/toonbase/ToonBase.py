@@ -1,9 +1,9 @@
 from otp.otpbase import OTPBase
 from otp.otpbase import OTPGlobals
 from direct.showbase.PythonUtil import *
-import ToontownGlobals
+from toontown.toonbase import ToontownGlobals
 from direct.directnotify import DirectNotifyGlobal
-import FunnyFarmLoader
+from toontown.toonbase import FunnyFarmLoader
 from direct.gui import DirectGuiGlobals
 from direct.gui.DirectGui import *
 from direct.showbase.Transitions import Transitions
@@ -338,7 +338,7 @@ class ToonBase(OTPBase.OTPBase):
 
     def removeGlitchMessage(self):
         self.ignore('InputState-forward')
-        print 'ignoring InputState-forward'
+        print('ignoring InputState-forward')
 
     def exitShow(self, errorCode = None):
         self.notify.setInfo(1)
