@@ -42,7 +42,8 @@ class QuestChoiceGui(DirectFrame):
             self.timer.setPos(-0.2, 0, -0.6)
         elif len(quests) == 3:
             self['geom_scale'] = (1.85, 1, 0.9)
-            map(lambda x: x.setScale(0.95), self.questChoicePosters)
+            for p in self.questChoicePosters:
+            	p.setScale(0.95)
             self.questChoicePosters[0].setPos(0, 0, -0.4)
             self.questChoicePosters[1].setPos(0, 0, 0.125)
             self.questChoicePosters[2].setPos(0, 0, 0.65)
