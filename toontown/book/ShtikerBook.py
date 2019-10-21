@@ -119,8 +119,9 @@ class ShtikerBook(DirectFrame):
 
         def goToPage():
             messenger.send('wakeup')
-            base.playSfx(self.pageSound)
-            self.setPage(page)
+            if self.currPage != pageIndex:
+                base.playSfx(self.pageSound)
+                self.setPage(page)
 
         yOffset = 0.07 * pageIndex
         iconGeom = None
@@ -136,6 +137,7 @@ class ShtikerBook(DirectFrame):
         elif pageName == TTLocalizer.ToonPageTitle:
             iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
             iconGeom = iconModels.find('**/district')
+            iconScale = (0.8, 1, 1)
             iconModels.detachNode()
         elif pageName == TTLocalizer.MapPageTitle:
             iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')

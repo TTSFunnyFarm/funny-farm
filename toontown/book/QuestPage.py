@@ -22,11 +22,11 @@ class QuestPage(ShtikerPage.ShtikerPage):
         return
 
     def load(self):
-        self.title = DirectLabel(parent=self, relief=None, text=TTLocalizer.QuestPageToonTasks, text_scale=0.12, textMayChange=0, pos=(0, 0, 0.6))
+        self.title = DirectLabel(parent=self, relief=None, text=TTLocalizer.QuestPageToonTasks, text_scale=0.12, textMayChange=0, pos=(0, 0, 0.625))
         questFramePlaceList = (
             (-0.45, 0, 0.28, 0, 0, 0),
             (0.45, 0, 0.28, 0, 0, 0),
-            (-0.45, 0, -0.38, 0, 0, 0), 
+            (-0.45, 0, -0.38, 0, 0, 0),
             (0.45, 0, -0.38, 0, 0, 0))
         self.questFrames = []
         for i in range(ToontownGlobals.MaxQuestCarryLimit):
@@ -145,4 +145,3 @@ class QuestPage(ShtikerPage.ShtikerPage):
 
     def __deleteQuest(self, questDesc):
         base.localAvatar.d_requestDeleteQuest(questDesc)
-
