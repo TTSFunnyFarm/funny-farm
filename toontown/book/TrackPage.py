@@ -137,6 +137,9 @@ class TrackPage(ShtikerPage.ShtikerPage):
         return
 
     def unload(self):
+        del self.title
+        del self.subtitle
+        del self.trackFrames
         ShtikerPage.ShtikerPage.unload(self)
 
     def enter(self):
