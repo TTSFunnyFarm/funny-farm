@@ -16,6 +16,7 @@ from toontown.book import MapPage
 from toontown.book import ToonPage
 from toontown.book import InventoryPage
 from toontown.book import QuestPage
+from toontown.book import TrackPage
 from toontown.quest import Quests
 from toontown.quest.InfoBubble import InfoBubble
 from toontown.toonbase import FunnyFarmGlobals
@@ -271,6 +272,9 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         self.questPage = QuestPage.QuestPage()
         self.questPage.load()
         self.book.addPage(self.questPage, pageName=TTLocalizer.QuestPageToonTasks)
+        self.trackPage = TrackPage.TrackPage()
+        self.trackPage.load()
+        self.book.addPage(self.trackPage, pageName=TTLocalizer.TrackPageShortTitle)
         self.questPage.acceptOnscreenHooks()
         self.laffMeter = LaffMeter(self.style, self.hp, self.maxHp)
         self.laffMeter.setAvatar(self)
@@ -574,7 +578,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         dataMgr.saveToonData(base.avatarData)
 
     def setQuestHistory(self, history):
-        self.questHistory = history  
+        self.questHistory = history
 
     def getQuestHistory(self):
         return self.questHistory
@@ -1585,7 +1589,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             self.hpText.setScale(1)
             self.hpText.setBillboardPointEye()
             self.hpText.setBin('fixed', 100)
-            
+
             stringText.clearShadow()
             stringText.setAlign(TextNode.ACenter)
             stringText.setTextColor(r, g, b, a)
@@ -1594,7 +1598,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             self.strText.setScale(0.5)
             self.strText.setBillboardPointEye()
             self.strText.setBin('fixed', 100)
-            
+
             self.nametag3d.setDepthTest(0)
             self.nametag3d.setBin('fixed', 99)
             self.hpText.setPos(0, 0, self.height / 2)
@@ -1621,7 +1625,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
                     if carryIndex == 6:
                         self.HpTextGenerator.setText(TTLocalizer.RewardCarryToonTasksText % carryAmount)
                     elif carryIndex == 7:
-                        self.HpTextGenerator.setText(TTLocalizer.RewardCarryGagsText % carryAmount)  
+                        self.HpTextGenerator.setText(TTLocalizer.RewardCarryGagsText % carryAmount)
                     elif carryIndex == 8:
                         self.HpTextGenerator.setText(TTLocalizer.RewardCarryJellybeansText % carryAmount)
                     self.HpTextGenerator.setTextColor(Vec4(0.9, 0.6, 0, 1))
@@ -1688,7 +1692,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         pass
 
     # These functions are for reflections of the toon on the floor in places like Loony Labs.
-    # This is currently just an alpha test; it looks pretty awkward for a variety of reasons, 
+    # This is currently just an alpha test; it looks pretty awkward for a variety of reasons,
     # so I'm unsure if we're going to keep it or not.
     def makeReflection(self):
         self.reflection = Toon.Toon()
