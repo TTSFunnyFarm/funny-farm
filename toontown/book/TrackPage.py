@@ -135,6 +135,9 @@ class TrackPage(ShtikerPage.ShtikerPage):
                     self.trackFrames[index].setUntrained(trackId)
 
             self.trackFrames[maxFrames].setUntrained(trackId)
+            icon = self.gagIcons[trackId]
+            icon.reparentTo(self)
+            icon.setPos(0.6, 0, -0.1)
         else:
             self.clearPage()
 
@@ -142,7 +145,17 @@ class TrackPage(ShtikerPage.ShtikerPage):
         ShtikerPage.ShtikerPage.load(self)
         self.title = DirectLabel(parent=self, relief=None, text=TTLocalizer.TrackPageTitle, text_scale=0.1, pos=(0, 0, 0.65))
         self.subtitle = DirectLabel(parent=self, relief=None, text=TTLocalizer.TrackPageSubtitle, text_scale=0.05, text_fg=(0.5, 0.1, 0.1, 1), pos=(0, 0, 0.56))
-        self.trackText = DirectLabel(parent=self, relief=None, text='', text_scale=0.05, text_fg=(0.5, 0.1, 0.1, 1), pos=(0.6, 0, 0.15))
+        self.trackText = DirectLabel(parent=self, relief=None, text='', text_scale=0.05, text_fg=(0.5, 0.1, 0.1, 1), pos=(0.6, 0, 0.25))
+        invGui = loader.loadModel('phase_3.5/models/gui/inventory_icons')
+        self.gagIcons = [
+            None,
+            invGui.find('**/inventory_bannana_peel'), # goddammit disney you had 1 job
+            invGui.find('**/inventory_1dollarbill'),
+            invGui.find('**/inventory_bikehorn'),
+            invGui.find('**/inventory_tart'),
+            invGui.find('**/inventory_water_gun'),
+            invGui.find('**/inventory_flower_pot')
+        ]
         for index in range(1, MAX_FRAMES + 1):
             frame = TrackFrame(index)
             frame.reparentTo(self)
@@ -164,6 +177,7 @@ class TrackPage(ShtikerPage.ShtikerPage):
         del self.subtitle
         del self.trackText
         del self.trackFrames
+        del self.gagIcons
         ShtikerPage.ShtikerPage.unload(self)
 
     def enter(self):
