@@ -721,7 +721,7 @@ class MazeGame(Minigame):
         self.timer.setTime(MazeGameGlobals.GAME_DURATION)
         self.timer.countdown(MazeGameGlobals.GAME_DURATION, self.timerExpired)
         self.accept('resetClock', self.__resetClock)
-        base.playMusic(self.music, looping=0, volume=0.8)
+        musicMgr.playMusic(self.music, looping=0, volume=0.8)
 
     def exitPlay(self):
         self.notify.debug('exitPlay')

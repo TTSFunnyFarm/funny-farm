@@ -24,7 +24,7 @@ class BattleBldg(Battle):
         #     self.battleMusic = base.loadMusic('phase_7/audio/bgm/encntr_suit_winning_indoor.ogg')
         # else:
         #     self.battleMusic = base.loadMusic('phase_7/audio/bgm/encntr_general_bg_indoor.ogg')
-        # base.playMusic(self.battleMusic, looping=1, volume=0.9)
+        # musicMgr.playMusic(self.battleMusic, looping=1, volume=0.9)
 
     def getBossBattleTaunt(self):
         return TTLocalizer.BattleBldgBossTaunt

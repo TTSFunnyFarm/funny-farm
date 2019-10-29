@@ -291,7 +291,7 @@ class TugOfWarGame(Minigame):
         self.dropShadow.setBin('fixed', 0, 1)
         self.splash.reparentTo(render)
         self.suitSplash.reparentTo(render)
-        base.playMusic(self.music, looping=1, volume=1)
+        musicMgr.playMusic(self.music, looping=1, volume=1)
         for x in range(len(self.arrows)):
             self.arrows[x].show()
 

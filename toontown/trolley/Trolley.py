@@ -166,7 +166,7 @@ class Trolley(DirectObject):
         if choice == 1:
             self.fillSlot(0)
             # musicMgr.stopMusic()
-            # base.playMusic(self.trolleySong)
+            # musicMgr.playMusic(self.trolleySong)
         else:
             base.localAvatar.enable()
             base.localAvatar.experienceBar.show()

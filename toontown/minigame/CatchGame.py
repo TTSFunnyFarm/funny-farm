@@ -499,7 +499,7 @@ class CatchGame(Minigame):
         self.timer.countdown(CatchGameGlobals.GameDuration, self.timerExpired)
         self.timer.setTransparency(1)
         self.timer.setColorScale(1, 1, 1, 0.75)
-        base.playMusic(self.music, looping=0, volume=0.9)
+        musicMgr.playMusic(self.music, looping=0, volume=0.9)
 
     def exitPlay(self):
         self.stopDropTask()

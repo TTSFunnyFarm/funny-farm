@@ -247,7 +247,7 @@ class RingGame(Minigame):
         self.notify.debug('setGameStart')
         Minigame.setGameStart(self, timestamp)
         self.gameFSM.request('swim')
-        base.playMusic(self.music, looping=0, volume=0.8)
+        musicMgr.playMusic(self.music, looping=0, volume=0.8)
 
     def enterOff(self):
         self.notify.debug('enterOff')

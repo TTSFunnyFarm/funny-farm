@@ -97,7 +97,7 @@ class Street(ToonHood):
         self.battle.reparentTo(self.battleCell)
         self.battle.enter()
         musicMgr.stopMusic()
-        base.playMusic(self.battleMusic, looping=1)
+        musicMgr.playMusic(self.battleMusic, looping=1)
         self.sp.startCheckBattleRange()
         self.accept(self.townBattle.doneEvent, self.exitBattle)
 
