@@ -31,7 +31,6 @@ from toontown.toon import Toon
 import random
 import math
 import time
-from toontown.toontowngui import SettingsMenu
 
 class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
     notify = directNotify.newCategory('LocalToon')
@@ -132,7 +131,6 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             self.hoodsVisited = []
             self.teleportAccess = []
             self.CETimer = 0.0
-            self.settingsMenu = None
 
     def generate(self):
         self.walkDoneEvent = 'walkDone'
@@ -306,10 +304,6 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         # self.accept('InputState-turnRight', self.__toonMoved)
         # self.accept('InputState-slide', self.__toonMoved)
         self.accept('shift-f1', self.sayLocation)
-        self.accept('f11', self.openSettings)
-
-    def openSettings(self):
-        self.settingsMenu = SettingsMenu.SettingsMenu()
 
     def enableDebug(self):
         onScreenDebug.enabled = True
