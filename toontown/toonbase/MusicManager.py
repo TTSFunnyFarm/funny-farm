@@ -7,6 +7,8 @@ class MusicManager:
     notify = directNotify.newCategory('MusicManager')
 
     def __init__(self):
+        self.volume = settings['musicVol']
+        self.track = None
         self.pickAToonMusic = [
             base.loader.loadMusic('phase_3/audio/bgm/ff_theme.ogg'),
             base.loader.loadMusic('phase_3/audio/bgm/ff_theme_winter.ogg'),
@@ -26,10 +28,18 @@ class MusicManager:
             FunnyFarmGlobals.SillySprings: base.loader.loadMusic('phase_14/audio/bgm/SS_SZ_activity.ogg')
         }
 
-    def playMusic(self, music, looping=0, volume=1.0):
+    def setVolume(self, volume):
+        self.volume = volume
+
+    def getVolume(self):
+        return self.volume
+
+    def playMusic(self, music, looping=0, volume=None):
         self.stopMusic()
         if music:
-            base.playMusic(music, looping=looping, volume=volume)
+            if volume:
+                volume = volume * self.getVolume()
+            self.track = base.playMusic(music, looping=looping, volume=volume)
 
     def stopMusic(self):
         for t in self.pickAToonMusic:
@@ -63,7 +73,8 @@ class MusicManager:
         else:
             self.notify.warning('playCurrentZoneMusic(): music for zone %s not in MusicManager.' % str(zoneId))
             return None
-        self.playMusic(music, looping=1, volume=volume)
+        volume = volume * self.getVolume()
+        self.track = self.playMusic(music, looping=1, volume=volume)
 
     def playPickAToon(self):
         if base.air.holidayMgr.isWinter():
@@ -75,4 +86,5 @@ class MusicManager:
         else:
             music = self.pickAToonMusic[0]
             volume = 0.5
-        self.playMusic(music, looping=1, volume=volume)
+        volume = volume * self.getVolume()
+        self.track = self.playMusic(music, looping=1, volume=volume)
