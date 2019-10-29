@@ -9,6 +9,7 @@ class MusicManager:
     def __init__(self):
         self.volume = settings['musicVol']
         self.track = None
+        self.multiplier = 1.0
         self.pickAToonMusic = [
             base.loader.loadMusic('phase_3/audio/bgm/ff_theme.ogg'),
             base.loader.loadMusic('phase_3/audio/bgm/ff_theme_winter.ogg'),
@@ -30,26 +31,32 @@ class MusicManager:
 
     def setVolume(self, volume):
         self.volume = volume
+        if self.track:
+            self.track.setVolume(volume * self.getMultiplier())
 
     def getVolume(self):
         return self.volume
 
+    def getMultiplier(self):
+        return self.multiplier
+
     def playMusic(self, music, looping=0, volume=None):
         self.stopMusic()
+        if not settings['music']:
+            return None
         if music:
             if volume:
                 volume = volume * self.getVolume()
-            self.track = base.playMusic(music, looping=looping, volume=volume)
+            self.track = music
+            self.multiplier = volume
+            self.track.setLoop(looping)
+            self.track.setVolume(volume)
+            self.track.play()
+            return self.track
 
     def stopMusic(self):
-        for t in self.pickAToonMusic:
-            t.stop()
-        for t in list(self.safezoneMusic.keys()):
-            self.safezoneMusic[t].stop()
-        for t in list(self.townMusic.keys()):
-            self.townMusic[t].stop()
-        for t in list(self.activityMusic.keys()):
-            self.activityMusic[t].stop()
+        if self.track:
+            self.track.stop()
 
     def playCurrentZoneMusic(self):
         zoneId = FunnyFarmGlobals.getHoodId(base.localAvatar.getZoneId())
@@ -74,7 +81,9 @@ class MusicManager:
             self.notify.warning('playCurrentZoneMusic(): music for zone %s not in MusicManager.' % str(zoneId))
             return None
         volume = volume * self.getVolume()
-        self.track = self.playMusic(music, looping=1, volume=volume)
+        self.playMusic(music, looping=1, volume=volume)
+        if self.track:
+            self.multiplier = volume
 
     def playPickAToon(self):
         if base.air.holidayMgr.isWinter():
@@ -87,4 +96,6 @@ class MusicManager:
             music = self.pickAToonMusic[0]
             volume = 0.5
         volume = volume * self.getVolume()
-        self.track = self.playMusic(music, looping=1, volume=volume)
+        self.playMusic(music, looping=1, volume=volume)
+        if self.track:
+            self.multiplier = volume
