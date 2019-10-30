@@ -31,6 +31,7 @@ class SettingsMenu(DirectFrame):
         self.buttons = []
         self.categories = {}
         self.currentIndex = 0
+        self.changed = False
         i = -1
         for icon in buttonIcons:
             i += 1
@@ -39,7 +40,7 @@ class SettingsMenu(DirectFrame):
             button.bind(DGG.WITHIN, self._onHover, [button])
             button.bind(DGG.WITHOUT, self._onExit, [button])
         guiButton = loader.loadModel('phase_3/models/gui/quit_button')
-        self.buttons.append(DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=(0.75, 0.75, 1), text="Apply", text_scale=0.06, text_pos=(0, -0.02), pos=(0.60, 0, -0.47), command=self._handleSettingsApply))
+        self.buttons.append(DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=(0.75, 0.75, 1), text="Apply", text_scale=0.06, text_pos=(0, -0.02), pos=(0.60, 0, -0.47), command=self.handleSettingsApply))
         self.dialog = TTDialog.TTDialog(text="Are you sure you want to apply these settings?", text_align=TextNode.ACenter, style=TTDialog.YesNo, command=self.handleSettingsSave)
         category = self.categories[AUDIO]
         category["musicVol"] = DirectSlider(parent=self, scale=(0.4,1.0,0.65), pos=(0.47, 0, 0.07), range=(0,100), value=settings["musicVol"] * 100, pageSize=0, color=(0.33, 0.2, 0.031,255), thumb_relief=None, thumb_image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), thumb_color=(1.0,1.0,1.0,255), command=self._onMusicVolumeUpdate)
@@ -64,10 +65,14 @@ class SettingsMenu(DirectFrame):
                 sfxMgr.setVolume(self.oldSettings["sfxVol"])
             musicMgr.setVolume(self.oldSettings["musicVol"])
         self.hover.removeNode()
+        self.dialog.removeNode()
         self.removeNode()
 
-    def _handleSettingsApply(self):
-        self.dialog.show()
+    def handleSettingsApply(self):
+        if self.changed:
+            self.dialog.show()
+        else:
+            self.close()
 
     def handleSettingsSave(self, arg=-1):
         self.dialog.hide()
@@ -81,6 +86,8 @@ class SettingsMenu(DirectFrame):
         category = self.categories[self.currentIndex]
         vol = int(category["sfxVol"]["value"])
         category["sfxVolLabel"].setText("SFX Volume: " + str(vol) + "%")
+        if not vol / 100 == self.oldSettings["sfxVol"]:
+            self.changed = True
         for sfxMgr in base.sfxManagerList:
             sfxMgr.setVolume(vol / 100)
 
@@ -90,6 +97,8 @@ class SettingsMenu(DirectFrame):
         category = self.categories[self.currentIndex]
         vol = int(category["musicVol"]["value"])
         category["musicVolLabel"].setText("Music Volume: " + str(vol) + "%")
+        if not vol / 100 == self.oldSettings["musicVol"]:
+            self.changed = True
         musicMgr.setVolume(vol / 100)
 
     def _onHover(self, button, huh):
@@ -103,9 +112,9 @@ class SettingsMenu(DirectFrame):
 
     def switchCategory(self, cat):
         if self.currentIndex > -1:
-            for category in self.categories[self.currentIndex]:
-                category.hide()
-        for element in self.categories[cat]:
+            for key, element in self.categories[self.currentIndex].items():
+                element.hide()
+        for key, element in self.categories[cat].items():
             element.show()
         self.title.setText(self.categoryNames[cat])
         self.currentIndex = cat

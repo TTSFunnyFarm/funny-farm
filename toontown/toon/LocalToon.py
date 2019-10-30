@@ -310,7 +310,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def openSettings(self):
         if self.settingsMenu:
-            self.settingsMenu.close()
+            self.settingsMenu.handleSettingsApply()
+            return
         self.settingsMenu = SettingsMenu.SettingsMenu()
 
     def enableDebug(self):
