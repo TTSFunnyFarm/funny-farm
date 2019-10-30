@@ -9,6 +9,8 @@ EXTRA = 3
 class SettingsMenu(DirectFrame):
     def __init__(self, parent = aspect2d, **kw):
         self.settingsGui = loader.loadModel("phase_14/models/gui/settings_gui")
+        if base.localAvatar.book.isOpen:
+            base.localAvatar.book.close()
         base.transitions.fadeScreen()
         base.localAvatar.disable()
         base.localAvatar.chatMgr.disableKeyboardShortcuts()
@@ -44,12 +46,24 @@ class SettingsMenu(DirectFrame):
         element.append(DirectLabel(parent=self, relief=None, text="", text_scale=(0.1, 0.1, 1.0), text_pos=(-0.4, 0.05, 0)))
         element.append(DirectSlider(parent=self, scale=(0.4,1.0,0.65), pos=(0.47, 0, -0.10), range=(0,100), value=settings["musicVol"] * 100, pageSize=0, color=(0.33, 0.2, 0.031,255), thumb_relief=None, thumb_image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), thumb_color=(1.0,1.0,1.0,255), command=self._onMusicVolumeUpdate))
         element.append(DirectLabel(parent=self, relief=None, text="", text_scale=(0.1, 0.1, 1.0), text_pos=(-0.4, -0.13, 0)))
+        self.oldSettings = settings
         self.setBin('gui-popup', 0)
 
-    def close(self):
+    def close(self, save=False):
         base.transitions.noFade()
         base.localAvatar.enable()
         base.localAvatar.chatMgr.enableKeyboardShortcuts()
+        element = self.elements[AUDIO]
+        sfxVol = int(element[0]["value"]) / 100
+        musicVol = int(element[2]["value"]) / 100
+        if save:
+            settings["sfxVol"] = sfxVol
+            settings["musicVol"] = musicVol
+        else:
+            for sfxMgr in base.sfxManagerList:
+                sfxMgr.setVolume(self.oldSettings["sfxVol"])
+            musicMgr.setVolume(self.oldSettings["musicVol"])
+        self.hover.removeNode()
         self.removeNode()
 
     def _handleSettingsApply(self):
@@ -59,8 +73,7 @@ class SettingsMenu(DirectFrame):
         self.dialog.hide()
         base.transitions.fadeScreen()
         print(arg)
-        if arg > 0:
-            self.close()
+        self.close(arg > 0)
 
     def _onSFXVolumeUpdate(self):
         if self.currentIndex != AUDIO:

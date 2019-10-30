@@ -309,6 +309,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         self.accept('f11', self.openSettings)
 
     def openSettings(self):
+        if self.settingsMenu:
+            self.settingsMenu.close()
         self.settingsMenu = SettingsMenu.SettingsMenu()
 
     def enableDebug(self):
