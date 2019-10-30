@@ -8,15 +8,11 @@ CONTROLS = 2
 EXTRA = 3
 class SettingsMenu(DirectFrame):
     def __init__(self, parent = aspect2d, **kw):
-        print("REEEEE", settings)
         self.settingsGui = loader.loadModel("phase_14/models/gui/settings_gui")
         base.transitions.fadeScreen()
         base.localAvatar.disable()
         base.localAvatar.chatMgr.disableKeyboardShortcuts()
         self.background = self.settingsGui.find('**/settingsBackground')
-        #self.background.reparentTo(aspect2d)
-        #self.background.setScale(1)
-        print(self.background)
         optiondefs = (('relief', None, None),
          ('image', self.background, None),
          ('image_scale', (1.0, 1.0, 1.0), None),
@@ -37,7 +33,6 @@ class SettingsMenu(DirectFrame):
         for icon in buttonIcons:
             i += 1
             self.elements[i] = []
-            print(i * 0.011)
             button = DirectButton(parent=self, relief=None, pos=(i * 0.22 - 0.28, 0, 0.3), image_scale=(1.0, 1.0, 1.0), state=DGG.NORMAL, image=buttonIcons[i], command=self.switchCategory, extraArgs=[i])
             button.bind(DGG.WITHIN, self._onHover, [button])
             button.bind(DGG.WITHOUT, self._onExit, [button])
@@ -65,7 +60,6 @@ class SettingsMenu(DirectFrame):
         base.transitions.fadeScreen()
         print(arg)
         if arg > 0:
-            print("yee")
             self.close()
 
     def _onSFXVolumeUpdate(self):
@@ -86,7 +80,6 @@ class SettingsMenu(DirectFrame):
         musicMgr.setVolume(vol / 100)
 
     def _onHover(self, button, huh):
-        print(button, huh)
         self.hover.reparentTo(button)
 
     def _onExit(self, button, huh):
@@ -96,7 +89,6 @@ class SettingsMenu(DirectFrame):
         bar.setValue()
 
     def switchCategory(self, cat):
-        print(cat, bool)
         if self.currentIndex > -1:
             for element in self.elements[self.currentIndex]:
                 element.hide()
