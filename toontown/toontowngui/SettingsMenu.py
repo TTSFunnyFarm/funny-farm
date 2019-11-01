@@ -23,6 +23,7 @@ class SettingsMenu(DirectFrame):
         DirectFrame.__init__(self, aspect2d, relief=None)
         self.initialiseoptions(SettingsMenu)
         self.categoryNames = ["Audio", "Video", "Controls", "Extras"]
+        self.frame = DirectScrolledFrame(canvasSize = (-0.9,0.9,-3,3), frameSize = (-0.9,0.9,-.55,.55), image=self.background, relief=None)
         self.title = DirectLabel(parent=self, relief=None, text_scale=(0.1, 0.1, 1.0), text=self.categoryNames[0], text_font=ToontownGlobals.getMinnieFont(), text_pos=(0, 0.23, 0), text_fg=(0.24, 0.13, 0.008, 1), text_align=TextNode.ACenter)
         buttonIcons = [self.settingsGui.find('**/settingsAudio'), self.settingsGui.find('**/settingsVideo'), self.settingsGui.find('**/settingsControls'), self.settingsGui.find('**/settingsExtra')]
         self.hover = self.settingsGui.find('**/settingsHover')
