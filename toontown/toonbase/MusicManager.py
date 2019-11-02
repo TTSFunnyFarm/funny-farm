@@ -2,14 +2,17 @@ from panda3d.core import *
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.building.Interior import Interior
 from toontown.building.SuitInteriorBase import SuitInteriorBase
+from direct.showbase.DirectObject import DirectObject
 
-class MusicManager:
+class MusicManager(DirectObject):
     notify = directNotify.newCategory('MusicManager')
 
     def __init__(self):
         self.volume = settings['musicVol']
         self.track = None
+        self.trackName = None
         self.multiplier = 1.0
+        self.pauseTime = None
         self.pickAToonMusic = [
             base.loader.loadMusic('phase_3/audio/bgm/ff_theme.ogg'),
             base.loader.loadMusic('phase_3/audio/bgm/ff_theme_winter.ogg'),
@@ -28,6 +31,8 @@ class MusicManager:
             FunnyFarmGlobals.FunnyFarm: base.loader.loadMusic('phase_14/audio/bgm/FF_SZ_activity.ogg'),
             FunnyFarmGlobals.SillySprings: base.loader.loadMusic('phase_14/audio/bgm/SS_SZ_activity.ogg')
         }
+        self.accept('PandaPaused', self.__audioPaused)
+        self.accept('PandaRestarted', self.__audioRestarted)
 
     def setVolume(self, volume):
         self.volume = volume
@@ -37,20 +42,28 @@ class MusicManager:
     def getVolume(self):
         return self.volume
 
+    def setMultiplier(self, multi):
+        self.multipier = multi
+
     def getMultiplier(self):
         return self.multiplier
 
-    def playMusic(self, music, looping=0, volume=None):
+    def playMusic(self, music, looping=0, volume=None, time=0.0):
         self.stopMusic()
         if not settings['music']:
             return None
         if music:
             if volume:
+                if self.pauseTime and self.getMultiplier():
+                    volume = self.getMultiplier()
                 volume = volume * self.getVolume()
             self.track = music
-            self.multiplier = volume
+            self.trackName = self.track
+            if not self.getMultiplier():
+                self.setMultiplier(volume)
             self.track.setLoop(looping)
             self.track.setVolume(volume)
+            self.track.setTime(time)
             self.track.play()
             return self.track
 
@@ -99,3 +112,13 @@ class MusicManager:
         self.playMusic(music, looping=1, volume=volume)
         if self.track:
             self.multiplier = volume
+
+    def __audioPaused(self):
+        if self.track:
+            self.pauseTime = self.track.getTime()
+
+    def __audioRestarted(self):
+        base.localAvatar.stopSound()
+        if self.pauseTime and self.trackName:
+            self.playMusic(self.trackName, looping=1, volume=self.multiplier, time=self.pauseTime)
+            self.pauseTime = None
