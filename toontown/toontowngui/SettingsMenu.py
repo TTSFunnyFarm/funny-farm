@@ -76,7 +76,7 @@ class SettingsMenu(DirectFrame):
     def handleSettingsApply(self):
         if self.changed:
             self.dialog.show()
-            self.setBin('gui-popup', 1)
+            self.setBin('gui-popup', 0)
         else:
             self.close()
 
