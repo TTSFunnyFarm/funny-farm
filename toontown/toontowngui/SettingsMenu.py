@@ -24,7 +24,7 @@ class SettingsMenu(DirectFrame):
         DirectFrame.__init__(self, aspect2d, relief=None)
         self.initialiseoptions(SettingsMenu)
         self.categoryNames = ["Audio", "Video", "Controls", "Extras"]
-        #self.frame = DirectScrolledFrame(canvasSize = (-0.9,0.9,-3,3), frameSize = (-0.9,0.9,-.55,.55), image=self.background, relief=None)
+        self.frame = DirectScrolledFrame(self, canvasSize = (-0.85,0.85,-3,1.5), frameSize = (-0.9,0.9,-.45,.25), image=None, relief=None)
         self.title = DirectLabel(parent=self, relief=None, text_scale=(0.1, 0.1, 1.0), text=self.categoryNames[0], text_font=ToontownGlobals.getMinnieFont(), text_pos=(0, 0.23, 0), text_fg=(0.24, 0.13, 0.008, 1), text_align=TextNode.ACenter)
         buttonIcons = [self.settingsGui.find('**/settingsAudio'), self.settingsGui.find('**/settingsVideo'), self.settingsGui.find('**/settingsControls'), self.settingsGui.find('**/settingsExtra')]
         self.hover = self.settingsGui.find('**/settingsHover')
@@ -44,11 +44,12 @@ class SettingsMenu(DirectFrame):
         guiButton = loader.loadModel('phase_3/models/gui/quit_button')
         self.buttons.append(DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=(0.75, 0.75, 1), text="Apply", text_scale=0.06, text_pos=(0, -0.02), pos=(0.60, 0, -0.47), command=self.handleSettingsApply))
         self.dialog = TTDialog.TTDialog(text="Are you sure you want to apply these settings?", text_align=TextNode.ACenter, style=TTDialog.YesNo, command=self.handleSettingsSave)
+        self.dialog.reparentTo(hidden)
         category = self.categories[AUDIO]
-        category["musicVol"] = DirectSlider(parent=self, scale=(0.4,1.0,0.65), pos=(0.47, 0, 0.07), range=(0,100), value=settings["musicVol"] * 100, pageSize=0, color=(0.33, 0.2, 0.031,255), thumb_relief=None, thumb_image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), thumb_color=(1.0,1.0,1.0,255), command=self._onMusicVolumeUpdate)
-        category["musicVolLabel"] = DirectLabel(parent=self, relief=None, text="", text_fg=(0.24, 0.13, 0.008, 1), text_scale=(0.1, 0.1, 1.0), text_pos=(-0.4, 0.05, 0))
-        category["sfxVol"] = DirectSlider(parent=self, scale=(0.4,1.0,0.65), pos=(0.47, 0, -0.10), range=(0,100), value=settings["sfxVol"] * 100, pageSize=0, color=(0.33, 0.2, 0.031,255), thumb_relief=None, thumb_image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), thumb_color=(1.0,1.0,1.0,255), command=self._onSFXVolumeUpdate)
-        category["sfxVolLabel"] = DirectLabel(parent=self, relief=None, text="", text_fg=(0.24, 0.13, 0.008, 1), text_scale=(0.1, 0.1, 1.0), text_pos=(-0.4, -0.13, 0))
+        category["musicVol"] = DirectSlider(parent=self.frame, scale=(0.4,1.0,0.65), pos=(0.47, 0, 0.07), range=(0,100), value=settings["musicVol"] * 100, pageSize=0, color=(0.33, 0.2, 0.031,255), thumb_relief=None, thumb_image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), thumb_color=(1.0,1.0,1.0,255), command=self._onMusicVolumeUpdate)
+        category["musicVolLabel"] = DirectLabel(parent=self.frame, relief=None, text="", text_fg=(0.24, 0.13, 0.008, 1), text_scale=(0.1, 0.1, 1.0), text_pos=(-0.4, 0.05, 0))
+        category["sfxVol"] = DirectSlider(parent=self.frame, scale=(0.4,1.0,0.65), pos=(0.47, 0, -0.10), range=(0,100), value=settings["sfxVol"] * 100, pageSize=0, color=(0.33, 0.2, 0.031,255), thumb_relief=None, thumb_image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), thumb_color=(1.0,1.0,1.0,255), command=self._onSFXVolumeUpdate)
+        category["sfxVolLabel"] = DirectLabel(parent=self.frame, relief=None, text="", text_fg=(0.24, 0.13, 0.008, 1), text_scale=(0.1, 0.1, 1.0), text_pos=(-0.4, -0.13, 0))
         self.oldSettings = settings
         self.setBin('gui-popup', 0)
 
@@ -66,6 +67,7 @@ class SettingsMenu(DirectFrame):
             for sfxMgr in base.sfxManagerList:
                 sfxMgr.setVolume(self.oldSettings["sfxVol"])
             musicMgr.setVolume(self.oldSettings["musicVol"])
+        self.frame.removeNode()
         self.hover.removeNode()
         self.dialog.removeNode()
         self.removeNode()
