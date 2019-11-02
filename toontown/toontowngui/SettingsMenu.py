@@ -14,7 +14,7 @@ class SettingsMenu(DirectFrame):
         base.transitions.fadeScreen()
         base.localAvatar.disable()
         base.localAvatar.chatMgr.disableKeyboardShortcuts()
-        base.localAvatar.b_setAnimState('neutral')
+        base.localAvatar.setAnimState('neutral')
         self.background = self.settingsGui.find('**/settingsBackground')
         optiondefs = (('relief', None, None),
          ('image', self.background, None),
