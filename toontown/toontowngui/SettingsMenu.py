@@ -9,9 +9,7 @@ EXTRA = 3
 class SettingsMenu(DirectFrame):
     def __init__(self, parent = aspect2d, **kw):
         self.settingsGui = loader.loadModel("phase_14/models/gui/settings_gui")
-        if base.localAvatar.book.isOpen:
-            base.localAvatar.book.close()
-        base.transitions.fadeScreen()
+        base.localAvatar.book.hideButton()
         base.localAvatar.disable()
         base.localAvatar.chatMgr.disableKeyboardShortcuts()
         base.localAvatar.setAnimState('neutral')
@@ -53,8 +51,10 @@ class SettingsMenu(DirectFrame):
         self.oldSettings = settings
         self.setBin('gui-popup', 0)
         self.switchCategory(AUDIO)
+        base.transitions.fadeScreen()
 
     def close(self, save=False):
+        base.localAvatar.book.showButton()
         base.transitions.noFade()
         base.localAvatar.enable()
         base.localAvatar.chatMgr.enableKeyboardShortcuts()
