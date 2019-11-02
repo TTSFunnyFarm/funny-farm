@@ -20,6 +20,7 @@ class ShtikerBook(DirectFrame):
         self.isOpen = 0
         self.__obscured = 0
         self.__shown = 0
+        self.__disabled = False
         self.esc = False
         self.hide()
         self.setPos(0, 0, 0.1)
@@ -285,12 +286,16 @@ class ShtikerBook(DirectFrame):
             self.bookCloseButton.hide()
 
     def open(self, esc=False):
+        if self.__disabled:
+            return
         self.esc = esc
         base.localAvatar.disable()
         base.localAvatar.enterOpenBook()
         Sequence(Wait(base.localAvatar.track.getDuration() - 0.1), Func(self.enter)).start()
 
     def close(self):
+        if self.__disabled:
+            return
         self.exit()
         base.localAvatar.exitReadBook()
         base.localAvatar.enterCloseBook(callback=self.__handleClose)
@@ -308,3 +313,9 @@ class ShtikerBook(DirectFrame):
     def __handleClose(self):
         self.showButton()
         base.localAvatar.enable()
+
+    def disable(self):
+        self.__disabled = True
+
+    def enable(self):
+        self.__disabled = False
