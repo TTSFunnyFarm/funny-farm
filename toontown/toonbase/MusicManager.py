@@ -121,5 +121,6 @@ class MusicManager(DirectObject):
         if hasattr(base, "localAvatar"):
             base.localAvatar.stopSound()
         if self.pauseTime and self.trackName:
-            self.playMusic(self.trackName, looping=1, volume=self.multiplier, time=self.pauseTime)
+            self.track.setTime(self.pauseTime)
+            self.track.play()
             self.pauseTime = None
