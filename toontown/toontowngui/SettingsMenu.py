@@ -83,7 +83,6 @@ class SettingsMenu(DirectFrame):
     def handleSettingsSave(self, arg=-1):
         self.dialog.hide()
         base.transitions.fadeScreen()
-        self.setBin('gui-popup', 0)
         self.close(arg > 0)
 
     def _onSFXVolumeUpdate(self):
