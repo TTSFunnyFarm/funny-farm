@@ -1,5 +1,6 @@
 from direct.gui.DirectGui import *
-from toontown.toonbase import ToontownGlobals
+from direct.gui.DirectGuiBase import *
+from toontown.toonbase import ToontownGlobals, DisplayOptions
 from toontown.toontowngui import TTDialog
 from panda3d.core import *
 AUDIO = 0
@@ -48,6 +49,14 @@ class SettingsMenu(DirectFrame):
         category["musicVolLabel"] = DirectLabel(parent=self.frame.getCanvas(), relief=None, text="", text_fg=(0.24, 0.13, 0.008, 1), text_scale=(0.1, 0.1, 1.0), text_pos=(-0.35, -0.195, 0))
         category["sfxVol"] = DirectSlider(parent=self.frame.getCanvas(), scale=(0.35,1.0,0.65), pos=(0.47, 0, -0.32), range=(0,100), value=settings["sfxVol"] * 100, pageSize=0, color=(0.33, 0.2, 0.031,255), thumb_relief=None, thumb_image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), thumb_color=(1.0,1.0,1.0,255), command=self._onSFXVolumeUpdate)
         category["sfxVolLabel"] = DirectLabel(parent=self.frame.getCanvas(), relief=None, text="", text_fg=(0.24, 0.13, 0.008, 1), text_scale=(0.1, 0.1, 1.0), text_pos=(-0.35, -0.35, 0))
+        category = self.categories[VIDEO]
+        category["isFullscreenTicked"] = False
+        category["fullscreenCheck"] = DirectButton(parent=self.frame.getCanvas(), relief=None, scale=1, pos=(0.58, 0, -0.155), geom=(self.settingsGui.find('**/settingsUnticked')), command=self._onFullscreenTick)
+        category["fullscreenCheckLabel"] = DirectLabel(parent=self.frame.getCanvas(), relief=None, text="", text_fg=(0.24, 0.13, 0.008, 1), text_scale=(0.1, 0.1, 1.0), text_pos=(-0.25, -0.195, 0))
+        for element in category:
+            element = category[element]
+            if isinstance(element, DirectGuiWidget):
+                element.hide()
         self.oldSettings = settings
         self.setBin('gui-popup', 0)
         self.switchCategory(AUDIO)
@@ -61,9 +70,12 @@ class SettingsMenu(DirectFrame):
         category = self.categories[AUDIO]
         sfxVol = int(category["sfxVol"]["value"]) / 100
         musicVol = int(category["musicVol"]["value"]) / 100
+        category = self.categories[VIDEO]
+        print(category)
         if save:
             settings["sfxVol"] = sfxVol
             settings["musicVol"] = musicVol
+            settings["fullscreen"] = category["isFullscreenTicked"]
         else:
             for sfxMgr in base.sfxManagerList:
                 sfxMgr.setVolume(self.oldSettings["sfxVol"])
@@ -105,6 +117,33 @@ class SettingsMenu(DirectFrame):
             self.changed = True
         musicMgr.setVolume(vol / 100)
 
+    def _onFullscreenTick(self):
+        category = self.categories[VIDEO]
+        fullscreen = not category["isFullscreenTicked"]
+        category["isFullscreenTicked"] = fullscreen
+        properties = WindowProperties()
+        width, height = (base.pipe.getDisplayWidth(), base.pipe.getDisplayHeight())
+        #tempProperties = WindowProperties()
+        #tempProperties.setSize(1024, 768)
+        #tempProperties.setFullscreen(fullscreen)
+        #base.win.requestProperties(tempProperties)
+        #base.graphicsEngine.renderFrame()
+        properties.setSize(settings['res'][0], settings['res'][1])
+        properties.setFullscreen(fullscreen)
+        base.win.requestProperties(properties)
+        base.graphicsEngine.renderFrame()
+        if fullscreen:
+            category["fullscreenCheck"]["image"] = self.settingsGui.find('**/settingsTicked')
+            category["fullscreenCheckLabel"]["text"] = "Fullscreen is on."
+            # Save their new resolution since we're fullscreened now.
+            #settings['res'] = [width, height]
+        else:
+            category["fullscreenCheck"]["image"] = self.settingsGui.find('**/settingsUnticked')
+            category["fullscreenCheckLabel"]["text"] = "Fullscreen is off."
+        # Hackfix: In order to avoid resolution issues when the user has their window fullscreened
+        # (which most people do), we're gonna first set their resolution to an acceptable size,
+        # and THEN correct the resolution with their actual display size.
+
     def _onHover(self, button, huh):
         if self.hover:
             self.hover.reparentTo(button)
@@ -118,15 +157,22 @@ class SettingsMenu(DirectFrame):
 
     def switchCategory(self, cat):
         if self.currentIndex > -1:
-            for key, element in self.categories[self.currentIndex].items():
-                element.hide()
+            for key, element in self.categories [self.currentIndex].items():
+                if isinstance(element, DirectGuiWidget):
+                    element.hide()
         diff = 0.02
         height = 0
         for key, element in self.categories[cat].items():
+            if type(element) == bool or type(element) == int:
+                print("4", element)
+                continue
             if isinstance(element, DirectLabel):
                 if element["text_pos"][1] < height:
                     height = element["text_pos"][1]
             element.show()
+            print(element, "2")
         self.frame["canvasSize"] = (-0.85,0.85,height - 0.03,0)
         self.title.setText(self.categoryNames[cat])
+        if cat == VIDEO:
+            self.categories[cat]
         self.currentIndex = cat
