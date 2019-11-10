@@ -332,7 +332,7 @@ class SuitPlannerAI(DirectObject):
             return task.done
         if adjustment < 0:
             # Negative adjustment, take away a suit
-            doId = self.activeSuits.keys()[0]
+            doId = list(self.activeSuits.keys())[0]
             self.notify.debug('removing suit %d' % doId)
             self.removeSuit(doId)
         else:
