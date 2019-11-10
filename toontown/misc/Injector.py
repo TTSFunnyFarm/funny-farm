@@ -12,7 +12,6 @@ class Injector(threading.Thread):
 
     def openInjector(self):
         global text
-        self.root = Tk()
         self.root.resizable(False, False)
         self.root.geometry('700x500')
         self.root.title('Funny Farm Injector')
@@ -38,4 +37,5 @@ class Injector(threading.Thread):
 
     def run(self):
         self.root = Tk()
+        self.openInjector()
         self.root.mainloop()

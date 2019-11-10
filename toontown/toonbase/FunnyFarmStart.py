@@ -68,6 +68,7 @@ from toontown.login.TitleScreen import TitleScreen
 from toontown.ai.FFAIRepository import FFAIRepository
 from toontown.distributed.FFClientRepository import FFClientRepository
 from toontown.misc import PythonUtil
+from toontown.misc import PythonProfiler
 
 class FunnyFarmStart:
     notify = directNotify.newCategory('FunnyFarmStart')
@@ -144,7 +145,6 @@ class FunnyFarmStart:
         builtins.screenshotMgr = ScreenshotManager()
         builtins.dataMgr = DataManager()
 
-        print(__debug__, sys.platform)
         if __debug__ and sys.platform == 'win32':
             Injector = importlib.import_module('toontown.misc.Injector')
             base.injector = Injector.Injector()
