@@ -330,15 +330,14 @@ class SuitPlannerAI(DirectObject):
             # The total is not within the range of suits for this street, try again later.
             self.__waitForNextAdjust()
             return task.done
-        for i in range(abs(adjustment)):
-            if adjustment < 0:
-                # Negative adjustment, take away a suit
-                doId = random.choice(list(self.activeSuits.keys()))
-                self.notify.debug('removing suit %d' % doId)
-                self.removeSuit(doId)
-            else:
-                # Positive adjustment, create a new suit
-                self.createNewSuit()
+        if adjustment < 0:
+            # Negative adjustment, take away a suit
+            doId = self.activeSuits.keys()[0]
+            self.notify.debug('removing suit %d' % doId)
+            self.removeSuit(doId)
+        else:
+            # Positive adjustment, create a new suit
+            self.createNewSuit()
         self.__waitForNextAdjust()
         return task.done
 
