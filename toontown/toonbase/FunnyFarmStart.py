@@ -144,6 +144,7 @@ class FunnyFarmStart:
         builtins.screenshotMgr = ScreenshotManager()
         builtins.dataMgr = DataManager()
 
+        print(__debug__, sys.platform)
         if __debug__ and sys.platform == 'win32':
             Injector = importlib.import_module('toontown.misc.Injector')
             base.injector = Injector.Injector()
@@ -154,6 +155,7 @@ class FunnyFarmStart:
         cr = FFClientRepository()
         base.initNametagGlobals()
         base.startShow(cr)
+
         # Can't start a new thread right away otherwise we'll crash panda
         taskMgr.doMethodLater(0.1, self.startAIThread, 'startAI')
 
