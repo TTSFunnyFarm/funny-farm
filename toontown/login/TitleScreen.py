@@ -90,7 +90,6 @@ class TitleScreen(DirectObject):
         self.track.append(Func(self.acceptOnce, 'mouse1', self.exitShow))
         if base.air.holidayMgr.isWinter():
             showTypes = [FunnyFarmGlobals.CHRISTMAS_FIREWORKS]
-            print('yeh')
         else:
             showTypes = [FunnyFarmGlobals.JULY4_FIREWORKS, PartyGlobals.FireworkShows.Summer]
         self.fireworkShow.startShow(random.choice(showTypes), 0, 0, 0)
