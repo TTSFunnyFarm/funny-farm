@@ -45,9 +45,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
     TokenTextNode = TextNode('TokenText')
 
     def __init__(self):
-        try:
-            self.LocalToon_initialized
-        except:
+        if not hasattr(self, "LocalToon_initialized"):
             self.LocalToon_initialized = 1
             Toon.Toon.__init__(self)
             LocalAvatar.LocalAvatar.__init__(self)
@@ -138,9 +136,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         self.walkStateData.load()
 
     def delete(self):
-        try:
-            self.LocalToon_deleted
-        except:
+        if not hasattr(self, "LocalToon_initialized"):
             self.LocalToon_deleted = 1
             self.ignoreAll()
             Toon.Toon.delete(self)
