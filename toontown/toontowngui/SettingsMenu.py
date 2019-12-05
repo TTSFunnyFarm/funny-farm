@@ -90,7 +90,7 @@ class SettingsMenu(DirectFrame):
             for sfxMgr in base.sfxManagerList:
                 sfxMgr.setVolume(self.oldSettings["sfxVol"])
             musicMgr.setVolume(self.oldSettings["musicVol"])
-            if category["isFullscreenTicked"] != oldSettings['fullscreen']:
+            if category["isFullscreenTicked"] != self.oldSettings['fullscreen']:
                 self._onFullscreenTick()
         self.frame.getCanvas().removeNode()
         self.hover.removeNode()
