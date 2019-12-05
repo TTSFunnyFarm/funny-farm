@@ -48,24 +48,26 @@ class MusicManager(DirectObject):
     def getMultiplier(self):
         return self.multiplier
 
-    def playMusic(self, music, looping=0, volume=None, time=0.0):
-        self.stopMusic()
+    def playMusic(self, music, looping=0, volume=1.0, time=0.0):
         if not settings['music']:
             return None
         if music:
-            if volume:
-                if self.pauseTime and self.getMultiplier():
-                    volume = self.getMultiplier()
-                volume = volume * self.getVolume()
+            self.stopMusic()
+            if self.pauseTime:
+                volume = self.getMultiplier()
+            else:
+                self.setMultiplier(volume)
+            volume = self.getMultiplier() * self.getVolume()
             self.track = music
             self.trackName = self.track
-            if not self.getMultiplier():
-                self.setMultiplier(volume)
             self.track.setLoop(looping)
             self.track.setVolume(volume)
             self.track.setTime(time)
             self.track.play()
             return self.track
+         else:
+            self.notify.warning("Invalid track %s was passed to playMusic.")
+            return None
 
     def stopMusic(self):
         if self.track:
@@ -93,10 +95,7 @@ class MusicManager(DirectObject):
         else:
             self.notify.warning('playCurrentZoneMusic(): music for zone %s not in MusicManager.' % str(zoneId))
             return None
-        volume = volume * self.getVolume()
         self.playMusic(music, looping=1, volume=volume)
-        if self.track:
-            self.multiplier = volume
 
     def playPickAToon(self):
         if base.air.holidayMgr.isWinter():
@@ -108,10 +107,7 @@ class MusicManager(DirectObject):
         else:
             music = self.pickAToonMusic[0]
             volume = 0.5
-        volume = volume * self.getVolume()
         self.playMusic(music, looping=1, volume=volume)
-        if self.track:
-            self.multiplier = volume
 
     def __audioPaused(self):
         if self.track:
@@ -120,7 +116,7 @@ class MusicManager(DirectObject):
     def __audioRestarted(self):
         if hasattr(base, "localAvatar"):
             base.localAvatar.stopSound()
-        if self.pauseTime and self.trackName:
+        if self.pauseTime and self.track:
             self.track.setTime(self.pauseTime)
             self.track.play()
             self.pauseTime = None
