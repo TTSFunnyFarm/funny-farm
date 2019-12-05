@@ -154,7 +154,11 @@ class SettingsMenu(DirectFrame):
         category["isFullscreenTicked"] = fullscreen
         properties = WindowProperties()
         #width, height = (base.pipe.getDisplayWidth(), base.pipe.getDisplayHeight())
-        properties.setSize(settings['res'][0], settings['res'][1])
+        if fullscreen:
+            w, h = (base.pipe.getDisplayWidth(), base.pipe.getDisplayHeight())
+        else:
+            w, h = (settings['res'][0], settings['res'][1])
+        properties.setSize(w, h)
         properties.setFullscreen(fullscreen)
         base.win.requestProperties(properties)
         base.graphicsEngine.renderFrame()
