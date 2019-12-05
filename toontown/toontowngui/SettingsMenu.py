@@ -127,28 +127,30 @@ class SettingsMenu(DirectFrame):
         category = self.categories[VIDEO]
         self.videoDialog.hide()
         if category["isFullscreenTicked"] != self.oldSettings['fullscreen']:
-            self._onFullscreenTick(handle=False)
+            self._onFullscreenTick(handle=False) # We don't want this to be handled or else we go into a bit of a loop.
 
     def _onSFXVolumeUpdate(self):
+        category = self.categories[self.currentIndex]
         if self.currentIndex != AUDIO:
             return # THIS REALLY. REALLY. SHOULD NOT HAPPEN.
-        category = self.categories[self.currentIndex]
         vol = int(category["sfxVol"]["value"])
-        category["sfxVolLabel"].setText("SFX Volume: " + str(vol) + "%")
-        if not vol / 100 == self.oldSettings["sfxVol"]:
+        category["sfxVolLabel"].setText("SFX Volume: %s%" % str(vol))
+        vol = vol / 100
+        if not vol == self.oldSettings["sfxVol"]:
             self.changed = True
         for sfxMgr in base.sfxManagerList:
-            sfxMgr.setVolume(vol / 100)
+            sfxMgr.setVolume(vol)
 
     def _onMusicVolumeUpdate(self):
+        category = self.categories[self.currentIndex]
         if self.currentIndex != AUDIO:
             return #THIS ALSO SHOULD NOT HAPPEN. GOD.
-        category = self.categories[self.currentIndex]
         vol = int(category["musicVol"]["value"])
-        category["musicVolLabel"].setText("Music Volume: " + str(vol) + "%")
-        if not vol / 100 == self.oldSettings["musicVol"]:
+        category["musicVolLabel"].setText("Music Volume: %s%" % str(vol))
+        vol = vol / 100
+        if not vol == self.oldSettings["musicVol"]:
             self.changed = True
-        musicMgr.setVolume(vol / 100)
+        musicMgr.setVolume(vol)
 
     def _onFullscreenTick(self, handle=True):
         category = self.categories[VIDEO]
@@ -174,9 +176,6 @@ class SettingsMenu(DirectFrame):
             category["fullscreenCheckLabel"]["text"] = "Fullscreen is off."
         if handle:
             self.handleVideoChange()
-        # Hackfix: In order to avoid resolution issues when the user has their window fullscreened
-        # (which most people do), we're gonna first set their resolution to an acceptable size,
-        # and THEN correct the resolution with their actual display size.
 
     def _videoCountdown(self, task):
         self.videoTimeoutSeconds -= 1
@@ -206,11 +205,10 @@ class SettingsMenu(DirectFrame):
         diff = 0.02
         height = 0
         for key, element in self.categories[cat].items():
-            if isinstance(element, DirectLabel):
-                if element["text_pos"][1] < height:
-                    height = element["text_pos"][1]
-                element.show()
-            elif isinstance(element, DirectGuiWidget):
+            if isinstance(element, DirectGuiWidget):
+                if isinstance(element, DirectLabel):
+                    if element["text_pos"][1] < height:
+                        height = element["text_pos"][1]
                 element.show()
             else:
                 continue
