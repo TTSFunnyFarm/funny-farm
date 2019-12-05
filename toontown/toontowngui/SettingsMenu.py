@@ -111,11 +111,13 @@ class SettingsMenu(DirectFrame):
         self.close(arg > 0)
 
     def handleVideoChange(self):
-        self.videoTimeoutSeconds = 15
         self.videoDialog.show()
         taskMgr.doMethodLater(1, self._videoCountdown, 'video-countdown')
 
     def handleVideoApply(self, arg=-1):
+        taskMgr.remove('video-countdown')
+        self.videoTimeoutSeconds = 15
+        self.videoDialog.setText(TTLocalizer.DisplaySettingsAccept % self.videoTimeoutSeconds)
         if arg != DGG.DIALOG_OK:
             self._closeVideoDialog()
         else:
