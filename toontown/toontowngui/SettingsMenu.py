@@ -80,7 +80,6 @@ class SettingsMenu(DirectFrame):
         sfxVol = int(category["sfxVol"]["value"]) / 100
         musicVol = int(category["musicVol"]["value"]) / 100
         category = self.categories[VIDEO]
-        print(category)
         if save:
             settings["sfxVol"] = sfxVol
             settings["sfx"] = sfxVol > 0.0
@@ -203,14 +202,12 @@ class SettingsMenu(DirectFrame):
         diff = 0.02
         height = 0
         for key, element in self.categories[cat].items():
-            if type(element) == bool or type(element) == int:
-                print("4", element)
-                continue
             if isinstance(element, DirectLabel):
                 if element["text_pos"][1] < height:
                     height = element["text_pos"][1]
+            else:
+                continue
             element.show()
-            print(element, "2")
         self.frame["canvasSize"] = (-0.85,0.85,height - 0.03,0)
         self.title.setText(self.categoryNames[cat])
         self.currentIndex = cat
