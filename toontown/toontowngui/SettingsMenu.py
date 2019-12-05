@@ -205,9 +205,11 @@ class SettingsMenu(DirectFrame):
             if isinstance(element, DirectLabel):
                 if element["text_pos"][1] < height:
                     height = element["text_pos"][1]
+                element.show()
+            elif isinstance(element, DirectGuiWidget):
+                element.show()
             else:
                 continue
-            element.show()
         self.frame["canvasSize"] = (-0.85,0.85,height - 0.03,0)
         self.title.setText(self.categoryNames[cat])
         self.currentIndex = cat
