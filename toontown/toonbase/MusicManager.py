@@ -65,7 +65,7 @@ class MusicManager(DirectObject):
             self.track.setTime(time)
             self.track.play()
             return self.track
-         else:
+        else:
             self.notify.warning("Invalid track %s was passed to playMusic." % str(music))
             return None
 
