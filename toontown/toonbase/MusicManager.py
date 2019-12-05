@@ -66,7 +66,7 @@ class MusicManager(DirectObject):
             self.track.play()
             return self.track
          else:
-            self.notify.warning("Invalid track %s was passed to playMusic.")
+            self.notify.warning("Invalid track %s was passed to playMusic." % str(music))
             return None
 
     def stopMusic(self):
