@@ -122,11 +122,6 @@ class SettingsMenu(DirectFrame):
     def _closeVideoDialog(self):
         category = self.categories[VIDEO]
         self.videoDialog.hide()
-        properties = WindowProperties()
-        properties.setSize(self.oldSettings['res'][0], self.oldSettings['res'][1])
-        properties.setFullscreen(self.oldSettings['fullscreen'])
-        base.win.requestProperties(properties)
-        base.graphicsEngine.renderFrame()
         if category["isFullscreenTicked"] != self.oldSettings['fullscreen']:
             self._onFullscreenTick()
 
