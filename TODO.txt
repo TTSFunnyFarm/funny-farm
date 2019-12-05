@@ -1,5 +1,4 @@
 - Cog gallery page
-- Track training page
 - Populate Funny Farm with random NPCs
 - Create second page for video options
 - Add wallpaper to shops
