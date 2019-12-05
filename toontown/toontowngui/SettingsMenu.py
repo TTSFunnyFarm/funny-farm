@@ -125,7 +125,7 @@ class SettingsMenu(DirectFrame):
         category = self.categories[VIDEO]
         self.videoDialog.hide()
         if category["isFullscreenTicked"] != self.oldSettings['fullscreen']:
-            self._onFullscreenTick()
+            self._onFullscreenTick(handle=False)
 
     def _onSFXVolumeUpdate(self):
         if self.currentIndex != AUDIO:
@@ -148,7 +148,7 @@ class SettingsMenu(DirectFrame):
             self.changed = True
         musicMgr.setVolume(vol / 100)
 
-    def _onFullscreenTick(self):
+    def _onFullscreenTick(self, handle=True):
         category = self.categories[VIDEO]
         fullscreen = not category["isFullscreenTicked"]
         category["isFullscreenTicked"] = fullscreen
@@ -170,15 +170,16 @@ class SettingsMenu(DirectFrame):
         else:
             category["fullscreenCheck"]["image"] = self.settingsGui.find('**/settingsUnticked')
             category["fullscreenCheckLabel"]["text"] = "Fullscreen is off."
-        self.handleVideoChange()
+        if handle:
+            self.handleVideoChange()
         # Hackfix: In order to avoid resolution issues when the user has their window fullscreened
         # (which most people do), we're gonna first set their resolution to an acceptable size,
         # and THEN correct the resolution with their actual display size.
 
     def _videoCountdown(self, task):
         self.videoTimeoutSeconds -= 1
-        self.videoDialog.setText(TTLocalizer.DisplaySettingsAccept % self.videoTimeoutSeconds)
         if self.videoTimeoutSeconds > 0:
+            self.videoDialog.setText(TTLocalizer.DisplaySettingsAccept % self.videoTimeoutSeconds)
             taskMgr.doMethodLater(1, self._videoCountdown, 'video-countdown')
         else:
             self._closeVideoDialog()
