@@ -74,7 +74,7 @@ class FireworkShowMixin:
 
             # TODO: Fix this properly. Hack-fixed for July 4th
             delay = Wait(max(0, self.fireworkShow.getShowDuration() - max(0, t)))
-            if eventId == JULY4_FIREWORKS or eventId == CHRISTMAS_FIREWORKS:
+            if eventId == JULY4_FIREWORKS:
                 delay = Wait(max(0, self.fireworkShow.getShowDuration() - max(0, t)) - 9.5)
             elif eventId == NEWYEARS_FIREWORKS:
                 delay = Wait(max(0, self.fireworkShow.getShowDuration() - max(0, t)) + 1.0)
