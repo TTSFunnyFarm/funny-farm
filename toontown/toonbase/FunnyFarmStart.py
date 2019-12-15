@@ -5,18 +5,18 @@ if __debug__:
 else:
     loadPrcFile('config/release.prc')
 
-import os, sys
+import os, sys, builtins
 from otp.settings.Settings import Settings
 from toontown.toonbase.FunnyFarmLogger import FunnyFarmLogger
 
-__builtins__.logger = FunnyFarmLogger()
+builtins.logger = FunnyFarmLogger()
 
 preferencesFilename = ConfigVariableString('preferences-filename', 'preferences.json').getValue()
 dir = os.path.dirname(os.getcwd() + '/' + preferencesFilename)
 if not os.path.exists(dir):
     os.makedirs(dir)
 print('Reading %s...' % preferencesFilename)
-__builtins__.settings = Settings(preferencesFilename)
+builtins.settings = Settings(preferencesFilename)
 # These have to be set before ToonBase loads
 if 'res' not in settings:
     settings['res'] = [1280, 720]
@@ -36,7 +36,7 @@ class game:
     name = 'toontown'
     process = 'client'
 
-__builtins__.game = game()
+builtins.game = game()
 
 from direct.gui import DirectGuiGlobals
 from direct.interval.IntervalGlobal import *
@@ -124,9 +124,9 @@ class FunnyFarmStart:
         base.air.createManagers()
         loader.loadingScreen.load()
 
-        __builtins__.musicMgr = MusicManager()
-        __builtins__.screenshotMgr = ScreenshotManager()
-        __builtins__.dataMgr = DataManager()
+        builtins.musicMgr = MusicManager()
+        builtins.screenshotMgr = ScreenshotManager()
+        builtins.dataMgr = DataManager()
 
         if __debug__ and sys.platform == 'win32':
             Injector.openInjector()
@@ -146,6 +146,6 @@ class FunnyFarmStart:
         base.air.preloadAvatars()
         base.air.createSafeZones()
 
-__builtins__.start = FunnyFarmStart()
+builtins.start = FunnyFarmStart()
 
 base.run()
