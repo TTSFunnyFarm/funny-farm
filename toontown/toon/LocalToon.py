@@ -56,7 +56,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             self.soundPhoneRing = base.loader.loadSfx('phase_3.5/audio/sfx/telephone_ring.ogg')
             self.soundSystemMessage = base.loader.loadSfx('phase_3/audio/sfx/clock03.ogg')
             self.rewardSfx = base.loader.loadSfx('phase_3.5/audio/sfx/tt_s_gui_sbk_cdrSuccess.ogg')
-            self.levelUpSfx = base.loader.loadSfx('phase_4/audio/sfx/MG_sfx_travel_game_bonus.ogg')
+            self.levelUpSfx = base.loader.loadSfx('phase_14/audio/sfx/lvl-up_jingle.ogg')
             self.tunnelX = 0.0
             self.estate = None
             self.__pieBubble = None
