@@ -1,10 +1,5 @@
 from panda3d.core import *
 
-if __debug__:
-    loadPrcFile('config/general.prc')
-else:
-    loadPrcFile('config/release.prc')
-
 import os, sys, builtins
 from otp.settings.Settings import Settings
 from toontown.toonbase.FunnyFarmLogger import FunnyFarmLogger
