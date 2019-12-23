@@ -32,7 +32,6 @@ class ToonBase(OTPBase.OTPBase):
     def __init__(self):
         OTPBase.OTPBase.__init__(self)
         self.disableShowbaseMouse()
-        self.addCullBins()
         base.debugRunningMultiplier /= OTPGlobals.ToonSpeedFactor
         self.toonChatSounds = self.config.GetBool('toon-chat-sounds', 1)
         self.placeBeforeObjects = config.GetBool('place-before-objects', 1)
@@ -137,6 +136,10 @@ class ToonBase(OTPBase.OTPBase):
         tpMgr.setProperties('WLDisplay', WLDisplay)
         tpMgr.setProperties('WLEnter', WLEnter)
         del tpMgr
+        if not __debug__:
+            CullBinManager.getGlobalPtr().addBin('gui-popup', CullBinManager.BTUnsorted, 60)
+        CullBinManager.getGlobalPtr().addBin('shadow', CullBinManager.BTFixed, 15)
+        CullBinManager.getGlobalPtr().addBin('ground', CullBinManager.BTFixed, 14)
         self.lastScreenShotTime = globalClock.getRealTime()
         self.accept('InputState-forward', self.__walking)
         self.canScreenShot = 1
@@ -224,12 +227,6 @@ class ToonBase(OTPBase.OTPBase):
         wp.setCursorFilename(Filename.fromOsSpecific(os.path.join(tempdir, 'toonmono.cur')))
         wp.setIconFilename(Filename.fromOsSpecific(os.path.join(tempdir, 'icon.ico')))
         self.win.requestProperties(wp)
-
-    def addCullBins(self):
-        cbm = CullBinManager.getGlobalPtr()
-        cbm.addBin('ground', CullBinManager.BTUnsorted, 18)
-        cbm.addBin('shadow', CullBinManager.BTBackToFront, 19)
-        cbm.addBin('gui-popup', CullBinManager.BTFixed, 60)
 
     def disableShowbaseMouse(self):
         self.useDrive()
