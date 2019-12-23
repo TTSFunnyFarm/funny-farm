@@ -1,6 +1,6 @@
 from panda3d.core import *
 
-import os, sys, builtins
+import os, sys, builtins, importlib
 from otp.settings.Settings import Settings
 from toontown.toonbase.FunnyFarmLogger import FunnyFarmLogger
 
@@ -123,7 +123,7 @@ class FunnyFarmStart:
         builtins.dataMgr = DataManager()
 
         if __debug__ and sys.platform == 'win32':
-            from toontown.misc import Injector
+            Injector = importlib.import_module('toontown.misc.Injector')
             Injector.openInjector()
 
         self.notify.info('Initializing Client Repository...')
