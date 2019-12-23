@@ -13,11 +13,6 @@ notify-integrate #f
 # Audio
 audio-library-name p3openal_audio
 
-# Display
-load-display pandagl
-aux-display pandagl
-aux-display p3tinydisplay
-
 # Models
 model-path resources
 model-path resources/phase_3
