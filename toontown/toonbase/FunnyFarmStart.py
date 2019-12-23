@@ -50,7 +50,6 @@ from toontown.login.DataManager import DataManager
 from toontown.login.TitleScreen import TitleScreen
 from toontown.ai.FFAIRepository import FFAIRepository
 from toontown.distributed.FFClientRepository import FFClientRepository
-from toontown.misc import Injector
 from toontown.misc import PythonUtil
 
 class FunnyFarmStart:
@@ -129,6 +128,7 @@ class FunnyFarmStart:
         builtins.dataMgr = DataManager()
 
         if __debug__ and sys.platform == 'win32':
+            from toontown.misc import Injector
             Injector.openInjector()
 
         self.notify.info('Initializing Client Repository...')
