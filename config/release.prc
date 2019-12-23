@@ -6,6 +6,7 @@ cursor-filename phase_3/etc/toonmono.cur
 icon-filename phase_3/etc/funnyfarm.ico
 
 # Notify
+notify-level warning
 default-directnotify-level info
 notify-timestamp #t
 notify-integrate #f
