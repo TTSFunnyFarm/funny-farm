@@ -5,7 +5,7 @@ if __debug__:
 else:
     loadPrcFile('config/release.prc')
 
-import os, sys, builtins, importlib
+import os, sys, builtins
 from otp.settings.Settings import Settings
 from toontown.toonbase.FunnyFarmLogger import FunnyFarmLogger
 
@@ -50,6 +50,7 @@ from toontown.login.DataManager import DataManager
 from toontown.login.TitleScreen import TitleScreen
 from toontown.ai.FFAIRepository import FFAIRepository
 from toontown.distributed.FFClientRepository import FFClientRepository
+from toontown.misc import Injector
 from toontown.misc import PythonUtil
 
 class FunnyFarmStart:
@@ -128,7 +129,6 @@ class FunnyFarmStart:
         builtins.dataMgr = DataManager()
 
         if __debug__ and sys.platform == 'win32':
-            Injector = importlib.import_module('toontown.misc.Injector')
             Injector.openInjector()
 
         self.notify.info('Initializing Client Repository...')
