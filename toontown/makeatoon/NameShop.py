@@ -98,22 +98,28 @@ class NameShop(StateData.StateData):
                 print('NameShop: Tried to destroy already removed object')
 
     def reviewName(self, name):
-        blacklistFile = 'resources/phase_4/etc/tblacklist.dat'
-        with open(blacklistFile) as blacklist:
-            badWords = blacklist.read().title().split()
-            nameWords = re.sub('[^\w]', ' ',  name).split()
-            for word in nameWords:
-                if word in badWords:
-                    self.rejectName()
-                    return
-            if len(name) < 3 or len(nameWords) > 4:
+        vfs = VirtualFileSystem.getGlobalPtr()
+        filename = Filename('tblacklist.dat')
+        searchPath = DSearchPath()
+        searchPath.appendDirectory(Filename('/phase_4/etc'))
+        found = vfs.resolveFilename(filename, searchPath)
+        if not found:
+            self.notify.info("Couldn't find blacklist data file!")
+        data = vfs.readFile(filename, 1)
+        badWords = data.title().split()
+        nameWords = re.sub('[^\w]', ' ',  name).split()
+        for word in nameWords:
+            if word in badWords:
                 self.rejectName()
                 return
-            if name == 'Rocky Reborn':
-                self.rockyDialog()
-                return
-            self.createAvatar()
-            self.promptTutorial()
+        if len(name) < 3 or len(nameWords) > 4:
+            self.rejectName()
+            return
+        if name == 'Rocky Reborn':
+            self.rockyDialog()
+            return
+        self.createAvatar()
+        self.promptTutorial()
 
     def rejectName(self):
         self.rejectDialog = TTDialog.TTDialog(parent=aspect2dp, text=TTLocalizer.RejectNameText, style=TTDialog.Acknowledge, command=self.cleanupRejectDialog)
