@@ -212,7 +212,7 @@ class ToonBase(OTPBase.OTPBase):
         vfs = VirtualFileSystem.getGlobalPtr()
 
         searchPath = DSearchPath()
-        searchPath.appendDirectory(Filename('/phase_3/etc'))
+        searchPath.appendDirectory(Filename('resources/phase_3/etc'))
 
         for filename in ['toonmono.cur', 'funnyfarm.ico']:
             p3filename = Filename(filename)

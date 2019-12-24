@@ -103,7 +103,7 @@ class NameShop(StateData.StateData):
         vfs = VirtualFileSystem.getGlobalPtr()
         filename = Filename('tblacklist.dat')
         searchPath = DSearchPath()
-        searchPath.appendDirectory(Filename('/phase_4/etc'))
+        searchPath.appendDirectory(Filename('resources/phase_4/etc'))
         found = vfs.resolveFilename(filename, searchPath)
         if not found:
             self.notify.info("Couldn't find blacklist data file!")
