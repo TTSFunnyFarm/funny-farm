@@ -1,5 +1,7 @@
 from panda3d.core import *
 
+import os, glob
+
 # Mount our resources through the VirtualFileSystem:
 vfs = VirtualFileSystem.getGlobalPtr()
 mounts = ConfigVariableList('vfs-mount')
@@ -7,7 +9,19 @@ for mount in mounts:
     mountfile, mountpoint = (mount.split(' ', 2) + [None, None, None])[:2]
     vfs.mount(Filename(mountfile), Filename(mountpoint), 0)
 
-import os, sys, builtins, importlib
+# Mount any custom resources through the VirtualFileSystem that may exist:
+for file in glob.glob('resources/custom/*.mf'):
+    mf = Multifile()
+    mf.openReadWrite(Filename(file))
+    names = mf.getSubfileNames()
+    for name in names:
+        ext = os.path.splitext(name)[1]
+        if ext not in ['.jpg', '.jpeg', '.png', '.ogg', '.rgb']:
+            mf.removeSubfile(name)
+
+    vfs.mount(mf, Filename('resources'), 0)
+
+import sys, builtins, importlib
 from otp.settings.Settings import Settings
 from toontown.toonbase.FunnyFarmLogger import FunnyFarmLogger
 
