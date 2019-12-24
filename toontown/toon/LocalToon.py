@@ -136,7 +136,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         self.walkStateData.load()
 
     def delete(self):
-        if not hasattr(self, "LocalToon_initialized"):
+        if not hasattr(self, "LocalToon_deleted"):
             self.LocalToon_deleted = 1
             self.ignoreAll()
             Toon.Toon.delete(self)
