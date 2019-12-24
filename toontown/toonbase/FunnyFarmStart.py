@@ -9,17 +9,18 @@ for mount in mounts:
     mountfile, mountpoint = (mount.split(' ', 2) + [None, None, None])[:2]
     vfs.mount(Filename(mountfile), Filename(mountpoint), 0)
 
-# Mount any custom resources through the VirtualFileSystem that may exist:
-for file in glob.glob('resources/custom/*.mf'):
-    mf = Multifile()
-    mf.openReadWrite(Filename(file))
-    names = mf.getSubfileNames()
-    for name in names:
-        ext = os.path.splitext(name)[1]
-        if ext not in ['.jpg', '.jpeg', '.png', '.ogg', '.rgb']:
-            mf.removeSubfile(name)
+if not __debug__:
+    # Mount any custom resources through the VirtualFileSystem that may exist:
+    for file in glob.glob('resources/custom/*.mf'):
+        mf = Multifile()
+        mf.openReadWrite(Filename(file))
+        names = mf.getSubfileNames()
+        for name in names:
+            ext = os.path.splitext(name)[1]
+            if ext not in ['.jpg', '.jpeg', '.png', '.ogg', '.rgb']:
+                mf.removeSubfile(name)
 
-    vfs.mount(mf, Filename('resources'), 0)
+        vfs.mount(mf, Filename('resources'), 0)
 
 import sys, builtins, importlib
 from otp.settings.Settings import Settings
