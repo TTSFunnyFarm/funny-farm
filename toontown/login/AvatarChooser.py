@@ -160,15 +160,18 @@ class AvatarChooser:
         button.delete.show()
 
     def reviewName(self, name, index):
-        blacklistFile = 'resources/phase_4/etc/tblacklist.dat'
+        vfs = VirtualFileSystem.getGlobalPtr()
+        filename = Filename('tblacklist.dat')
+        searchPath = DSearchPath()
+        searchPath.appendDirectory(Filename('/phase_4/etc'))
+        found = vfs.resolveFilename(filename, searchPath)
+        if not found:
+            self.notify.info("Couldn't find blacklist data file!")
+        data = vfs.readFile(filename, 1)
+
         # We need two lists: one uppercase and one lowercase.
-        # That means we have to open 2 blacklist files because whatever
-        # changes we make to it are saved to the "blacklist" variable.
-        with open(blacklistFile) as blacklist:
-            badWords = blacklist.read().split()
-        with open(blacklistFile) as blacklist:
-            badWordsTitled = blacklist.read().title().split()
-        
+        badWords = data.split()
+        badWordsTitled = data.title().split()
         nameWords = re.sub('[^\w]', ' ',  name).split()
         for word in nameWords:
             if word in badWords or word in badWordsTitled:

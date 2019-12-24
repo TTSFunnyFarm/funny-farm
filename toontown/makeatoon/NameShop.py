@@ -1,4 +1,5 @@
 from panda3d.core import *
+from direct.directnotify import DirectNotifyGlobal
 from direct.gui.DirectGui import *
 from direct.gui import OnscreenText
 from direct.interval.IntervalGlobal import *
@@ -12,6 +13,7 @@ import os
 import re
 
 class NameShop(StateData.StateData):
+    notify = DirectNotifyGlobal.directNotify.newCategory('NameShop')
 
     def __init__(self, doneEvent, index):
         StateData.StateData.__init__(self, doneEvent)
