@@ -43,5 +43,5 @@ want-winter #f
 
 # Misc.
 want-pets #f
-game-version ff-1.4.0
+game-version %GAME_VERSION%
 want-discord-integration true
