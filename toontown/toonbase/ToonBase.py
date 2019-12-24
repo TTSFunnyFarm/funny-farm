@@ -159,7 +159,7 @@ class ToonBase(OTPBase.OTPBase):
 
     def openMainWindow(self, *args, **kw):
         result = OTPBase.OTPBase.openMainWindow(self, *args, **kw)
-        # self.setCursorAndIcon()
+        self.setCursorAndIcon()
         return result
 
     def setFrameRateMeter(self, flag):
@@ -214,7 +214,7 @@ class ToonBase(OTPBase.OTPBase):
         searchPath = DSearchPath()
         searchPath.appendDirectory(Filename('/phase_3/etc'))
 
-        for filename in ['toonmono.cur', 'icon.ico']:
+        for filename in ['toonmono.cur', 'funnyfarm.ico']:
             p3filename = Filename(filename)
             found = vfs.resolveFilename(p3filename, searchPath)
             if not found:
@@ -225,7 +225,7 @@ class ToonBase(OTPBase.OTPBase):
 
         wp = WindowProperties()
         wp.setCursorFilename(Filename.fromOsSpecific(os.path.join(tempdir, 'toonmono.cur')))
-        wp.setIconFilename(Filename.fromOsSpecific(os.path.join(tempdir, 'icon.ico')))
+        wp.setIconFilename(Filename.fromOsSpecific(os.path.join(tempdir, 'funnyfarm.ico')))
         self.win.requestProperties(wp)
 
     def disableShowbaseMouse(self):

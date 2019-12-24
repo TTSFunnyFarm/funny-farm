@@ -2,8 +2,6 @@
 window-title Toontown's Funny Farm
 win-origin 8 31
 win-size 1280 720
-cursor-filename phase_3/etc/toonmono.cur
-icon-filename phase_3/etc/funnyfarm.ico
 
 # Notify
 default-directnotify-level info
