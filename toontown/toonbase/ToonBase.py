@@ -218,7 +218,7 @@ class ToonBase(OTPBase.OTPBase):
             p3filename = Filename(filename)
             found = vfs.resolveFilename(p3filename, searchPath)
             if not found:
-                return # Can't do anything past this point.
+                return  # Can't do anything past this point.
 
             with open(os.path.join(tempdir, filename), 'wb') as f:
                 f.write(vfs.readFile(p3filename, False))
@@ -231,8 +231,10 @@ class ToonBase(OTPBase.OTPBase):
     def disableShowbaseMouse(self):
         self.useDrive()
         self.disableMouse()
-        if self.mouseInterface: self.mouseInterface.detachNode()
-        if self.mouse2cam: self.mouse2cam.detachNode()
+        if self.mouseInterface:
+            self.mouseInterface.detachNode()
+        if base.mouse2cam:
+            self.mouse2cam.detachNode()
 
     def __walking(self, pressed):
         self.walking = pressed
