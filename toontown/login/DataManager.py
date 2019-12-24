@@ -20,7 +20,7 @@ class DataManager:
     def __init__(self):
         self.fileExt = '.dat'
         self.fileDir = os.getcwd() + '/database/'
-        self.key = None
+        self.index2key = {}
         self.corrupted = 0
         self.toons = []
         for toonNum in range(FunnyFarmGlobals.MaxAvatars):
@@ -77,13 +77,15 @@ class DataManager:
                 return
 
             try:
-                if not self.key:
-                    self.key = self.generateKey(32)
-                    self.key = codecs.encode(self.key, 'base64')
+                key = self.index2key.get(index)
+                if not key:
+                    key = self.generateKey(32)
+                    key = codecs.encode(key, 'base64')
+                    self.index2key[index] = key
 
-                fernet = Fernet(self.key)
+                fernet = Fernet(key)
                 encryptedData = fernet.encrypt(fileData)
-                toonData.write(self.key.decode() + encryptedData.decode())
+                toonData.write(key.decode() + encryptedData.decode())
                 toonData.close()
             except:
                 toonData.close()
@@ -101,8 +103,12 @@ class DataManager:
             with open(filename.toOsSpecific(), 'r') as toonData:
                 try:
                     fileData = toonData.read().encode()
-                    self.key, db = fileData[0:45], fileData[45:]
-                    fernet = Fernet(self.key)
+                    key, db = fileData[0:45], fileData[45:]
+                    localKey = self.index2key.get(index)
+                    if localKey != key:
+                        self.index2key[index] = key
+
+                    fernet = Fernet(key)
                     decryptedData = fernet.decrypt(db)
                     jsonData = json.loads(decryptedData)
                     toonData.close()
