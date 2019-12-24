@@ -11,7 +11,6 @@ from toontown.toon.ToonData import ToonData
 from toontown.toonbase import FunnyFarmGlobals
 
 BASE_DB_ID = 1000001
-KEY = b'PU05SWFTMmRGbWRFdW5VQW85ZFNWSkNKakFMYTNwQXpSM1VFSGFyRHpYRGY='
 
 
 class DataManager:
@@ -21,6 +20,7 @@ class DataManager:
     def __init__(self):
         self.fileExt = '.dat'
         self.fileDir = os.getcwd() + '/database/'
+        self.key = None
         self.corrupted = 0
         self.toons = []
         for toonNum in range(FunnyFarmGlobals.MaxAvatars):
@@ -42,6 +42,9 @@ class DataManager:
 
     def createToonData(self, index, dna, name):
         return ToonData.getDefaultToonData(index, dna, name)
+
+    def generateKey(self, size=256):
+        return os.urandom(size)
 
     def saveToonData(self, data):
         if self.corrupted:
@@ -74,9 +77,13 @@ class DataManager:
                 return
 
             try:
-                fernet = Fernet(codecs.decode(KEY, 'base64')[::-1])
+                if not self.key:
+                    self.key = self.generateKey(32)
+                    self.key = codecs.encode(self.key, 'base64')
+
+                fernet = Fernet(self.key)
                 encryptedData = fernet.encrypt(fileData)
-                toonData.write(encryptedData.decode())
+                toonData.write(self.key.decode() + encryptedData.decode())
                 toonData.close()
             except:
                 toonData.close()
@@ -94,8 +101,9 @@ class DataManager:
             with open(filename.toOsSpecific(), 'r') as toonData:
                 try:
                     fileData = toonData.read().encode()
-                    fernet = Fernet(codecs.decode(KEY, 'base64')[::-1])
-                    decryptedData = fernet.decrypt(fileData)
+                    self.key, db = fileData[0:45], fileData[45:]
+                    fernet = Fernet(self.key)
+                    decryptedData = fernet.decrypt(db)
                     jsonData = json.loads(decryptedData)
                     toonData.close()
                 except:
