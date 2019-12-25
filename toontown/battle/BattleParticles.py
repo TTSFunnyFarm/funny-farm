@@ -1,7 +1,6 @@
 from direct.particles.ParticleEffect import *
 import os
 from direct.directnotify import DirectNotifyGlobal
-from direct.showbase import AppRunnerGlobal
 from toontown.battle import ParticleDefs
 notify = DirectNotifyGlobal.directNotify.newCategory('BattleParticles')
 TutorialParticleEffects = ('gearExplosionBig.ptf', 'gearExplosionSmall.ptf', 'gearExplosion.ptf')
