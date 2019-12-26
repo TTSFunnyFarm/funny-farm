@@ -55,7 +55,8 @@ class DataManager:
         if not os.path.exists(filename.toOsSpecific()):
             filename.makeDir()
 
-        with open(filename.toOsSpecific(), 'w') as toonData:
+        toonDataToWrite = None
+        with open(filename.toOsSpecific(), 'r') as toonData:
             valid, _, toonDataObj = ToonData.verifyToonData(data, saveToonData=False)
             if not valid:
                 toonData.close()
@@ -85,12 +86,17 @@ class DataManager:
 
                 fernet = Fernet(key)
                 encryptedData = fernet.encrypt(fileData)
-                toonData.write(key.decode() + encryptedData.decode())
+                toonDataToWrite = key.decode() + encryptedData.decode()
                 toonData.close()
             except:
                 toonData.close()
                 self.handleDataError()
                 return
+
+        if toonDataToWrite:
+            with open(filename.toOsSpecific(), 'w') as toonData:
+                toonData.write(toonDataToWrite)
+                toonData.close()
 
         return
 
