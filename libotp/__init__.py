@@ -1,1 +1,1 @@
-from nametag import *
+from .nametag import *

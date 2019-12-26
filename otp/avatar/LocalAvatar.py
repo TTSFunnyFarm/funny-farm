@@ -1,4 +1,5 @@
 from panda3d.core import *
+from libotp import Nametag, WhisperPopup
 from direct.gui.DirectGui import *
 from direct.showbase.PythonUtil import *
 from direct.interval.IntervalGlobal import *
@@ -14,7 +15,6 @@ from direct.controls import ControlManager
 from direct.task import Task
 from otp.otpbase import OTPGlobals
 from otp.otpbase import OTPLocalizer
-from otp.nametag.Nametag import Nametag
 from toontown.toonbase import ToontownGlobals
 import math
 import string

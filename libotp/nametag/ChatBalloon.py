@@ -1,7 +1,7 @@
 from direct.directnotify import DirectNotifyGlobal
 from panda3d.core import *
 
-import NametagGlobals
+from . import NametagGlobals
 
 
 class ChatBalloon:

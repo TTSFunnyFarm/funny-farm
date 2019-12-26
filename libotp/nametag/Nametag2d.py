@@ -2,10 +2,10 @@ import math
 
 from panda3d.core import *
 
-import NametagGlobals
-from MarginPopup import MarginPopup
-from Nametag import Nametag
-from _constants import *
+from . import NametagGlobals
+from .MarginPopup import MarginPopup
+from .Nametag import Nametag
+from ._constants import *
 
 
 class Nametag2d(Nametag, MarginPopup):

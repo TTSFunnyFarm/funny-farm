@@ -1,4 +1,5 @@
 from panda3d.core import *
+from libotp import *
 from direct.interval.IntervalGlobal import *
 from direct.distributed.ClockDelta import *
 from direct.showbase import PythonUtil
@@ -6,10 +7,7 @@ from direct.showbase.PythonUtil import *
 from direct.task import Task
 from otp.avatar import LocalAvatar
 from otp.otpbase import OTPGlobals
-from otp.nametag.NametagConstants import *
-from otp.margins.WhisperPopup import *
 from toontown.chat.ChatManager import ChatManager
-from toontown.chat.ChatGlobals import *
 from toontown.book import ShtikerBook
 from toontown.book import OptionsPage
 from toontown.book import MapPage
