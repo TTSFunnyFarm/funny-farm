@@ -74,7 +74,7 @@ class Nametag2d(Nametag, MarginPopup):
         return np.getPos(NametagGlobals._toon).lengthSquared()
 
     def considerVisible(self):
-        from NametagGroup import NametagGroup
+        from .NametagGroup import NametagGroup
 
         v2 = 0
         do_update = True

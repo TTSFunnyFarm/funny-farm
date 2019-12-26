@@ -344,7 +344,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         dataMgr.saveToonData(base.avatarData)
 
     def getName(self):
-        return self.nametag.name
+        return self.nametag.getName()
 
     def getMaxNPCFriends(self):
         return self.maxNPCFriends

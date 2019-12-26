@@ -36,7 +36,6 @@ class Avatar(Actor, ShadowCaster):
         Actor.__init__(self, None, None, other, flattenable=0, setFinal=0)
         ShadowCaster.__init__(self)
         self.__font = OTPGlobals.getInterfaceFont()
-        self.__speechFont = OTPGlobals.getInterfaceFont()
         self.soundChatBubble = None
         self.avatarType = ''
         self.nametagNodePath = None
@@ -44,7 +43,6 @@ class Avatar(Actor, ShadowCaster):
         self.nametag = NametagGroup()
         self.nametag.setAvatar(self)
         self.nametag.setFont(OTPGlobals.getInterfaceFont())
-        self.nametag.setSpeechFont(OTPGlobals.getInterfaceFont())
         self.nametag2dContents = Nametag.CName | Nametag.CSpeech
         self.nametag2dDist = Nametag.CName | Nametag.CSpeech
         self.nametag2dNormalContents = Nametag.CName | Nametag.CSpeech
@@ -91,10 +89,8 @@ class Avatar(Actor, ShadowCaster):
                 self.ignoreNametagAmbientLightChange()
             self.Avatar_deleted = 1
             del self.__font
-            del self.__speechFont
             del self.style
             del self.soundChatBubble
-            self.nametag.destroy()
             del self.nametag
             self.nametag3d.removeNode()
             ShadowCaster.delete(self)
@@ -252,13 +248,6 @@ class Avatar(Actor, ShadowCaster):
     def setFont(self, font):
         self.__font = font
         self.nametag.setFont(font)
-
-    def getSpeechFont(self):
-        return self.__speechFont
-
-    def setSpeechFont(self, font):
-        self.__speechFont = font
-        self.nametag.setSpeechFont(font)
 
     def getStyle(self):
         return self.style
