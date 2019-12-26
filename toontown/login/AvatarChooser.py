@@ -174,7 +174,7 @@ class AvatarChooser:
         badWordsTitled = data.title().split()
         nameWords = re.sub('[^\w]', ' ',  name).split()
         for word in nameWords:
-            if word in badWords or word in badWordsTitled:
+            if word.encode() in badWords or word.encode() in badWordsTitled:
                 name = self.findTempName(name, index)
                 break
         if len(name) < 3 or len(nameWords) > 4:
