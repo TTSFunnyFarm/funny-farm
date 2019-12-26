@@ -2,7 +2,6 @@ from toontown.suit.BattleSuit import BattleSuit
 from toontown.suit import SuitDNA
 from toontown.building import SuitBuildingGlobals
 import random
-import types
 
 class SuitPlannerInterior:
     notify = directNotify.newCategory('SuitPlannerInterior')
@@ -18,7 +17,7 @@ class SuitPlannerInterior:
             self.dbg_defaultSuitType = None
         else:
             self.dbg_defaultSuitType = SuitDNA.getSuitType(dbg_defaultSuitName)
-        if isinstance(bldgLevel, types.StringType):
+        if isinstance(bldgLevel, str):
             self.notify.warning('bldgLevel is a string!')
             bldgLevel = int(bldgLevel)
         self._genSuitInfos(numFloors, bldgLevel, bldgTrack)
