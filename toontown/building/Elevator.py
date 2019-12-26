@@ -132,7 +132,7 @@ class Elevator(DirectObject):
         cameraTrack = LerpPosHprInterval(camera, 1.5, Point3(0, -16, 5.5), Point3(0, 0, 0))
         animInFunc = Sequence(Func(base.localAvatar.setAnimState, 'run'))
         animFunc = Func(base.localAvatar.setAnimState, 'neutral')
-        track = Sequence(animInFunc, LerpPosInterval(base.localAvatar, TOON_BOARD_ELEVATOR_TIME * 0.75, apply(Point3, ElevatorPoints[index]), other=self.np), LerpHprInterval(base.localAvatar, TOON_BOARD_ELEVATOR_TIME * 0.25, Point3(180, 0, 0), other=self.np), animFunc, name=base.localAvatar.uniqueName('fillElevator'), autoPause=1)
+        track = Sequence(animInFunc, LerpPosInterval(base.localAvatar, TOON_BOARD_ELEVATOR_TIME * 0.75, Point3(*ElevatorPoints[index]), other=self.np), LerpHprInterval(base.localAvatar, TOON_BOARD_ELEVATOR_TIME * 0.25, Point3(180, 0, 0), other=self.np), animFunc, name=base.localAvatar.uniqueName('fillElevator'), autoPause=1)
         track = Parallel(cameraTrack, track)
         if callback:
             track.setDoneEvent(track.getName())
