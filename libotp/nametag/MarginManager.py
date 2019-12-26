@@ -36,7 +36,7 @@ class MarginManager(PandaNode):
         self.m_code_map = {}  # code: MarginPopup*
         self.m_num_available = 0
 
-    def addGridCell(self, a2, a3, a4, a5, a6, a7):
+    def addGridCell(self, a2, a3, a4, a5, a6, a7, newParent, newPos):
         v7 = (a5 - a4) * 0.16666667
         v8 = (a7 - a6) * 0.16666667
         v15 = v7 * a2 + a4
@@ -45,9 +45,9 @@ class MarginManager(PandaNode):
         v11 = v9 + 0.01
         v12 = v15 + v7 - 0.01
         v13 = v15 + 0.01
-        return self.addCell(v13, v12, v11, v10)
+        return self.addCell(v13, v12, v11, v10, newParent, newPos)
 
-    def addCell(self, left, right, bottom, top):
+    def addCell(self, left, right, bottom, top, newParent, newPos):
         v5 = (top - bottom) * 0.5
         v19 = Vec3(v5, 0, 0)
         scale = Vec3(v5, v5, v5)
@@ -56,7 +56,7 @@ class MarginManager(PandaNode):
 
         v18 = len(self.m_cells)
         v9 = MarginCell()
-        self.m_cells.append(v9)
+        self.m_cells.append((v9, newParent, newPos))
         v9.m_available = True
 
         mat3 = Mat3()
@@ -73,7 +73,7 @@ class MarginManager(PandaNode):
         return v18
 
     def setCellAvailable(self, a2, a3):
-        v5 = self.m_cells[a2]
+        v5 = self.m_cells[a2][0]
         if v5.m_available:
             self.m_num_available -= 1
 
@@ -87,7 +87,7 @@ class MarginManager(PandaNode):
             v5.m_objcode = 0
 
     def getCellAvailable(self, a2):
-        return self.m_cells[a2].m_available
+        return self.m_cells[a2][0].m_available
 
     def cullCallback(self, *args):
         self.update()
@@ -109,18 +109,20 @@ class MarginManager(PandaNode):
             del self.m_code_map[v9.m_objcode]
 
     def hide(self, a2):
-        cell = self.m_cells[a2]
+        cell = self.m_cells[a2][0]
         cell.m_np.removeNode()
         cell.m_time = globalClock.getFrameTime()
         if cell.m_popup:
             cell.m_popup.setVisible(False)
 
     def show(self, popup, cell_index):
-        v12 = self.m_cells[cell_index]
+        v12 = self.m_cells[cell_index][0]
         v12.m_popup = popup
         v12.m_objcode = popup.getObjectCode()
         v12.m_np = NodePath.anyPath(self).attachNewNode(popup)
         v12.m_np.setMat(v12.m_mat)
+        v12.m_np.reparentTo(self.m_cells[cell_index][1])
+        v12.m_np.setPos(self.m_cells[cell_index][2])
         self.m_popups[popup].m_cell = cell_index
         popup.m_cell_width = v12.m_cell_width
         popup.setVisible(True)
@@ -130,14 +132,14 @@ class MarginManager(PandaNode):
         objcode = a2.getObjectCode()
 
         for cell in a3:
-            v7 = self.m_cells[cell]
+            v7 = self.m_cells[cell][0]
             if (v7.m_popup == a2 or v7.m_objcode == objcode) and (now - v7.m_time) <= 30.0:
                 result = cell
                 break
 
         else:
             for cell in a3[::-1][1:]:  # Iterate backwards, skip last item
-                v10 = self.m_cells[cell]
+                v10 = self.m_cells[cell][0]
                 if (not v10.m_popup) or (now - v10.m_time) > 30.0:
                     result = cell
                     break
@@ -151,7 +153,7 @@ class MarginManager(PandaNode):
     def showVisibleNoConflict(self):
         cells = []
         for i, cell in enumerate(self.m_cells):
-            if cell.m_available and not cell.m_np:
+            if cell[0].m_available and not cell[0].m_np:
                 cells.append(i)
 
         for handle in self.m_popups.values():
@@ -178,7 +180,7 @@ class MarginManager(PandaNode):
 
         cells = []
         for i, cell in enumerate(self.m_cells):
-            if cell.m_available and not cell.m_np:
+            if cell[0].m_available and not cell[0].m_np:
                 cells.append(i)
 
         for handle in v4[:self.m_num_available]:
