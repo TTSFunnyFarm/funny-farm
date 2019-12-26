@@ -1671,8 +1671,9 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         if hasattr(self, 'auxText'):
             self.auxText.removeNode()
             del self.auxText
-        self.nametag3d.clearDepthTest()
-        self.nametag3d.clearBin()
+        if self.nametag3d:
+            self.nametag3d.clearDepthTest()
+            self.nametag3d.clearBin()
         self.sillySurgeText = False
 
     def died(self):

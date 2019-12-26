@@ -360,6 +360,13 @@ class SuitPlannerAI(DirectObject):
     def requestBattle(self, suitId, pos):
         if suitId not in list(self.activeSuits.keys()):
             return
+        toon = None
+        if hasattr(base, "localAvatar"):
+            toon = base.localAvatar
+        if not toon:
+            return
+        if not toon.getWantBattles():
+            return
         # Don't need the suit AI anymore, the battle will take it from here
         self.removeSuitAI(suitId)
         # Find the nearest battle cell

@@ -500,6 +500,7 @@ class Toon(Avatar.Avatar, ToonHead):
         self.shoes = (0, 0, 0)
         self.isStunned = 0
         self.isDisguised = 0
+        self.wantBattles = 1
         self.defaultColorScale = None
         self.jar = None
         self.setTag('pieCode', str(ToontownGlobals.PieCodeToon))
@@ -2222,6 +2223,7 @@ class Toon(Avatar.Avatar, ToonHead):
         return
 
     def enterSquish(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
+        self.setWantBattles(0)
         Emote.globalEmote.disableAll(self)
         sound = loader.loadSfx('phase_9/audio/sfx/toon_decompress.ogg')
         lerpTime = 0.1
@@ -2241,6 +2243,7 @@ class Toon(Avatar.Avatar, ToonHead):
             DelayDelete.cleanupDelayDeletes(self.track)
             self.track = None
         Emote.globalEmote.releaseAll(self)
+        self.setWantBattles(1)
         return
 
     def enterFallDown(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
@@ -3156,3 +3159,9 @@ class Toon(Avatar.Avatar, ToonHead):
         self.splash.setScale(2)
         self.splash.play()
         return
+
+    def getWantBattles(self):
+        return self.wantBattles
+
+    def setWantBattles(self, want):
+        self.wantBattles = want
