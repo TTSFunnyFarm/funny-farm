@@ -111,7 +111,7 @@ class NameShop(StateData.StateData):
         badWords = data.title().split()
         nameWords = re.sub('[^\w]', ' ',  name).split()
         for word in nameWords:
-            if word in badWords:
+            if word.encode() in badWords:
                 self.rejectName()
                 return
         if len(name) < 3 or len(nameWords) > 4:
