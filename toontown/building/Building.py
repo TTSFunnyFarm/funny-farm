@@ -532,7 +532,7 @@ class Building(DirectObject):
         i = 0
         toon = base.localAvatar
         toon.wrtReparentTo(hidden)
-        origPosTrack.append(Func(toon.setPosHpr, self.elevatorNodePath, apply(Point3, ElevatorPoints[i]), Point3(180, 0, 0)))
+        origPosTrack.append(Func(toon.setPosHpr, self.elevatorNodePath, Point3(*ElevatorPoints[i]), Point3(180, 0, 0)))
         origPosTrack.append(Func(toon.wrtReparentTo, render))
 
         openDoors = Sequence(Func(self.elevator.openDoors), Wait(ElevatorData[ELEVATOR_NORMAL]['openTime']))
