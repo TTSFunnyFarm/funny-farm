@@ -56,21 +56,21 @@ class DataManager:
             filename.makeDir()
 
         toonDataToWrite = None
-        valid, _, toonDataObj = ToonData.verifyToonData(data, saveToonData=False)
+        valid, reason, toonDataObj = ToonData.verifyToonData(data, saveToonData=False)
         if not valid:
-            self.handleDataError()
+            self.handleDataError(reason)
             return
 
         try:
             jsonData = toonDataObj.makeJsonData()
-        except:
-            self.handleDataError()
+        except Exception as e:
+            self.handleDataError(e)
             return
 
         try:
             fileData = json.dumps(jsonData, indent=4).encode()
-        except:
-            self.handleDataError()
+        except Exception as e:
+            self.handleDataError(e)
             return
 
         try:
@@ -83,8 +83,8 @@ class DataManager:
             fernet = Fernet(key)
             encryptedData = fernet.encrypt(fileData)
             toonDataToWrite = key.decode() + encryptedData.decode()
-        except:
-            self.handleDataError()
+        except Exception as e:
+            self.handleDataError(e)
             return
 
         if toonDataToWrite:
@@ -112,15 +112,15 @@ class DataManager:
                     decryptedData = fernet.decrypt(db)
                     jsonData = json.loads(decryptedData)
                     toonData.close()
-                except:
+                except Exception as e:
                     toonData.close()
-                    self.handleDataError()
+                    self.handleDataError(e)
                     return None
 
                 try:
                     toonDataObj = ToonData.makeFromJsonData(jsonData)
-                except:
-                    self.handleDataError()
+                except Exception as e:
+                    self.handleDataError(e)
                     return None
 
                 return toonDataObj
@@ -134,10 +134,19 @@ class DataManager:
         else:
             self.notify.warning('Tried to delete nonexistent toon data!')
 
-    def handleDataError(self):
+    def handleDataError(self, err=None):
         self.notify.warning('The database has been corrupted. Notifying user.')
-        base.handleGameError(
-            'Your database has been corrupted. Please contact The Toontown\'s Funny Farm Team for assistance.')
+        if err:
+            self.notify.warning(err)
+        exception = False
+        if isinstance(err, Exception):
+            exception = True
+        if exception:
+            base.handleGameError(
+                'Your database has been corrupted. Please contact The Toontown\'s Funny Farm Team for assistance.\nError: %s' % err.__class__.__name__)
+        else:
+            base.handleGameError(
+                'Your database has failed verification and possibly been corrupted. Please contact The Toontown\'s Funny Farm Team for assistance.')
         self.corrupted = 1
 
     def createLocalAvatar(self, data):
