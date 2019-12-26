@@ -4146,7 +4146,7 @@ TutorialFriendsPanelYes = '%s said yes!' % Flippy
 TutorialFriendsPanelNo = "That's not very friendly!"
 TutorialFriendsPanelCongrats = 'Congratulations! You made your first friend.'
 TutorialFlippyChat1 = 'Come see me when you are ready for your first ToonTask!'
-TutorialFlippyChat2 = "I'll be in ToonHall!"
+TutorialFlippyChat2 = "I'll be in Toon Hall!"
 TutorialAllFriendsButton = 'You can view all your friends by clicking the friends button. Try it out...'
 TutorialEmptyFriendsList = "Right now your list is empty because %s isn't a real player." % Flippy
 TutorialCloseFriendsList = "Click the 'Close'\nbutton to make the\nlist go away"
@@ -5950,6 +5950,7 @@ NPCToonNames = {20000: 'Tutorial Tom',
  1111: 'Brad Wurst',
  1112: 'Joe',
  1113: 'Loony Louis',
+ 1114: 'Scar D. Mouse',
  1201: lHQOfficerM,
  1202: lHQOfficerM,
  1203: lHQOfficerF,
