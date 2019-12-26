@@ -1,6 +1,5 @@
+from libotp import *
 from toontown.minigame.PurchaseBase import *
-from otp.nametag.NametagFloat2d import *
-from otp.nametag import NametagGlobals
 from direct.task.Task import Task
 from toontown.toon import ToonHead
 from toontown.toonbase import ToontownTimer

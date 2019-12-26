@@ -1,4 +1,5 @@
 from panda3d.core import *
+from libotp import *
 from toontown.toon.NPCToonBase import *
 from toontown.minigame import ClerkPurchase
 from toontown.book.PurchaseManagerConstants import *
@@ -7,7 +8,6 @@ from direct.task.Task import Task
 from toontown.toonbase import TTLocalizer
 from toontown.hood import ZoneUtil
 from toontown.toontowngui import TeaserPanel
-from otp.nametag.NametagConstants import *
 
 class NPCClerk(NPCToonBase):
 

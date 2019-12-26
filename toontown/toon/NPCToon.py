@@ -1,4 +1,5 @@
 from panda3d.core import *
+from libotp import *
 from direct.task.Task import Task
 from toontown.toon.NPCToonBase import *
 from toontown.quest import Quests
@@ -6,7 +7,6 @@ from toontown.quest.QuestChoiceGui import QuestChoiceGui
 from toontown.quest.TrackChoiceGui import TrackChoiceGui
 from toontown.toonbase import TTLocalizer
 from toontown.hood import ZoneUtil
-from otp.nametag.NametagConstants import *
 ChoiceTimeout = 20
 
 class NPCToon(NPCToonBase):

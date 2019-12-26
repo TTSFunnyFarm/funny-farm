@@ -1,4 +1,5 @@
 from panda3d.core import *
+from libotp import *
 from direct.interval.IntervalGlobal import *
 from toontown.minigame.Minigame import *
 from direct.gui.DirectGui import *
@@ -21,7 +22,6 @@ from toontown.effects import Ripples
 from toontown.toonbase import TTLocalizer
 from toontown.minigame import MinigamePowerMeter
 from direct.task.Task import Task
-from otp.nametag import NametagGlobals
 import math
 
 class TugOfWarGame(Minigame):

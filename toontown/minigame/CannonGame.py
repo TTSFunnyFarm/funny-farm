@@ -1,6 +1,5 @@
 from panda3d.core import *
-from otp.nametag.NametagFloat3d import NametagFloat3d
-from otp.nametag.Nametag import Nametag
+from libotp import *
 from toontown.minigame.Minigame import *
 from direct.distributed.ClockDelta import *
 from direct.interval.IntervalGlobal import *

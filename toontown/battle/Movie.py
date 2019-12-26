@@ -1,3 +1,4 @@
+from libotp import *
 import copy
 from direct.directnotify import DirectNotifyGlobal
 from direct.interval.IntervalGlobal import *
@@ -25,7 +26,6 @@ from toontown.battle import MovieUtil
 from toontown.battle import PlayByPlayText
 from toontown.battle import RewardPanel
 from toontown.battle.SuitBattleGlobals import *
-from toontown.chat.ChatGlobals import *
 from toontown.distributed import DelayDelete
 from toontown.toon import NPCToons
 from toontown.toon import Toon
@@ -33,7 +33,6 @@ from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase.ToontownBattleGlobals import *
 from toontown.toontowngui import TTDialog
-from otp.nametag import NametagConstants
 
 camPos = Point3(14, 0, 10)
 camHpr = Vec3(89, -30, 0)
