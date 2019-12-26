@@ -55,42 +55,42 @@ class DataManager:
         if not os.path.exists(filename.toOsSpecific()):
             filename.makeDir()
 
-        with open(filename.toOsSpecific(), 'w') as toonData:
-            valid, _, toonDataObj = ToonData.verifyToonData(data, saveToonData=False)
-            if not valid:
-                toonData.close()
-                self.handleDataError()
-                return
+        toonDataToWrite = None
+        valid, _, toonDataObj = ToonData.verifyToonData(data, saveToonData=False)
+        if not valid:
+            self.handleDataError()
+            return
 
-            try:
-                jsonData = toonDataObj.makeJsonData()
-            except:
-                toonData.close()
-                self.handleDataError()
-                return
+        try:
+            jsonData = toonDataObj.makeJsonData()
+        except:
+            self.handleDataError()
+            return
 
-            try:
-                fileData = json.dumps(jsonData, indent=4).encode()
-            except:
-                toonData.close()
-                self.handleDataError()
-                return
+        try:
+            fileData = json.dumps(jsonData, indent=4).encode()
+        except:
+            self.handleDataError()
+            return
 
-            try:
-                key = self.__index2key.get(index)
-                if not key:
-                    key = self.generateKey(32)
-                    key = codecs.encode(key, 'base64')
-                    self.__index2key[index] = key
+        try:
+            key = self.__index2key.get(index)
+            if not key:
+                key = self.generateKey(32)
+                key = codecs.encode(key, 'base64')
+                self.__index2key[index] = key
 
-                fernet = Fernet(key)
-                encryptedData = fernet.encrypt(fileData)
-                toonData.write(key.decode() + encryptedData.decode())
+            fernet = Fernet(key)
+            encryptedData = fernet.encrypt(fileData)
+            toonDataToWrite = key.decode() + encryptedData.decode()
+        except:
+            self.handleDataError()
+            return
+
+        if toonDataToWrite:
+            with open(filename.toOsSpecific(), 'w') as toonData:
+                toonData.write(toonDataToWrite)
                 toonData.close()
-            except:
-                toonData.close()
-                self.handleDataError()
-                return
 
         return
 
