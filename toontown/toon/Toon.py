@@ -6,6 +6,7 @@ from toontown.suit import SuitDNA
 from direct.actor import Actor
 from toontown.toon.ToonHead import *
 from panda3d.core import *
+from libotp import *
 from direct.interval.IntervalGlobal import *
 from direct.directnotify import DirectNotifyGlobal
 from toontown.toonbase import ToontownGlobals
@@ -22,7 +23,6 @@ from otp.otpbase import OTPGlobals
 from toontown.effects import DustCloud, Splash
 from direct.showbase.PythonUtil import Functor
 from toontown.distributed import DelayDelete
-from otp.nametag.NametagConstants import *
 from toontown.toon import AccessoryGlobals
 import types
 

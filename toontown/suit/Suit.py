@@ -3,7 +3,7 @@ from otp.avatar import Avatar
 from toontown.suit import SuitDNA
 from toontown.toonbase import ToontownGlobals
 from panda3d.core import *
-from otp.nametag.NametagGroup import NametagGroup
+from libotp import *
 from toontown.battle import SuitBattleGlobals
 from direct.task.Task import Task
 from toontown.battle import BattleProps

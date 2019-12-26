@@ -1,5 +1,5 @@
 from panda3d.core import *
-from otp.nametag.NametagGroup import NametagGroup
+from libotp import *
 from direct.directnotify import DirectNotifyGlobal
 from direct.fsm import ClassicFSM
 from direct.fsm import State

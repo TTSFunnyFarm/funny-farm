@@ -1414,7 +1414,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             self.__pieButtonCount = self.numPies
         return
 
-    def setSystemMessage(self, aboutId, chatString, whisperType = WTSystem):
+    def setSystemMessage(self, aboutId, chatString, whisperType = WhisperPopup.WTSystem):
         self.displayWhisper(aboutId, chatString, whisperType)
 
     def displayWhisper(self, fromId, chatString, whisperType):

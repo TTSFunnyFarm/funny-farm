@@ -1,6 +1,6 @@
 from direct.showbase.DirectObject import DirectObject
 
-from otp.nametag import NametagGlobals
+from libotp import *
 from otp.otpbase import OTPLocalizer
 from toontown.discord.FFDiscordIntegration import FFDiscordIntegration
 from toontown.distributed.PlayGame import PlayGame

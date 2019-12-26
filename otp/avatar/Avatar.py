@@ -1,7 +1,5 @@
 from panda3d.core import *
-from otp.nametag.Nametag import Nametag
-from otp.nametag.NametagGroup import NametagGroup
-from otp.nametag.NametagConstants import CFSpeech, CFThought, CFTimeout, CFPageButton, CFNoQuitButton, CFQuitButton
+from libotp import *
 from otp.otpbase import OTPGlobals
 from otp.otpbase import OTPLocalizer
 from direct.actor.Actor import Actor

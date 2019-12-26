@@ -6,7 +6,7 @@ from otp.otpbase import OTPLocalizer
 import types
 from direct.showbase import PythonUtil
 from panda3d.core import *
-from otp.nametag.NametagConstants import *
+from libotp import *
 from otp.avatar import Emote
 from direct.directnotify import DirectNotifyGlobal
 EmoteSleepIndex = 4
