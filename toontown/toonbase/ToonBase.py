@@ -8,10 +8,8 @@ from direct.gui import DirectGuiGlobals
 from direct.gui.DirectGui import *
 from direct.showbase.Transitions import Transitions
 from panda3d.core import *
+from libotp import *
 from direct.interval.IntervalGlobal import Sequence, Func, Wait
-from otp.nametag.ChatBalloon import ChatBalloon
-from otp.nametag import NametagGlobals
-from otp.margins.MarginManager import MarginManager
 import sys
 import os
 import math
@@ -274,48 +272,16 @@ class ToonBase(OTPBase.OTPBase):
         if clickSound:
             NametagGlobals.setClickSound(clickSound)
         NametagGlobals.setToon(self.cam)
-
         self.marginManager = MarginManager()
         self.margins = self.aspect2d.attachNewNode(self.marginManager, DirectGuiGlobals.MIDGROUND_SORT_INDEX + 1)
         mm = self.marginManager
-
-        # TODO: Dynamicaly add more and reposition cells
-        padding = 0.0225
-
-        # Order: Top to bottom
-        self.leftCells = [
-            mm.addGridCell(0.2 + padding, -0.45, base.a2dTopLeft), # Above boarding groups
-            mm.addGridCell(0.2 + padding, -0.9, base.a2dTopLeft),  # 1
-            mm.addGridCell(0.2 + padding, -1.35, base.a2dTopLeft)  # Below Boarding Groups
-        ]
-
-        # Order: Left to right
-        self.bottomCells = [
-            mm.addGridCell(-1.05, 0.2 + padding, base.a2dBottomCenter), # To the right of the laff meter
-            mm.addGridCell(-0.61, 0.2 + padding, base.a2dBottomCenter), # 1
-            #mm.addGridCell(0.01, 0.2 + padding, base.a2dBottomCenter), # 2
-            mm.addGridCell(0.61, 0.2 + padding, base.a2dBottomCenter),  # 3
-            mm.addGridCell(1.05, 0.2 + padding, base.a2dBottomCenter)   # To the left of the shtiker book
-        ]
-
-        # Order: Bottom to top
-        self.rightCells = [
-            mm.addGridCell(-0.2 - padding, -1.35, base.a2dTopRight), # Above the street map
-            mm.addGridCell(-0.2 - padding, -0.9, base.a2dTopRight),  # Below the friends list
-            mm.addGridCell(-0.2 - padding, -0.45, base.a2dTopRight)  # Behind the friends list
-        ]
-
-    def hideFriendMargins(self):
-        middleCell = self.rightCells[1]
-        topCell = self.rightCells[2]
-
-        self.setCellsAvailable([middleCell, topCell], False)
-
-    def showFriendMargins(self):
-        middleCell = self.rightCells[1]
-        topCell = self.rightCells[2]
-
-        self.setCellsAvailable([middleCell, topCell], True)
+        self.leftCells = [mm.addGridCell(0, 1, -1.33333333333, 1.33333333333, -1.0, 1.0, base.a2dTopLeft, (0.222222, 0, -1.5)), mm.addGridCell(0, 2, -1.33333333333, 1.33333333333, -1.0, 1.0, base.a2dTopLeft, (0.222222, 0, -1.16667)), mm.addGridCell(0, 3, -1.33333333333, 1.33333333333, -1.0, 1.0, base.a2dTopLeft, (0.222222, 0, -0.833333))]
+        self.bottomCells = [mm.addGridCell(0.5, 0, -1.33333333333, 1.33333333333, -1.0, 1.0, base.a2dBottomCenter, (-0.888889, 0, 0.166667)),
+         mm.addGridCell(1.5, 0, -1.33333333333, 1.33333333333, -1.0, 1.0, base.a2dBottomCenter, (-0.444444, 0, 0.166667)),
+         mm.addGridCell(2.5, 0, -1.33333333333, 1.33333333333, -1.0, 1.0, base.a2dBottomCenter, (0, 0, 0.166667)),
+         mm.addGridCell(3.5, 0, -1.33333333333, 1.33333333333, -1.0, 1.0, base.a2dBottomCenter, (0.444444, 0, 0.166667)),
+         mm.addGridCell(4.5, 0, -1.33333333333, 1.33333333333, -1.0, 1.0, base.a2dBottomCenter, (0.888889, 0, 0.166667))]
+        self.rightCells = [mm.addGridCell(5, 2, -1.33333333333, 1.33333333333, -1.0, 1.0, base.a2dTopRight, (-0.222222, 0, -1.16667)), mm.addGridCell(5, 1, -1.33333333333, 1.33333333333, -1.0, 1.0, base.a2dTopRight, (-0.222222, 0, -1.5))]
 
     def setCellsAvailable(self, cell_list, available):
         for cell in cell_list:
