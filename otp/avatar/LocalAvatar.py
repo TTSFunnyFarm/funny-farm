@@ -62,6 +62,7 @@ class LocalAvatar(DirectObject):
         self.nametag2dNormalContents = Nametag.CSpeech
         self.showNametag2d()
         self.setPickable(0)
+        self.addActive()
         return
 
     def useSwimControls(self):
