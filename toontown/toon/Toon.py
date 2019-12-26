@@ -26,6 +26,9 @@ from otp.nametag.NametagConstants import *
 from toontown.toon import AccessoryGlobals
 import types
 
+def cmp(a, b):
+    return (a > b) - (a < b)
+
 def teleportDebug(requestStatus, msg, onlyIfToAv = True):
     if teleportNotify.getDebug():
         teleport = 'teleport'
