@@ -135,12 +135,10 @@ class DataManager:
             self.notify.warning('Tried to delete nonexistent toon data!')
 
     def handleDataError(self, err=None):
-        self.notify.warning('The database has been corrupted. Notifying user.')
+        self.notify.warning('The database has possibly been corrupted due to an error. Notifying user, error below.')
         if err:
             self.notify.warning(err)
-        exception = False
-        if isinstance(err, Exception):
-            exception = True
+        exception = isinstance(err, Exception)
         if exception:
             base.handleGameError(
                 'Your database has possibly been corrupted. Please contact The Toontown\'s Funny Farm Team for assistance.\nError: %s' % err.__class__.__name__)
