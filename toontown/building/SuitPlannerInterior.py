@@ -9,7 +9,6 @@ def cmp(a, b):
 
 class SuitPlannerInterior:
     notify = directNotify.newCategory('SuitPlannerInterior')
-    notify.setDebug(1)
 
     def __init__(self, numFloors, bldgLevel, bldgTrack):
         self.dbg_4SuitsPerFloor = config.GetBool('4-suits-per-floor', 0)
