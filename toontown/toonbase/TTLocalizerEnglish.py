@@ -544,7 +544,7 @@ QuestDialogDict = {
         QUEST: 'You found the last piece of the memo!\x07Toontastic! Let\'s see what it says...\x07"Soon the power of the Toons will lie in the hands of the corporation..."\x07"All ground forces are to maintain their current position until further notice."\x07"Signed, Mover & Shaker, Manager."\x07Manager? Hmm.\x07If we can find the manager, we can shut down this operation once and for all!\x07Go speak to Mr. Wurst.\x07He is the president of the Rickety Road Association.\x07Let him know what\'s going on, so he can help us begin a full-fledged search._where_'},
  1019: {GREETING: '',
         LEAVING: '',
-        QUEST: 'Hello. What can I help you with?\x07You recovered a letter from the Cogs? Let me read that...\x07Hmm...\x07Ah, OK, and Flippy sent you here so that I could inform all of Rickety Road to search for this "manager".\x07Done. I\'ll get right on that.\x07In the meantime, could you help me out?\x07I sent my assistant to retrieve some parts for one of our appliances, but he hasn\'t returned in a while.\x07Will you go out and look for him?\x07Just help him get back here safely.',
+        QUEST: 'Hello. What can I help you with?\x07You recovered a letter from the Cogs? Let me read that...\x07Hmm...\x07Ah, OK, and Flippy sent you here so that I could inform all of Rickety Road to search for this "manager".\x07Done. I\'ll get right on that.\x07In the meantime, could you help me out?\x07I sent my assistant, Scar D. Mouse, to retrieve some parts for one of our appliances, but he hasn\'t returned in a while.\x07Will you go out and look for him?\x07Just help him get back here safely.',
         COMPLETE: 'Oh, jeez, you scared me.'},
  1020: {GREETING: '',
         LEAVING: '',
