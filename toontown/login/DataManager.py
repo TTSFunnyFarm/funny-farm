@@ -88,9 +88,9 @@ class DataManager:
             return
 
         if toonDataToWrite:
-            with open(filename.toOsSpecific(), 'w') as toonData:
-                toonData.write(toonDataToWrite)
-                toonData.close()
+            with open(filename.toOsSpecific(), 'w') as f:
+                f.write(toonDataToWrite)
+                f.close()
 
         return
 
@@ -99,31 +99,34 @@ class DataManager:
             return None
 
         filename = Filename(self.fileDir + self.toons[index - 1] + self.fileExt)
+        toonData = None
         if os.path.exists(filename.toOsSpecific()):
-            with open(filename.toOsSpecific(), 'r') as toonData:
-                try:
-                    fileData = toonData.read().encode()
-                    key, db = fileData[0:45], fileData[45:]
-                    localKey = self.__index2key.get(index)
-                    if localKey != key:
-                        self.__index2key[index] = key
+            with open(filename.toOsSpecific(), 'r') as f:
+                toonData = f.read()
+                f.close()
 
-                    fernet = Fernet(key)
-                    decryptedData = fernet.decrypt(db)
-                    jsonData = json.loads(decryptedData)
-                    toonData.close()
-                except Exception as e:
-                    toonData.close()
-                    self.handleDataError(e)
-                    return None
+        if toonData:
+            try:
+                fileData = toonData.encode()
+                key, db = fileData[0:45], fileData[45:]
+                localKey = self.__index2key.get(index)
+                if localKey != key:
+                    self.__index2key[index] = key
 
-                try:
-                    toonDataObj = ToonData.makeFromJsonData(jsonData)
-                except Exception as e:
-                    self.handleDataError(e)
-                    return None
+                fernet = Fernet(key)
+                decryptedData = fernet.decrypt(db)
+                jsonData = json.loads(decryptedData)
+            except Exception as e:
+                self.handleDataError(e)
+                return None
 
-                return toonDataObj
+            try:
+                toonDataObj = ToonData.makeFromJsonData(jsonData)
+            except Exception as e:
+                self.handleDataError(e)
+                return None
+
+            return toonDataObj
 
         return None
 
