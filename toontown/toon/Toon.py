@@ -26,6 +26,9 @@ from toontown.distributed import DelayDelete
 from toontown.toon import AccessoryGlobals
 import types
 
+def cmp(a, b):
+    return (a > b) - (a < b)
+
 def teleportDebug(requestStatus, msg, onlyIfToAv = True):
     if teleportNotify.getDebug():
         teleport = 'teleport'
@@ -1363,6 +1366,8 @@ class Toon(Avatar.Avatar, ToonHead):
             ts = 0.0
         else:
             ts = globalClockDelta.localElapsedTime(timestamp)
+        if animMultiplier == None:
+            animMultiplier = 1.0
         if base.config.GetBool('check-invalid-anims', True):
             if animMultiplier > 1.0 and animName in ['neutral']:
                 animMultiplier = 1.0
