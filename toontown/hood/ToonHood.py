@@ -58,7 +58,8 @@ class ToonHood(Hood):
         if len(self.buildings) > 0:
             self.destroyLandmarkBuildings()
         if hasattr(self, "treasurePlanner"):
-            self.treasurePlanner.unloadTreasures()
+            if self.treasurePlanner:
+                self.treasurePlanner.unloadTreasures()
         self.unloadButterflies()
 
     def load(self):
