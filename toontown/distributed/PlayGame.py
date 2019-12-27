@@ -139,7 +139,6 @@ class PlayGame(DirectObject):
             self.enterMinigame(game)
 
     def enterMinigame(self, minigame):
-        self.exitActiveZone()
         self.minigame = minigame
         self.minigame.generate()
         self.minigame.announceGenerate()
