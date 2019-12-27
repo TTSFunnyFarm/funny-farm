@@ -103,10 +103,10 @@ class SettingsMenu(DirectFrame):
             settings["sfx"] = sfxVol > 0.0
             settings["musicVol"] = musicVol
             settings["music"] = musicVol > 0.0
-            if isinstance(element, DirectButton):
-                if hasattr(element, "key") and hasattr(element, "title"):
-                    settings[key] = category["fullscreenCheckTicked"]
-                    settings["vsync"] = category["isVSyncTicked"]
+            for element in list(category):
+                if isinstance(element, DirectButton):
+                    if hasattr(element, "key") and hasattr(element, "title"):
+                        settings[key] = category[key + "CheckTicked"]
         else:
             for sfxMgr in base.sfxManagerList:
                 sfxMgr.setVolume(self.oldSettings["sfxVol"])
