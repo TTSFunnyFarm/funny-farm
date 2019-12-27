@@ -1,5 +1,4 @@
 from toontown.toonbase.ToontownBattleGlobals import *
-import types
 from direct.fsm import StateData
 from direct.fsm import ClassicFSM, State
 from direct.fsm import State
