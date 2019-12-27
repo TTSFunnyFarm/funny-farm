@@ -598,7 +598,7 @@ class Avatar(Actor, ShadowCaster):
             except ValueError:
                 pass
 
-            if self.nametag:
+            if hasattr(self, "nametag"):
                 self.nametag.unmanage(base.marginManager)
                 self.ignore(self.nametag.getUniqueId())
 
