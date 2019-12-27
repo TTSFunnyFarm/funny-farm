@@ -328,16 +328,6 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         base.avatarData.setName = name
         dataMgr.saveToonData(base.avatarData)
 
-    def setDisplayName(self, displayName, font=None):
-        if displayName == None:
-            displayName = self.getName()
-
-        if font:
-            self.setFont(font)
-
-        Toon.Toon.setDisplayName(self, displayName)
-        self.setFont(ToontownGlobals.getToonFont())
-
     def getName(self):
         return self.nametag.getName()
 
@@ -347,7 +337,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
     def setNametagFont(self, font):
         base.avatarData.setNametagStyle = FunnyFarmGlobals.nametagDict[font]
         dataMgr.saveToonData(base.avatarData)
-        self.setDisplayName(self.getName(), font)
+        Toon.Toon.setNametagFont(self, font)
 
     def setHat(self, hatIdx, textureIdx, colorIdx, fromRTM = False):
         Toon.Toon.setHat(self, hatIdx, textureIdx, colorIdx, fromRTM = False)

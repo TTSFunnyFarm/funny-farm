@@ -122,7 +122,7 @@ def createLocalNPC(npcId, functional = False):
         npc.setGlasses(*accessories[1])
         npc.setBackpack(*accessories[2])
         npc.setShoes(*accessories[3])
-    npc.nametag.setFont(ToontownGlobals.getSignFont())
+    npc.setNametagFont(ToontownGlobals.getSignFont())
     npc.animFSM.request('neutral')
     return npc
 

@@ -3167,3 +3167,16 @@ class Toon(Avatar.Avatar, ToonHead):
 
     def setWantBattles(self, want):
         self.wantBattles = want
+
+    def setNametagFont(self, font):
+        self.setDisplayName(self.getName(), font)
+
+    def setDisplayName(self, displayName, font=None):
+        if displayName == None:
+            displayName = self.getName()
+
+        if font:
+            self.setFont(font)
+
+        Avatar.Avatar.setDisplayName(self, displayName)
+        self.setFont(ToontownGlobals.getToonFont())
