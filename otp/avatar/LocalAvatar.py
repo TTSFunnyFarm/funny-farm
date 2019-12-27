@@ -100,6 +100,7 @@ class LocalAvatar(DirectObject):
         except:
             self.LocalAvatar_deleted = 1
 
+        self.removeActive()
         self.ignoreAll()
         self.stopJumpLandTask()
         taskMgr.remove('shadowReach')
