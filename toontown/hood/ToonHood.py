@@ -57,7 +57,7 @@ class ToonHood(Hood):
         Hood.exit(self)
         if len(self.buildings) > 0:
             self.destroyLandmarkBuildings()
-        if self.treasurePlanner:
+        if hasattr(self, "treasurePlanner"):
             self.treasurePlanner.unloadTreasures()
         self.unloadButterflies()
 
