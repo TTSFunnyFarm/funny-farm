@@ -99,8 +99,7 @@ class Hood(DirectObject):
                 del npc
         if hasattr(self, 'geom'):
             self.geom.removeNode()
-        if hasattr(self, 'geom'):
-            self.sky.removeNode()
+        self.sky.removeNode()
         del self.geom
         del self.sky
 
