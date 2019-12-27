@@ -129,6 +129,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             self.hoodsVisited = []
             self.teleportAccess = []
             self.CETimer = 0.0
+            self.addActive()
 
     def generate(self):
         self.walkDoneEvent = 'walkDone'
@@ -140,6 +141,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             self.LocalToon_deleted
         except:
             self.LocalToon_deleted = 1
+            self.removeActive()
             self.ignoreAll()
             Toon.Toon.delete(self)
             LocalAvatar.LocalAvatar.delete(self)
