@@ -231,8 +231,6 @@ class ToonHood(Hood):
                                         'state': currentButterfly.getState()})
 
     def unloadButterflies(self):
-        if not hasattr(self, "butterflies"):
-            return
         for butterfly in self.butterflies:
             butterfly.disable()
             butterfly.delete()
