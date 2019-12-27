@@ -231,7 +231,8 @@ class Hood(DirectObject):
 
     def stopSky(self):
         taskMgr.remove('skyTrack')
-        self.sky.reparentTo(hidden)
+        if hasattr(self, "sky"):
+            self.sky.reparentTo(hidden)
 
     def startSpookySky(self):
         if not self.spookySkyFile:
