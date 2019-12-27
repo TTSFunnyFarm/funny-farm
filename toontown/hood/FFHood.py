@@ -42,8 +42,7 @@ class FFHood(ToonHood):
         taskMgr.remove('FF-birds')
         self.unloadQuestChanges()
         if hasattr(self, 'waterShader'):
-            if self.waterShader:
-                self.waterShader.stop()
+            self.waterShader.stop()
         if hasattr(self, 'snow'):
             self.snow.disable()
 
