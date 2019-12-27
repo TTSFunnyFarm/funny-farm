@@ -146,7 +146,9 @@ class FunnyFarmStart:
 
         if __debug__ and sys.platform == 'win32':
             Injector = importlib.import_module('toontown.misc.Injector')
-            Injector.openInjector()
+            base.injector = Injector.Injector()
+            base.injector.daemon = True
+            base.injector.start()
 
         self.notify.info('Initializing Client Repository...')
         cr = FFClientRepository()
