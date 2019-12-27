@@ -1,5 +1,4 @@
 from toontown.suit import SuitDNA
-import types
 from toontown.toonbase import TTLocalizer
 from direct.showbase import PythonUtil
 from otp.otpbase import OTPGlobals

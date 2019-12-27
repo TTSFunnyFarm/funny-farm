@@ -6,7 +6,7 @@ from toontown.toonbase.ToontownBattleGlobals import *
 from toontown.battle import SuitBattleGlobals
 from toontown.toon import NPCToons
 from toontown.hood import ZoneUtil
-import copy, types, random
+import copy, random
 
 ItemDict = TTLocalizer.QuestsItemDict
 CompleteString = TTLocalizer.QuestsCompleteString
