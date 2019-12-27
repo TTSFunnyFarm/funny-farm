@@ -1,4 +1,5 @@
 from panda3d.core import *
+from direct.showbase import DConfig
 import string
 import types
 
@@ -7,8 +8,8 @@ try:
     checkLanguage = config.GetBool('check-language', 0)
 except NameError:
     # __builtin__.config not defined yet.
-    language = getConfigExpress().GetString('language', 'english')
-    checkLanguage = getConfigExpress().GetBool('check-language', 0)
+    language = DConfig.GetString('language', 'english')
+    checkLanguage = DConfig.GetBool('check-language', 0)
 
 def getLanguage():
     return language

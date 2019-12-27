@@ -1,22 +1,39 @@
 from panda3d.core import *
 
-if __debug__:
-    loadPrcFile('config/general.prc')
-else:
-    loadPrcFile('config/release.prc')
+import os, glob
 
-import os, sys
+# Mount our resources through the VirtualFileSystem:
+vfs = VirtualFileSystem.getGlobalPtr()
+mounts = ConfigVariableList('vfs-mount')
+for mount in mounts:
+    mountfile, mountpoint = (mount.split(' ', 2) + [None, None, None])[:2]
+    vfs.mount(Filename(mountfile), Filename(mountpoint), 0)
+
+if not __debug__:
+    # Mount any custom resources through the VirtualFileSystem that may exist:
+    for file in glob.glob('resources/custom/*.mf'):
+        mf = Multifile()
+        mf.openReadWrite(Filename(file))
+        names = mf.getSubfileNames()
+        for name in names:
+            ext = os.path.splitext(name)[1]
+            if ext not in ['.jpg', '.jpeg', '.png', '.ogg', '.rgb']:
+                mf.removeSubfile(name)
+
+        vfs.mount(mf, Filename('resources'), 0)
+
+import sys, builtins, importlib
 from otp.settings.Settings import Settings
 from toontown.toonbase.FunnyFarmLogger import FunnyFarmLogger
 
-__builtins__.logger = FunnyFarmLogger()
+builtins.logger = FunnyFarmLogger()
 
 preferencesFilename = ConfigVariableString('preferences-filename', 'preferences.json').getValue()
 dir = os.path.dirname(os.getcwd() + '/' + preferencesFilename)
 if not os.path.exists(dir):
     os.makedirs(dir)
 print('Reading %s...' % preferencesFilename)
-__builtins__.settings = Settings(preferencesFilename)
+builtins.settings = Settings(preferencesFilename)
 # These have to be set before ToonBase loads
 if 'res' not in settings:
     settings['res'] = [1280, 720]
@@ -36,7 +53,7 @@ class game:
     name = 'toontown'
     process = 'client'
 
-__builtins__.game = game()
+builtins.game = game()
 
 from direct.gui import DirectGuiGlobals
 from direct.interval.IntervalGlobal import *
@@ -50,7 +67,6 @@ from toontown.login.DataManager import DataManager
 from toontown.login.TitleScreen import TitleScreen
 from toontown.ai.FFAIRepository import FFAIRepository
 from toontown.distributed.FFClientRepository import FFClientRepository
-from toontown.misc import Injector
 from toontown.misc import PythonUtil
 
 class FunnyFarmStart:
@@ -124,11 +140,12 @@ class FunnyFarmStart:
         base.air.createManagers()
         loader.loadingScreen.load()
 
-        __builtins__.musicMgr = MusicManager()
-        __builtins__.screenshotMgr = ScreenshotManager()
-        __builtins__.dataMgr = DataManager()
+        builtins.musicMgr = MusicManager()
+        builtins.screenshotMgr = ScreenshotManager()
+        builtins.dataMgr = DataManager()
 
         if __debug__ and sys.platform == 'win32':
+            Injector = importlib.import_module('toontown.misc.Injector')
             Injector.openInjector()
 
         self.notify.info('Initializing Client Repository...')
@@ -146,6 +163,6 @@ class FunnyFarmStart:
         base.air.preloadAvatars()
         base.air.createSafeZones()
 
-__builtins__.start = FunnyFarmStart()
+builtins.start = FunnyFarmStart()
 
 base.run()

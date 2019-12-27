@@ -102,7 +102,10 @@ class ToonData:
         jsonData = self.__dict__.copy()
         for key, value in jsonData.items():
             if type(value) == bytes:
-                jsonData[key] = value.decode()
+                try:
+                    jsonData[key] = value.decode()
+                except:
+                    jsonData[key] = value.decode('unicode_escape')
 
         return jsonData
 

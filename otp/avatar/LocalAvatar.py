@@ -109,7 +109,8 @@ class LocalAvatar(DirectObject):
         self.stopUpdateSmartCamera()
         self.shutdownSmartCamera()
         self.deleteCollisions()
-        self.controlManager.delete()
+        # Leaving this out until Panda fixes their code
+        # self.controlManager.delete()
         self.physControls = None
         del self.controlManager
         taskMgr.remove(self.uniqueName('walkReturnTask'))

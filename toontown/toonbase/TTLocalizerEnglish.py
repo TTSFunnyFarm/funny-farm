@@ -544,7 +544,7 @@ QuestDialogDict = {
         QUEST: 'You found the last piece of the memo!\x07Toontastic! Let\'s see what it says...\x07"Soon the power of the Toons will lie in the hands of the corporation..."\x07"All ground forces are to maintain their current position until further notice."\x07"Signed, Mover & Shaker, Manager."\x07Manager? Hmm.\x07If we can find the manager, we can shut down this operation once and for all!\x07Go speak to Mr. Wurst.\x07He is the president of the Rickety Road Association.\x07Let him know what\'s going on, so he can help us begin a full-fledged search._where_'},
  1019: {GREETING: '',
         LEAVING: '',
-        QUEST: 'Hello. What can I help you with?\x07You recovered a letter from the Cogs? Let me read that...\x07Hmm...\x07Ah, OK, and Flippy sent you here so that I could inform all of Rickety Road to search for this "manager".\x07Done. I\'ll get right on that.\x07In the meantime, could you help me out?\x07I sent my assistant to retrieve some parts for one of our appliances, but he hasn\'t returned in a while.\x07Will you go out and look for him?\x07Just help him get back here safely.',
+        QUEST: 'Hello. What can I help you with?\x07You recovered a letter from the Cogs? Let me read that...\x07Hmm...\x07Ah, OK, and Flippy sent you here so that I could inform all of Rickety Road to search for this "manager".\x07Done. I\'ll get right on that.\x07In the meantime, could you help me out?\x07I sent my assistant, Scar D. Mouse, to retrieve some parts for one of our appliances, but he hasn\'t returned in a while.\x07Will you go out and look for him?\x07Just help him get back here safely.',
         COMPLETE: 'Oh, jeez, you scared me.'},
  1020: {GREETING: '',
         LEAVING: '',
@@ -3574,9 +3574,9 @@ OptionsPageLODOnLabel = 'LOD nodes are on.'
 OptionsPageLODOffLabel = 'LOD nodes are off.'
 OptionsPageRequiresRestart = '\n(Requires game restart)'
 OptionsPageVsyncHeading = 'V-sync'
-OptionsPageVsyncHelp = 'Vertical synchronization caps the game\'s frame rate at your monitor\'s refresh rate for more stability.\n\nV-sync is disabled by default. You can enable it to give your graphics card a lighter load, but you will have a lower frame rate overall.'
+OptionsPageVsyncHelp = 'Vertical synchronization caps the game\'s frame rate at your monitor\'s refresh rate for more stability.\n\nV-sync is disabled by default. You can enable it to give your graphics card a lighter load, but you may have a lower frame rate overall.'
 OptionsPageAntialiasingHeading = 'Anti-aliasing'
-OptionsPageAntialiasingHelp = 'Anti-aliasing makes objects in the game look better by smoothing out jagged edges on models.\n\nAnti-aliasing is enabled by default, but you can disable it to improve performance.'
+OptionsPageAntialiasingHelp = 'Anti-aliasing makes objects in the game look better by smoothing out jagged edges on models.\n\nAnti-aliasing is disabled by default, and enabling it may slightly reduce performance.'
 OptionsPageFpsHeading = 'FPS Meter'
 OptionsPageFpsHelp = 'If you want to monitor your game\'s performance, you can turn on the FPS meter to see how many frames per second the game renders.'
 OptionsPageLODHeading = 'LOD Nodes'
@@ -3647,7 +3647,7 @@ TrackPageTitle = 'Gag Track Training'
 TrackPageShortTitle = 'Gag Training'
 TrackPageSubtitle = 'Complete ToonTasks to learn how to use new gags!'
 TrackPageTraining = 'You are training to use\n%s gags.\nWhen you complete all\n15 strips you\nwill be able to use them\nin battle.'
-TrackPageClear = 'You are not training any Gag Tracks now.'
+TrackPageClear = 'You are not training\nany Gag Tracks now.'
 TrackPageFilmTitle = '%s\nTraining\nFilm'
 TrackPageDone = 'FIN'
 QuestPageToonTasks = 'ToonTasks'
@@ -4146,7 +4146,7 @@ TutorialFriendsPanelYes = '%s said yes!' % Flippy
 TutorialFriendsPanelNo = "That's not very friendly!"
 TutorialFriendsPanelCongrats = 'Congratulations! You made your first friend.'
 TutorialFlippyChat1 = 'Come see me when you are ready for your first ToonTask!'
-TutorialFlippyChat2 = "I'll be in ToonHall!"
+TutorialFlippyChat2 = "I'll be in Toon Hall!"
 TutorialAllFriendsButton = 'You can view all your friends by clicking the friends button. Try it out...'
 TutorialEmptyFriendsList = "Right now your list is empty because %s isn't a real player." % Flippy
 TutorialCloseFriendsList = "Click the 'Close'\nbutton to make the\nlist go away"
@@ -4317,7 +4317,7 @@ PhotoGameTitle = 'Photo Fun'
 PhotoGameFilm = 'FILM'
 PhotoGameScore = 'Team Score: %s\n\nBest Photos: %s\n\nTotal Score: %s'
 CogThiefGameTitle = 'Cog Thief'
-CogThiefGameInstructions = 'Stop the Cogs from stealing our gags! Press the Alt or Delete key to throw pies. Be careful - they have a tendancy to explode.'
+CogThiefGameInstructions = 'Stop the Cogs from stealing our gags! Press the CTRL key to throw pies. Be careful - they have a tendancy to explode!'
 CogThiefBarrelsSaved = '%(num)d Barrels\nSaved!'
 CogThiefBarrelSaved = '%(num)d Barrel\nSaved!'
 CogThiefNoBarrelsSaved = 'No Barrels\nSaved'
@@ -5950,6 +5950,7 @@ NPCToonNames = {20000: 'Tutorial Tom',
  1111: 'Brad Wurst',
  1112: 'Joe',
  1113: 'Loony Louis',
+ 1114: 'Scar D. Mouse',
  1201: lHQOfficerM,
  1202: lHQOfficerM,
  1203: lHQOfficerF,

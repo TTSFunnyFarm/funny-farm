@@ -11,7 +11,6 @@ from toontown.toon.ToonData import ToonData
 from toontown.toonbase import FunnyFarmGlobals
 
 BASE_DB_ID = 1000001
-KEY = b'PU05SWFTMmRGbWRFdW5VQW85ZFNWSkNKakFMYTNwQXpSM1VFSGFyRHpYRGY='
 
 
 class DataManager:
@@ -21,6 +20,7 @@ class DataManager:
     def __init__(self):
         self.fileExt = '.dat'
         self.fileDir = os.getcwd() + '/database/'
+        self.__index2key = {}
         self.corrupted = 0
         self.toons = []
         for toonNum in range(FunnyFarmGlobals.MaxAvatars):
@@ -43,6 +43,9 @@ class DataManager:
     def createToonData(self, index, dna, name):
         return ToonData.getDefaultToonData(index, dna, name)
 
+    def generateKey(self, size=256):
+        return os.urandom(size)
+
     def saveToonData(self, data):
         if self.corrupted:
             return None
@@ -52,36 +55,42 @@ class DataManager:
         if not os.path.exists(filename.toOsSpecific()):
             filename.makeDir()
 
-        with open(filename.toOsSpecific(), 'w') as toonData:
-            valid, _, toonDataObj = ToonData.verifyToonData(data, saveToonData=False)
-            if not valid:
-                toonData.close()
-                self.handleDataError()
-                return
+        toonDataToWrite = None
+        valid, reason, toonDataObj = ToonData.verifyToonData(data, saveToonData=False)
+        if not valid:
+            self.handleDataError(reason)
+            return
 
-            try:
-                jsonData = toonDataObj.makeJsonData()
-            except:
-                toonData.close()
-                self.handleDataError()
-                return
+        try:
+            jsonData = toonDataObj.makeJsonData()
+        except Exception as e:
+            self.handleDataError(e)
+            return
 
-            try:
-                fileData = json.dumps(jsonData, indent=4).encode()
-            except:
-                toonData.close()
-                self.handleDataError()
-                return
+        try:
+            fileData = json.dumps(jsonData, indent=4).encode()
+        except Exception as e:
+            self.handleDataError(e)
+            return
 
-            try:
-                fernet = Fernet(codecs.decode(KEY, 'base64')[::-1])
-                encryptedData = fernet.encrypt(fileData)
-                toonData.write(encryptedData.decode())
-                toonData.close()
-            except:
-                toonData.close()
-                self.handleDataError()
-                return
+        try:
+            key = self.__index2key.get(index)
+            if not key:
+                key = self.generateKey(32)
+                key = codecs.encode(key, 'base64')
+                self.__index2key[index] = key
+
+            fernet = Fernet(key)
+            encryptedData = fernet.encrypt(fileData)
+            toonDataToWrite = key.decode() + encryptedData.decode()
+        except Exception as e:
+            self.handleDataError(e)
+            return
+
+        if toonDataToWrite:
+            with open(filename.toOsSpecific(), 'w') as f:
+                f.write(toonDataToWrite)
+                f.close()
 
         return
 
@@ -90,26 +99,34 @@ class DataManager:
             return None
 
         filename = Filename(self.fileDir + self.toons[index - 1] + self.fileExt)
+        toonData = None
         if os.path.exists(filename.toOsSpecific()):
-            with open(filename.toOsSpecific(), 'r') as toonData:
-                try:
-                    fileData = toonData.read().encode()
-                    fernet = Fernet(codecs.decode(KEY, 'base64')[::-1])
-                    decryptedData = fernet.decrypt(fileData)
-                    jsonData = json.loads(decryptedData)
-                    toonData.close()
-                except:
-                    toonData.close()
-                    self.handleDataError()
-                    return None
+            with open(filename.toOsSpecific(), 'r') as f:
+                toonData = f.read()
+                f.close()
 
-                try:
-                    toonDataObj = ToonData.makeFromJsonData(jsonData)
-                except:
-                    self.handleDataError()
-                    return None
+        if toonData:
+            try:
+                fileData = toonData.encode()
+                key, db = fileData[0:45], fileData[45:]
+                localKey = self.__index2key.get(index)
+                if localKey != key:
+                    self.__index2key[index] = key
 
-                return toonDataObj
+                fernet = Fernet(key)
+                decryptedData = fernet.decrypt(db)
+                jsonData = json.loads(decryptedData)
+            except Exception as e:
+                self.handleDataError(e)
+                return None
+
+            try:
+                toonDataObj = ToonData.makeFromJsonData(jsonData)
+            except Exception as e:
+                self.handleDataError(e)
+                return None
+
+            return toonDataObj
 
         return None
 
@@ -120,10 +137,17 @@ class DataManager:
         else:
             self.notify.warning('Tried to delete nonexistent toon data!')
 
-    def handleDataError(self):
-        self.notify.warning('The database has been corrupted. Notifying user.')
-        base.handleGameError(
-            'Your database has been corrupted. Please contact The Toontown\'s Funny Farm Team for assistance.')
+    def handleDataError(self, err=None):
+        self.notify.warning('The database has possibly been corrupted due to an error. Notifying user, error below.')
+        if err:
+            self.notify.warning(err)
+        exception = isinstance(err, Exception)
+        if exception:
+            base.handleGameError(
+                'Your database has possibly been corrupted. Please contact The Toontown\'s Funny Farm Team for assistance.\nError: %s' % err.__class__.__name__)
+        else:
+            base.handleGameError(
+                'Your database has failed verification and possibly been corrupted. Please contact The Toontown\'s Funny Farm Team for assistance.')
         self.corrupted = 1
 
     def createLocalAvatar(self, data):

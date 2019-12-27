@@ -1,4 +1,9 @@
 from direct.showbase.ShowBase import ShowBase
+if not __debug__:
+    from direct.showbase import PhysicsManagerGlobal
+    from direct.particles import ParticleManagerGlobal
+    from panda3d.physics import *
+
 from panda3d.core import Camera, TPLow, VBase4, ColorWriteAttrib, Filename, getModelPath, NodePath, TexturePool, Multifile
 from otp.otpbase import OTPRender
 import time
@@ -246,6 +251,23 @@ class OTPBase(ShowBase):
             self.destroy()
             import traceback
             traceback.print_exc()
+
+    if not __debug__:
+        def enableParticles(self):
+            if not self.particleMgrEnabled:
+                if not self.particleMgr:
+                    self.particleMgr = ParticleManagerGlobal.particleMgr
+                    self.particleMgr.setFrameStepping(1)
+
+                if not self.physicsMgr:
+                    self.physicsMgr = PhysicsManagerGlobal.physicsMgr
+                    integrator = LinearEulerIntegrator()
+                    self.physicsMgr.attachLinearIntegrator(integrator)
+
+                self.particleMgrEnabled = 1
+                self.physicsMgrEnabled = 1
+                self.taskMgr.remove('manager-update')
+                self.taskMgr.add(self.updateManagers, 'manager-update')
 
 
 @magicWord(category=CATEGORY_GRAPHICAL)

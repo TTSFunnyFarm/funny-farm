@@ -2,7 +2,6 @@ from direct.gui.DirectGui import *
 from panda3d.core import *
 from direct.task.Task import Task
 from direct.fsm import StateData
-from direct.showbase import AppRunnerGlobal
 from direct.directnotify import DirectNotifyGlobal
 from toontown.toonbase import TTLocalizer
 from toontown.toontowngui import TTDialog

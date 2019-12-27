@@ -399,7 +399,7 @@ class OptionsTabPage(DirectFrame):
         if settings['antialiasing']:
             settings['antialiasing'] = 0
         else:
-            settings['antialiasing'] = 4
+            settings['antialiasing'] = 2
         loadPrcFileData('Settings: MSAA', 'framebuffer-multisample %s' % (settings['antialiasing'] > 0))
         loadPrcFileData('Settings: MSAA samples', 'multisamples %i' % settings['antialiasing'])
         base.needRestartAntialiasing = True
@@ -632,7 +632,7 @@ class OptionsTabPage(DirectFrame):
 
     def enterAntialiasHelp(self):
         self.help = TTDialog.TTDialog(text=TTLocalizer.OptionsPageAntialiasingHelp, text_wordwrap=14, pos=(0, 0, 0.2), style=TTDialog.Acknowledge, command=self.exitHelp)
-        self.heading = DirectLabel(parent=self.help, relief=None, text=TTLocalizer.OptionsPageAntialiasingHeading, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_scale=0.07, pos=(-0.205, 0, 0.345))
+        self.heading = DirectLabel(parent=self.help, relief=None, text=TTLocalizer.OptionsPageAntialiasingHeading, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_scale=0.07, pos=(-0.185, 0, 0.345))
         self.help.show()
 
     def enterFpsHelp(self):

@@ -2,11 +2,13 @@ from toontown.suit.BattleSuit import BattleSuit
 from toontown.suit import SuitDNA
 from toontown.building import SuitBuildingGlobals
 import random
-import types
+import functools
+
+def cmp(a, b):
+    return (a > b) - (a < b)
 
 class SuitPlannerInterior:
     notify = directNotify.newCategory('SuitPlannerInterior')
-    notify.setDebug(1)
 
     def __init__(self, numFloors, bldgLevel, bldgTrack):
         self.dbg_4SuitsPerFloor = config.GetBool('4-suits-per-floor', 0)
@@ -18,7 +20,7 @@ class SuitPlannerInterior:
             self.dbg_defaultSuitType = None
         else:
             self.dbg_defaultSuitType = SuitDNA.getSuitType(dbg_defaultSuitName)
-        if isinstance(bldgLevel, types.StringType):
+        if isinstance(bldgLevel, str):
             self.notify.warning('bldgLevel is a string!')
             bldgLevel = int(bldgLevel)
         self._genSuitInfos(numFloors, bldgLevel, bldgTrack)
@@ -29,7 +31,7 @@ class SuitPlannerInterior:
         for currChance in range(num):
             joinChances.append(random.randint(1, 100))
 
-        joinChances.sort(cmp)
+        joinChances.sort(key=functools.cmp_to_key(cmp))
         return joinChances
 
     def _genSuitInfos(self, numFloors, bldgLevel, bldgTrack):
@@ -120,7 +122,7 @@ class SuitPlannerInterior:
             bossLvlRange = bldgInfo[SuitBuildingGlobals.SUIT_BLDG_INFO_BOSS_LVLS]
             newLvl = random.randint(bossLvlRange[0], bossLvlRange[1])
             lvlList.append(newLvl)
-        lvlList.sort(cmp)
+        lvlList.sort(key=functools.cmp_to_key(cmp))
         self.notify.debug('LevelList: ' + repr(lvlList))
         return lvlList
 

@@ -1,5 +1,4 @@
 from panda3d.core import *
-from toontown.toon import Toon
 from direct.gui import DirectGuiGlobals
 from otp.margins.MarginManager import MarginManager
 from otp.nametag import NametagGlobals

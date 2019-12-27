@@ -89,12 +89,12 @@ class MusicManager(DirectObject):
             volume = 1.0
         else:
             self.notify.warning('playCurrentZoneMusic(): localAvatar is not currently in a valid zone.')
-            return None
+            return
         if zoneId in list(lookupTable.keys()):
             music = lookupTable[zoneId]
         else:
             self.notify.warning('playCurrentZoneMusic(): music for zone %s not in MusicManager.' % str(zoneId))
-            return None
+            return
         self.playMusic(music, looping=1, volume=volume)
 
     def playPickAToon(self):

@@ -702,7 +702,7 @@ NPCToonDict = {
         1,
         NPC_REGULAR),
  1114: (1110,
-        '',
+        lnames[1114],
         ('mss',
          'ms',
          's',

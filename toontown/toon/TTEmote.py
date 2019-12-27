@@ -1,4 +1,4 @@
-from toontown.toon import Toon, ToonDNA
+from toontown.toon import ToonDNA
 from direct.interval.IntervalGlobal import *
 from otp.otpbase import OTPLocalizer
 from toontown.toonbase import TTLocalizer
