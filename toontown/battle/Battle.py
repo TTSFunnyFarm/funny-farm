@@ -78,6 +78,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         self.activeToonIds = [] # for AI functions
         for toon in self.toons:
             self.activeToons.append(toon)
+            toon.setInBattle(1)
 
         for toon in self.activeToons:
             self.activeToonIds.append(toon.doId)
@@ -133,6 +134,8 @@ class Battle(DirectObject, NodePath, BattleBase):
         self.toons = []
         self.joiningToons = []
         self.pendingToons = []
+        for toon in self.activeToons:
+            self.setInBattle(0)
         self.activeToons = []
         self.runningToons = []
         self.__stopTimer()
@@ -335,7 +338,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         self.movieHasPlayed = 0
         self.rewardHasPlayed = 0
         self.movieRequested = 0
-        
+
         camera.setPosHpr(self.camPos, self.camHpr)
         base.camLens.setMinFov(self.camMenuFov/(4./3.))
         NametagGlobals.setMasterArrowsOn(0)
@@ -345,7 +348,7 @@ class Battle(DirectObject, NodePath, BattleBase):
             self.townBattle.updateLaffMeter(self.activeToons.index(toon), toon.hp)
         for i in range(len(self.activeSuits)):
             self.townBattle.cogPanels[i].setAvatar(self.activeSuits[i])
-        
+
         if not self.tutorialFlag:
             self.startTimer()
         if self.needAdjust:
@@ -844,6 +847,7 @@ class Battle(DirectObject, NodePath, BattleBase):
             else:
                 self.movie.playReward(0, base.localAvatar.getName(), self.battleDone)
             for t in self.activeToons:
+                t.setInBattle(0)
                 self.activeToons.remove(t)
         return
 

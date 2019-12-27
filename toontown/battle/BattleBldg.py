@@ -228,5 +228,6 @@ class BattleBldg(Battle):
                 self.bldgClass.helpfulToons = self.helpfulToons
                 self.enterReward()
             for t in self.activeToons:
+                t.setInBattle(0)
                 self.activeToons.remove(t)
         return

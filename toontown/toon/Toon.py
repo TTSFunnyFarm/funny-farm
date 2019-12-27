@@ -504,6 +504,7 @@ class Toon(Avatar.Avatar, ToonHead):
         self.isStunned = 0
         self.isDisguised = 0
         self.wantBattles = 1
+        self.inBattle = 0
         self.defaultColorScale = None
         self.jar = None
         self.setTag('pieCode', str(ToontownGlobals.PieCodeToon))
@@ -3170,3 +3171,9 @@ class Toon(Avatar.Avatar, ToonHead):
 
     def setWantBattles(self, want):
         self.wantBattles = want
+
+    def getInBattle(self):
+        return self.inBattle
+
+    def setInBattle(self, inBattle):
+        self.inBattle = inBattle
