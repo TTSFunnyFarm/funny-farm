@@ -45,7 +45,7 @@ class Experience:
         return dataList
 
     def saveExp(self):
-        base.avatarData.setExperience = self.makeNetString().decode()
+        base.avatarData.setExperience = self.makeNetString()
         dataMgr.saveToonData(base.avatarData)
 
     def addExp(self, track, amount = 1):
