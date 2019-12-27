@@ -29,6 +29,7 @@ class Hood(DirectObject):
         self.place = None
         self.battle = None
         self.battleCell = None
+        self.unloaded = False
 
     def enter(self, shop=None, tunnel=None, init=0):
         if tunnel:
@@ -90,6 +91,8 @@ class Hood(DirectObject):
         if gsg:
             self.geom.prepareScene(gsg)
 
+        self.unloaded = False
+
     def unload(self):
         self.stopSky()
         if hasattr(self, 'npcs'):
@@ -101,6 +104,7 @@ class Hood(DirectObject):
         self.sky.removeNode()
         del self.geom
         del self.sky
+        self.unloaded = True
 
     def getHoodText(self):
         hoodId = FunnyFarmGlobals.getHoodId(self.zoneId)

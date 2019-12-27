@@ -55,12 +55,13 @@ class PlayGame(DirectObject):
         loader.endBulkLoad('hood')
         self.hood.enter(tunnel=tunnel, init=init)
 
-    def exitHood(self):
+    def exitHood(self, delete=True):
         if self.hood.place:
             self.hood.exitPlace()
         self.hood.exit()
         self.hood.unload()
-        self.hood = None
+        if delete:
+            self.hood = None
         ModelPool.garbageCollect()
         TexturePool.garbageCollect()
 
@@ -117,10 +118,7 @@ class PlayGame(DirectObject):
 
     def enterRandomMinigame(self):
         if hasattr(self.hood, 'geom'):
-            self.hood.exit()
-            self.hood.unload()
-            ModelPool.garbageCollect()
-            TexturePool.garbageCollect()
+            self.exitHood(False)
         game = random.choice(self.MINIGAMES)()
         if self.lastGame:
             if game.getTitle() == self.lastGame:
