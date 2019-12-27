@@ -52,6 +52,7 @@ class SuitPlanner(DirectObject):
 
     def deleteSuit(self, suit):
         # Instantly removes the suit from the scene graph
+        suit.removeActive()
         suit.disable()
         suit.delete()
         self.removeActiveSuit(suit.doId)

@@ -856,6 +856,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         if self.activeSuits.count(suit) != 0:
             self.activeSuits.remove(suit)
         self.suitGone = 1
+        suit.removeActive()
         suit.disable()
         suit.delete()
         messenger.send('removeActiveSuit', [suit.doId])
