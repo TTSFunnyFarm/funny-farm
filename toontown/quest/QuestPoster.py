@@ -12,7 +12,7 @@ from toontown.suit import Suit
 from toontown.hood import ZoneUtil
 from toontown.toonbase.ToontownBattleGlobals import AvPropsNew
 from toontown.toontowngui import TTDialog
-import Quests
+from toontown.quest import Quests
 import string
 
 IMAGE_SCALE_LARGE = 0.2
@@ -85,6 +85,7 @@ class QuestPoster(DirectFrame):
         self.trackIcon = None
         self.taskIcon = None
         self.teleportIcon = None
+        self.carryGagsIcon = None
         self.rewardText = DirectLabel(parent=self.questFrame, relief=None, text='', text_fg=self.colors['rewardRed'], text_scale=0.0425, text_align=TextNode.ALeft, text_wordwrap=17.0, textMayChange=1, pos=(-0.35, 0, -0.26))
         self.rewardText.hide()
         self.lPictureFrame = DirectFrame(parent=self.questFrame, relief=None, image=bookModel.find('**/questPictureFrame'), image_scale=IMAGE_SCALE_SMALL, text='', text_pos=(0, -0.11), text_fg=self.normalTextColor, text_scale=TEXT_SCALE, text_align=TextNode.ACenter, text_wordwrap=11.0, textMayChange=1, pos=(0, 0, 0.13))
@@ -209,6 +210,9 @@ class QuestPoster(DirectFrame):
         if self.teleportIcon:
             self.teleportIcon.removeNode()
             self.teleportIcon = None
+        if self.carryGagsIcon:
+            self.carryGagsIcon.removeNode()
+            self.carryGagsIcon = None
         self.rewardText['text'] = ''
         self.auxText['text'] = ''
         self.auxText['text_fg'] = self.normalTextColor
@@ -284,6 +288,15 @@ class QuestPoster(DirectFrame):
         self.teleportIcon.setScale(0.08)
         gui.removeNode()
 
+    def createCarryGagsRewardIcon(self, numGags):
+        gui = loader.loadModel('phase_3.5/models/gui/inventory_gui')
+        self.carryGagsIcon = gui.find('**/InventoryButtonUp')
+        self.carryGagsIcon.reparentTo(self.rewardFrame)
+        self.carryGagsIcon.setScale(0.5)
+        self.carryGagsIcon.setColor(Vec4(0, 0.6, 1, 1))
+        gagText = DirectLabel(parent=self.carryGagsIcon, relief=None, text=str(numGags), pos=(0, 0, -0.023), scale=0.09)
+        gui.removeNode()
+
     def update(self, questDesc):
         self.clear()
         questId, progress = questDesc
@@ -315,7 +328,8 @@ class QuestPoster(DirectFrame):
                 self.createTaskRewardIcon(reward[3])
                 self.taskIcon.setPos(0.09, 0, -0.01)
             elif reward[2] == Quests.QuestRewardCarryGags:
-                pass # todo
+                self.createCarryGagsRewardIcon(reward[3])
+                self.carryGagsIcon.setPos(0.09, 0, -0.01)
             elif reward[2] == Quests.QuestRewardCarryJellybeans:
                 pass # todo
         else:
@@ -367,7 +381,7 @@ class QuestPoster(DirectFrame):
         auxTextPos = Vec3(0, 0, 0.12)
         headlineString = quest.getHeadlineString()
         objectiveStrings = quest.getObjectiveStrings()
-        captions = map(string.capwords, quest.getObjectiveStrings())
+        captions = list(map(string.capwords, quest.getObjectiveStrings()))
         imageColor = Vec4(*self.colors['white'])
         if quest.getType() == Quests.QuestTypeDeliverGag or quest.getType() == Quests.QuestTypeDeliver:
             frameBgColor = 'red'
@@ -460,6 +474,33 @@ class QuestPoster(DirectFrame):
                  toNpcLocationName)
                 infoZ = -0.02
             invModel.removeNode()
+        elif quest.getType() == Quests.QuestTypeDefeatBuilding:
+            frameBgColor = 'blue'
+            track = quest.getBuildingTrack()
+            numFloors = quest.getNumFloors()
+            if track == 'c':
+                lIconGeom = loader.loadModel('phase_4/models/modules/suit_landmark_corp')
+            elif track == 'l':
+                lIconGeom = loader.loadModel('phase_4/models/modules/suit_landmark_legal')
+            elif track == 'm':
+                lIconGeom = loader.loadModel('phase_4/models/modules/suit_landmark_money')
+            elif track == 's':
+                lIconGeom = loader.loadModel('phase_4/models/modules/suit_landmark_sales')
+            else:
+                bookModel = loader.loadModel('phase_3.5/models/gui/stickerbook_gui')
+                lIconGeom = bookModel.find('**/COG_building')
+                bookModel.removeNode()
+            if lIconGeom and track != Quests.Any:
+                self.loadElevator(lIconGeom, numFloors)
+                lIconGeom.setH(180)
+                self.fitGeometry(lIconGeom, fFlip=0)
+                lIconGeomScale = IMAGE_SCALE_SMALL
+            else:
+                lIconGeomScale = 0.13
+            if not fComplete:
+                infoText = quest.getLocationName()
+                if infoText == '':
+                    infoText = TTLocalizer.QuestPosterAnywhere
         else:
             frameBgColor = 'blue'
             if quest.getType() == Quests.QuestTypeDefeatCog:

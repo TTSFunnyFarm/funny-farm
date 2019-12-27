@@ -1,9 +1,9 @@
 from otp.otpbase import OTPBase
 from otp.otpbase import OTPGlobals
 from direct.showbase.PythonUtil import *
-import ToontownGlobals
+from toontown.toonbase import ToontownGlobals
 from direct.directnotify import DirectNotifyGlobal
-import FunnyFarmLoader
+from toontown.toonbase import FunnyFarmLoader
 from direct.gui import DirectGuiGlobals
 from direct.gui.DirectGui import *
 from direct.showbase.Transitions import Transitions
@@ -32,7 +32,6 @@ class ToonBase(OTPBase.OTPBase):
     def __init__(self):
         OTPBase.OTPBase.__init__(self)
         self.disableShowbaseMouse()
-        self.addCullBins()
         base.debugRunningMultiplier /= OTPGlobals.ToonSpeedFactor
         self.toonChatSounds = self.config.GetBool('toon-chat-sounds', 1)
         self.placeBeforeObjects = config.GetBool('place-before-objects', 1)
@@ -137,6 +136,10 @@ class ToonBase(OTPBase.OTPBase):
         tpMgr.setProperties('WLDisplay', WLDisplay)
         tpMgr.setProperties('WLEnter', WLEnter)
         del tpMgr
+        if not __debug__:
+            CullBinManager.getGlobalPtr().addBin('gui-popup', CullBinManager.BTUnsorted, 60)
+        CullBinManager.getGlobalPtr().addBin('shadow', CullBinManager.BTFixed, 15)
+        CullBinManager.getGlobalPtr().addBin('ground', CullBinManager.BTFixed, 14)
         self.lastScreenShotTime = globalClock.getRealTime()
         self.accept('InputState-forward', self.__walking)
         self.canScreenShot = 1
@@ -148,14 +151,21 @@ class ToonBase(OTPBase.OTPBase):
         self.localAvatarStyle = None
         self.drawFps = 0
         self.secretAreaFlag = 1
-        base.needRestartAntialiasing = False
-        base.needRestartLOD = False
+        self.needRestartVsync = False
+        self.needRestartAntialiasing = False
+        self.needRestartSmoothing = False
+        self.needRestartLOD = False
         return
 
     def openMainWindow(self, *args, **kw):
         result = OTPBase.OTPBase.openMainWindow(self, *args, **kw)
-        #self.setCursorAndIcon()
+        self.setCursorAndIcon()
         return result
+
+    def setFrameRateMeter(self, flag):
+        OTPBase.OTPBase.setFrameRateMeter(self, flag)
+        if self.frameRateMeter:
+            self.frameRateMeter.setFont(ToontownGlobals.getSignFont())
 
     def windowEvent(self, win):
         OTPBase.OTPBase.windowEvent(self, win)
@@ -202,41 +212,41 @@ class ToonBase(OTPBase.OTPBase):
         vfs = VirtualFileSystem.getGlobalPtr()
 
         searchPath = DSearchPath()
-        searchPath.appendDirectory(Filename('/phase_3/etc'))
+        searchPath.appendDirectory(Filename('resources/phase_3/etc'))
 
-        for filename in ['toonmono.cur', 'icon.ico']:
+        for filename in ['toonmono.cur', 'funnyfarm.ico']:
             p3filename = Filename(filename)
             found = vfs.resolveFilename(p3filename, searchPath)
             if not found:
-                return # Can't do anything past this point.
+                return  # Can't do anything past this point.
 
             with open(os.path.join(tempdir, filename), 'wb') as f:
                 f.write(vfs.readFile(p3filename, False))
 
         wp = WindowProperties()
         wp.setCursorFilename(Filename.fromOsSpecific(os.path.join(tempdir, 'toonmono.cur')))
-        wp.setIconFilename(Filename.fromOsSpecific(os.path.join(tempdir, 'icon.ico')))
+        wp.setIconFilename(Filename.fromOsSpecific(os.path.join(tempdir, 'funnyfarm.ico')))
         self.win.requestProperties(wp)
-
-    def addCullBins(self):
-        cbm = CullBinManager.getGlobalPtr()
-        cbm.addBin('ground', CullBinManager.BTUnsorted, 18)
-        cbm.addBin('shadow', CullBinManager.BTBackToFront, 19)
-        cbm.addBin('gui-popup', CullBinManager.BTFixed, 60)
 
     def disableShowbaseMouse(self):
         self.useDrive()
         self.disableMouse()
-        if self.mouseInterface: self.mouseInterface.detachNode()
-        if self.mouse2cam: self.mouse2cam.detachNode()
+        if self.mouseInterface:
+            self.mouseInterface.detachNode()
+        if base.mouse2cam:
+            self.mouse2cam.detachNode()
 
     def __walking(self, pressed):
         self.walking = pressed
 
     def toggleGui(self):
         if aspect2d.isHidden():
+            if settings['drawFps']:
+                base.setFrameRateMeter(True)
             aspect2d.show()
         else:
+            if settings['drawFps']:
+                base.setFrameRateMeter(False)
             aspect2d.hide()
 
     def initNametagGlobals(self):
@@ -331,7 +341,7 @@ class ToonBase(OTPBase.OTPBase):
 
     def removeGlitchMessage(self):
         self.ignore('InputState-forward')
-        print 'ignoring InputState-forward'
+        print('ignoring InputState-forward')
 
     def exitShow(self, errorCode = None):
         self.notify.setInfo(1)

@@ -8,12 +8,12 @@ from direct.interval.IntervalGlobal import *
 from direct.task import Task
 from panda3d.core import *
 import random
-import BodyShop
-import ColorShop
-import GenderShop
-from MakeAToonGlobals import *
-import MakeClothesGUI
-import NameShop
+from toontown.makeatoon import BodyShop
+from toontown.makeatoon import ColorShop
+from toontown.makeatoon import GenderShop
+from toontown.makeatoon.MakeAToonGlobals import *
+from toontown.makeatoon import MakeClothesGUI
+from toontown.makeatoon import NameShop
 from otp.avatar import Avatar
 from toontown.distributed.ToontownMsgTypes import *
 from toontown.toon import LocalToon
@@ -199,13 +199,15 @@ class MakeAToon(StateData.StateData):
         self.roomDropActor.loadModel('phase_3/models/makeatoon/roomAnim_model')
         self.roomDropActor.loadAnims({'drop': 'phase_3/models/makeatoon/roomAnim_roomDrop'})
         self.roomDropActor.reparentTo(render)
-        self.roomDropActor.setBlend(frameBlend = True)
+        if config.GetBool('smooth-animations', True):
+            self.roomDropActor.setBlend(frameBlend = True)
         self.dropJoint = self.roomDropActor.find('**/droppingJoint')
         self.roomSquishActor = Actor()
         self.roomSquishActor.loadModel('phase_3/models/makeatoon/roomAnim_model')
         self.roomSquishActor.loadAnims({'squish': 'phase_3/models/makeatoon/roomAnim_roomSquish'})
         self.roomSquishActor.reparentTo(render)
-        self.roomSquishActor.setBlend(frameBlend = True)
+        if config.GetBool('smooth-animations', True):
+            self.roomSquishActor.setBlend(frameBlend = True)
         self.squishJoint = self.roomSquishActor.find('**/scalingJoint')
         self.propSquishActor = Actor()
         self.propSquishActor.loadModel('phase_3/models/makeatoon/roomAnim_model')
@@ -217,7 +219,8 @@ class MakeAToon(StateData.StateData):
         self.spotlightActor.loadModel('phase_3/models/makeatoon/roomAnim_model')
         self.spotlightActor.loadAnims({'spotlightShake': 'phase_3/models/makeatoon/roomAnim_spotlightShake'})
         self.spotlightActor.reparentTo(render)
-        self.spotlightActor.setBlend(frameBlend = True)
+        if config.GetBool('smooth-animations', True):
+            self.spotlightActor.setBlend(frameBlend = True)
         self.spotlightJoint = self.spotlightActor.find('**/spotlightJoint')
         ee = DirectFrame(pos=(-1, 1, 1), frameSize=(-.01, 0.01, -.01, 0.01), frameColor=(0, 0, 0, 0.05), state='normal')
         ee.bind(DGG.B1PRESS, lambda x, ee = ee: self.toggleSlide())
@@ -285,11 +288,11 @@ class MakeAToon(StateData.StateData):
         self.musicVolume = base.config.GetFloat('makeatoon-music-volume', 1)
         self.sfxVolume = base.config.GetFloat('makeatoon-sfx-volume', 1)
         self.soundBack = base.loader.loadSfx('phase_3/audio/sfx/GUI_create_toon_back.ogg')
-        self.crashSounds = map(base.loader.loadSfx, ['phase_3/audio/sfx/tt_s_ara_mat_crash_boing.ogg',
+        self.crashSounds = list(map(base.loader.loadSfx, ['phase_3/audio/sfx/tt_s_ara_mat_crash_boing.ogg',
                                               'phase_3/audio/sfx/tt_s_ara_mat_crash_glassBoing.ogg',
                                               'phase_3/audio/sfx/tt_s_ara_mat_crash_wood.ogg',
                                               'phase_3/audio/sfx/tt_s_ara_mat_crash_woodBoing.ogg',
-                                              'phase_3/audio/sfx/tt_s_ara_mat_crash_woodGlass.ogg'])
+                                              'phase_3/audio/sfx/tt_s_ara_mat_crash_woodGlass.ogg']))
 
     def unload(self):
         self.exit()

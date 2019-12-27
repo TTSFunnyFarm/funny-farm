@@ -1,7 +1,7 @@
 from panda3d.core import *
 from direct.interval.IntervalGlobal import *
-from EffectController import EffectController
-from PooledEffect import PooledEffect
+from toontown.effects.EffectController import EffectController
+from toontown.effects.PooledEffect import PooledEffect
 
 class Glow(PooledEffect, EffectController):
 

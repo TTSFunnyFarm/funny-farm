@@ -11,14 +11,14 @@ from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.suit import Suit
-from BattleCalculator import BattleCalculator
-from BattleBase import *
-from SuitBattleGlobals import *
-import BattleExperienceAI
-import BattleProps
-import BattleParticles
-import Movie
-import MovieUtil
+from toontown.battle.BattleCalculator import BattleCalculator
+from toontown.battle.BattleBase import *
+from toontown.battle.SuitBattleGlobals import *
+from toontown.battle import BattleExperienceAI
+from toontown.battle import BattleProps
+from toontown.battle import BattleParticles
+from toontown.battle import Movie
+from toontown.battle import MovieUtil
 import random
 
 class Battle(DirectObject, NodePath, BattleBase):
@@ -67,15 +67,18 @@ class Battle(DirectObject, NodePath, BattleBase):
         self.toonParts = {}
         self.suitsKilled = []
         self.joinable = 1
+        self.joinTrack = None
 
-    def enter(self):
+    def enter(self, creditMultiplier = 1):
         self.enterFaceOff()
-        self.townBattle.enter(self.localToonBattleEvent, bldg=self.bldg, tutorialFlag=self.tutorialFlag)
+        self.townBattle.enter(self.localToonBattleEvent, bldg=self.bldg, creditMultiplier=creditMultiplier, tutorialFlag=self.tutorialFlag)
+        self.battleCalc.setSkillCreditMultiplier(creditMultiplier)
         self.activeToons = []
         self.activeSuits = []
         self.activeToonIds = [] # for AI functions
         for toon in self.toons:
             self.activeToons.append(toon)
+            toon.setInBattle(1)
 
         for toon in self.activeToons:
             self.activeToonIds.append(toon.doId)
@@ -131,6 +134,8 @@ class Battle(DirectObject, NodePath, BattleBase):
         self.toons = []
         self.joiningToons = []
         self.pendingToons = []
+        for toon in self.activeToons:
+            self.setInBattle(0)
         self.activeToons = []
         self.runningToons = []
         self.__stopTimer()
@@ -172,16 +177,16 @@ class Battle(DirectObject, NodePath, BattleBase):
             self.notify.debug('interval: %s already cleared' % name)
 
     def finishInterval(self, name):
-        if self.activeIntervals.has_key(name):
+        if name in self.activeIntervals:
             interval = self.activeIntervals[name]
             interval.finish()
 
-    def __faceOff(self, name, callback):
+    def faceOff(self, name, callback):
         if len(self.suits) == 0:
-            self.notify.warning('__faceOff(): no suits.')
+            self.notify.warning('faceOff(): no suits.')
             return
         if len(self.toons) == 0:
-            self.notify.warning('__faceOff(): no toons.')
+            self.notify.warning('faceOff(): no toons.')
             return
         suit = self.suits[0]
         point = self.suitPoints[0][0]
@@ -249,12 +254,14 @@ class Battle(DirectObject, NodePath, BattleBase):
         done = Func(callback)
         track = Sequence(mtrack, done, name=name)
         track.start()
+        self.storeInterval(track, name)
 
     def enterFaceOff(self):
         self.notify.debug('enterFaceOff()')
-        self.__faceOff('faceoff-%d' % self.doId, self.startCamTrack)
+        self.faceOff('faceoff-%d' % self.doId, self.startCamTrack)
 
     def startCamTrack(self):
+        camera.wrtReparentTo(self)
         camTrack = Parallel()
         camTrack.append(LerpFunctionInterval(base.camLens.setMinFov, duration=1.0, fromData=self.camFov/(4./3.), toData=self.camMenuFov/(4./3.), blendType='easeInOut'))
         camTrack.append(LerpPosInterval(camera, 1.0, self.camPos, blendType='easeInOut'))
@@ -331,7 +338,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         self.movieHasPlayed = 0
         self.rewardHasPlayed = 0
         self.movieRequested = 0
-        
+
         camera.setPosHpr(self.camPos, self.camHpr)
         base.camLens.setMinFov(self.camMenuFov/(4./3.))
         NametagGlobals.setMasterArrowsOn(0)
@@ -340,12 +347,12 @@ class Battle(DirectObject, NodePath, BattleBase):
         for toon in self.activeToons:
             self.townBattle.updateLaffMeter(self.activeToons.index(toon), toon.hp)
         for i in range(len(self.activeSuits)):
-            self.townBattle.cogPanels[i].setCogInformation(self.activeSuits[i])
-        
+            self.townBattle.cogPanels[i].setAvatar(self.activeSuits[i])
+
         if not self.tutorialFlag:
             self.startTimer()
         if self.needAdjust:
-            self.__requestAdjust()
+            self.requestAdjust()
         if self.needAdjustTownBattle:
             self.__adjustTownBattle()
         self.accept(self.localToonBattleEvent, self.__handleLocalToonBattleEvent)
@@ -485,9 +492,9 @@ class Battle(DirectObject, NodePath, BattleBase):
             toon = self.getToon(toonId)
             if toon == None:
                 return
-            if toon.NPCFriendsDict.has_key(av):
+            if av in toon.NPCFriendsDict:
                 npcCollision = 0
-                if self.npcAttacks.has_key(av):
+                if av in self.npcAttacks:
                     callingToon = self.npcAttacks[av]
                     if self.activeToonIds.count(callingToon) == 1:
                         self.toonAttacks[toonId] = getToonAttack(toonId, track=PASS)
@@ -505,7 +512,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         elif track == UN_ATTACK:
             self.notify.debug('toon: %d changed its mind' % toonId)
             self.toonAttacks[toonId] = getToonAttack(toonId, track=UN_ATTACK)
-            if self.responses.has_key(toonId):
+            if toonId in self.responses:
                 self.responses[toonId] = 0
             validResponse = 0
         elif track == PASS:
@@ -564,7 +571,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         self.movieHasPlayed = 0
         self.rewardHasPlayed = 0
         for t in self.activeToonIds:
-            if not self.toonAttacks.has_key(t):
+            if t not in self.toonAttacks:
                 self.toonAttacks[t] = getToonAttack(t)
             attack = self.toonAttacks[t]
             if attack[TOON_TRACK_COL] == PASS or attack[TOON_TRACK_COL] == UN_ATTACK:
@@ -611,7 +618,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         p.append(self.activeToonIds)
         p.append(suitIds)
         for t in self.activeToonIds:
-            if self.toonAttacks.has_key(t):
+            if t in self.toonAttacks:
                 ta = self.toonAttacks[t]
                 index = -1
                 id = ta[TOON_ID_COL]
@@ -820,7 +827,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         if not allSuitsDied:
             if self.needAdjust:
                 if len(self.joiningSuits) == 0:
-                    self.__requestAdjust()
+                    self.requestAdjust()
                 # If a suit joined at the last minute, it'll wait for him
                 self.acceptOnce('battle-%d-adjustDone' % self.doId, self.startCamTrack)
             else:
@@ -836,10 +843,11 @@ class Battle(DirectObject, NodePath, BattleBase):
             self.setBattleExperience(*self.getBattleExperience())
             self.assignRewards()
             if self.tutorialFlag:
-                self.movie.playTutorialReward(0, base.localAvatar.getName(), self.__battleDone)
+                self.movie.playTutorialReward(0, base.localAvatar.getName(), self.battleDone)
             else:
-                self.movie.playReward(0, base.localAvatar.getName(), self.__battleDone)
+                self.movie.playReward(0, base.localAvatar.getName(), self.battleDone)
             for t in self.activeToons:
+                t.setInBattle(0)
                 self.activeToons.remove(t)
         return
 
@@ -895,12 +903,12 @@ class Battle(DirectObject, NodePath, BattleBase):
                 trainTrap.removeNode()
         for s in suitsJoining:
             suit = self.suits[int(s)]
-            if suit != None:
+            if suit != None and self.joiningSuits.count(suit) == 0:
                 self.makeSuitJoin(suit)
 
         for s in suitsPending:
             suit = self.suits[int(s)]
-            if suit != None:
+            if suit != None and self.pendingSuits.count(suit) == 0:
                 self.__makeSuitPending(suit)
 
         oldLuredSuits = self.luredSuits
@@ -999,22 +1007,24 @@ class Battle(DirectObject, NodePath, BattleBase):
         self.notify.debug('suitRequestJoin(%d)' % suit.getDoId())
         if self.suitCanJoin():
             self.addSuit(suit)
-            self.__joinSuit(suit)
+            self.joinSuit(suit)
             self.setMembers(*self.getMembers())
+            self.makeSuitJoin(suit)
             return 1
         else:
-            self.notify.warning('suitRequestJoin() - not joinable - joinable state: %s max suits: %d' % (self.isJoinable(), self.maxSuits))
+            self.notify.debug('suitRequestJoin() - not joinable - joinable state: %s max suits: %d' % (self.isJoinable(), self.maxSuits))
             return 0
 
     def addSuit(self, suit):
         self.notify.debug('addSuit(%d)' % suit.doId)
-        self.suits.append(suit)
+        if suit not in self.suits:
+            self.suits.append(suit)
         suit.battleTrap = NO_TRAP
         if len(self.suits) == self.maxSuits:
             # We've hit the max; no more suits can join this battle, ever.
             self.setJoinable(0)
 
-    def __joinSuit(self, suit):
+    def joinSuit(self, suit):
         self.joiningSuits.append(suit)
 
     def __createJoinInterval(self, av, destPos, destHpr, name, callback, toon = 0):
@@ -1084,7 +1094,7 @@ class Battle(DirectObject, NodePath, BattleBase):
     def makeSuitJoin(self, suit):
         self.notify.debug('makeSuitJoin(%d)' % suit.doId)
         spotIndex = len(self.pendingSuits) + len(self.joiningSuits)
-        #self.joiningSuits.append(suit)
+        # self.joiningSuits.append(suit)
         suit.enterBattle()
         openSpot = self.suitPendingPoints[spotIndex]
         pos = openSpot[0]
@@ -1092,7 +1102,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         trackName = 'to-pending-suit-%d' % suit.doId
         track = self.__createJoinInterval(suit, pos, hpr, trackName, self.__handleSuitJoinDone)
         track.start()
-        self.storeInterval(track, trackName)
+        # self.storeInterval(track, trackName)
         if ToontownBattleGlobals.SkipMovie:
             track.finish()
 
@@ -1103,7 +1113,8 @@ class Battle(DirectObject, NodePath, BattleBase):
             self.pendingSuits.append(suit)
         self.setMembers(*self.getMembers())
         self.needAdjust = 1
-        self.__requestAdjust()
+        self.requestAdjust()
+        self.joinTrack = None
 
     def __makeSuitPending(self, suit):
         self.notify.debug('__makeSuitPending(%d)' % suit.doId)
@@ -1111,7 +1122,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         if self.joiningSuits.count(suit):
             self.joiningSuits.remove(suit)
 
-    def __requestAdjust(self):
+    def requestAdjust(self):
         cstate = self.townBattle.fsm.getCurrentState().getName()
         if self.movieHasPlayed == 1 or cstate != 'Off':
             if not self.adjusting:
@@ -1233,7 +1244,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         if len(self.pendingSuits) > 0:
             self.notify.debug('__adjustDone() - need to adjust again')
             self.needAdjust = 1
-            self.__requestAdjust()
+            self.requestAdjust()
             return
         messenger.send('battle-%d-adjustDone' % self.doId)
 
@@ -1371,6 +1382,6 @@ class Battle(DirectObject, NodePath, BattleBase):
     def hasLocalToon(self):
         return 1
 
-    def __battleDone(self):
+    def battleDone(self):
         doneStatus = 'victory'
         messenger.send(self.townBattle.doneEvent, [doneStatus])

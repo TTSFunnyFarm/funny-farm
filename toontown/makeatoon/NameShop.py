@@ -1,8 +1,9 @@
 from panda3d.core import *
+from direct.directnotify import DirectNotifyGlobal
 from direct.gui.DirectGui import *
 from direct.gui import OnscreenText
 from direct.interval.IntervalGlobal import *
-from MakeAToonGlobals import *
+from toontown.makeatoon.MakeAToonGlobals import *
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase.ToontownGlobals import *
 from toontown.toon.LocalToon import LocalToon
@@ -12,6 +13,7 @@ import os
 import re
 
 class NameShop(StateData.StateData):
+    notify = DirectNotifyGlobal.directNotify.newCategory('NameShop')
 
     def __init__(self, doneEvent, index):
         StateData.StateData.__init__(self, doneEvent)
@@ -76,7 +78,7 @@ class NameShop(StateData.StateData):
             try:
                 x.show()
             except:
-                print 'NameShop: Tried to show already removed object'
+                print('NameShop: Tried to show already removed object')
 
     def hideAll(self):
         self.uberhide(self.pickANameGUIElements)
@@ -87,7 +89,7 @@ class NameShop(StateData.StateData):
             try:
                 x.hide()
             except:
-                print 'NameShop: Tried to hide already removed object'
+                print('NameShop: Tried to hide already removed object')
 
     def uberdestroy(self, guiObjectsToDestroy):
         for x in guiObjectsToDestroy:
@@ -95,25 +97,28 @@ class NameShop(StateData.StateData):
                 x.destroy()
                 del x
             except:
-                print 'NameShop: Tried to destroy already removed object'
+                print('NameShop: Tried to destroy already removed object')
 
     def reviewName(self, name):
-        blacklistFile = 'resources/phase_4/etc/tblacklist.dat'
-        with open(blacklistFile) as blacklist:
-            badWords = blacklist.read().title().split()
-            nameWords = re.sub('[^\w]', ' ',  name).split()
-            for word in nameWords:
-                if word in badWords:
-                    self.rejectName()
-                    return
-            if len(name) < 3 or len(nameWords) > 4:
+        vfs = VirtualFileSystem.getGlobalPtr()
+        filename = Filename('tblacklist.dat')
+        searchPath = DSearchPath()
+        searchPath.appendDirectory(Filename('resources/phase_4/etc'))
+        found = vfs.resolveFilename(filename, searchPath)
+        if not found:
+            self.notify.info("Couldn't find blacklist data file!")
+        data = vfs.readFile(filename, 1)
+        badWords = data.title().split()
+        nameWords = re.sub('[^\w]', ' ',  name).split()
+        for word in nameWords:
+            if word.encode() in badWords:
                 self.rejectName()
                 return
-            if name == 'Rocky Reborn':
-                self.rockyDialog()
-                return
-            self.createAvatar()
-            self.promptTutorial()
+        if len(name) < 3 or len(nameWords) > 4:
+            self.rejectName()
+            return
+        self.createAvatar()
+        self.promptTutorial()
 
     def rejectName(self):
         self.rejectDialog = TTDialog.TTDialog(parent=aspect2dp, text=TTLocalizer.RejectNameText, style=TTDialog.Acknowledge, command=self.cleanupRejectDialog)
@@ -122,16 +127,6 @@ class NameShop(StateData.StateData):
     def cleanupRejectDialog(self, *args):
         self.rejectDialog.destroy()
         self.rejectDialog = None
-
-    def rockyDialog(self):
-        self.rockyDialog = TTDialog.TTDialog(parent=aspect2dp, text='Rocky Reborn is playing my game? What a\nstrong soldier!', text_align=TextNode.ACenter, style=TTDialog.Acknowledge, command=self.cleanupRockyDialog)
-        self.rockyDialog.show()
-
-    def cleanupRockyDialog(self, *args):
-        self.rockyDialog.destroy()
-        del self.rockyDialog
-        self.createAvatar()
-        self.promptTutorial()
 
     def createAvatar(self):
         self.dna = self.toon.getRawDNA()

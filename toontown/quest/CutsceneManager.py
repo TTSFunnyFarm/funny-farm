@@ -1,8 +1,8 @@
 from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
 from direct.interval.IntervalGlobal import *
-import Cutscenes
-import Quests
+from toontown.quest import Cutscenes
+from toontown.quest import Quests
 
 class CutsceneManager(DirectObject):
     notify = directNotify.newCategory('CutsceneManager')

@@ -12,7 +12,7 @@ class Experience:
         self.owner = owner
         if expStr == None:
             self.experience = []
-            for track in xrange(0, len(Tracks)):
+            for track in range(0, len(Tracks)):
                 self.experience.append(StartingLevel)
 
         else:
@@ -25,7 +25,7 @@ class Experience:
     def makeNetString(self):
         dataList = self.experience
         datagram = PyDatagram()
-        for track in xrange(0, len(Tracks)):
+        for track in range(0, len(Tracks)):
             datagram.addUint16(dataList[track])
 
         dgi = PyDatagramIterator(datagram)
@@ -33,9 +33,13 @@ class Experience:
 
     def makeFromNetString(self, netString):
         dataList = []
-        dg = PyDatagram(netString)
+        if type(netString) == str:
+            dg = PyDatagram(netString.encode())
+        else:
+            dg = PyDatagram(netString)
+
         dgi = PyDatagramIterator(dg)
-        for track in xrange(0, len(Tracks)):
+        for track in range(0, len(Tracks)):
             dataList.append(dgi.getUint16())
 
         return dataList
@@ -62,7 +66,7 @@ class Experience:
         self.saveExp()
 
     def maxOutExp(self):
-        for track in xrange(0, len(Tracks)):
+        for track in range(0, len(Tracks)):
             if track == HEAL_TRACK:
                 self.experience[track] = MaxPowerUpSkill
             else:
@@ -71,33 +75,33 @@ class Experience:
         self.saveExp()
 
     def maxOutExpMinusOne(self):
-        for track in xrange(0, len(Tracks)):
+        for track in range(0, len(Tracks)):
             self.experience[track] = MaxSkill - 1
         self.owner.inventory.updateGUI()
         self.saveExp()
 
     def makeExpHigh(self):
-        for track in xrange(0, len(Tracks)):
+        for track in range(0, len(Tracks)):
             self.experience[track] = Levels[track][len(Levels[track]) - 1] - 1
         self.owner.inventory.updateGUI()
         self.saveExp()
 
     def makeExpRegular(self):
         import random
-        for track in xrange(0, len(Tracks)):
+        for track in range(0, len(Tracks)):
             rank = random.choice((0, int(random.random() * 1500.0), int(random.random() * 2000.0)))
             self.experience[track] = Levels[track][len(Levels[track]) - 1] - rank
         self.owner.inventory.updateGUI()
         self.saveExp()
 
     def zeroOutExp(self):
-        for track in xrange(0, len(Tracks)):
+        for track in range(0, len(Tracks)):
             self.experience[track] = StartingLevel
         self.owner.inventory.updateGUI()
         self.saveExp()
 
     def setAllExp(self, num):
-        for track in xrange(0, len(Tracks)):
+        for track in range(0, len(Tracks)):
             self.experience[track] = num
         self.owner.inventory.updateGUI()
         self.saveExp()

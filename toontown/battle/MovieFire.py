@@ -1,15 +1,16 @@
 from panda3d.core import *
 from direct.interval.IntervalGlobal import *
-from BattleBase import *
-from BattleProps import *
-from BattleSounds import *
+from toontown.battle.BattleBase import *
+from toontown.battle.BattleProps import *
+from toontown.battle.BattleSounds import *
 from toontown.toon.ToonDNA import *
 from toontown.suit.SuitDNA import *
 from direct.directnotify import DirectNotifyGlobal
 import random
-import MovieCamera
-import MovieUtil
-from MovieUtil import calcAvgSuitPos
+import functools
+from toontown.battle import MovieCamera
+from toontown.battle import MovieUtil
+from toontown.battle.MovieUtil import calcAvgSuitPos
 notify = DirectNotifyGlobal.directNotify.newCategory('MovieThrow')
 hitSoundFiles = ('AA_tart_only.ogg', 'AA_slice_only.ogg', 'AA_slice_only.ogg', 'AA_slice_only.ogg', 'AA_slice_only.ogg', 'AA_wholepie_only.ogg', 'AA_wholepie_only.ogg')
 tPieLeavesHand = 2.7
@@ -38,14 +39,14 @@ def doFires(fires):
         else:
             suitFiresDict[suitId] = [fire]
 
-    suitFires = suitFiresDict.values()
+    suitFires = list(suitFiresDict.values())
     def compFunc(a, b):
         if len(a) > len(b):
             return 1
         elif len(a) < len(b):
             return -1
         return 0
-    suitFires.sort(compFunc)
+    suitFires.sort(key=functools.cmp_to_key(compFunc))
 
     totalHitDict = {}
     singleHitDict = {}

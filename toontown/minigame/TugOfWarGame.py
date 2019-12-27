@@ -1,6 +1,6 @@
 from panda3d.core import *
 from direct.interval.IntervalGlobal import *
-from Minigame import *
+from toontown.minigame.Minigame import *
 from direct.gui.DirectGui import *
 from direct.fsm import ClassicFSM, State
 from direct.fsm import State
@@ -9,17 +9,17 @@ from toontown.toon import ToonHead
 from toontown.suit import SuitDNA
 from toontown.suit import Suit
 from toontown.char import Char
-import ArrowKeys
+from toontown.minigame import ArrowKeys
 import random
 from toontown.toonbase import ToontownGlobals
 import string
 from toontown.toonbase import TTLocalizer
-import TugOfWarGameGlobals
+from toontown.minigame import TugOfWarGameGlobals
 from direct.showutil import Rope
 from toontown.effects import Splash
 from toontown.effects import Ripples
 from toontown.toonbase import TTLocalizer
-import MinigamePowerMeter
+from toontown.minigame import MinigamePowerMeter
 from direct.task.Task import Task
 from otp.nametag import NametagGlobals
 import math
@@ -90,7 +90,7 @@ class TugOfWarGame(Minigame):
          [8, 12]]
         self.nextRateIndex = 0
         self.drinkPositions = []
-        for k in xrange(4):
+        for k in range(4):
             self.drinkPositions.append(VBase3(-.2 + 0.2 * k, 16 + 2 * k, 0.0))
 
         self.rng = RandomNumGen.RandomNumGen(1000)
@@ -159,7 +159,7 @@ class TugOfWarGame(Minigame):
         self.powerMeter.setTarget(8)
         self.powerMeter.hide()
         self.arrows = [None] * 2
-        for x in xrange(len(self.arrows)):
+        for x in range(len(self.arrows)):
             self.arrows[x] = loader.loadModel('phase_3/models/props/arrow')
             self.arrows[x].reparentTo(self.powerMeter)
             self.arrows[x].hide()
@@ -292,7 +292,7 @@ class TugOfWarGame(Minigame):
         self.splash.reparentTo(render)
         self.suitSplash.reparentTo(render)
         base.playMusic(self.music, looping=1, volume=1)
-        for x in xrange(len(self.arrows)):
+        for x in range(len(self.arrows)):
             self.arrows[x].show()
 
         for avId in self.avIdList:
@@ -433,7 +433,7 @@ class TugOfWarGame(Minigame):
         return
 
     def hideControls(self):
-        for x in xrange(len(self.arrows)):
+        for x in range(len(self.arrows)):
             self.arrows[x].hide()
 
         for rope in self.tugRopes:
@@ -666,10 +666,10 @@ class TugOfWarGame(Minigame):
     def calculatePositions(self):
         hprPositions = [VBase3(240, 0, 0), VBase3(120, 0, 0)]
         dockPositions = []
-        for k in xrange(5):
+        for k in range(5):
             dockPositions.append(VBase3(-9.0 + 1.5 * k, 18, 0.1))
 
-        for k in xrange(5):
+        for k in range(5):
             dockPositions.append(VBase3(3 + 1.5 * k, 18, 0.1))
 
         if self.numPlayers == 1:
@@ -751,8 +751,8 @@ class TugOfWarGame(Minigame):
             toon.setHpr(self.hprDict[avId])
 
     def arrangeByHeight(self, avIdList, order, iStart, iFin):
-        for i in xrange(iStart, iFin + 1):
-            for j in xrange(i + 1, iFin + 1):
+        for i in range(iStart, iFin + 1):
+            for j in range(i + 1, iFin + 1):
                 if order == self.H_TO_L and self.rightHandDict[avIdList[i]].getZ() < self.rightHandDict[avIdList[j]].getZ() or order == self.L_TO_H and self.rightHandDict[avIdList[i]].getZ() > self.rightHandDict[avIdList[j]].getZ():
                     temp = avIdList[i]
                     avIdList[i] = avIdList[j]
@@ -868,10 +868,10 @@ class TugOfWarGame(Minigame):
     def __updateKeyPressRateTask(self, task):
         if self.gameFSM.getCurrentState().getName() != 'tug':
             return Task.done
-        for i in xrange(len(self.keyTTL)):
+        for i in range(len(self.keyTTL)):
             self.keyTTL[i] -= 0.1
 
-        for i in xrange(len(self.keyTTL)):
+        for i in range(len(self.keyTTL)):
             if self.keyTTL[i] <= 0:
                 a = self.keyTTL[0:i]
                 del self.keyTTL
@@ -1046,11 +1046,13 @@ class TugOfWarGame(Minigame):
         self.moveSuits()
 
     def sendCurrentPosition(self, avIdList, offsetList):
+        avIdList = list(avIdList)
+        offsetList = list(offsetList)
         if not self.hasLocalToon:
             return
         if self.gameFSM.getCurrentState().getName() != 'tug':
             return
-        for i in xrange(len(avIdList)):
+        for i in range(len(avIdList)):
             self.offsetDict[avIdList[i]] = offsetList[i]
 
         self.moveToons()
@@ -1217,7 +1219,7 @@ class TugOfWarGame(Minigame):
             numRopes = self.numPlayers
         else:
             numRopes = self.numPlayers - 1
-        for x in xrange(0, numRopes):
+        for x in range(0, numRopes):
             rope = Rope.Rope(self.uniqueName('TugRope' + str(x)))
             if rope.showRope:
                 rope.ropeNode.setRenderMode(RopeNode.RMBillboard)
@@ -1237,10 +1239,10 @@ class TugOfWarGame(Minigame):
 
     def __updateRopeTask(self, task):
         if self.tugRopes != None:
-            for i in xrange(len(self.tugRopes)):
+            for i in range(len(self.tugRopes)):
                 if self.tugRopes[i] != None:
                     self.ropePts[i] = self.tugRopes[i].getPoints(len(self.ropeTex[i]))
-                    for j in xrange(len(self.ropePts[i])):
+                    for j in range(len(self.ropePts[i])):
                         self.ropeTex[i][j].setPos(self.ropePts[i][j])
 
         return Task.cont
@@ -1339,7 +1341,7 @@ class TugOfWarGame(Minigame):
                     self.losers.append(self.suitId)
                 else:
                     self.winners.append(self.suitId)
-                for i in xrange(0, self.numPlayers):
+                for i in range(0, self.numPlayers):
                     avId = self.avIdList[i]
                     if self.sides[avId] != self.losingSide:
                         self.scoreDict[avId] = self.suitJellybeanReward + TugOfWarGameGlobals.WIN_JELLYBEANS
@@ -1349,7 +1351,7 @@ class TugOfWarGame(Minigame):
                         self.losers.append(avId)
 
             else:
-                for i in xrange(0, self.numPlayers):
+                for i in range(0, self.numPlayers):
                     avId = self.avIdList[i]
                     if self.sides[avId] != self.losingSide:
                         self.scoreDict[avId] = TugOfWarGameGlobals.WIN_JELLYBEANS
@@ -1359,7 +1361,7 @@ class TugOfWarGame(Minigame):
                         self.losers.append(avId)
 
         elif self.gameType == TugOfWarGameGlobals.TOON_VS_COG:
-            for i in xrange(0, self.numPlayers):
+            for i in range(0, self.numPlayers):
                 avId = self.avIdList[i]
                 if -self.offsetDict[avId] > self.suitOffset:
                     self.scoreDict[avId] = self.suitJellybeanReward / 2 + TugOfWarGameGlobals.TIE_WIN_JELLYBEANS
@@ -1372,7 +1374,7 @@ class TugOfWarGame(Minigame):
         else:
             maxOffset = -100
             minOffset = 100
-            for i in xrange(0, self.numPlayers):
+            for i in range(0, self.numPlayers):
                 avId = self.avIdList[i]
                 if self.sides[avId] == 0:
                     if -self.offsetDict[avId] > maxOffset:
@@ -1385,7 +1387,7 @@ class TugOfWarGame(Minigame):
                     elif self.offsetDict[avId] < minOffset:
                         minOffset = self.offsetDict[avId]
 
-            for i in xrange(0, self.numPlayers):
+            for i in range(0, self.numPlayers):
                 avId = self.avIdList[i]
                 if maxOffset != minOffset:
                     if self.sides[avId] == 0:

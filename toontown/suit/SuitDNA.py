@@ -106,7 +106,7 @@ def getSuitBodyType(name):
     elif name in suitCTypes:
         return 'c'
     else:
-        print 'Unknown body type for suit name: ', name
+        print('Unknown body type for suit name: ', name)
 
 
 def getSuitDept(name):
@@ -120,7 +120,7 @@ def getSuitDept(name):
     elif index < suitsPerDept * 4:
         return suitDepts[3]
     else:
-        print 'Unknown dept for suit name: ', name
+        print('Unknown dept for suit name: ', name)
         return None
     return None
 
@@ -239,7 +239,7 @@ class SuitDNA(AvatarDNA.AvatarDNA):
         base = index * suitsPerDept
         offset = 0
         if level > 1:
-            for i in xrange(1, level):
+            for i in range(1, level):
                 offset = offset + suitsPerLevel[i - 1]
 
         bottom = base + offset

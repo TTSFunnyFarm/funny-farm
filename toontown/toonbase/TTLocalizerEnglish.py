@@ -1,7 +1,7 @@
 from toontown.toonbase.TTLocalizerEnglishProperty import *
 from otp.otpbase import OTPLocalizer as OL
 OL.SpeedChatStaticText = OL.SpeedChatStaticTextToontown.copy()
-for key in OL.SpeedChatStaticTextCommon.iterkeys():
+for key in iter(OL.SpeedChatStaticTextCommon):
     OL.SpeedChatStaticText[key] = OL.SpeedChatStaticTextCommon[key]
 
 commitmantst = 'kptmptest - removable'
@@ -241,7 +241,7 @@ QuestsDefaultLeaving = ('Bye!',
  'So long, _avName_.',
  'See ya, _avName_!',
  'Good luck!',
- 'Have fun in Toontown!',
+ 'Have fun in Funny Farm!',
  'See you later!')
 QuestsDefaultReject = ('Hello.',
  'Can I help you?',
@@ -547,7 +547,7 @@ QuestDialogDict = {
         QUEST: 'You found the last piece of the memo!\x07Toontastic! Let\'s see what it says...\x07"Soon the power of the Toons will lie in the hands of the corporation..."\x07"All ground forces are to maintain their current position until further notice."\x07"Signed, Mover & Shaker, Manager."\x07Manager? Hmm.\x07If we can find the manager, we can shut down this operation once and for all!\x07Go speak to Mr. Wurst.\x07He is the president of the Rickety Road Association.\x07Let him know what\'s going on, so he can help us begin a full-fledged search._where_'},
  1019: {GREETING: '',
         LEAVING: '',
-        QUEST: 'Hello. What can I help you with?\x07You recovered a letter from the Cogs? Let me read that...\x07Hmm...\x07Ah, OK, and Flippy sent you here so that I could inform all of Rickety Road to search for this "manager".\x07Done. I\'ll get right on that.\x07In the meantime, could you help me out?\x07I sent my assistant to retrieve some parts for one of our appliances, but he hasn\'t returned in a while.\x07Will you go out and look for him?\x07Just help him get back here safely.',
+        QUEST: 'Hello. What can I help you with?\x07You recovered a letter from the Cogs? Let me read that...\x07Hmm...\x07Ah, OK, and Flippy sent you here so that I could inform all of Rickety Road to search for this "manager".\x07Done. I\'ll get right on that.\x07In the meantime, could you help me out?\x07I sent my assistant, Scar D. Mouse, to retrieve some parts for one of our appliances, but he hasn\'t returned in a while.\x07Will you go out and look for him?\x07Just help him get back here safely.',
         COMPLETE: 'Oh, jeez, you scared me.'},
  1020: {GREETING: '',
         LEAVING: '',
@@ -577,6 +577,17 @@ QuestDialogDict = {
         LEAVING: '',
         QUEST: 'I\'m afraid there\'s not much we can do until we receive a new lead on the manager Cog.\x07As we await a new message, you should keep defeating Cogs on this street.\x07You seem to be a good fighter, and defeating any Cogs will help alleviate our problem.',
         COMPLETE: 'Good work, _avName_.\x07Funny Farm owes you a debt of gratitude for fighting off those pests.'},
+ 1028: {GREETING: '',
+        LEAVING: '',
+        QUEST: '',
+        COMPLETE: ''},
+ 1029: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'I\'m glad you\'re here.\x07Loony Louis\' building has been taken over by the Cogs.\x07I didn\'t think they were strong enough to take over our buildings there.\x07Will you go and win it back for us?\x07It will be challenging, so make sure you\'ve worked up your throw and squirt gags.\x07Check in with Loony Louis after you\'ve finished.\x07Thanks, _avName_. Good luck!'},
+ 1030: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Gee thanks for saving my building, Toon!\x07Now I\'m just gonna need you to pick up an air pump from Lucy Tires.\x07Just kidding...\x07Go see Flippy and let him know you saved my building.\x07See ya around!',
+        COMPLETE: 'Yes! Great job!\x07You\'ve been an immense help to the Toons of Rickety Road.\x07You are relieved of your duties for now.\x07Remember to keep checking the Toon HQ for important ToonTasks!\x07So long, _avName_.'},
  1040: {GREETING: '',
         QUEST: 'Emma\'s dairy store called us for help earlier.\x07She is offering teleport access to anyone who can assist her._where_'},
  1041: {GREETING: '',
@@ -597,7 +608,19 @@ QuestDialogDict = {
  1046: {GREETING: '',
         LEAVING: '',
         QUEST: 'Hey, that got a few of \'em!\x07But I think them money bots is the real problem.\x07They\'re takin\' our money straight from us!\x07Go out there and give \'em a piece of yer pie, will ya?\x07I got a special little treat for ya when ya get back.',
-        COMPLETE: 'Great work, partner!\x07Here\'s somethin\' that only the major-leaguers get.\x07You\'ll want it when travelin\' from far distances.\x07Ya now have teleport access to Funny Farm.'}
+        COMPLETE: 'Great work, partner!\x07Here\'s somethin\' that only the major-leaguers get.\x07You\'ll want it when travelin\' from far distances.\x07Ya now have teleport access to Funny Farm.'},
+ 1050: {GREETING: '',
+        QUEST: 'The Toon HQ is impressed with the work you\'ve done so far.\x07However, we think it\'s important you have stronger gags for future ToonTasks.\x07If you can show us some progress with your throw and squirt gags, we\'ll give you a larger inventory.\x07Go defeat some stronger Cogs to get more practice, then report back here.'},
+ 1051: {GREETING: '',
+        QUEST: 'Very good, _avName_!\x07You seem to be getting the hang of things around here.\x07The comedy club on Rickety Road requested a few more plates of dessert for an event tonight.\x07Would you help them out and deliver a few of your pie slices?_where_',
+        INCOMPLETE_PROGRESS: 'Hey, thanks for the delivery!\x07We almost have enough pies, but I still need a few more.'},
+ 1052: {GREETING: '',
+        LEAVING: '',
+        QUEST: 'Hey, thanks for the delivery!\x07Our dessert is finally ready for tonight!\x07Say... there is one other thing I would like to have for this very special event.\x07Could you bring me some squirt guns?\x07There\'s no time for questions now, I just need the squirt guns.\x07Hurry back!',
+        INCOMPLETE_PROGRESS: 'You brought some squirt guns?\x07Excellent!\x07Just a few more...'},
+ 1053: {GREETING: '',
+        QUEST: 'Toontastic! We have just enough squirt guns now!\x07Thank you for donating your time and jellybeans to us.\x07This event will be spectacular thanks to you!\x07Head back to Toon HQ and let them know we\'re all set.',
+        COMPLETE: 'All finished at the comedy club?\x07Ah, squirt guns, you say?\x07They must have an especially silly event planned tonight.\x07Anyway, you\'ve done a great job training those gags.\x07You\'ve earned this!\x07You can now carry 30 gags.'}
 }
 CutsceneDialogDict = {
  1001: 'Hmm... It doesn\'t look like Flippy is in here.\x07Maybe you should check back outside.',
@@ -612,7 +635,8 @@ CutsceneDialogDict = {
         'Our Silly Meter readings have plummeted.\x07Ever since you encountered those Cogs, the rates have been decreasing intensely.\x07It\'s almost at zero!',
         'But then that means...',
         'Uh, oh.'),
-        'Oh, this is a disaster!')
+        'Oh, this is a disaster!'),
+ 1028: '_avName_! This is Flippy. Something\'s happened and we\'re gonna need your help.\x07Report to the Toon Hall immediately!'
 }
 MovieTutorialReward1 = 'You received 1 Throw point! When you get 10, you will get a new gag!'
 MovieTutorialReward2 = 'You received 1 Squirt point! When you get 10, you will get a new gag!'
@@ -620,8 +644,8 @@ MovieTutorialReward3 = 'Good job! You completed your first ToonTask!'
 MovieTutorialReward4 = 'Go to Toon Headquarters for your reward!'
 MovieTutorialReward5 = 'Have fun!'
 InfoBubbleDialog = {
- 0: 'You\'ve just received a new ToonTask!\x07When completed, you will gain experience and other rewards for your Toon!\x07Now head through the tunnel to find Flippy.',
- 1: 'Remember, in order to defeat the Cogs you must buy gags.\x07You can ride the trolley to play minigames, earn jellybeans, and purchase gags.\x07Or if you already have some jellybeans on hand, head to Goofy\'s Gag Shop to purchase gags quickly!',
+ 0: 'You just received your first ToonTask!\x07When completed, ToonTasks give you experience points and other rewards for your Toon!\x07Check your ToonTask progress by opening the Shticker Book or pressing the "End" key.\x07Now, head through the tunnel to find Flippy!',
+ 1: 'Remember, in order to defeat the Cogs you must buy gags.\x07You can ride the trolley to play minigames, earn jellybeans, and purchase gags.\x07Or if you already have some jellybeans on hand, head to Goofy\'s Gag Shop to purchase gags quickly!\x07Check your gags by opening the Shticker Book or pressing the "Home" key.',
  2: MovieTutorialReward1,
  3: MovieTutorialReward2,
  4: 'You can now carry two ToonTasks!\x07This means you can start working on multiple ToonTasks at the same time, for efficiency!\x07If you see this icon above a Toon HQ, that means the officers have important tasks for you to do.\x07Otherwise, the HQ officers will always have "Just for fun!" ToonTasks to do if you want some fun rewards.'
@@ -3527,6 +3551,7 @@ OptionsPagePurchase = 'Subscribe'
 OptionsPageLogout = 'Logout'
 OptionsPageAudioLabel = 'Audio Options'
 OptionsPageVideoLabel = 'Video Options'
+OptionsPageAdvancedLabel = 'Advanced\nVideo Options'
 OptionsPageExitToontown = 'Exit Funny Farm'
 OptionsPageMusicOnLabel = 'Music is on.'
 OptionsPageMusicOffLabel = 'Music is off.'
@@ -3538,21 +3563,29 @@ OptionsPageFriendsEnabledLabel = 'Accepting new friend requests.'
 OptionsPageFriendsDisabledLabel = 'Not accepting friend requests.'
 OptionsPageWhisperEnabledLabel = 'Allowing whispers from anyone.'
 OptionsPageWhisperDisabledLabel = 'Allowing whispers from friends only.'
+OptionsPageVsyncOnLabel = 'V-sync is on.'
+OptionsPageVsyncOffLabel = 'V-sync is off.'
 OptionsPageAntialiasingOnLabel = 'Anti-aliasing is on.'
 OptionsPageAntialiasingOffLabel = 'Anti-aliasing is off.'
-OptionsPageLODOnLabel = 'LODs are on.'
-OptionsPageLODOffLabel = 'LODs are off.'
-OptionsPageFpsOnLabel = 'FPS Meter is on.'
-OptionsPageFpsOffLabel = 'FPS Meter is off.'
+OptionsPageFpsOnLabel = 'FPS meter is on.'
+OptionsPageFpsOffLabel = 'FPS meter is off.'
+OptionsPageSmoothingOnLabel = 'Animation smoothing is on.'
+OptionsPageSmoothingOffLabel = 'Animation smoothing is off.'
+OptionsPageBlendingOnLabel = 'Animation blending is on.'
+OptionsPageBlendingOffLabel = 'Animation blending is off.'
+OptionsPageLODOnLabel = 'LOD nodes are on.'
+OptionsPageLODOffLabel = 'LOD nodes are off.'
 OptionsPageRequiresRestart = '\n(Requires game restart)'
+OptionsPageVsyncHeading = 'V-sync'
+OptionsPageVsyncHelp = 'Vertical synchronization caps the game\'s frame rate at your monitor\'s refresh rate for more stability.\n\nV-sync is disabled by default. You can enable it to give your graphics card a lighter load, but you may have a lower frame rate overall.'
 OptionsPageAntialiasingHeading = 'Anti-aliasing'
-OptionsPageAntialiasingHelp = 'Anti-aliasing makes objects in the game look better by smoothing out jagged edges on models. Enabling this can reduce performance.\n\nYou can adjust the strength in your preferences file.'
-OptionsPageLODHeading = 'LOD Nodes'
-OptionsPageLODHelp = 'LOD nodes show lower quality models for characters as you move farther away from them.\n\nTurning on LODs can slightly improve performance.'
+OptionsPageAntialiasingHelp = 'Anti-aliasing makes objects in the game look better by smoothing out jagged edges on models.\n\nAnti-aliasing is disabled by default, and enabling it may slightly reduce performance.'
 OptionsPageFpsHeading = 'FPS Meter'
-OptionsPageFpsHelp = 'If you want to monitor your game\'s performance, you can turn on the FPS meter to see how many frames per second you get.'
-OptionsPageShaderLevelHeading = 'Shader Level'
-OptionsPageShaderLevelHelp = 'This option adjusts the quality of shaders, at the cost of performance.\n\nIt can also disable the shader to save performance.\nIf you are not satisfied with these levels, you can adjust the shader values to your liking in preferences.json.'
+OptionsPageFpsHelp = 'If you want to monitor your game\'s performance, you can turn on the FPS meter to see how many frames per second the game renders.'
+OptionsPageLODHeading = 'LOD Nodes'
+OptionsPageLODHelp = 'LOD (level of detail) nodes show lower quality models for characters as you move farther away from them.\n\nLODs are disabled by default, but you can enable them to slightly improve performance.'
+OptionsPageShaderLevelHeading = 'Water Shader'
+OptionsPageShaderLevelHelp = 'This option enables reflections and refractions on bodies of water in-game.\n\nNote: this feature is experimental and can reduce performance significantly. Water shaders are disabled by default.'
 OptionsPageSpeedChatStyleLabel = 'SpeedChat Color'
 OptionsPageDisplayWindowed = '%s x %s'
 OptionsPageDisplayFullscreen = 'Fullscreen'
@@ -3573,12 +3606,14 @@ OptionsPageSelect = 'Select'
 OptionsPageToggleOn = 'Turn On'
 OptionsPageToggleOff = 'Turn Off'
 OptionsPageChange = 'Change'
+OptionsPageResolution = 'Resolution: %(screensize)s'
 OptionsPageDisplaySettings = 'Display: %(screensize)s, %(api)s'
 OptionsPageDisplaySettingsNoApi = 'Display: %(screensize)s'
 OptionsPageExitConfirm = 'Exit Funny Farm?'
-DisplaySettingsTitle = 'Display Settings'
+DisplaySettingsTitle = 'Change Resolution'
 DisplaySettingsIntro = 'The following settings are used to configure the way Toontown is displayed on your computer.  It is usually unnecessary to adjust these unless you are experiencing a problem.'
 DisplaySettingsIntroSimple = 'You may adjust the screen resolution to a higher value to improve the clarity of text and graphics in Toontown, but depending on your graphics card, some higher values may make the game run less smoothly or may not work at all.'
+DisplaySettingsNote = 'Note: changing the game\'s resolution is usually only necessary in fullscreen mode.'
 DisplaySettingsApi = 'Graphics API:'
 DisplaySettingsResolution = 'Resolution:'
 DisplaySettingsWindowed = 'In a window'
@@ -3607,15 +3642,15 @@ CdrResultTooManyFails = "We're sorry. You've tried to enter an incorrect code to
 CdrResultServiceUnavailable = "We're sorry. This feature is temporarily unavailable. Please try again during your next login."
 ToonPageTitle = 'My Toon'
 ToonPageLevel = 'Level %d'
-ToonPageExperience = '%d / %d XP'
+ToonPageExperience = '%d/%d'
 ToonPageDamage = 'Damage Boost (%)'
 ToonPageDefense = 'Defense (%)'
 ToonPageAccuracy = 'Accuracy Boost (%)'
 TrackPageTitle = 'Gag Track Training'
 TrackPageShortTitle = 'Gag Training'
 TrackPageSubtitle = 'Complete ToonTasks to learn how to use new gags!'
-TrackPageTraining = 'You are training to use %s gags.\nWhen you complete all 16 tasks you\nwill be able to use %s gags in battle.'
-TrackPageClear = 'You are not training any Gag Tracks now.'
+TrackPageTraining = 'You are training to use\n%s gags.\nWhen you complete all\n15 strips you\nwill be able to use them\nin battle.'
+TrackPageClear = 'You are not training\nany Gag Tracks now.'
 TrackPageFilmTitle = '%s\nTraining\nFilm'
 TrackPageDone = 'FIN'
 QuestPageToonTasks = 'ToonTasks'
@@ -4114,7 +4149,7 @@ TutorialFriendsPanelYes = '%s said yes!' % Flippy
 TutorialFriendsPanelNo = "That's not very friendly!"
 TutorialFriendsPanelCongrats = 'Congratulations! You made your first friend.'
 TutorialFlippyChat1 = 'Come see me when you are ready for your first ToonTask!'
-TutorialFlippyChat2 = "I'll be in ToonHall!"
+TutorialFlippyChat2 = "I'll be in Toon Hall!"
 TutorialAllFriendsButton = 'You can view all your friends by clicking the friends button. Try it out...'
 TutorialEmptyFriendsList = "Right now your list is empty because %s isn't a real player." % Flippy
 TutorialCloseFriendsList = "Click the 'Close'\nbutton to make the\nlist go away"
@@ -4285,7 +4320,7 @@ PhotoGameTitle = 'Photo Fun'
 PhotoGameFilm = 'FILM'
 PhotoGameScore = 'Team Score: %s\n\nBest Photos: %s\n\nTotal Score: %s'
 CogThiefGameTitle = 'Cog Thief'
-CogThiefGameInstructions = 'Stop the Cogs from stealing our gags! Press the Alt or Delete key to throw pies. Be careful - they have a tendancy to explode.'
+CogThiefGameInstructions = 'Stop the Cogs from stealing our gags! Press the CTRL key to throw pies. Be careful - they have a tendancy to explode!'
 CogThiefBarrelsSaved = '%(num)d Barrels\nSaved!'
 CogThiefBarrelSaved = '%(num)d Barrel\nSaved!'
 CogThiefNoBarrelsSaved = 'No Barrels\nSaved'
@@ -4568,7 +4603,7 @@ TutorialTraining_1 = 'Practice throwing some pies at the targets ahead.'
 TutorialTraining_2 = 'Nicely done! You\'re a natural!'
 TutorialCog_0 = 'Uh oh...'
 TutorialCog_1 = 'It\'s happening already.\x07Quick! Go defeat that Cog!'
-TutorialOutro = 'This is not good... I have to go and investigate!'
+TutorialOutro = 'This is not good... Meet me at the Toon Hall as soon as possible!'
 MissingKeySanityCheck = 'Ignore me'
 SellbotBossName = 'Senior V. P.'
 CashbotBossName = 'C. F. O.'
@@ -5918,6 +5953,7 @@ NPCToonNames = {20000: 'Tutorial Tom',
  1111: 'Brad Wurst',
  1112: 'Joe',
  1113: 'Loony Louis',
+ 1114: 'Scar D. Mouse',
  1201: lHQOfficerM,
  1202: lHQOfficerM,
  1203: lHQOfficerF,
@@ -6196,11 +6232,11 @@ TipDict = {TIP_NONE: ('',),
                #'You can browse the selection at Clothing Stores even without a clothing ticket.',
                'Rewards for some ToonTasks allow you to carry more gags and jellybeans.',
                #'You can have up to 200 friends on your Friends List.',
-               #'Some ToonTask rewards let you teleport to playgrounds in Toontown by using the Map Page in the Shticker Book.',
+               'Some ToonTask rewards let you teleport to playgrounds in Toontown by using the Map Page in the Shticker Book.',
                'Increase your Laff points in the Playgrounds by collecting treasures like stars and ice cream cones.',
                #'To heal quickly after a battle, go to your estate and play with your Doodle.',
                'Change to different views of your Toon by pressing the Tab Key.',
-               #'Sometimes you can find several different ToonTasks offered for the same reward. Shop around!',
+               'Sometimes you can find several different ToonTasks offered for the same reward. Shop around!',
                #'Finding friends with similar ToonTasks is a fun way to progress through the game.',
                'You never need to save your Toontown progress. The game continually saves all the necessary information.'
                #'You can whisper to other Toons either by clicking on them or by selecting them from your Friends List.',
@@ -6246,9 +6282,9 @@ TipDict = {TIP_NONE: ('',),
               #'In battle, gags are used in order from top to bottom as displayed on the Gag Menu.',
               'The row of circular lights over Cog Building elevators show how many floors will be inside.',
               #'Click on a Cog to see more details.',
-              'Using high level gags against low level Cogs will not earn any experience points.',
+              'Using high level gags against low level Cogs will not earn you any experience points.',
               'A gag that will earn experience has a blue background on the Gag Menu in battle.',
-              'Gag experience is multiplied when used inside Cog Buildings. Higher floors have higher multipliers.',
+              #'Gag experience is multiplied when used inside Cog Buildings. Higher floors have higher multipliers.',
               #'When a Cog is defeated, each Toon in that round will get credit for the Cog when the battle is over.',
               'Each street in Toontown has different Cog levels and types.',
               'Sidewalks are safe from Cogs.',
@@ -6943,7 +6979,7 @@ def getRecipeBeanText(beanTuple):
     if not beanTuple:
         return retval
     allTheSame = True
-    for index in xrange(len(beanTuple)):
+    for index in range(len(beanTuple)):
         if index + 1 < len(beanTuple):
             if not beanTuple[index] == beanTuple[index + 1]:
                 allTheSame = False
@@ -6957,7 +6993,7 @@ def getRecipeBeanText(beanTuple):
     else:
         retval += 'a'
         maxBeans = len(beanTuple)
-        for index in xrange(maxBeans):
+        for index in range(maxBeans):
             if index == maxBeans - 1:
                 retval += ' and %s jellybean' % BeanColorWords[beanTuple[index]]
             elif index == 0:

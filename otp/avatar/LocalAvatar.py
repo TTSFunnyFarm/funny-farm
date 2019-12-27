@@ -109,7 +109,8 @@ class LocalAvatar(DirectObject):
         self.stopUpdateSmartCamera()
         self.shutdownSmartCamera()
         self.deleteCollisions()
-        self.controlManager.delete()
+        # Leaving this out until Panda fixes their code
+        # self.controlManager.delete()
         self.physControls = None
         del self.controlManager
         taskMgr.remove(self.uniqueName('walkReturnTask'))
@@ -540,21 +541,21 @@ class LocalAvatar(DirectObject):
             self.nextCameraPos(1)
 
     def printCameraPositions(self):
-        print '['
+        print('[')
         for i in range(len(self.cameraPositions)):
             self.printCameraPosition(i)
-            print ','
+            print(',')
 
-        print ']'
+        print(']')
 
     def printCameraPosition(self, index):
         cp = self.cameraPositions[index]
-        print '(Point3(%0.2f, %0.2f, %0.2f),' % (cp[0][0], cp[0][1], cp[0][2])
-        print 'Point3(%0.2f, %0.2f, %0.2f),' % (cp[1][0], cp[1][1], cp[1][2])
-        print 'Point3(%0.2f, %0.2f, %0.2f),' % (cp[2][0], cp[2][1], cp[2][2])
-        print 'Point3(%0.2f, %0.2f, %0.2f),' % (cp[3][0], cp[3][1], cp[3][2])
-        print '%d,' % cp[4]
-        print ')',
+        print('(Point3(%0.2f, %0.2f, %0.2f),' % (cp[0][0], cp[0][1], cp[0][2]))
+        print('Point3(%0.2f, %0.2f, %0.2f),' % (cp[1][0], cp[1][1], cp[1][2]))
+        print('Point3(%0.2f, %0.2f, %0.2f),' % (cp[2][0], cp[2][1], cp[2][2]))
+        print('Point3(%0.2f, %0.2f, %0.2f),' % (cp[3][0], cp[3][1], cp[3][2]))
+        print('%d,' % cp[4])
+        print(')',)
 
     def posCamera(self, lerp, time):
         if not lerp:
@@ -757,7 +758,7 @@ class LocalAvatar(DirectObject):
         camera.setPos(targetCamPos)
         camera.lookAt(targetCamLookAt)
         targetCamHpr = camera.getHpr()
-        for x in xrange(3):
+        for x in range(3):
             # This function is from PythonUtil:
             targetCamHpr[x] = fitDestAngle2Src(curCamHpr[x], targetCamHpr[x])
         hprDone = 0

@@ -1,7 +1,7 @@
 from panda3d.core import *
-from NametagConstants import *
-from Nametag3d import *
-from Nametag2d import *
+from otp.nametag.NametagConstants import *
+from otp.nametag.Nametag3d import *
+from otp.nametag.Nametag2d import *
 
 class NametagGroup:
     CCNormal = CCNormal

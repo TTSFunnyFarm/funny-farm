@@ -90,6 +90,7 @@ INTERIOR_ELEVATOR_COUNTDOWN_TIME = 90
 LIGHT_OFF_COLOR = Vec4(0.5, 0.5, 0.5, 1.0)
 LIGHT_ON_COLOR = Vec4(1.0, 1.0, 1.0, 1.0)
 ElevatorPoints = [[0, 5, 0.1],
+ [-1.5, 5, 0.1],
  [1.5, 5, 0.1],
  [-2.5, 3, 0.1],
  [2.5, 3, 0.1],
@@ -121,7 +122,8 @@ BossbotElevatorPoints = [[-2.5, 7.5, 0.1],
  [2.5, 3.5, 0.1],
  [-5.5, 3.5, 0.1],
  [5.5, 3.5, 0.1]]
-ElevatorOutPoints = [[-4.6, -5.2, 0.1],
+ElevatorOutPoints = [[0, -5.2, 0.1],
+ [-4.6, -5.2, 0.1],
  [4.6, -5.2, 0.1],
  [-1.6, -6.2, 0.1],
  [1.6, -6.2, 0.1]]

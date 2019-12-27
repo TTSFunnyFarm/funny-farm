@@ -1,3 +1,5 @@
+import random
+
 from panda3d.core import *
 
 from toontown.battle import BattleParticles
@@ -23,18 +25,21 @@ class FFHood(ToonHood):
         self.winterHoodFile = 'phase_14/models/neighborhoods/funny_farm_winter'
         self.skyFile = 'phase_3.5/models/props/TT_sky'
         self.titleColor = (1.0, 0.5, 0.4, 1.0)
+        self.birdSound = list(map(base.loader.loadSfx, ['phase_4/audio/sfx/SZ_TC_bird1.ogg', 'phase_4/audio/sfx/SZ_TC_bird2.ogg', 'phase_4/audio/sfx/SZ_TC_bird3.ogg']))
         self.waterShader = None
         self.treasurePlanner = FFTreasurePlanner()
 
     def enter(self, shop=None, tunnel=None, init=0):
         self.loadQuestChanges()
         ToonHood.enter(self, shop=shop, tunnel=tunnel, init=init)
+        taskMgr.doMethodLater(1, self.__birds, 'FF-birds')
         self.waterShader.start('water', self.geom, self.sky)
         if hasattr(self, 'snow'):
             self.snow.start(camera, self.snowRender)
 
     def exit(self):
         ToonHood.exit(self)
+        taskMgr.remove('FF-birds')
         self.unloadQuestChanges()
         self.waterShader.stop()
         if hasattr(self, 'snow'):
@@ -105,3 +110,9 @@ class FFHood(ToonHood):
         if hasattr(self, 'flippy'):
             self.flippy.delete()
             del self.flippy
+
+    def __birds(self, task):
+        base.playSfx(random.choice(self.birdSound))
+        t = random.random() * 20.0 + 1
+        taskMgr.doMethodLater(t, self.__birds, 'FF-birds')
+        return task.done

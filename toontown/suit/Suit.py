@@ -1,6 +1,6 @@
 from direct.actor import Actor
 from otp.avatar import Avatar
-import SuitDNA
+from toontown.suit import SuitDNA
 from toontown.toonbase import ToontownGlobals
 from panda3d.core import *
 from otp.nametag.NametagGroup import NametagGroup
@@ -9,7 +9,6 @@ from direct.task.Task import Task
 from toontown.battle import BattleProps
 from toontown.toonbase import TTLocalizer
 from panda3d.core import VirtualFileMountHTTP, VirtualFileSystem, Filename, DSearchPath
-from direct.showbase import AppRunnerGlobal
 import string
 import os
 
@@ -214,11 +213,7 @@ def loadSuitModelsAndAnims(level, flag = 0):
 
 def cogExists(filePrefix):
     searchPath = DSearchPath()
-    if AppRunnerGlobal.appRunner:
-        searchPath.appendDirectory(Filename.expandFrom('$TT_3_5_ROOT/phase_3.5'))
-    else:
-        basePath = os.path.expandvars('$TTMODELS') or './ttmodels'
-        searchPath.appendDirectory(Filename.fromOsSpecific(basePath + '/built/phase_3.5'))
+    searchPath.appendDirectory(Filename('resources/phase_3.5'))
     filePrefix = filePrefix.strip('/')
     pfile = Filename(filePrefix)
     found = vfs.resolveFilename(pfile, searchPath)
@@ -232,11 +227,11 @@ def loadSuitAnims(suit, flag = 1):
         try:
             animList = globals()[suit]
         except KeyError:
-            print 'still keyError, gg'
+            print('still keyError, gg')
             animList = ()
 
     else:
-        print 'Invalid suit name: ', suit
+        print('Invalid suit name: ', suit)
         return -1
     for anim in animList:
         phase = 'phase_' + str(anim[2])
@@ -622,7 +617,8 @@ class Suit(Avatar.Avatar):
         self.getGeomNode().setScale(self.scale)
         self.generateHealthBar()
         self.generateCorporateMedallion()
-        self.setBlend(frameBlend=True)
+        if config.GetBool('smooth-animations', True):
+            self.setBlend(frameBlend=True)
         return
 
     def generateBody(self):
@@ -792,7 +788,7 @@ class Suit(Avatar.Avatar):
             filePrefix, phase = ModelDict[self.style.body]
         headModel = loader.loadModel('phase_' + str(phase) + filePrefix + 'heads')
         headReferences = headModel.findAllMatches('**/' + headType)
-        for i in xrange(0, headReferences.getNumPaths()):
+        for i in range(0, headReferences.getNumPaths()):
             if config.GetBool('want-new-cogs', 0):
                 headPart = self.instance(headReferences.getPath(i), 'modelRoot', 'to_head')
                 if not headPart:
@@ -963,7 +959,8 @@ class Suit(Avatar.Avatar):
         self.loseActor.setScale(self.scale)
         self.loseActor.setPos(self.getPos())
         self.loseActor.setHpr(self.getH(), 0, 0)
-        self.loseActor.setBlend(frameBlend=True)
+        if config.GetBool('smooth-animations', True):
+            self.loseActor.setBlend(frameBlend=True)
         self.collTube = CollisionTube(0, 0, 0.5, 0, 0, 4, 2)
         self.collNode = CollisionNode('loseActor')
         self.collNode.addSolid(self.collTube)
@@ -1003,7 +1000,7 @@ class Suit(Avatar.Avatar):
         self.generateCorporateTie()
         self.setHeight(self.height)
         parts = self.findAllMatches('**/pPlane*')
-        for partNum in xrange(0, parts.getNumPaths()):
+        for partNum in range(0, parts.getNumPaths()):
             bb = parts.getPath(partNum)
             bb.setTwoSided(1)
 

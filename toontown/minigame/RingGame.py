@@ -1,18 +1,19 @@
 from panda3d.core import *
 from direct.interval.IntervalGlobal import *
-from Minigame import Minigame
+from toontown.minigame.Minigame import Minigame
 from direct.distributed.ClockDelta import *
 from direct.fsm import ClassicFSM, State
 from direct.fsm import State
 from direct.task import Task
-import ArrowKeys
-import Ring
-import RingTrack
-import RingGameGlobals
-import RingGroup
-import RingTrackGroups
+from toontown.minigame import ArrowKeys
+from toontown.minigame import Ring
+from toontown.minigame import RingTrack
+from toontown.minigame import RingGameGlobals
+from toontown.minigame import RingGroup
+from toontown.minigame import RingTrackGroups
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
+from functools import reduce
 
 class RingGame(Minigame):
     UPDATE_ENVIRON_TASK = 'RingGameUpdateEnvironTask'
@@ -150,19 +151,19 @@ class RingGame(Minigame):
             render.setFog(self.__fog)
         self.environNode = render.attachNewNode('environNode')
         self.environBlocks = []
-        for i in xrange(0, 2):
+        for i in range(0, 2):
             instance = self.environModel.instanceUnderNode(self.environNode, 'model')
             y = self.ENVIRON_LENGTH * i
             instance.setY(y)
             self.environBlocks.append(instance)
-            for j in xrange(0, 2):
+            for j in range(0, 2):
                 instance = self.environModel.instanceUnderNode(self.environNode, 'blocks')
                 x = self.ENVIRON_LENGTH * (j + 1)
                 instance.setY(y)
                 instance.setX(-x)
                 self.environBlocks.append(instance)
 
-            for j in xrange(0, 2):
+            for j in range(0, 2):
                 instance = self.environModel.instanceUnderNode(self.environNode, 'blocks')
                 x = self.ENVIRON_LENGTH * (j + 1)
                 instance.setY(y)
@@ -172,7 +173,7 @@ class RingGame(Minigame):
         self.ringNode = render.attachNewNode('ringNode')
         self.sndTable = {'gotRing': [None] * self.numPlayers,
          'missedRing': [None] * self.numPlayers}
-        for i in xrange(0, self.numPlayers):
+        for i in range(0, self.numPlayers):
             self.sndTable['gotRing'][i] = base.loader.loadSfx('phase_4/audio/sfx/ring_get.ogg')
             self.sndTable['missedRing'][i] = base.loader.loadSfx('phase_4/audio/sfx/ring_miss.ogg')
 
@@ -278,13 +279,13 @@ class RingGame(Minigame):
         self.__tallyTextNode.setFont(ToontownGlobals.getSignFont())
         self.__tallyTextNode.setAlign(TextNode.ACenter)
         self.tallyMarkers = [None] * self.__numRingGroups
-        for i in xrange(0, self.__numRingGroups):
+        for i in range(0, self.__numRingGroups):
             self.__createTallyMarker(i, self.RT_UNKNOWN)
 
         return
 
     def __destroyTallyDisplay(self):
-        for i in xrange(0, self.__numRingGroups):
+        for i in range(0, self.__numRingGroups):
             self.__deleteTallyMarker(i)
 
         del self.tallyMarkers
@@ -482,20 +483,20 @@ class RingGame(Minigame):
                     for difficulty in [0, 1, 2]:
                         numGroupsPerDifficulty = difficultyDistributions[sz]
                         if numGroupsPerDifficulty[difficulty] != pattern.count(difficulty):
-                            print 'safezone:', sz
-                            print 'pattern:', pattern
-                            print 'difficulty:', difficulty
-                            print 'expected %s %ss, found %s' % (numGroupsPerDifficulty[difficulty], difficulty, pattern.count(difficulty))
+                            print('safezone:', sz)
+                            print('pattern:', pattern)
+                            print('difficulty:', difficulty)
+                            print('expected %s %ss, found %s' % (numGroupsPerDifficulty[difficulty], difficulty, pattern.count(difficulty)))
                             return 0
 
             return 1
 
         pattern = self.randomNumGen.choice(difficultyPatterns[base.cr.playGame.hood.TTZoneId])
-        for i in xrange(0, self.__numRingGroups):
+        for i in range(0, self.__numRingGroups):
             numRings = self.numPlayers
             trackGroup = RingTrackGroups.getRandomRingTrackGroup(pattern[i], numRings, self.randomNumGen)
             ringGroup = RingGroup.RingGroup(trackGroup, self.ringModel, RingGameGlobals.MAX_TOONXZ, self.colorIndices)
-            for r in xrange(numRings):
+            for r in range(numRings):
                 self.__addRingDropShadow(ringGroup.getRing(r))
 
             self.ringGroups.append(ringGroup)
@@ -574,7 +575,7 @@ class RingGame(Minigame):
         list.append([shadow, object])
 
     def __removeDropShadow_INTERNAL(self, object, list):
-        for i in xrange(len(list)):
+        for i in range(len(list)):
             entry = list[i]
             if entry[1] == object:
                 entry[0].removeNode()

@@ -1,10 +1,10 @@
 from panda3d.core import *
 from toontown.hood import ZoneUtil
-from Interior import Interior
-import ToonInteriorColors
-import InteriorStorage
+from toontown.building.Interior import Interior
+from toontown.building import ToonInteriorColors
+from toontown.building import InteriorStorage
 import random
-import Door
+from toontown.building import Door
 
 class ToonHallInterior(Interior):
 

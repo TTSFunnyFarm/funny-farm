@@ -1,4 +1,3 @@
-# Embedded file name: lib\toontown\toon\ChatBalloon.py
 from panda3d.core import *
 
 class ChatBalloon:

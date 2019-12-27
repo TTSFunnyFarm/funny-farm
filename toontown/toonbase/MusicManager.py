@@ -1,6 +1,7 @@
 from panda3d.core import *
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.building.Interior import Interior
+from toontown.building.SuitInteriorBase import SuitInteriorBase
 
 class MusicManager:
     notify = directNotify.newCategory('MusicManager')
@@ -34,22 +35,20 @@ class MusicManager:
 
     def stopMusic(self):
         for t in self.pickAToonMusic:
-            if t != None:
-                t.stop()
-        for t in self.safezoneMusic.keys():
-            if self.safezoneMusic[t] != None:
-                self.safezoneMusic[t].stop()
-        for t in self.townMusic.keys():
-            if self.townMusic[t] != None:
-                self.townMusic[t].stop()
-        for t in self.activityMusic.keys():
-            if self.activityMusic[t] != None:
-                self.activityMusic[t].stop()
+            t.stop()
+        for t in list(self.safezoneMusic.keys()):
+            self.safezoneMusic[t].stop()
+        for t in list(self.townMusic.keys()):
+            self.townMusic[t].stop()
+        for t in list(self.activityMusic.keys()):
+            self.activityMusic[t].stop()
 
     def playCurrentZoneMusic(self):
         zoneId = FunnyFarmGlobals.getHoodId(base.localAvatar.getZoneId())
         zone = base.cr.playGame.getActiveZone()
         if zone.place:
+            if isinstance(zone.place, SuitInteriorBase):
+                return
             lookupTable = self.activityMusic
             volume = 0.5
         elif base.cr.playGame.hood:
@@ -60,14 +59,13 @@ class MusicManager:
             volume = 1.0
         else:
             self.notify.warning('playCurrentZoneMusic(): localAvatar is not currently in a valid zone.')
-            return None
-        if zoneId in lookupTable.keys():
+            return
+        if zoneId in list(lookupTable.keys()):
             music = lookupTable[zoneId]
         else:
             self.notify.warning('playCurrentZoneMusic(): music for zone %s not in MusicManager.' % str(zoneId))
-            return None
-        if music is not None:
-            self.playMusic(music, looping=1, volume=volume)
+            return
+        self.playMusic(music, looping=1, volume=volume)
 
     def playPickAToon(self):
         if base.air.holidayMgr.isWinter():

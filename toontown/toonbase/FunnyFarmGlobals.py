@@ -1,11 +1,10 @@
 from panda3d.core import *
-from toontown.toon import Toon
 from direct.gui import DirectGuiGlobals
 from otp.margins.MarginManager import MarginManager
 from otp.nametag import NametagGlobals
 from otp.nametag.ChatBalloon import ChatBalloon
-import TTLocalizer
-from ToontownGlobals import *
+from toontown.toonbase import TTLocalizer
+from toontown.toonbase.ToontownGlobals import *
 
 def getVar(var):
     return globals()[var]
@@ -80,7 +79,7 @@ def getNameFromId(hoodId):
 def getHoodId(zoneId):
     for zones in HoodHierarchy.values():
         if zoneId in zones:
-            return HoodHierarchy.keys()[HoodHierarchy.values().index(zones)]
+            return list(HoodHierarchy.keys())[list(HoodHierarchy.values()).index(zones)]
     return zoneId
 
 phaseMap = {
@@ -101,14 +100,15 @@ townCountMap = {
 }
 SpawnPoints = {
     FunnyFarm: [
-        (Point3(0, -140, 0), Vec3(0, 0, 0)),
-        (Point3(-40, -90, 0), Vec3(315, 0, 0)),
-        (Point3(40, -90, 0), Vec3(45, 0, 0)),
-        (Point3(60, -20, 0), Vec3(90, 0, 0)),
-        (Point3(-60, -20, 0), Vec3(270, 0, 0)),
-        (Point3(-50, 45, 0), Vec3(225, 0, 0)),
-        (Point3(5, 60, 0), Vec3(180, 0, 0)),
-        (Point3(60, 35, 0), Vec3(135, 0, 0))
+        (Point3(0, -100, 0.025), Vec3(0, 0, 0)),
+        (Point3(82, -89, 0.025), Vec3(45, 0, 0)),
+        (Point3(-82, -89, 0.025), Vec3(315, 0, 0)),
+        (Point3(-85, -30, 0.025), Vec3(270, 0, 0)),
+        (Point3(85, -30, 0.025), Vec3(90, 0, 0)),
+        (Point3(5, 65, 0.536), Vec3(180, 0, 0)),
+        (Point3(-63, 59, 0.025), Vec3(215, 0, 0)),
+        (Point3(-30, 15, 0.536), Vec3(190, 0, 0)),
+        (Point3(-95, -153, 0.025), Vec3(270, 0, 0))
     ]
 }
 nametagFonts = []

@@ -6,7 +6,7 @@ from toontown.hood import ZoneUtil
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.quest import QuestBookPoster
-import ShtikerPage
+from toontown.book import ShtikerPage
 
 class QuestPage(ShtikerPage.ShtikerPage):
     notify = directNotify.newCategory('QuestPage')
@@ -22,11 +22,11 @@ class QuestPage(ShtikerPage.ShtikerPage):
         return
 
     def load(self):
-        self.title = DirectLabel(parent=self, relief=None, text=TTLocalizer.QuestPageToonTasks, text_scale=0.12, textMayChange=0, pos=(0, 0, 0.6))
+        self.title = DirectLabel(parent=self, relief=None, text=TTLocalizer.QuestPageToonTasks, text_scale=0.12, textMayChange=0, pos=(0, 0, 0.625))
         questFramePlaceList = (
             (-0.45, 0, 0.28, 0, 0, 0),
             (0.45, 0, 0.28, 0, 0, 0),
-            (-0.45, 0, -0.38, 0, 0, 0), 
+            (-0.45, 0, -0.38, 0, 0, 0),
             (0.45, 0, -0.38, 0, 0, 0))
         self.questFrames = []
         for i in range(ToontownGlobals.MaxQuestCarryLimit):
@@ -92,7 +92,7 @@ class QuestPage(ShtikerPage.ShtikerPage):
                 index = self.getLowestUnusedIndex()
                 self.fillQuestFrame(newQuestDesc, index)
 
-        for i, questDesc in self.quests.iteritems():
+        for i, questDesc in self.quests.items():
             if questDesc:
                 if self.canDeleteQuest(questDesc):
                     self.questFrames[i].setDeleteCallback(self.__deleteQuest)
@@ -145,4 +145,3 @@ class QuestPage(ShtikerPage.ShtikerPage):
 
     def __deleteQuest(self, questDesc):
         base.localAvatar.d_requestDeleteQuest(questDesc)
-

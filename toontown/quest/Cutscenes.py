@@ -218,3 +218,50 @@ def scene1014():
     
     track.append(Func(base.localAvatar.acceptOnce, 'cutscene-done', sceneDone))
     return track
+
+def scene1028():
+    interior = base.cr.playGame.street.place.interior
+    street = base.cr.playGame.street.geom
+    sky = base.cr.playGame.street.sky
+
+    def loadStreet():
+        interior.reparentTo(hidden)
+        interior.stash()
+        street.unstash()
+        street.reparentTo(render)
+        sky.unstash()
+        sky.reparentTo(render)
+        base.cr.playGame.street.setupLandmarkBuildings()
+        aspect2d.hide()
+        camera.wrtReparentTo(render)
+        camera.setPosHpr(55, 163, 12, 39, 0, 0)
+        base.transitions.fadeIn(1.0)
+
+    def loadInterior():
+        street.reparentTo(hidden)
+        street.stash()
+        sky.reparentTo(hidden)
+        sky.stash()
+        base.cr.playGame.street.destroyLandmarkBuildings()
+        interior.unstash()
+        interior.reparentTo(render)
+        aspect2d.show()
+        base.localAvatar.enable()
+        base.localAvatar.disable()
+        base.localAvatar.setAnimState('neutral')
+        base.transitions.fadeIn(1.0)
+
+    track = Sequence()
+    track.append(Func(base.transitions.fadeOut, 1.0))
+    track.append(Wait(1.0))
+    track.append(Func(loadStreet))
+    track.append(Wait(1.0))
+    track.append(Func(messenger.send, 'spawnBuilding-1100', [18]))
+    track.append(Wait(10.0))
+    track.append(Func(base.transitions.fadeOut, 1.0))
+    track.append(Wait(1.0))
+    track.append(Func(loadInterior))
+    track.append(Wait(1.0))
+    track.append(Func(base.localAvatar.showInfoBubble, 1028, 'cutscene-done', 1001))
+    track.append(Func(base.localAvatar.addQuestHistory, 1028))
+    return track

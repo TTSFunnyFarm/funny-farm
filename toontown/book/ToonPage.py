@@ -3,7 +3,7 @@ from direct.gui.DirectGui import *
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toon import Toon
-import ShtikerPage
+from toontown.book import ShtikerPage
 
 GagIconPoints = [
     (-0.5, 0, 0),

@@ -7,13 +7,14 @@ from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toontowngui import TTDialog
 from toontown.suit import Suit
-from ElevatorConstants import *
-from ElevatorUtils import *
+from toontown.building.ElevatorConstants import *
+from toontown.building.ElevatorUtils import *
 
 class Elevator(DirectObject):
     notify = directNotify.newCategory('Elevator')
 
-    def __init__(self, type=ELEVATOR_NORMAL):
+    def __init__(self, block, type=ELEVATOR_NORMAL):
+        self.block = block
         self.type = type
         self.openSfx = base.loader.loadSfx('phase_5/audio/sfx/elevator_door_open.ogg')
         self.closeSfx = base.loader.loadSfx('phase_5/audio/sfx/elevator_door_close.ogg')
@@ -36,8 +37,8 @@ class Elevator(DirectObject):
                 floor = int(light.getName()[-1:]) - 1
                 if floor < self.numFloors:
                     light.setColor(LIGHT_OFF_COLOR)
-                    if base.cr.playGame.getActiveZone().place:
-                        currFloor = base.cr.playGame.getActiveZone().place.currentFloor
+                    if base.cr.playGame.street.place and hasattr(base.cr.playGame.street.place, 'currentFloor'):
+                        currFloor = base.cr.playGame.street.place.currentFloor
                         if floor == (currFloor - 1):
                             light.setColor(LIGHT_ON_COLOR)
                 else:
@@ -97,6 +98,7 @@ class Elevator(DirectObject):
         return ('%s-%s' % (idString, str(id(self))))
 
     def addActive(self):
+        self.ignoreAll()
         self.accept('enter' + self.elevatorSphere.getName(), self.__handleEnterSphere)
 
     def removeActive(self):
@@ -130,7 +132,7 @@ class Elevator(DirectObject):
         cameraTrack = LerpPosHprInterval(camera, 1.5, Point3(0, -16, 5.5), Point3(0, 0, 0))
         animInFunc = Sequence(Func(base.localAvatar.setAnimState, 'run'))
         animFunc = Func(base.localAvatar.setAnimState, 'neutral')
-        track = Sequence(animInFunc, LerpPosInterval(base.localAvatar, TOON_BOARD_ELEVATOR_TIME * 0.75, apply(Point3, ElevatorPoints[index]), other=self.np), LerpHprInterval(base.localAvatar, TOON_BOARD_ELEVATOR_TIME * 0.25, Point3(180, 0, 0), other=self.np), animFunc, name=base.localAvatar.uniqueName('fillElevator'), autoPause=1)
+        track = Sequence(animInFunc, LerpPosInterval(base.localAvatar, TOON_BOARD_ELEVATOR_TIME * 0.75, Point3(*ElevatorPoints[index]), other=self.np), LerpHprInterval(base.localAvatar, TOON_BOARD_ELEVATOR_TIME * 0.25, Point3(180, 0, 0), other=self.np), animFunc, name=base.localAvatar.uniqueName('fillElevator'), autoPause=1)
         track = Parallel(cameraTrack, track)
         if callback:
             track.setDoneEvent(track.getName())
@@ -147,8 +149,8 @@ class Elevator(DirectObject):
             self.dialog = TTDialog.TTDialog(text=TTLocalizer.SuitBuildingDialog, text_align=TextNode.ACenter, style=TTDialog.YesNo, command=self.handleDialog)
             self.dialog.show()
             return
-        elif base.cr.playGame.getActiveZone().place:
-            self.board(0, callback=base.cr.playGame.getActiveZone().place.loadNextFloor)
+        elif base.cr.playGame.street.place:
+            self.board(0, callback=base.cr.playGame.street.place.loadNextFloor)
         else:
             self.board(0)
 
@@ -229,7 +231,7 @@ class Elevator(DirectObject):
         del self.clockNode
 
     def enterSuitBuilding(self):
-        base.cr.playGame.getActiveZone().enterSuitBuilding(self.track, self.difficulty, self.numFloors)
+        base.cr.playGame.getActiveZone().enterSuitBuilding(self.block, self.track, self.difficulty, self.numFloors)
 
     def enterEliteBuilding(self):
-        base.cr.playGame.getActiveZone().enterEliteBuilding(self.track, self.difficulty, self.numFloors)
+        base.cr.playGame.getActiveZone().enterEliteBuilding(self.block, self.track, self.difficulty, self.numFloors)

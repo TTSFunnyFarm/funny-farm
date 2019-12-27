@@ -4,13 +4,13 @@ from direct.showbase.DirectObject import DirectObject
 from panda3d.core import *
 
 from toontown.building.SuitInterior import SuitInterior
-from toontown.building.EliteInterior import EliteInterior
 from toontown.hood import ZoneUtil
 from toontown.quest import Quests
 from toontown.toon import NPCToons
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals
+
 
 class Hood(DirectObject):
     notify = directNotify.newCategory('Hood')
@@ -50,9 +50,12 @@ class Hood(DirectObject):
                     base.localAvatar.setSystemMessage(0, TTLocalizer.WinterHolidayMessage)
             else:
                 base.localAvatar.enterTeleportIn(callback=self.handleEntered)
-        if self.overwriteLastHood:
-            base.avatarData.setLastHood = self.zoneId
-            dataMgr.saveToonData(base.avatarData)
+        if ZoneUtil.getCanonicalHoodId(self.zoneId) not in base.localAvatar.getHoodsVisited():
+            hoodList = base.localAvatar.getHoodsVisited()
+            hoodList.append(ZoneUtil.getCanonicalHoodId(self.zoneId))
+            base.localAvatar.setHoodsVisited(hoodList)
+        base.avatarData.setLastHood = self.zoneId
+        dataMgr.saveToonData(base.avatarData)
         self.spawnTitleText()
 
     def exit(self):
@@ -124,7 +127,7 @@ class Hood(DirectObject):
 
     def generateNPCs(self):
         self.npcs = NPCToons.createNpcsInZone(self.zoneId)
-        for i in xrange(len(self.npcs)):
+        for i in range(len(self.npcs)):
             origin = self.geom.find('**/npc_origin_%d' % i)
             if not origin.isEmpty():
                 self.npcs[i].reparentTo(self.geom)
@@ -206,13 +209,14 @@ class Hood(DirectObject):
     def exitPlace(self):
         pass
 
-    def enterSuitBuilding(self, track, difficulty, numFloors):
+    def enterSuitBuilding(self, block, track, difficulty, numFloors):
         self.exit()
         self.geom.reparentTo(hidden)
         self.geom.stash()
         self.sky.reparentTo(hidden)
         self.sky.stash()
-        self.place = SuitInterior(track, difficulty, numFloors)
+        zone = self.zoneId + 500 + block
+        self.place = SuitInterior(zone, track, difficulty, numFloors)
         self.place.loadNextFloor()
 
     def enterEliteBuilding(self):

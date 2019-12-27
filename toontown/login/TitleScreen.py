@@ -42,7 +42,10 @@ class TitleScreen(DirectObject):
         self.pandaLogo.setScale(0.4)
         self.pandaLogo.hide()
         pandaText = DirectLabel(parent=self.pandaLogo, relief=None, pos=(0, 0, 0.08), text='Powered by', text_scale=0.1, text_fg=Vec4(1, 1, 1, 1), text_align=TextNode.ACenter, text_font=FunnyFarmGlobals.getMinnieFont(), text_shadow=(0, 0, 0, 1))
-        self.ground = loader.loadModel('phase_4/models/minigames/toon_cannon_gameground')
+        if base.air.holidayMgr.isWinter():
+            self.ground = loader.loadModel('phase_4/models/minigames/toon_cannon_gameground_winter')
+        else:
+            self.ground = loader.loadModel('phase_4/models/minigames/toon_cannon_gameground')
         self.ground.reparentTo(render)
         self.ground.setScale(1.1)
         self.ground.setColorScale(0.55, 0.55, 0.55, 1.0)

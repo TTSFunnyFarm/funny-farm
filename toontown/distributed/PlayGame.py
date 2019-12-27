@@ -16,6 +16,7 @@ from toontown.minigame import TugOfWarGame
 from toontown.minigame import MazeGame
 from toontown.minigame import DivingGame
 from toontown.minigame import CogThiefGame
+from toontown.building.SuitInteriorBase import SuitInteriorBase
 import random
 
 class PlayGame(DirectObject):
@@ -98,10 +99,14 @@ class PlayGame(DirectObject):
             self.exitStreet()
 
     def getActiveZone(self):
+        zone = None
         if self.hood:
-            return self.hood
+            zone = self.hood
         elif self.street:
-            return self.street
+            zone = self.street
+        if zone.place and isinstance(zone.place, SuitInteriorBase):
+            zone = zone.place
+        return zone
 
     def enterTutorial(self):
         name = TTLocalizer.Tutorial

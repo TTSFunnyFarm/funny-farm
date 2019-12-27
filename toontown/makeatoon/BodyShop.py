@@ -2,12 +2,12 @@ from panda3d.core import *
 from toontown.toon import ToonDNA
 from direct.fsm import StateData
 from direct.gui.DirectGui import *
-from MakeAToonGlobals import *
+from toontown.makeatoon.MakeAToonGlobals import *
 import random
 from toontown.toonbase import TTLocalizer
 from direct.directnotify import DirectNotifyGlobal
 from toontown.toontowngui import TeaserPanel
-import ShuffleButton
+from toontown.makeatoon import ShuffleButton
 
 class BodyShop(StateData.StateData):
     notify = DirectNotifyGlobal.directNotify.newCategory('BodyShop')
@@ -242,7 +242,8 @@ class BodyShop(StateData.StateData):
         self.toon.swapToonTorso(torso)
         self.toon.loop('neutral', 0)
         self.toon.swapToonColor(self.dna)
-        self.toon.setBlend(frameBlend=True)
+        if config.GetBool('smooth-animations', True):
+            self.toon.setBlend(frameBlend=True)
 
     def __swapLegs(self, offset):
         length = len(ToonDNA.toonLegTypes)
@@ -254,7 +255,8 @@ class BodyShop(StateData.StateData):
         self.toon.swapToonLegs(newLeg)
         self.toon.loop('neutral', 0)
         self.toon.swapToonColor(self.dna)
-        self.toon.setBlend(frameBlend=True)
+        if config.GetBool('smooth-animations', True):
+            self.toon.setBlend(frameBlend=True)
 
     def __swapHead(self, offset):
         self.headList = ToonDNA.getHeadList(self.species)
@@ -282,7 +284,8 @@ class BodyShop(StateData.StateData):
         self.toon.swapToonHead(newHead)
         self.toon.loop('neutral', 0)
         self.toon.swapToonColor(self.dna)
-        self.toon.setBlend(frameBlend=True)
+        if config.GetBool('smooth-animations', True):
+            self.toon.setBlend(frameBlend=True)
         self.restrictHeadType(newHead)
 
     def __updateScrollButtons(self, choice, length, start, lButton, rButton):

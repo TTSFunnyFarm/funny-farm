@@ -78,10 +78,11 @@ class AvatarChooser:
         trashOpen = trashcanGui.find('**/TrashCan_OPEN')
         trashRlvr = trashcanGui.find('**/TrashCan_RLVR')
         self.bg = DirectFrame(image=bgImage, relief=None)
+        self.bg.setBin('background', 1)
         self.bg.hide()
         self.title = OnscreenText(TTLocalizer.AvatarChooserPickAToon, scale=TTLocalizer.ACtitle, parent=self.bg, font=ToontownGlobals.getSignFont(), fg=(1, 0.9, 0.1, 1), pos=(0.0, 0.82))
         
-        for i in xrange(0, FunnyFarmGlobals.MaxAvatars):
+        for i in range(0, FunnyFarmGlobals.MaxAvatars):
             button = DirectButton(parent=self.bg, image=btnImages[i], relief=None, pos=POSITIONS[i], scale=1.01, text=(TTLocalizer.AvatarChoiceMakeAToon,), text_scale=0.1, text_font=ToontownGlobals.getSignFont(), text_fg=(0, 1, 0.8, 0.5), text1_scale=TTLocalizer.ACmakeAToon, text1_font=ToontownGlobals.getSignFont(), text1_fg=(0, 1, 0.8, 1), text2_scale=TTLocalizer.ACmakeAToon, text2_font=ToontownGlobals.getSignFont(), text2_fg=(0.3, 1, 0.9, 1), command=self.__handleCreate, extraArgs=[i + 1])
             button.delete = DirectButton(parent=button, image=(trashcanGui.find('**/TrashCan_CLSD'), trashcanGui.find('**/TrashCan_OPEN'), trashcanGui.find('**/TrashCan_RLVR')), text=('', TTLocalizer.AvatarChoiceDelete, TTLocalizer.AvatarChoiceDelete), text_fg=(1, 1, 1, 1), text_shadow=(0, 0, 0, 1), text_scale=0.15, text_pos=(0, -0.1), text_font=ToontownGlobals.getInterfaceFont(), relief=None, pos=DELETE_POSITIONS[i], scale=0.45, command=self.__handleDelete, extraArgs=[i + 1])
             button.delete.hide()
@@ -89,7 +90,7 @@ class AvatarChooser:
             button.rename.hide()
             self.buttons.append(button)
 
-        self.quitButton = DirectButton(parent=self.bg, image=(quitHover, quitHover, quitHover), relief=None, text=TTLocalizer.AvatarChooserQuit, text_font=ToontownGlobals.getSignFont(), text_fg=(0.977, 0.816, 0.133, 1), text_pos=TTLocalizer.ACquitButtonPos, text_scale=TTLocalizer.ACquitButton, image_scale=1, image1_scale=1.05, image2_scale=1.05, scale=1.05, pos=(1.08, 0, -0.907), command=base.userExit)
+        self.quitButton = DirectButton(parent=base.a2dBottomRight, image=(quitHover, quitHover, quitHover), relief=None, text=TTLocalizer.AvatarChooserQuit, text_font=ToontownGlobals.getSignFont(), text_fg=(0.977, 0.816, 0.133, 1), text_pos=TTLocalizer.ACquitButtonPos, text_scale=TTLocalizer.ACquitButton, image_scale=1, image1_scale=1.05, image2_scale=1.05, scale=1.05, pos=(-0.253333, 0, 0.093), command=base.userExit)
         self.loadAvatars()
         gui.removeNode()
         quitGui.removeNode()
@@ -107,17 +108,17 @@ class AvatarChooser:
             button.delete.destroy()
             button.rename.destroy()
         del self.buttons
-        self.bg.destroy()
-        del self.bg
-        self.title.removeNode()
-        del self.title
         self.quitButton.destroy()
         del self.quitButton
+        self.title.removeNode()
+        del self.title
+        self.bg.destroy()
+        del self.bg
         self.isLoaded = 0
 
     def loadAvatars(self):
         if dataMgr.checkToonFiles():
-            for i in xrange(0, FunnyFarmGlobals.MaxAvatars):
+            for i in range(0, FunnyFarmGlobals.MaxAvatars):
                 data = dataMgr.loadToonData(i + 1)
                 if data != None:
                     self.displayHead(data, self.buttons[i])
@@ -159,18 +160,21 @@ class AvatarChooser:
         button.delete.show()
 
     def reviewName(self, name, index):
-        blacklistFile = 'resources/phase_4/etc/tblacklist.dat'
+        vfs = VirtualFileSystem.getGlobalPtr()
+        filename = Filename('tblacklist.dat')
+        searchPath = DSearchPath()
+        searchPath.appendDirectory(Filename('resources/phase_4/etc'))
+        found = vfs.resolveFilename(filename, searchPath)
+        if not found:
+            self.notify.info("Couldn't find blacklist data file!")
+        data = vfs.readFile(filename, 1)
+
         # We need two lists: one uppercase and one lowercase.
-        # That means we have to open 2 blacklist files because whatever
-        # changes we make to it are saved to the "blacklist" variable.
-        with open(blacklistFile) as blacklist:
-            badWords = blacklist.read().split()
-        with open(blacklistFile) as blacklist:
-            badWordsTitled = blacklist.read().title().split()
-        
+        badWords = data.split()
+        badWordsTitled = data.title().split()
         nameWords = re.sub('[^\w]', ' ',  name).split()
         for word in nameWords:
-            if word in badWords or word in badWordsTitled:
+            if word.encode() in badWords or word.encode() in badWordsTitled:
                 name = self.findTempName(name, index)
                 break
         if len(name) < 3 or len(nameWords) > 4:
@@ -203,7 +207,7 @@ class AvatarChooser:
             nameBalloon = loader.loadModel('phase_3/models/props/chatbox_input')
             okButtonImage = (buttons.find('**/ChtBx_OKBtn_UP'), buttons.find('**/ChtBx_OKBtn_DN'), buttons.find('**/ChtBx_OKBtn_Rllvr'))
             cancelButtonImage = (buttons.find('**/CloseBtn_UP'), buttons.find('**/CloseBtn_DN'), buttons.find('**/CloseBtn_Rllvr'))
-            self.renameFrame = DirectFrame(pos=(0, 0, 0), parent=aspect2dp, relief=None, image=DGG.getDefaultDialogGeom(), image_color=ToontownGlobals.GlobalDialogColor, image_scale=(1.4, 1.0, 1.0), text=deleteText, text_wordwrap=19, text_scale=TTLocalizer.ACdeleteWithPasswordFrame, text_pos=(0, 0.25), textMayChange=1, sortOrder=NO_FADE_SORT_INDEX)
+            self.renameFrame = DirectFrame(pos=(0, 0, 0), parent=aspect2dp, relief=None, image=DGG.getDefaultDialogGeom(), image_color=ToontownGlobals.GlobalDialogColor, image_scale=(1.4, 1.0, 1.0), text=deleteText, text_wordwrap=19, text_scale=TTLocalizer.ACdeleteWithPasswordFrame, text_pos=(0, 0.25), textMayChange=1, sortOrder=DGG.NO_FADE_SORT_INDEX)
             self.renameFrame.hide()
             self.renameEntry = DirectEntry(parent=self.renameFrame, relief=None, image=nameBalloon, image1_color=(0.8, 0.8, 0.8, 1.0), scale=0.064, pos=(-0.3, 0.0, -0.2), width=10, numLines=1, focus=1, cursorKeys=1, autoCapitalize=1, command=self.__handleRenameOK, extraArgs = [index])
             DirectLabel(parent=self.renameFrame, relief=None, pos=(0, 0, 0.35), text=TTLocalizer.AvatarChoiceRenameTitle, textMayChange=0, text_scale=0.08)
@@ -223,7 +227,7 @@ class AvatarChooser:
         name = self.renameEntry.get()
         data = dataMgr.loadToonData(index)
         reviewedName = self.reviewName(name, index)
-        print " NAME: {0}, REVIEW: {1}".format(name, reviewedName)
+        print(" NAME: {0}, REVIEW: {1}".format(name, reviewedName))
         if name == reviewedName:
             self.renameFrame.hide()
             base.transitions.noTransitions()

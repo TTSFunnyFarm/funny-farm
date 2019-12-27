@@ -1,7 +1,7 @@
 from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
-from BattleSuit import BattleSuit
-import SuitTimings
+from toontown.suit.BattleSuit import BattleSuit
+from toontown.suit import SuitTimings
 
 class SuitPlanner(DirectObject):
 
@@ -58,7 +58,7 @@ class SuitPlanner(DirectObject):
 
     def removeSuit(self, doId):
         # Makes the suit fly away first, then deletes it
-        if doId in self.activeSuits.keys():
+        if doId in list(self.activeSuits.keys()):
             suit = self.activeSuits[doId]
             suit.exitWalk()
             suit.enterToSky()
@@ -70,7 +70,7 @@ class SuitPlanner(DirectObject):
 
     def removeActiveSuit(self, doId):
         # Simply removes the suit from the list of active suits
-        if doId in self.activeSuits.keys():
+        if doId in list(self.activeSuits.keys()):
             self.activeSuits.pop(doId)
 
     def spawnSuitBuilding(self, requestStatus):
@@ -132,7 +132,7 @@ class SuitPlanner(DirectObject):
             suit.enterWalk(status['posA'], status['posB'], time)
 
     def unloadSuits(self):
-        for doId in self.activeSuits.keys():
+        for doId in list(self.activeSuits.keys()):
             suit = self.activeSuits[doId]
             self.deleteSuit(suit)
 
@@ -167,7 +167,7 @@ class SuitPlanner(DirectObject):
         cell = render.find('**/battleCell')
         if cell.isEmpty():
             return task.cont
-        for doId in self.activeSuits.keys()[:]: # Iterate over a COPY of activeSuits instead of the original since it'll be constantly changing as this task continues.
+        for doId in list(self.activeSuits.keys())[:]: # Iterate over a COPY of activeSuits instead of the original since it'll be constantly changing as this task continues.
             suit = self.activeSuits[doId]
             dist = (suit.getPos() - cell.getPos()).length()
             if dist <= 12:

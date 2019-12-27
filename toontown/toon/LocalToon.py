@@ -16,19 +16,21 @@ from toontown.book import MapPage
 from toontown.book import ToonPage
 from toontown.book import InventoryPage
 from toontown.book import QuestPage
+from toontown.book import TrackPage
 from toontown.quest import Quests
 from toontown.quest.InfoBubble import InfoBubble
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
-from LaffMeter import LaffMeter
-from PublicWalk import PublicWalk
-from ExperienceBar import ExperienceBar
-import InventoryNew
-import Experience
-import Toon
+from toontown.toon.LaffMeter import LaffMeter
+from toontown.toon.PublicWalk import PublicWalk
+from toontown.toon.ExperienceBar import ExperienceBar
+from toontown.toon import InventoryNew
+from toontown.toon import Experience
+from toontown.toon import Toon
 import random
 import math
+import time
 
 class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
     notify = directNotify.newCategory('LocalToon')
@@ -56,7 +58,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             self.soundPhoneRing = base.loader.loadSfx('phase_3.5/audio/sfx/telephone_ring.ogg')
             self.soundSystemMessage = base.loader.loadSfx('phase_3/audio/sfx/clock03.ogg')
             self.rewardSfx = base.loader.loadSfx('phase_3.5/audio/sfx/tt_s_gui_sbk_cdrSuccess.ogg')
-            self.levelUpSfx = base.loader.loadSfx('phase_4/audio/sfx/MG_sfx_travel_game_bonus.ogg')
+            self.levelUpSfx = base.loader.loadSfx('phase_14/audio/sfx/lvl-up_jingle.ogg')
             self.tunnelX = 0.0
             self.estate = None
             self.__pieBubble = None
@@ -128,6 +130,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             self.experienceBar = None
             self.hoodsVisited = []
             self.teleportAccess = []
+            self.CETimer = 0.0
 
     def generate(self):
         self.walkDoneEvent = 'walkDone'
@@ -269,6 +272,9 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         self.questPage = QuestPage.QuestPage()
         self.questPage.load()
         self.book.addPage(self.questPage, pageName=TTLocalizer.QuestPageToonTasks)
+        self.trackPage = TrackPage.TrackPage()
+        self.trackPage.load()
+        self.book.addPage(self.trackPage, pageName=TTLocalizer.TrackPageShortTitle)
         self.questPage.acceptOnscreenHooks()
         self.laffMeter = LaffMeter(self.style, self.hp, self.maxHp)
         self.laffMeter.setAvatar(self)
@@ -372,8 +378,38 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def setCheesyEffect(self, effect):
         Toon.Toon.applyCheesyEffect(self, effect, lerpTime=0.5)
+        if effect != ToontownGlobals.CENormal:
+            # We need to set a timer so the toon isn't stuck like this forever.
+            effectDict = FunnyFarmGlobals.CheesyEffectDict[self.getQuestingZone()]
+            # Make sure the effect is available in our playground.
+            if effect in effectDict.keys():
+                unit, duration = effectDict[effect]
+                # Did we JUST put on the effect, or was this one already active?
+                if self.getCETimer() == 0.0:
+                    # Brand new effect, set the startTime to... right now!
+                    startTime = time.time()
+                    self.setCETimer(startTime)
+                else:
+                    # There must be an active timer already.
+                    startTime = self.getCETimer()
+                # Start the timer, AI will take it from here.
+                base.air.cheesyEffectMgr.startTimer(unit, duration, startTime)
+                self.accept('cheesyEffectTimeout', self.cheesyEffectTimeout)
         base.avatarData.setCheesyEffect = effect
         dataMgr.saveToonData(base.avatarData)
+
+    def cheesyEffectTimeout(self):
+        self.ignore('cheesyEffectTimeout')
+        self.setCheesyEffect(ToontownGlobals.CENormal)
+        self.setCETimer(0.0)
+
+    def setCETimer(self, startTime):
+        self.CETimer = startTime
+        base.avatarData.setCETimer = startTime
+        dataMgr.saveToonData(base.avatarData)
+
+    def getCETimer(self):
+        return self.CETimer
 
     def setAccessLevel(self, level):
         self.accessLevel = level
@@ -506,6 +542,14 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
     def getQuestCarryLimit(self):
         return self.questCarryLimit
 
+    def setQuestingZone(self, zone):
+        self.questingZone = zone
+        base.avatarData.setQuestingZone = zone
+        dataMgr.saveToonData(base.avatarData)
+
+    def getQuestingZone(self):
+        return self.questingZone
+
     def addQuest(self, questId):
         if len(self.quests) >= self.questCarryLimit:
             self.notify.warning('Cannot add quest %d; maximum quests reached' % questId)
@@ -534,7 +578,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         dataMgr.saveToonData(base.avatarData)
 
     def setQuestHistory(self, history):
-        self.questHistory = history  
+        self.questHistory = history
 
     def getQuestHistory(self):
         return self.questHistory
@@ -842,7 +886,15 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
                 if zoneId == FunnyFarmGlobals.FunnyFarm:
                     base.cr.cutsceneMgr.enterCutscene(1014)
                     return True
-
+            # Not a cutscene, but this is the easiest way to do this.
+            if questDesc[0] in [1028, 1029]:
+                if zoneId == FunnyFarmGlobals.RicketyRoad:
+                    for bldg in currZone.buildings:
+                        if bldg.mode != 'toon':
+                            if questDesc[0] == 1028:
+                                bldg.elevator.removeActive()
+                            else:
+                                bldg.elevator.addActive()
         return False
 
     def showInfoBubble(self, index, doneEvent, npcId=0):
@@ -1153,7 +1205,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         return
 
     def localPresentPie(self, time):
-        import TTEmote
+        from toontown.toon import TTEmote
         from otp.avatar import Emote
         self.__stopPresentPie()
         if self.tossTrack:
@@ -1183,7 +1235,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def __stopPresentPie(self):
         if self.__presentingPie:
-            import TTEmote
+            from toontown.toon import TTEmote
             from otp.avatar import Emote
             Emote.globalEmote.releaseBody(self)
             messenger.send('end-pie')
@@ -1537,7 +1589,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             self.hpText.setScale(1)
             self.hpText.setBillboardPointEye()
             self.hpText.setBin('fixed', 100)
-            
+
             stringText.clearShadow()
             stringText.setAlign(TextNode.ACenter)
             stringText.setTextColor(r, g, b, a)
@@ -1546,7 +1598,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             self.strText.setScale(0.5)
             self.strText.setBillboardPointEye()
             self.strText.setBin('fixed', 100)
-            
+
             self.nametag3d.setDepthTest(0)
             self.nametag3d.setBin('fixed', 99)
             self.hpText.setPos(0, 0, self.height / 2)
@@ -1573,7 +1625,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
                     if carryIndex == 6:
                         self.HpTextGenerator.setText(TTLocalizer.RewardCarryToonTasksText % carryAmount)
                     elif carryIndex == 7:
-                        self.HpTextGenerator.setText(TTLocalizer.RewardCarryGagsText % carryAmount)  
+                        self.HpTextGenerator.setText(TTLocalizer.RewardCarryGagsText % carryAmount)
                     elif carryIndex == 8:
                         self.HpTextGenerator.setText(TTLocalizer.RewardCarryJellybeansText % carryAmount)
                     self.HpTextGenerator.setTextColor(Vec4(0.9, 0.6, 0, 1))
@@ -1619,8 +1671,9 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         if hasattr(self, 'auxText'):
             self.auxText.removeNode()
             del self.auxText
-        self.nametag3d.clearDepthTest()
-        self.nametag3d.clearBin()
+        if self.nametag3d:
+            self.nametag3d.clearDepthTest()
+            self.nametag3d.clearBin()
         self.sillySurgeText = False
 
     def died(self):
@@ -1640,7 +1693,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         pass
 
     # These functions are for reflections of the toon on the floor in places like Loony Labs.
-    # This is currently just an alpha test; it looks pretty awkward for a variety of reasons, 
+    # This is currently just an alpha test; it looks pretty awkward for a variety of reasons,
     # so I'm unsure if we're going to keep it or not.
     def makeReflection(self):
         self.reflection = Toon.Toon()
@@ -1667,7 +1720,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def startUpdateReflection(self):
         self.reflectionAnim = None
-        self.reflectionRate = None
+        self.reflectionRate = 1.0
         taskMgr.add(self.updateReflection, 'ltUpdateReflection')
 
     def stopUpdateReflection(self):

@@ -6,7 +6,7 @@ from toontown.toonbase.ToontownBattleGlobals import *
 from toontown.battle import SuitBattleGlobals
 from toontown.toon import NPCToons
 from toontown.hood import ZoneUtil
-import copy, types, random
+import copy, random
 
 ItemDict = TTLocalizer.QuestsItemDict
 CompleteString = TTLocalizer.QuestsCompleteString
@@ -176,6 +176,15 @@ class Quest:
             self.holderType = self.questType[5]
         elif self.questType[0] == QuestTypeDeliver:
             self.item = self.questType[1] 
+        elif self.questType[0] == QuestTypeDeliverGag:
+            self.numGags = self.questType[1]
+            self.gagTrack = self.questType[2]
+            self.gagLevel = self.questType[3]
+        elif self.questType[0] == QuestTypeDefeatBuilding:
+            self.numBuildings = self.questType[1]
+            self.numFloors = self.questType[2]
+            self.buildingTrack = self.questType[3]
+            self.buildingLocation = self.questType[4]
         # todo finish quest types
         self.fromNpc = questInfo[4]
         self.toNpc = questInfo[5]
@@ -220,16 +229,25 @@ class Quest:
         return self.cogTrack
 
     def getNumBuildings(self):
-        pass
+        return self.numBuildings
 
     def getNumFloors(self):
-        pass
+        return self.numFloors
+
+    def getBuildingTrack(self):
+        return self.buildingTrack
 
     def getNumItems(self):
         return self.numItems
 
     def getItem(self):
         return self.item
+
+    def getNumGags(self):
+        return self.numGags
+
+    def getGagType(self):
+        return (self.gagTrack, self.gagLevel)
 
     def getPercentChance(self):
         return self.percentChance
@@ -254,12 +272,13 @@ class Quest:
         elif self.questType[0] == QuestTypeDeliver:
             return 1
         elif self.questType[0] == QuestTypeDeliverGag:
-            return self.getNumItems()
+            return self.getNumGags()
 
     def getCompletionStatus(self):
-        questComplete = self.questProgress >= self.getNumQuestItems()
-        if questComplete:
+        if self.questProgress >= self.getNumQuestItems():
             return COMPLETE
+        # elif self.getType() == QuestTypeDeliverGag and self.questProgress == 0:
+        #     return INCOMPLETE
         return INCOMPLETE_PROGRESS
 
     def getLocation(self):
@@ -322,6 +341,12 @@ class Quest:
             else:
                 return TTLocalizer.QuestsRecoverItemQuestProgress % {'progress': self.questProgress,
                  'numItems': self.getNumItems()}
+        elif self.getType() == QuestTypeDeliverGag:
+            if self.numGags == 1:
+                return ''
+            else:
+                return TTLocalizer.QuestsDeliverGagQuestProgress % {'progress': self.questProgress,
+                 'numGags': self.getNumGags()}
         else:
             return ''
 
@@ -494,6 +519,14 @@ class Quest:
             else:
                 cogCounts = 0
             return cogCounts and avId in cogDict['activeToons'] and self.isLocationMatch(zoneId)
+        else:
+            return 0
+
+    def doesBuildingCount(self, track, numFloors, zoneId):
+        if self.getType() == QuestTypeDefeatBuilding:
+            trackCounts = self.buildingTrack is Any or track == self.buildingTrack
+            floorCounts = self.numFloors is Any or numFloors >= self.numFloors
+            return trackCounts and floorCounts and self.isLocationMatch(zoneId)
         else:
             return 0
 
@@ -710,7 +743,7 @@ QuestDict = {
         (QuestTypeRecover,
          1,
          1,
-         25,
+         30,
          Any,
          Any,
          FunnyFarmGlobals.FunnyFarm),
@@ -824,7 +857,7 @@ QuestDict = {
         (QuestTypeRecover,
          3,
          3,
-         40,
+         50,
          Any,
          Any,
          FunnyFarmGlobals.RicketyRoad),
@@ -912,8 +945,51 @@ QuestDict = {
          50,
          QuestRewardTrackFrame,
          6),
-        NA,
+        1028,
         TTLocalizer.QuestDialogDict[1027]),
+ 1028: (FF_TIER,
+        MainQuest,
+        Start,
+        (QuestTypeGoTo,),
+        1111,
+        1001,
+        1514,
+        (QuestRewardXP,
+         100,
+         QuestRewardTrackFrame,
+         7),
+        1029,
+        TTLocalizer.QuestDialogDict[1028]),
+ 1029: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeDefeatBuilding,
+         1,
+         Any,
+         Any,
+         1100),
+        1001,
+        1113,
+        1618,
+        (QuestRewardXP,
+         100,
+         QuestRewardTrackFrame,
+         7),
+        1030,
+        TTLocalizer.QuestDialogDict[1029]),
+ 1030: (FF_TIER,
+        MainQuest,
+        Finish,
+        (QuestTypeGoTo,),
+        1113,
+        1001,
+        1514,
+        (QuestRewardXP,
+         100,
+         QuestRewardTrackFrame,
+         7),
+        NA,
+        TTLocalizer.QuestDialogDict[1030]),
  1040: (FF_TIER,
         MainQuest,
         Start,
@@ -1019,7 +1095,69 @@ QuestDict = {
          FunnyFarmGlobals.FunnyFarm),
         NA,
         TTLocalizer.QuestDialogDict[1046]),
-
+ 1050: (FF_TIER,
+        MainQuest,
+        Start,
+        (QuestTypeDefeatCog,
+         4,
+         3,
+         Any,
+         Any,
+         FunnyFarmGlobals.FunnyFarm),
+        ToonHQ,
+        Same,
+        NA,
+        (QuestRewardXP,
+         40,
+         QuestRewardCarryGags,
+         30),
+        1051,
+        TTLocalizer.QuestDialogDict[1050]),
+ 1051: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeDeliverGag,
+         5,
+         4,
+         2),
+        ToonHQ,
+        1109,
+        1614,
+        (QuestRewardXP,
+         40,
+         QuestRewardCarryGags,
+         30),
+        1052,
+        TTLocalizer.QuestDialogDict[1051]),
+ 1052: (FF_TIER,
+        MainQuest,
+        Cont,
+        (QuestTypeDeliverGag,
+         5,
+         5,
+         2),
+        1109,
+        Same,
+        1614,
+        (QuestRewardXP,
+         40,
+         QuestRewardCarryGags,
+         30),
+        1053,
+        TTLocalizer.QuestDialogDict[1052]),
+ 1053: (FF_TIER,
+        MainQuest,
+        Finish,
+        (QuestTypeGoTo,),
+        1109,
+        ToonHQ,
+        ToonHQ,
+        (QuestRewardXP,
+         40,
+         QuestRewardCarryGags,
+         30),
+        NA,
+        TTLocalizer.QuestDialogDict[1053]),
  1060: (FF_TIER,
         JustForFun,
         Finish,
@@ -1233,11 +1371,15 @@ QuestDict = {
 Cutscenes = (1,
  1001,
  1002,
- 1004)
+ 1004,
+ 1028)
 ImportantQuests = (1004,
- 1031,
+ 1028,
+ 1030,
  1040,
- 1046)
+ 1046,
+ 1050,
+ 1053)
 ffMainQuests = []
 ffSideQuests = []
 ffJustForFunQuests = []
@@ -1369,9 +1511,16 @@ def chooseQuestDialog(id, status):
                 rewardDialog = rewardDialog % str(reward[1])
             elif reward[0] == QuestRewardCheesyEffect:
                 effect = TTLocalizer.CheesyEffectDescriptions[reward[1]][1]
-                # todo determine the correct lengths of time for cheesy effects.
-                # right now they're permanent.
-                rewardDialog = rewardDialog['i'] % {'effectName': effect, 'whileIn': ''}
+                tier = getQuestTier(id)
+                if tier == FF_TIER or tier == FF_TIER + 1:
+                    zoneId = FunnyFarmGlobals.FunnyFarm
+                else:
+                    zoneId = FunnyFarmGlobals.FunnyFarm
+                if reward[1] in FunnyFarmGlobals.CheesyEffectDict[zoneId].keys():
+                    unit, duration = FunnyFarmGlobals.CheesyEffectDict[zoneId][reward[1]]
+                    rewardDialog = rewardDialog[unit] % {'time': duration, 'effectName': effect, 'whileIn': ''}
+                else:
+                    rewardDialog = rewardDialog['i'] % {'effectName': effect, 'whileIn': ''}
             questDialog += '\x07' + rewardDialog
     return questDialog
 

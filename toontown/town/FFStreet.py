@@ -1,11 +1,11 @@
 from panda3d.core import *
 from direct.interval.IntervalGlobal import *
 from direct.showbase import Audio3DManager
-from toontown.shader import WaterShader
-from toontown.toonbase import FunnyFarmGlobals
 from toontown.hood import SkyUtil
+from toontown.shader import WaterShader
 from toontown.toon import NPCToons
-from Street import Street
+from toontown.toonbase import FunnyFarmGlobals
+from toontown.town.Street import Street
 
 class FFStreet(Street):
 
@@ -65,7 +65,11 @@ class FFStreet(Street):
                 self.npcs[1].origin = origin
                 self.npcs[1].initializeBodyCollisions('toon')
                 self.npcs[1].addActive()
-                return
+                continue
+            if questDesc[0] in [1028, 1029] and questDesc[1] != 1:
+                bldg = base.air.suitPlanners[self.zoneId].buildingMap[18]
+                if bldg.mode == 'toon':
+                    messenger.send('spawnBuilding-%d' % self.zoneId, [18])
 
     def unloadQuestChanges(self):
         if len(self.npcs) > 1:
@@ -97,6 +101,8 @@ class FFStreet(Street):
         del self.audio3d
 
     def __handleTrainCollision(self, entry):
+        if base.localAvatar.getInBattle():
+            return
         base.localAvatar.disable()
         base.localAvatar.setAnimState('neutral')
         animalType = base.localAvatar.getStyle().getType()

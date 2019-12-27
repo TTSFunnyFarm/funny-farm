@@ -1,10 +1,10 @@
 from otp.avatar import Avatar
 from otp.avatar.Avatar import teleportNotify
-import ToonDNA
+from toontown.toon import ToonDNA
 from direct.task.Task import Task
 from toontown.suit import SuitDNA
 from direct.actor import Actor
-from ToonHead import *
+from toontown.toon.ToonHead import *
 from panda3d.core import *
 from direct.interval.IntervalGlobal import *
 from direct.directnotify import DirectNotifyGlobal
@@ -13,9 +13,9 @@ from otp.otpbase import OTPLocalizer
 from toontown.toonbase import TTLocalizer
 import random
 from toontown.effects import Wake
-import TTEmote
+from toontown.toon import TTEmote
 from otp.avatar import Emote
-import Motion
+from toontown.toon import Motion
 from toontown.hood import ZoneUtil
 from toontown.battle import SuitBattleGlobals
 from otp.otpbase import OTPGlobals
@@ -23,8 +23,10 @@ from toontown.effects import DustCloud, Splash
 from direct.showbase.PythonUtil import Functor
 from toontown.distributed import DelayDelete
 from otp.nametag.NametagConstants import *
-import AccessoryGlobals
-import types
+from toontown.toon import AccessoryGlobals
+
+def cmp(a, b):
+    return (a > b) - (a < b)
 
 def teleportDebug(requestStatus, msg, onlyIfToAv = True):
     if teleportNotify.getDebug():
@@ -500,6 +502,8 @@ class Toon(Avatar.Avatar, ToonHead):
         self.shoes = (0, 0, 0)
         self.isStunned = 0
         self.isDisguised = 0
+        self.wantBattles = 1
+        self.inBattle = 0
         self.defaultColorScale = None
         self.jar = None
         self.setTag('pieCode', str(ToontownGlobals.PieCodeToon))
@@ -703,7 +707,8 @@ class Toon(Avatar.Avatar, ToonHead):
         self.rescaleToon()
         self.resetHeight()
         self.setupToonNodes()
-        self.setBlend(frameBlend=True)
+        if config.GetBool('smooth-animations', True):
+            self.setBlend(frameBlend=True)
 
     def setupToonNodes(self):
         rightHand = NodePath('rightHand')
@@ -755,7 +760,8 @@ class Toon(Avatar.Avatar, ToonHead):
         for bookActor, hand in zip(self.__bookActors, hands):
             bookActor.reparentTo(hand)
             bookActor.hide()
-            bookActor.setBlend(frameBlend = True)
+            if config.GetBool('smooth-animations', True):
+                bookActor.setBlend(frameBlend = True)
 
         return self.__bookActors
 
@@ -1028,7 +1034,7 @@ class Toon(Avatar.Avatar, ToonHead):
                 sleeves.setTexture(sleeveTex, 1)
                 sleeves.setColor(sleeveColor)
                 bottoms = thisPart.findAllMatches('**/torso-bot')
-                for bottomNum in xrange(0, bottoms.getNumPaths()):
+                for bottomNum in range(0, bottoms.getNumPaths()):
                     bottom = bottoms.getPath(bottomNum)
                     bottom.setTexture(bottomTex, 1)
                     bottom.setColor(bottomColor)
@@ -1361,6 +1367,8 @@ class Toon(Avatar.Avatar, ToonHead):
             ts = 0.0
         else:
             ts = globalClockDelta.localElapsedTime(timestamp)
+        if animMultiplier == None:
+            animMultiplier = 1.0
         if base.config.GetBool('check-invalid-anims', True):
             if animMultiplier > 1.0 and animName in ['neutral']:
                 animMultiplier = 1.0
@@ -2220,6 +2228,7 @@ class Toon(Avatar.Avatar, ToonHead):
         return
 
     def enterSquish(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
+        self.setWantBattles(0)
         Emote.globalEmote.disableAll(self)
         sound = loader.loadSfx('phase_9/audio/sfx/toon_decompress.ogg')
         lerpTime = 0.1
@@ -2239,6 +2248,7 @@ class Toon(Avatar.Avatar, ToonHead):
             DelayDelete.cleanupDelayDeletes(self.track)
             self.track = None
         Emote.globalEmote.releaseAll(self)
+        self.setWantBattles(1)
         return
 
     def enterFallDown(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
@@ -2290,11 +2300,11 @@ class Toon(Avatar.Avatar, ToonHead):
             for partName, pieceNames in pieces:
                 part = self.getPart(partName, lodName)
                 if part:
-                    if type(pieceNames) == types.StringType:
+                    if type(pieceNames) == str:
                         pieceNames = (pieceNames,)
                     for pieceName in pieceNames:
                         npc = part.findAllMatches('**/%s;+s' % pieceName)
-                        for i in xrange(npc.getNumPaths()):
+                        for i in range(npc.getNumPaths()):
                             results.append(npc[i])
 
         return results
@@ -2335,7 +2345,7 @@ class Toon(Avatar.Avatar, ToonHead):
         if scale == None:
             scale = ToontownGlobals.toonHeadScales[self.style.getAnimal()]
         track = Parallel()
-        for hi in xrange(self.headParts.getNumPaths()):
+        for hi in range(self.headParts.getNumPaths()):
             head = self.headParts[hi]
             track.append(LerpScaleInterval(head, lerpTime, scale, blendType='easeInOut'))
 
@@ -2348,7 +2358,7 @@ class Toon(Avatar.Avatar, ToonHead):
         else:
             invScale = 1.0 / scale
         track = Parallel()
-        for li in xrange(self.legsParts.getNumPaths()):
+        for li in range(self.legsParts.getNumPaths()):
             legs = self.legsParts[li]
             torso = self.torsoParts[li]
             track.append(LerpScaleInterval(legs, lerpTime, scale, blendType='easeInOut'))
@@ -2462,10 +2472,10 @@ class Toon(Avatar.Avatar, ToonHead):
 
             def hideParts():
                 self.notify.debug('HidePaths')
-                for hi in xrange(self.headParts.getNumPaths()):
+                for hi in range(self.headParts.getNumPaths()):
                     head = self.headParts[hi]
                     parts = head.getChildren()
-                    for pi in xrange(parts.getNumPaths()):
+                    for pi in range(parts.getNumPaths()):
                         p = parts[pi]
                         if not p.isHidden():
                             p.hide()
@@ -2482,10 +2492,10 @@ class Toon(Avatar.Avatar, ToonHead):
 
             def showHiddenParts():
                 self.notify.debug('ShowHiddenPaths')
-                for hi in xrange(self.headParts.getNumPaths()):
+                for hi in range(self.headParts.getNumPaths()):
                     head = self.headParts[hi]
                     parts = head.getChildren()
-                    for pi in xrange(parts.getNumPaths()):
+                    for pi in range(parts.getNumPaths()):
                         p = parts[pi]
                         if not self.snowMen.hasPath(p) and p.getTag('snowman') == 'enabled':
                             p.show()
@@ -2631,7 +2641,7 @@ class Toon(Avatar.Avatar, ToonHead):
 
     def setPartsAdd(self, parts):
         actorCollection = parts
-        for thingIndex in xrange(0, actorCollection.getNumPaths()):
+        for thingIndex in range(0, actorCollection.getNumPaths()):
             thing = actorCollection[thingIndex]
             if thing.getName() not in ('joint_attachMeter', 'joint_nameTag'):
                 thing.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.MAdd))
@@ -2640,7 +2650,7 @@ class Toon(Avatar.Avatar, ToonHead):
 
     def setPartsNormal(self, parts, alpha = 0):
         actorCollection = parts
-        for thingIndex in xrange(0, actorCollection.getNumPaths()):
+        for thingIndex in range(0, actorCollection.getNumPaths()):
             thing = actorCollection[thingIndex]
             if thing.getName() not in ('joint_attachMeter', 'joint_nameTag'):
                 thing.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.MNone))
@@ -3154,3 +3164,15 @@ class Toon(Avatar.Avatar, ToonHead):
         self.splash.setScale(2)
         self.splash.play()
         return
+
+    def getWantBattles(self):
+        return self.wantBattles
+
+    def setWantBattles(self, want):
+        self.wantBattles = want
+
+    def getInBattle(self):
+        return self.inBattle
+
+    def setInBattle(self, inBattle):
+        self.inBattle = inBattle

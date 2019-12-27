@@ -5,9 +5,9 @@ from direct.fsm import ClassicFSM
 from direct.fsm import State
 from toontown.toonbase import ToontownGlobals, TTLocalizer
 from toontown.hood import ZoneUtil
-import Toon
+from toontown.toon import Toon
 from direct.distributed import DistributedObject
-import NPCToons
+from toontown.toon import NPCToons
 from toontown.quest import Quests
 from direct.distributed import ClockDelta
 from toontown.quest.QuestIcon import *
@@ -68,7 +68,8 @@ class NPCToonBase(Toon.Toon):
         self.legsParts = []
         self.__bookActors = []
         self.__holeActors = []
-        self.setBlend(frameBlend=True)
+        if config.GetBool('smooth-animations', True):
+            self.setBlend(frameBlend=True)
 
     def wantsSmoothing(self):
         return 0

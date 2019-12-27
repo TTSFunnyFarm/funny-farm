@@ -1,7 +1,7 @@
 from direct.task.Task import Task
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.toonbase import FunnyFarmGlobals
-import Quests
+from toontown.quest import Quests
 
 class QuestManager:
     notify = directNotify.newCategory('QuestManager')
@@ -51,7 +51,7 @@ class QuestManager:
         return Task.done
 
     def recoverItems(self, toon, suitsKilled, zoneId):
-        recovered, notRecovered = ([] for i in xrange(2))
+        recovered, notRecovered = ([] for i in range(2))
         for index, questDesc in enumerate(toon.quests):
             quest = Quests.getQuest(questDesc[0])
             quest.setQuestProgress(questDesc[1])
@@ -95,13 +95,33 @@ class QuestManager:
             toNpcId = quest.toNpc
             completeStatus = quest.getCompletionStatus()
 
-            if completeStatus != Quests.COMPLETE and quest.getType() not in [Quests.QuestTypeGoTo, Quests.QuestTypeChoose, Quests.QuestTypeDeliver]:
+            if completeStatus != Quests.COMPLETE and quest.getType() not in [Quests.QuestTypeGoTo, Quests.QuestTypeChoose, Quests.QuestTypeDeliver, Quests.QuestTypeDeliverGag]:
                 # Quest isn't complete, skip to the next one.
                 continue
             if toNpcId == npc.getNpcId() or toNpcId == Quests.Any or toNpcId == Quests.ToonHQ and npc.getHq():
                 # They made it to the right NPC!
                 if quest.getType() == Quests.QuestTypeChoose:
                     npc.presentTrackChoice(toon.doId, questId, quest.getChoices())
+                elif quest.getType() == Quests.QuestTypeDeliverGag:
+                    track, level = quest.getGagType()
+                    numInvGags = toon.inventory.numItem(track, level)
+                    numQuestGags = quest.getNumGags() - progress
+                    if numInvGags == 0:
+                        # They have zero of the required gags to deliver. Send them off with a default dialog.
+                        npc.incompleteQuest(toon.doId, questId, Quests.INCOMPLETE, toNpcId)
+                    elif numInvGags < numQuestGags:
+                        # They can deliver SOME of the required gags. Take what they have. 
+                        toon.inventory.setItem(track, level, 0)
+                        toon.setQuestProgress(questId, progress + numInvGags)
+                        npc.incompleteQuest(toon.doId, questId, Quests.INCOMPLETE_PROGRESS, toNpcId)
+                    else:
+                        # Awesome! They can deliver the required amount.
+                        toon.inventory.setItem(track, level, numInvGags - numQuestGags)
+                        toon.setQuestProgress(questId, progress + numQuestGags)
+                        if Quests.getQuestFinished(questId) == Quests.Finish:
+                            npc.completeQuest(toon.doId, questId)
+                        else:
+                            self.completeQuest(npc, questId)
                 else:
                     if Quests.getQuestFinished(questId) == Quests.Finish:
                         # They only COMPLETE the quest when the actual quest progression is over.
@@ -170,9 +190,9 @@ class QuestManager:
         # Determines the current quest tier of the toon using their quest history.
         # Only important quests are added to the history, and we use those to determine if they're ready to start the next tier.
         
-        # In this case, 1031 is the final task in tier 1, and they'll also have to have teleport access and carry 30 gags.
+        # In this case, 1030 is the final task in tier 1, and they'll also have to have teleport access and carry 30 gags.
         # (I will finish this method as I write the quests.)
-        if avatar.hasQuestHistory(1031) and avatar.hasQuestHistory(1046): # and avatar.hasQuestHistory(carry30Gags):
+        if avatar.hasQuestHistory(1030) and avatar.hasQuestHistory(1046) and avatar.hasQuestHistory(1053):
             return Quests.FF_TIER + 1
         # else if avatar.hasQuestHistory(finalQuestId):
         #     return Quests.SS_TIER
@@ -235,7 +255,7 @@ class QuestManager:
             elif reward[0] == Quests.QuestRewardCheesyEffect:
                 cheesyEffect = reward[1]
         if trackFrame > 0:
-            toon.setTrackProgress(toon.trackProgressId, toon.trackProgress + 1)
+            toon.setTrackProgress(toon.trackProgressId, trackFrame)
         if gagTrack != -1 and gagLevel != -1:
             trackArray = toon.getTrackAccess()
             trackArray[gagTrack] = 1
@@ -248,13 +268,15 @@ class QuestManager:
         if carryToonTasks > 0:
             toon.setQuestCarryLimit(carryToonTasks)
         if carryGags > 0:
-            toon.setMaxCarry(carrygags)
+            toon.setMaxCarry(carryGags)
         if carryJellybeans > 0:
             toon.setMaxMoney(carryJellybeans)
         if jellybeans > 0:
             toon.addMoney(jellybeans)
         if cheesyEffect > 0:
-            # todo figure out best way to set the timers on these
+            # If they already have a cheesy effect, we need to cancel it before we apply another one.
+            if toon.getCETimer() != 0.0:
+                toon.cheesyEffectTimeout()
             toon.setCheesyEffect(cheesyEffect)
         levelUp = (toon.levelExp + expGained) >= toon.getMaxLevelExp() and (toon.level + 1) <= FunnyFarmGlobals.ToonLevelCap
         if expGained > 0:

@@ -1,17 +1,16 @@
-from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
-from direct.interval.IntervalGlobal import *
-from toontown.toonbase import FunnyFarmGlobals
-from toontown.toonbase import TTLocalizer
+
+from otp.nametag import NametagGlobals
+from otp.otpbase import OTPLocalizer
+from toontown.discord.FFDiscordIntegration import FFDiscordIntegration
+from toontown.distributed.PlayGame import PlayGame
 from toontown.login.AvatarChooser import AvatarChooser
 from toontown.makeatoon.MakeAToon import MakeAToon
-from toontown.toontowngui import TTDialog
-from toontown.quest.QuestManager import QuestManager
 from toontown.quest.CutsceneManager import CutsceneManager
-from otp.otpbase import OTPLocalizer
-from otp.nametag import NametagGlobals
-from PlayGame import PlayGame
-import random
+from toontown.quest.QuestManager import QuestManager
+from toontown.toonbase import FunnyFarmGlobals
+from toontown.toontowngui import TTDialog
+
 
 class FFClientRepository(DirectObject):
     notify = directNotify.newCategory('ClientRepository')
@@ -19,6 +18,12 @@ class FFClientRepository(DirectObject):
     AI_TIMEOUT = 30
 
     def __init__(self):
+        DirectObject.__init__(self)
+        if config.GetBool('want-discord-integration', 0):
+            self.discordIntegration = FFDiscordIntegration(self)
+        else:
+            self.discordIntegration = None
+
         self.avChoice = None
         self.avCreate = None
         self.playGame = PlayGame()
@@ -32,7 +37,8 @@ class FFClientRepository(DirectObject):
             base.transitions.fadeIn(1.0)
             # We usually won't get here, but just in case the AI is taking extra long, we'll have them wait.
             # In the future, as we build up our AI more and more, there's a better chance we'll get here.
-            self.waitDialog = TTDialog.TTDialog(parent=aspect2dp, style=TTDialog.NoButtons, text=OTPLocalizer.AIPleaseWait)
+            self.waitDialog = TTDialog.TTDialog(parent=aspect2dp, style=TTDialog.NoButtons,
+                                                text=OTPLocalizer.AIPleaseWait)
             self.waitDialog.show()
             self.accept('ai-done', self.enterChooseAvatar, [True])
             taskMgr.doMethodLater(self.AI_TIMEOUT, self.aiTimeout, 'aiTimeout')
@@ -45,7 +51,7 @@ class FFClientRepository(DirectObject):
         base.handleGameError('AI services either took too long or could not be started.')
         return task.done
 
-    def enterChooseAvatar(self, fade = False):
+    def enterChooseAvatar(self, fade=False):
         if self.waitDialog:
             self.waitDialog.destroy()
             self.waitDialog = None
@@ -134,6 +140,7 @@ class FFClientRepository(DirectObject):
     def cleanupGame(self):
         self.playGame.exitActiveZone()
         camera.reparentTo(render)
+        base.air.cheesyEffectMgr.stopTimer()
         # If we're in the tutorial, don't even bother cleaning up localAvatar; too many errors
         if base.localAvatar.tutorialAck:
             base.localAvatar.delete()
@@ -141,7 +148,7 @@ class FFClientRepository(DirectObject):
         NametagGlobals.setMasterArrowsOn(0)
         self.playingGame = 0
 
-    def shutdown(self, errorCode = None):
+    def shutdown(self, errorCode=None):
         if self.playingGame:
             self.cleanupGame()
         self.notify.info('Exiting cleanly')

@@ -3,9 +3,9 @@ from direct.actor.Actor import Actor
 from direct.interval.IntervalGlobal import *
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.hood import ZoneUtil
-from Interior import Interior
-import ToonInteriorColors
-import InteriorStorage
+from toontown.building.Interior import Interior
+from toontown.building import ToonInteriorColors
+from toontown.building import InteriorStorage
 import random
 
 class PetShopInterior(Interior):
@@ -78,7 +78,8 @@ class PetShopInterior(Interior):
             fish.setPos(FunnyFarmGlobals.PetShopFishPositions[FunnyFarmGlobals.PetShopFish.index(fishName)])
             fish.setHpr(FunnyFarmGlobals.PetShopFishRotations[FunnyFarmGlobals.PetShopFish.index(fishName)])
             fish.setScale(FunnyFarmGlobals.PetShopFishScales[FunnyFarmGlobals.PetShopFish.index(fishName)])
-            fish.setBlend(frameBlend=True)
+            if config.GetBool('smooth-animations', True):
+                fish.setBlend(frameBlend=True)
             fish.actorInterval('swim').loop()
             if fishName == 'BearAcuda':
                 self.bearSwim = Parallel(

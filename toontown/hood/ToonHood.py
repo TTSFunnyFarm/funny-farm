@@ -12,6 +12,7 @@ from toontown.building.Building import Building
 from toontown.estate import EstateInterior
 from toontown.hood.Hood import Hood
 from toontown.quest import Quests
+from toontown.safezone.Butterfly import Butterfly
 from toontown.toonbase import TTLocalizer
 from toontown.trolley.Trolley import Trolley
 
@@ -35,6 +36,7 @@ class ToonHood(Hood):
         self.animSeq = None
         self.buildings = []
         self.treasurePlanner = None
+        self.butterflies = []
 
     def enter(self, shop=None, tunnel=None, init=0):
         base.localAvatar.setZoneId(self.zoneId)
@@ -42,6 +44,7 @@ class ToonHood(Hood):
         self.setupLandmarkBuildings()
         if self.treasurePlanner:
             self.treasurePlanner.loadTreasures()
+        self.loadButterflies()
         if shop:
             building = self.geom.find('**/tb%s:toon_landmark*' % shop[2:])
             if building.isEmpty():
@@ -58,6 +61,7 @@ class ToonHood(Hood):
             self.destroyLandmarkBuildings()
         if self.treasurePlanner:
             self.treasurePlanner.unloadTreasures()
+        self.unloadButterflies()
 
     def load(self):
         Hood.load(self)
@@ -65,7 +69,8 @@ class ToonHood(Hood):
             self.fish = Actor('phase_4/models/props/exteriorfish-zero',
                               {'chan': 'phase_4/models/props/exteriorfish-swim'})
             self.fish.reparentTo(self.geom.find('**/fish_origin'))
-            self.fish.setBlend(frameBlend=True)
+            if config.GetBool('smooth-animations', True):
+                self.fish.setBlend(frameBlend=True)
             self.fish.loop('chan')
         if not self.geom.find('**/*trolley_station*').isEmpty():
             self.trolley = Trolley()
@@ -73,6 +78,7 @@ class ToonHood(Hood):
         if self.treasurePlanner:
             self.treasurePlanner.generate()
             self.treasurePlanner.setZoneId(self.zoneId)
+        self.accept('generateButterfly', self.generateButterfly)
 
     def unload(self):
         Hood.unload(self)
@@ -88,6 +94,7 @@ class ToonHood(Hood):
         if self.treasurePlanner:
             self.treasurePlanner.delete()
             del self.treasurePlanner
+        del self.butterflies
 
     def startActive(self):
         Hood.startActive(self)
@@ -198,3 +205,35 @@ class ToonHood(Hood):
         self.sky.reparentTo(camera)
         ModelPool.garbageCollect()
         TexturePool.garbageCollect()
+
+    def generateButterfly(self, requestStatus):
+        butterfly = Butterfly(base.cr)
+        butterfly.setDoId(requestStatus['doId'])
+        butterfly.setArea(*requestStatus['area'])
+        butterfly.generate()
+        butterfly.setState(*requestStatus['state'])
+        self.butterflies.append(butterfly)
+
+    def loadButterflies(self):
+        ourHood = None
+        for hood in base.air.hoods:
+            if hood.zoneId == self.zoneId:
+                ourHood = hood
+                break
+
+        if not ourHood:
+            return
+
+        currentButterflies = ourHood.butterflies[:]
+        for currentButterfly in currentButterflies:
+            if currentButterfly:
+                self.generateButterfly({'area': currentButterfly.getArea(),
+                                        'doId': currentButterfly.getDoId(),
+                                        'state': currentButterfly.getState()})
+
+    def unloadButterflies(self):
+        for butterfly in self.butterflies:
+            butterfly.disable()
+            butterfly.delete()
+
+        self.butterflies = []

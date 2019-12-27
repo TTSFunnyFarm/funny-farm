@@ -1,21 +1,21 @@
 from direct.interval.IntervalGlobal import *
-from BattleBase import *
-from BattleProps import *
-from BattleSounds import *
+from toontown.battle.BattleBase import *
+from toontown.battle.BattleProps import *
+from toontown.battle.BattleSounds import *
 from toontown.toon.ToonDNA import *
 from toontown.suit.SuitDNA import *
 from direct.particles.ParticleEffect import *
 from direct.gui.DirectGui import *
 from panda3d.core import *
-import MovieUtil
-import MovieCamera
+from toontown.battle import MovieUtil
+from toontown.battle import MovieCamera
 from direct.directnotify import DirectNotifyGlobal
-import BattleParticles
+from toontown.battle import BattleParticles
 from toontown.toonbase import ToontownGlobals
-import RewardPanel
 notify = DirectNotifyGlobal.directNotify.newCategory('Fanfare')
 
 def makePanel(toon, showToonName):
+    from toontown.battle import RewardPanel
     panel = DirectFrame(relief=None, geom=DGG.getDefaultDialogGeom(), geom_color=ToontownGlobals.GlobalDialogColor, geom_scale=(1.75, 1, 0.75), pos=(0, 0, 0.587))
     panel.initialiseoptions(RewardPanel)
     panel.setTransparency(1)
