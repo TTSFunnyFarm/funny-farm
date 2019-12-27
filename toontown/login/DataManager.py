@@ -144,7 +144,7 @@ class DataManager:
         exception = isinstance(err, Exception)
         if exception:
             base.handleGameError(
-                'Your database has possibly been corrupted. Please contact The Toontown\'s Funny Farm Team for assistance.\nError: %s' % err.__class__.__name__)
+                'Your database has possibly been corrupted. Please contact The Toontown\'s Funny Farm Team for assistance.\n\nError: %s' % err.__class__.__name__)
         else:
             base.handleGameError(
                 'Your database has failed verification and possibly been corrupted. Please contact The Toontown\'s Funny Farm Team for assistance.')
