@@ -1103,10 +1103,6 @@ class MazeGame(Minigame):
         self.showScoreTrack = Parallel(lerpTrack, Sequence(Wait(MazeGameGlobals.SHOWSCORES_DURATION), Func(self.gameOver)))
         self.showScoreTrack.start()
 
-        #For the Alpha Blueprint ARG
-        if config.GetBool('want-blueprint4-ARG', False):
-            MinigameGlobals.generateDebugARGPhrase()
-
     def exitShowScores(self):
         self.showScoreTrack.pause()
         del self.showScoreTrack
