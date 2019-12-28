@@ -1468,6 +1468,9 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         self.disable()
         camera.wrtReparentTo(render)
         self.setAnimState('Died')
+        self.inventory.zeroInv(killUber=1)
+        self.inventory.updateGUI()
+        self.inventory.saveInventory()
 
     def startToonUp(self, healFrequency):
         self.stopToonUp()
