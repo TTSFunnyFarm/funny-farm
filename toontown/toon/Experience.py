@@ -66,7 +66,7 @@ class Experience:
     def saveExp(self):
         netString = self.makeNetString()
         valid = self.verifyExp(netString)
-        if valid and base.avatarData.setExperience != netString:
+        if valid and base.avatarData.setExperience.encode() != netString:
             base.avatarData.setExperience = netString
             dataMgr.saveToonData(base.avatarData)
 

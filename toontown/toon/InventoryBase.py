@@ -96,7 +96,7 @@ class InventoryBase(DirectObject.DirectObject):
 
     def saveInventory(self):
         netString = self.makeNetString()
-        if base.avatarData.setInventory != netString:
+        if base.avatarData.setInventory.encode() != netString:
             base.avatarData.setInventory = netString
             dataMgr.saveToonData(base.avatarData)
 
