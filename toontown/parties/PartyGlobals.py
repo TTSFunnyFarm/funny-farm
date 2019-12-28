@@ -166,21 +166,6 @@ DecorationIds = PythonUtil.Enum(('BalloonAnvil',
  'snowman',
  'snowDoodle',
  'BalloonAnvilValentine'))
-TTRUnreleasedDecor = [DecorationIds.HeartTarget,
- DecorationIds.HeartBanner,
- DecorationIds.FlyingHeart,
- DecorationIds.Hydra,
- DecorationIds.BannerVictory,
- DecorationIds.CannonVictory,
- DecorationIds.CogStatueVictory,
- DecorationIds.TubeCogVictory,
- DecorationIds.CogIceCreamVictory,
- DecorationIds.cogIceCreamWinter,
- DecorationIds.StageWinter,
- DecorationIds.CogStatueWinter,
- DecorationIds.snowman,
- DecorationIds.snowDoodle,
- DecorationIds.BalloonAnvilValentine]
 DECORATION_VOLUME = 1.0
 DECORATION_CUTOFF = 45
 VictoryPartyDecorationIds = frozenset([DecorationIds.Hydra,
