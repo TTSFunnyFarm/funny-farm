@@ -26,22 +26,32 @@ class MusicManager:
             FunnyFarmGlobals.SillySprings: base.loader.loadMusic('phase_14/audio/bgm/SS_SZ_activity.ogg')
         }
 
-    def playMusic(self, music, looping=0, volume=1.0):
+    def playMusic(self, music, looping=0, volume=1.0, time=0.0):
         self.stopMusic()
         if music:
-            base.playMusic(music, looping=looping, volume=volume)
+            base.playMusic(music, looping=looping, volume=volume, time=time)
 
     def stopMusic(self):
+        stopTime = 0.0
         for t in self.pickAToonMusic:
+            if t.status() == AudioSound.PLAYING:
+                stopTime = t.getTime()
             t.stop()
         for t in list(self.safezoneMusic.keys()):
+            if self.safezoneMusic[t].status() == AudioSound.PLAYING:
+                stopTime = self.safezoneMusic[t].getTime()
             self.safezoneMusic[t].stop()
         for t in list(self.townMusic.keys()):
+            if self.townMusic[t].status() == AudioSound.PLAYING:
+                stopTime = self.townMusic[t].getTime()
             self.townMusic[t].stop()
         for t in list(self.activityMusic.keys()):
+            if self.activityMusic[t].status() == AudioSound.PLAYING:
+                stopTime = self.activityMusic[t].getTime()
             self.activityMusic[t].stop()
+        return stopTime
 
-    def playCurrentZoneMusic(self):
+    def playCurrentZoneMusic(self, time=0.0):
         zoneId = FunnyFarmGlobals.getHoodId(base.localAvatar.getZoneId())
         zone = base.cr.playGame.getActiveZone()
         if zone.place:
@@ -63,7 +73,7 @@ class MusicManager:
         else:
             self.notify.warning('playCurrentZoneMusic(): music for zone %s not in MusicManager.' % str(zoneId))
             return
-        self.playMusic(music, looping=1, volume=volume)
+        self.playMusic(music, looping=1, volume=volume, time=time)
 
     def playPickAToon(self):
         if base.air.holidayMgr.isWinter():

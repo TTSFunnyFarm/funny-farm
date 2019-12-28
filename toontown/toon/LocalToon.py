@@ -686,7 +686,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             pass
         else:
             self.setAnimState('jump')
-        base.playSfx(self.levelUpSfx, volume=0.5)
+        startTime = musicMgr.stopMusic()
+        Sequence(Func(base.playSfx, self.levelUpSfx), Wait(self.levelUpSfx.length()), Func(musicMgr.playCurrentZoneMusic, startTime)).start()
         return True
 
     def showLevelUpText(self, hp, exp, token = 0):
