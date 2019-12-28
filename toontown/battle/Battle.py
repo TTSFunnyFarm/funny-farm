@@ -135,7 +135,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         self.joiningToons = []
         self.pendingToons = []
         for toon in self.activeToons:
-            self.setInBattle(0)
+            toon.setInBattle(0)
         self.activeToons = []
         self.runningToons = []
         self.__stopTimer()
