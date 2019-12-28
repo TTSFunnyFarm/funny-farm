@@ -1921,7 +1921,7 @@ KnockKnockContestJokes = {
         6: ['Weirdo', 'Weirdo all these Cogs come from?'],
         30: ['Bacon', 'Bacon a cake to throw at the Cogs.'],
         28: ['Isaiah', 'Isaiah we go ride the trolley.'],
-        12: ['Juliet', "Juliet me in that Cog building with you and I'll give you a Toon-Up."]}}
+        12: ['Juliet', "Juliet me in that Cog building with you and I'll give you a Toon-Up."]}}}
 KnockKnockJokes = [['Who', "Bad echo in here, isn't there?"],
  ['Dozen', 'Dozen anybody want to let me in?'],
  ['Freddie', 'Freddie or not, here I come.'],
