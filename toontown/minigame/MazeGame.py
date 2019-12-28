@@ -42,6 +42,7 @@ class MazeGame(Minigame):
             ToontownGlobals.TheBrrrgh: 0.2,
             ToontownGlobals.DonaldsDreamland: 0.25
         }
+        self.totalGrabbed = 0
 
     def getTitle(self):
         return TTLocalizer.MazeGameTitle
@@ -1151,6 +1152,7 @@ class MazeGame(Minigame):
             return
         avId = self.localAvId
         self.setTreasureGrabbed(avId, treasureNum)
-        if treasureNum >= self.maze.numTreasures:
+        self.totalGrabbed += 1
+        if self.totalGrabbed >= self.maze.numTreasures:
             self.allTreasuresTaken()
         return
