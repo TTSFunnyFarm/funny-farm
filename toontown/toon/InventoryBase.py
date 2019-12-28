@@ -58,7 +58,7 @@ class InventoryBase(DirectObject.DirectObject):
 
     def makeFromNetString(self, netString):
         dataList = []
-        dg = PyDatagram(netString.encode())
+        dg = PyDatagram(netString)
         dgi = PyDatagramIterator(dg)
         for track in range(0, len(Tracks)):
             subList = []
@@ -91,7 +91,7 @@ class InventoryBase(DirectObject.DirectObject):
         return dataList
 
     def saveInventory(self):
-        netString = self.makeNetString().decode()
+        netString = self.makeNetString()
         if not (base.avatarData.setInventory and base.avatarData.setInventory == netString):
             base.avatarData.setInventory = netString
             dataMgr.saveToonData(base.avatarData)

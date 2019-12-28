@@ -100,6 +100,10 @@ class ToonData:
 
     def makeJsonData(self):
         jsonData = self.__dict__.copy()
+        for key, value in jsonData.items():
+            if type(value) == bytes:
+                jsonData[key] = value.decode('utf-8')
+
         return jsonData
 
     @staticmethod

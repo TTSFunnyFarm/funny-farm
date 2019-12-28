@@ -33,7 +33,7 @@ class Experience:
 
     def makeFromNetString(self, netString):
         dataList = []
-        dg = PyDatagram(netString.encode())
+        dg = PyDatagram(netString)
         dgi = PyDatagramIterator(dg)
         for track in range(0, len(Tracks)):
             dataList.append(dgi.getUint16())
@@ -41,7 +41,7 @@ class Experience:
         return dataList
 
     def saveExp(self):
-        netString = self.makeNetString().decode()
+        netString = self.makeNetString()
         if not (base.avatarData.setExperience and base.avatarData.setExperience == netString):
             base.avatarData.setExperience = netString
             dataMgr.saveToonData(base.avatarData)
