@@ -1546,22 +1546,6 @@ BR = 6
 OZ = 7
 DL = 8
 DefaultWantNewsPageSetting = 1
-gmMagicWordList = ['restock',
- 'restockUber',
- 'autoRestock',
- 'resistanceRestock',
- 'restockSummons',
- 'uberDrop',
- 'rich',
- 'maxBankMoney',
- 'toonUp',
- 'rod',
- 'cogPageFull',
- 'pinkSlips',
- 'Tickets',
- 'newSummons',
- 'who',
- 'who all']
 NewsPageScaleAdjust = 0.85
 AnimPropTypes = Enum(('Unknown',
  'Hydrant',
