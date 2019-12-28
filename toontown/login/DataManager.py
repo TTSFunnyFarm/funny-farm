@@ -1,4 +1,3 @@
-import codecs
 import json
 import os
 
@@ -43,9 +42,6 @@ class DataManager:
     def createToonData(self, index, dna, name):
         return ToonData.getDefaultToonData(index, dna, name)
 
-    def generateKey(self, size=256):
-        return os.urandom(size)
-
     def saveToonData(self, data):
         if self.corrupted:
             return None
@@ -68,7 +64,7 @@ class DataManager:
             return
 
         try:
-            fileData = json.dumps(jsonData, indent=4).encode()
+            fileData = json.dumps(jsonData).encode('utf-8')
         except Exception as e:
             self.handleDataError(e)
             return
@@ -76,19 +72,18 @@ class DataManager:
         try:
             key = self.__index2key.get(index)
             if not key:
-                key = self.generateKey(32)
-                key = codecs.encode(key, 'base64')
+                key = Fernet.generate_key()
                 self.__index2key[index] = key
 
             fernet = Fernet(key)
             encryptedData = fernet.encrypt(fileData)
-            toonDataToWrite = key.decode() + encryptedData.decode()
+            toonDataToWrite = key + encryptedData
         except Exception as e:
             self.handleDataError(e)
             return
 
         if toonDataToWrite:
-            with open(filename.toOsSpecific(), 'w') as f:
+            with open(filename.toOsSpecific(), 'wb') as f:
                 f.write(toonDataToWrite)
                 f.close()
 
@@ -101,14 +96,13 @@ class DataManager:
         filename = Filename(self.fileDir + self.toons[index - 1] + self.fileExt)
         toonData = None
         if os.path.exists(filename.toOsSpecific()):
-            with open(filename.toOsSpecific(), 'r') as f:
+            with open(filename.toOsSpecific(), 'rb') as f:
                 toonData = f.read()
                 f.close()
 
         if toonData:
             try:
-                fileData = toonData.encode()
-                key, db = fileData[0:45], fileData[45:]
+                key, db = toonData[0:44], toonData[44:]
                 localKey = self.__index2key.get(index)
                 if localKey != key:
                     self.__index2key[index] = key
