@@ -10,14 +10,14 @@ DefaultData = [
     ['setBankMoney', [int], 0],
     ['setMaxBankMoney', [int], 12000],
     ['setMaxCarry', [int], 20],
-    ['setInventory', [bytes, str], None],
-    ['setExperience', [bytes, str], None],
+    ['setInventory', [str], None],
+    ['setExperience', [str], None],
     ['setTrackAccess', [list], [0, 0, 0, 0, 1, 1, 0]],
     ['setHat', [list], [0, 0, 0]],
     ['setGlasses', [list], [0, 0, 0]],
     ['setBackpack', [list], [0, 0, 0]],
     ['setShoes', [list], [0, 0, 0]],
-    ['setNametagStyle', [bytes, str], 'Mickey'],
+    ['setNametagStyle', [str], 'Mickey'],
     ['setCheesyEffect', [int], 0],
     ['setCETimer', [float], 0.0],
     ['setLastHood', [int], 1000],
@@ -100,13 +100,6 @@ class ToonData:
 
     def makeJsonData(self):
         jsonData = self.__dict__.copy()
-        for key, value in jsonData.items():
-            if type(value) == bytes:
-                try:
-                    jsonData[key] = value.decode()
-                except:
-                    jsonData[key] = value.decode('unicode_escape')
-
         return jsonData
 
     @staticmethod
