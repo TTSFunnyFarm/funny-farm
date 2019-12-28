@@ -264,7 +264,6 @@ DialogLength2 = 12
 DialogLength3 = 20
 GlobalSpeedChatName = 'SpeedChat'
 SCMenuPromotion = 'PROMOTIONAL'
-SCMenuElection = 'ELECTION'
 SCMenuEmotions = 'ANIMATIONS'
 SCMenuCustom = 'MY PHRASES'
 SCMenuResistance = 'UNITE!'
