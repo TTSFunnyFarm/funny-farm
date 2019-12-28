@@ -56,8 +56,11 @@ class Hood(DirectObject):
             hoodList = base.localAvatar.getHoodsVisited()
             hoodList.append(ZoneUtil.getCanonicalHoodId(self.zoneId))
             base.localAvatar.setHoodsVisited(hoodList)
-        base.avatarData.setLastHood = self.zoneId
-        dataMgr.saveToonData(base.avatarData)
+
+        if base.avatarData.setLastHood != self.zoneId:
+            base.avatarData.setLastHood = self.zoneId
+            dataMgr.saveToonData(base.avatarData)
+
         self.spawnTitleText()
 
     def exit(self):

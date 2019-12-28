@@ -95,8 +95,10 @@ class InventoryBase(DirectObject.DirectObject):
         return dataList
 
     def saveInventory(self):
-        base.avatarData.setInventory = self.makeNetString()
-        dataMgr.saveToonData(base.avatarData)
+        netString = self.makeNetString()
+        if base.avatarData.setInventory != netString:
+            base.avatarData.setInventory = netString
+            dataMgr.saveToonData(base.avatarData)
 
     def addItem(self, track, level):
         return self.addItems(track, level, 1)
