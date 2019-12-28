@@ -775,7 +775,7 @@ class DivingGame(Minigame):
 
     def enterSwim(self):
         self.notify.debug('enterSwim')
-        base.playMusic(self.music, looping=1, volume=0.9)
+        musicMgr.playMusic(self.music, looping=1, volume=0.9)
         self.localLerp = Sequence()
         self.timer = ToontownTimer.ToontownTimer()
         self.timer.posInTopRightCorner()

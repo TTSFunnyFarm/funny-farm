@@ -195,7 +195,7 @@ class CogThiefGame(Minigame):
             self.sndTable['hitBySuit'][i] = base.loader.loadSfx('phase_4/audio/sfx/MG_Tag_C.ogg')
             self.sndTable['falling'][i] = base.loader.loadSfx('phase_4/audio/sfx/MG_cannon_whizz.ogg')
 
-        base.playMusic(self.music, looping=1, volume=0.8)
+        musicMgr.playMusic(self.music, looping=1, volume=0.8)
         self.introTrack = self.getIntroTrack()
         self.introTrack.start()
         return

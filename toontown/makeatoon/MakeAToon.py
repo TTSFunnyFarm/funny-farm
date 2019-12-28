@@ -84,7 +84,7 @@ class MakeAToon(StateData.StateData):
         self.notify.debug('Starting Make A Toon.')
         if base.config.GetBool('want-qa-regression', 0):
             self.notify.info('QA-REGRESSION: MAKEATOON: Starting Make A Toon')
-        base.playMusic(self.music, looping=1, volume=self.musicVolume)
+        musicMgr.playMusic(self.music, looping=1, volume=self.musicVolume)
         base.camLens.setMinFov(ToontownGlobals.MakeAToonCameraFov/(4./3.))
         camera.setPosHpr(-5.7, -12.3501, 2.15, -24.8499, 2.73, 0)
         if self.warp:

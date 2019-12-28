@@ -261,7 +261,7 @@ class Purchase(PurchaseBase):
             headFrame.setAvatarState(state)
 
     def enter(self):
-        base.playMusic(self.music, looping=1, volume=0.8)
+        musicMgr.playMusic(self.music, looping=1, volume=0.8)
         self.fsm.request('reward')
 
     def enterReward(self):
