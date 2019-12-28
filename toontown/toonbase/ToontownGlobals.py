@@ -97,7 +97,6 @@ FM_DeletedItem = 3
 FM_RecoveredItem = 4
 SPDonaldsBoat = 3
 SPMinniesPiano = 4
-SPSlappysBalloon = 5
 CEVirtual = 14
 MaxHpLimit = 137
 MaxCarryLimit = 80
@@ -145,7 +144,6 @@ def getSuitFont():
         SuitFont = loader.loadFont(TTLocalizer.SuitFont, pixelsPerUnit=40, spaceAdvance=0.25, lineHeight=1.0)
     return SuitFont
 
-SafezoneToonupFrequency = 15
 DonaldsDock = 1000
 ToontownCentral = 2000
 TheBrrrgh = 3000
@@ -1548,22 +1546,6 @@ BR = 6
 OZ = 7
 DL = 8
 DefaultWantNewsPageSetting = 1
-gmMagicWordList = ['restock',
- 'restockUber',
- 'autoRestock',
- 'resistanceRestock',
- 'restockSummons',
- 'uberDrop',
- 'rich',
- 'maxBankMoney',
- 'toonUp',
- 'rod',
- 'cogPageFull',
- 'pinkSlips',
- 'Tickets',
- 'newSummons',
- 'who',
- 'who all']
 NewsPageScaleAdjust = 0.85
 AnimPropTypes = Enum(('Unknown',
  'Hydrant',
