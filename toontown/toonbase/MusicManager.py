@@ -2,11 +2,17 @@ from panda3d.core import *
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.building.Interior import Interior
 from toontown.building.SuitInteriorBase import SuitInteriorBase
+from direct.showbase.DirectObject import DirectObject
 
-class MusicManager:
+class MusicManager(DirectObject):
     notify = directNotify.newCategory('MusicManager')
 
     def __init__(self):
+        self.volume = settings['musicVol']
+        self.track = None
+        self.trackName = None
+        self.multiplier = 1.0
+        self.pauseTime = None
         self.pickAToonMusic = [
             base.loader.loadMusic('phase_3/audio/bgm/ff_theme.ogg'),
             base.loader.loadMusic('phase_3/audio/bgm/ff_theme_winter.ogg'),
@@ -25,33 +31,49 @@ class MusicManager:
             FunnyFarmGlobals.FunnyFarm: base.loader.loadMusic('phase_14/audio/bgm/FF_SZ_activity.ogg'),
             FunnyFarmGlobals.SillySprings: base.loader.loadMusic('phase_14/audio/bgm/SS_SZ_activity.ogg')
         }
+        self.accept('PandaPaused', self.__audioPaused)
+        self.accept('PandaRestarted', self.__audioRestarted)
+
+    def setVolume(self, volume):
+        self.volume = volume
+        if self.track:
+            self.track.setVolume(volume * self.getMultiplier())
+
+    def getVolume(self):
+        return self.volume
+
+    def setMultiplier(self, multi):
+        self.multipier = multi
+
+    def getMultiplier(self):
+        return self.multiplier
 
     def playMusic(self, music, looping=0, volume=1.0, time=0.0):
-        self.stopMusic()
+        if not settings['music']:
+            return None
         if music:
-            base.playMusic(music, looping=looping, volume=volume, time=time)
+            self.stopMusic()
+            if self.pauseTime:
+                volume = self.getMultiplier()
+            else:
+                self.setMultiplier(volume)
+            volume = self.getMultiplier() * self.getVolume()
+            self.track = music
+            self.trackName = self.track
+            self.track.setLoop(looping)
+            self.track.setVolume(volume)
+            self.track.setTime(time)
+            self.track.play()
+            return self.track
+        else:
+            self.notify.warning("Invalid track %s was passed to playMusic." % str(music))
+            return None
 
     def stopMusic(self):
-        stopTime = 0.0
-        for t in self.pickAToonMusic:
-            if t.status() == AudioSound.PLAYING:
-                stopTime = t.getTime()
-            t.stop()
-        for t in list(self.safezoneMusic.keys()):
-            if self.safezoneMusic[t].status() == AudioSound.PLAYING:
-                stopTime = self.safezoneMusic[t].getTime()
-            self.safezoneMusic[t].stop()
-        for t in list(self.townMusic.keys()):
-            if self.townMusic[t].status() == AudioSound.PLAYING:
-                stopTime = self.townMusic[t].getTime()
-            self.townMusic[t].stop()
-        for t in list(self.activityMusic.keys()):
-            if self.activityMusic[t].status() == AudioSound.PLAYING:
-                stopTime = self.activityMusic[t].getTime()
-            self.activityMusic[t].stop()
-        return stopTime
+        if self.track:
+            self.track.stop()
 
-    def playCurrentZoneMusic(self, time=0.0):
+    def playCurrentZoneMusic(self):
         zoneId = FunnyFarmGlobals.getHoodId(base.localAvatar.getZoneId())
         zone = base.cr.playGame.getActiveZone()
         if zone.place:
@@ -73,7 +95,7 @@ class MusicManager:
         else:
             self.notify.warning('playCurrentZoneMusic(): music for zone %s not in MusicManager.' % str(zoneId))
             return
-        self.playMusic(music, looping=1, volume=volume, time=time)
+        self.playMusic(music, looping=1, volume=volume)
 
     def playPickAToon(self):
         if base.air.holidayMgr.isWinter():
@@ -86,3 +108,22 @@ class MusicManager:
             music = self.pickAToonMusic[0]
             volume = 0.5
         self.playMusic(music, looping=1, volume=volume)
+
+    def pauseMusic(self):
+        self.__audioPaused()
+        self.stopMusic()
+
+    def unpauseMusic(self):
+        self.__audioRestarted()
+
+    def __audioPaused(self):
+        if self.track:
+            self.pauseTime = self.track.getTime()
+
+    def __audioRestarted(self):
+        if hasattr(base, "localAvatar"):
+            base.localAvatar.stopSound()
+        if self.pauseTime and self.track:
+            self.track.setTime(self.pauseTime)
+            self.track.play()
+            self.pauseTime = None
