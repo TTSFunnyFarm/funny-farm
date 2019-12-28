@@ -54,5 +54,3 @@ want-winter #f
 want-pets #f
 game-version %GAME_VERSION%
 want-discord-integration true
-
-want-data-debug #t
