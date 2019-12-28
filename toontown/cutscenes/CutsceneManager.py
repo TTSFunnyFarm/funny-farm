@@ -9,7 +9,7 @@ class CutsceneManager(DirectObject):
 
     def __init__(self):
         self.track = None
-        self.currQuest = None
+        self.currQuest = 0
 
     def enterCutscene(self, questId):
         currZone = base.cr.playGame.getActiveZone()
@@ -31,6 +31,7 @@ class CutsceneManager(DirectObject):
             self.acceptOnce('cutscene-done', self.exitCutscene)
 
     def exitCutscene(self):
+        self.currQuest = 0
         base.localAvatar.enable()
         self.track.pause()
         self.track = None
