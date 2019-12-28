@@ -4,6 +4,7 @@ from direct.directnotify import DirectNotifyGlobal
 from direct.distributed.PyDatagram import PyDatagram
 from direct.distributed.PyDatagramIterator import PyDatagramIterator
 from otp.otpbase import OTPGlobals
+import traceback
 
 class Experience:
     notify = DirectNotifyGlobal.directNotify.newCategory('Experience')
@@ -28,8 +29,7 @@ class Experience:
         for track in range(0, len(Tracks)):
             datagram.addUint16(dataList[track])
 
-        dgi = PyDatagramIterator(datagram)
-        return dgi.getRemainingBytes()
+        return datagram.getMessage()
 
     def makeFromNetString(self, netString):
         dataList = []
@@ -44,9 +44,31 @@ class Experience:
 
         return dataList
 
+    def verifyExp(self, netString):
+        dg = None
+        if type(netString) == str:
+            netString = netString.encode()
+        else:
+            try:
+                netString.decode()
+            except Exception as e:
+                self.notify.warning("verifyExp failed on decode! %s %s" % str(e), str(netString))
+        dg = PyDatagram(netString)
+        dgi = PyDatagramIterator(dg)
+        for track in range(0, len(Tracks)):
+            value = dgi.getUint16()
+            if value != self.experience[track]:
+                traceback.print_stack()
+                self.notify.error("Hey what the, that's not nice. verifyExp failed! %s %s %s" % str(track), str(self.experience[track]), str(value))
+                self.notify.error(datagram)
+        return True
+
     def saveExp(self):
-        base.avatarData.setExperience = self.makeNetString()
-        dataMgr.saveToonData(base.avatarData)
+        netString = self.makeNetString()
+        valid = self.verifyExp(netString)
+        if valid:
+            base.avatarData.setExperience = self.makeNetString()
+            dataMgr.saveToonData(base.avatarData)
 
     def addExp(self, track, amount = 1):
         if type(track) == type(''):

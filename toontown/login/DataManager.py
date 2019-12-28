@@ -23,6 +23,7 @@ class DataManager:
         self.__index2key = {}
         self.corrupted = 0
         self.toons = []
+        self.debug = config.GetBool('want-data-debug', 0)
         for toonNum in range(FunnyFarmGlobals.MaxAvatars):
             self.toons.append(str(BASE_DB_ID + toonNum))
         return
@@ -58,18 +59,24 @@ class DataManager:
         toonDataToWrite = None
         valid, reason, toonDataObj = ToonData.verifyToonData(data, saveToonData=False)
         if not valid:
+            if self.debug:
+                self.notify.warning("saveToonData verifyToonData " + str(reason))
             self.handleDataError(reason)
             return
 
         try:
             jsonData = toonDataObj.makeJsonData()
         except Exception as e:
+            if self.debug:
+                self.notify.warning("saveToonData makeJsonData " + str(e))
             self.handleDataError(e)
             return
 
         try:
             fileData = json.dumps(jsonData, indent=4).encode()
         except Exception as e:
+            if self.debug:
+                self.notify.warning("saveToonData json.dumps(jsonData) " + str(e))
             self.handleDataError(e)
             return
 
@@ -84,11 +91,14 @@ class DataManager:
             encryptedData = fernet.encrypt(fileData)
             toonDataToWrite = key.decode() + encryptedData.decode()
         except Exception as e:
+            if self.debug:
+                self.notify.warning("saveToonData encryptedData " + str(e))
             self.handleDataError(e)
             return
 
         if toonDataToWrite:
             with open(filename.toOsSpecific(), 'w') as f:
+                self.notify.warning("Writing!")
                 f.write(toonDataToWrite)
                 f.close()
 
@@ -104,6 +114,8 @@ class DataManager:
             with open(filename.toOsSpecific(), 'r') as f:
                 toonData = f.read()
                 f.close()
+                if self.debug:
+                    self.notify.warning("Reading!")
 
         if toonData:
             try:
@@ -116,16 +128,25 @@ class DataManager:
                 fernet = Fernet(key)
                 decryptedData = fernet.decrypt(db)
                 jsonData = json.loads(decryptedData)
+                if self.debug:
+                    self.notify.warning("loadToonData decryptedData " + str(decryptedData))
+                    self.notify.warning("loadToonData jsonData " + str(jsonData))
             except Exception as e:
+                if self.debug:
+                    self.notify.warning("loadToonData decryptedData " + str(e))
                 self.handleDataError(e)
                 return None
 
             try:
                 toonDataObj = ToonData.makeFromJsonData(jsonData)
             except Exception as e:
+                if self.debug:
+                    self.notify.warning("loadToonData makeFromJsonData " + str(e))
                 self.handleDataError(e)
                 return None
 
+            if self.debug:
+                self.notify.warning("loadToonData toonDataObj " + str(toonDataObj.__dict__))
             return toonDataObj
 
         return None
