@@ -667,7 +667,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def setHoodsVisited(self, hoodList):
         self.hoodsVisited = hoodList
-        if base.avatarData.setHoodsVisited:
+        if base.avatarData.setHoodsVisited != self.hoodsVisited:
             base.avatarData.setHoodsVisited = self.hoodsVisited
             dataMgr.saveToonData(base.avatarData)
 
