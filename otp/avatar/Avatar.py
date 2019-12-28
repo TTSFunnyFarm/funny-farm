@@ -598,8 +598,9 @@ class Avatar(Actor, ShadowCaster):
             except ValueError:
                 pass
 
-            self.nametag.unmanage(base.marginManager)
-            self.ignore(self.nametag.getUniqueId())
+            if hasattr(self, "nametag"):
+                self.nametag.unmanage(base.marginManager)
+                self.ignore(self.nametag.getUniqueId())
 
     def loop(self, animName, restart = 1, partName = None, fromFrame = None, toFrame = None):
         return Actor.loop(self, animName, restart, partName, fromFrame, toFrame)

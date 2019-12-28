@@ -241,7 +241,7 @@ class CannonGame(Minigame):
         base.camLens.setFar(FAR_PLANE_DIST)
         self.__startIntro()
         base.transitions.irisIn(0.4)
-        base.playMusic(self.music, looping=1, volume=0.8)
+        musicMgr.playMusic(self.music, looping=1, volume=0.8)
 
     def offstage(self):
         self.notify.debug('offstage')

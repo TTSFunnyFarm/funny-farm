@@ -145,10 +145,12 @@ class AvatarChooser:
         tempname = colorstring + ' ' + animaltype
         reviewedName = self.reviewName(data.setName, data.index)
         if reviewedName == tempname:
-           # oh no! this toon has a rejected name probably
-           data.setName = reviewedName
-           dataMgr.saveToonData(data)
-           button.rename.show()
+            # oh no! this toon has a rejected name probably
+            if data.setName != reviewedName:
+                data.setName = reviewedName
+                dataMgr.saveToonData(data)
+
+            button.rename.show()
 
         nameText = DirectLabel(parent=button, text=data.setName, relief=None, scale=0.08, pos=NAME_POSITIONS[data.index - 1], hpr=(0, 0, NAME_ROTATIONS[data.index - 1]), text_fg=(1, 1, 1, 1), text_shadow=(0, 0, 0, 1), text_wordwrap=8, text_font=ToontownGlobals.getToonFont(), state=DGG.DISABLED)
         button.name = data.setName
@@ -231,8 +233,10 @@ class AvatarChooser:
         if name == reviewedName:
             self.renameFrame.hide()
             base.transitions.noTransitions()
-            data.setName = name
-            dataMgr.saveToonData(data)
+            if data.setName != name:
+                data.setName = name
+                dataMgr.saveToonData(data)
+
             # Hacky way of updating the gui
             self.unload()
             self.load()

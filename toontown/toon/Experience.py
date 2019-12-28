@@ -45,8 +45,10 @@ class Experience:
         return dataList
 
     def saveExp(self):
-        base.avatarData.setExperience = self.makeNetString()
-        dataMgr.saveToonData(base.avatarData)
+        netString = self.makeNetString()
+        if base.avatarData.setExperience.encode() != netString:
+            base.avatarData.setExperience = netString
+            dataMgr.saveToonData(base.avatarData)
 
     def addExp(self, track, amount = 1):
         if type(track) == type(''):

@@ -291,7 +291,7 @@ class TugOfWarGame(Minigame):
         self.dropShadow.setBin('fixed', 0, 1)
         self.splash.reparentTo(render)
         self.suitSplash.reparentTo(render)
-        base.playMusic(self.music, looping=1, volume=1)
+        musicMgr.playMusic(self.music, looping=1, volume=1)
         for x in range(len(self.arrows)):
             self.arrows[x].show()
 
@@ -981,9 +981,6 @@ class TugOfWarGame(Minigame):
         if self.gameFSM.getCurrentState().getName() == 'cleanup' or not self.randomNumGen:
             return
         if self.suit:
-            #For the Alpha Blueprint ARG
-            if config.GetBool('want-blueprint4-ARG', False):
-                MinigameGlobals.generateDebugARGPhrase()
             if self.suitId in winners:
                 newPos = VBase3(2.65, 18, 0.1)
                 randInt = self.randomNumGen.randrange(0, 10)

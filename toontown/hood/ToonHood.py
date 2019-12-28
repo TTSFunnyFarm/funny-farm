@@ -125,7 +125,8 @@ class ToonHood(Hood):
                 quest.setQuestProgress(questDesc[1])
                 if quest.getCompletionStatus() == Quests.COMPLETE or quest.getType() in [Quests.QuestTypeGoTo,
                                                                                          Quests.QuestTypeChoose,
-                                                                                         Quests.QuestTypeDeliver]:
+                                                                                         Quests.QuestTypeDeliver,
+                                                                                         Quests.QuestTypeDeliverGag]:
                     if quest.toLocation == building.zoneId:
                         if quest.questCategory == Quests.MainQuest:
                             building.setMainQuest(questDesc[0])
