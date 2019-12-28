@@ -167,7 +167,8 @@ class Hood(DirectObject):
                 quest.setQuestProgress(questDesc[1])
                 if quest.getCompletionStatus() == Quests.COMPLETE or quest.getType() in [Quests.QuestTypeGoTo,
                                                                                          Quests.QuestTypeChoose,
-                                                                                         Quests.QuestTypeDeliver]:
+                                                                                         Quests.QuestTypeDeliver,
+                                                                                         Quests.QuestTypeDeliverGag]:
                     if quest.toNpc == npc.getNpcId():
                         if quest.questCategory == Quests.MainQuest:
                             npc.setMainQuest(questDesc[0])

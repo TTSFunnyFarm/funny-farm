@@ -138,7 +138,7 @@ class NPCToonBase(Toon.Toon):
         self.questOffer = questId
         if self.questIcon:
             self.questIcon.unload()
-        self.questIcon = QuestIcon(typeId=Offer)
+        self.questIcon = QuestIcon(typeId=OFFER)
         self.questIcon.reparentTo(self)
         self.questIcon.setPos(0, 0, self.height + 2)
         self.questIcon.setScale(2.0)
@@ -157,7 +157,7 @@ class NPCToonBase(Toon.Toon):
         self.mainQuest = questId
         if self.questIcon:
             self.questIcon.unload()
-        self.questIcon = QuestIcon(typeId=Main)
+        self.questIcon = QuestIcon(typeId=MAIN)
         self.questIcon.reparentTo(self)
         self.questIcon.setPos(0, 0, self.height + 2)
         self.questIcon.setScale(2.0)
@@ -176,7 +176,7 @@ class NPCToonBase(Toon.Toon):
         self.sideQuest = questId
         if self.questIcon:
             self.questIcon.unload()
-        self.questIcon = QuestIcon(typeId=Bonus)
+        self.questIcon = QuestIcon(typeId=BONUS)
         self.questIcon.reparentTo(self)
         self.questIcon.setPos(0, 0, self.height + 2)
         self.questIcon.setScale(2.0)
