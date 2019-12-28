@@ -10,6 +10,7 @@ from toontown.toon import NPCToons
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals
+from toontown.toontowngui import TTDialog
 
 
 class Hood(DirectObject):
@@ -30,6 +31,7 @@ class Hood(DirectObject):
         self.battle = None
         self.battleCell = None
         self.unloaded = False
+        self.dialog = None
 
     def enter(self, shop=None, tunnel=None, init=0):
         if tunnel:
@@ -126,7 +128,19 @@ class Hood(DirectObject):
         base.localAvatar.enable()
         if base.localAvatar.hp <= 0:
             base.localAvatar.setAnimState('Sad')
+            self.showSadDialog()
         self.startActive()
+
+    def showSadDialog(self):
+        base.localAvatar.disable()
+        base.localAvatar.setAnimState('sad-neutral')
+        self.dialog = TTDialog.TTDialog(text=TTLocalizer.PlaygroundDeathAckMessage, style=TTDialog.Acknowledge, command=self.exitDialog)
+        self.dialog.show()
+
+    def exitDialog(self, response):
+        self.dialog.destroy()
+        self.dialog = None
+        base.localAvatar.enable()
 
     def generateNPCs(self):
         self.npcs = NPCToons.createNpcsInZone(self.zoneId)
@@ -163,7 +177,7 @@ class Hood(DirectObject):
 
     def startActive(self):
         for door in self.geom.findAllMatches('**/*door_trigger*'):
-            self.acceptOnce('enter%s' % door.getName(), self.handleDoorTrigger)
+            self.accept('enter%s' % door.getName(), self.handleDoorTrigger)
         for linkTunnel in self.geom.findAllMatches('**/linktunnel*'):
             name = linkTunnel.getName().split('_')
             hoodStr = name[1]
@@ -172,7 +186,7 @@ class Hood(DirectObject):
             if linkSphere.isEmpty():
                 linkSphere = linkTunnel.find('**/tunnel_sphere')
             linkSphere.setName('tunnel_trigger_%s_%s' % (hoodStr, zoneStr))
-            self.acceptOnce('enter%s' % linkSphere.getName(), self.handleEnterTunnel)
+            self.accept('enter%s' % linkSphere.getName(), self.handleEnterTunnel)
         base.localAvatar.checkQuestCutscene()
         self.accept('questsChanged', self.refreshQuestIcons)
 
@@ -180,6 +194,9 @@ class Hood(DirectObject):
         pass
 
     def handleEnterTunnel(self, collEntry):
+        if base.localAvatar.hp <= 0:
+            self.showSadDialog()
+            return
         tunnel = collEntry.getIntoNodePath()
         name = tunnel.getName().split('_')
         zoneId = int(name[3])
