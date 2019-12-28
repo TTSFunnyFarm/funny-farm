@@ -30,6 +30,9 @@ class CutsceneManager(DirectObject):
             self.track.start()
             self.acceptOnce('cutscene-done', self.exitCutscene)
 
+    def getCurrentQuest():
+        return self.currQuest
+
     def exitCutscene(self):
         self.currQuest = 0
         base.localAvatar.enable()
