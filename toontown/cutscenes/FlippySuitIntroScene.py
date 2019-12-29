@@ -1,4 +1,5 @@
 from toontown.cutscenes.CutsceneBase import CutsceneBase
+from toontown.cutscenes import CutsceneUtil
 from direct.interval.IntervalGlobal import *
 from panda3d.core import *
 
@@ -19,10 +20,13 @@ class FlippySuitIntroScene(CutsceneBase):
         aspect2d.hide()
         taskMgr.remove('FF-birds')
         base.cr.playGame.hood.startSpookySky()
+        CutsceneUtil.FadeScreen(0.25)
 
     def exit(self):
         CutsceneBase.exit(self)
         aspect2d.show()
+        CutsceneUtil.UnfadeScreen()
+        base.cr.playGame.hood.endSpookySky()
 
     def questDone(self):
         self.flippy.setAllowedToTalk(0)
