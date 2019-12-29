@@ -2,18 +2,19 @@ from panda3d.core import *
 from toontown.toonbase import TTLocalizer
 from toontown.cutscenes.CutscenesGlobals import *
 from toontown.toon import NPCToons
+from direct.directnotify import DirectNotifyGlobal
 
 class CutsceneBase:
+    notify = DirectNotifyGlobal.directNotify.newCategory('CutsceneBase')
+
     def __init__(self, id):
         self.id = id
-        self.track = None
-        self.bgm = None
-        self.dialog = None
-        self.actors = None
-        if TTLocalizer.CutsceneDialogDict.get(id):
+        self.track = None # A track is always needed cause hint hint, it's a cutscene.
+        self.bgm = None # If this is set CutsceneBase will automatically play it.
+        self.dialog = None # Touch this and you die.
+        self.actors = None # ^
+        if TTLocalizer.CutsceneDialogDict.get(id): # This automatically grabs the dialog for the associated ID.
             self.dialog = TTLocalizer.CutsceneDialogDict[id]
-        #base.cr.cutsceneMgr.cutscenes[id] = self
-        #print(base.cr.cutsceneMgr.cutscenes)
 
     def getId(self):
         return self.id
@@ -22,7 +23,7 @@ class CutsceneBase:
         return self.track
 
     def enter(self):
-        print("entering!")
+        self.notify.info('Entering %s!' % self.__class__.__name__)
         if self.bgm:
             musicMgr.stopMusic()
             musicMgr.playMusic(self.bgm)
@@ -43,7 +44,7 @@ class CutsceneBase:
 
 
     def exit(self):
-        print("exiting!")
+        self.notify.info('Exiting %s!' % self.__class__.__name__)
         base.localAvatar.enable()
         if self.bgm:
             self.bgm.stop()

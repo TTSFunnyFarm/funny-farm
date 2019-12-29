@@ -4,9 +4,10 @@ from direct.interval.IntervalGlobal import *
 from toontown.cutscenes import *
 cutscenes = [BuyGagsScene.BuyGagsScene, DualTasksScene.DualTasksScene, FirstBuildingScene.FirstBuildingScene, FlippySuitIntroScene.FlippySuitIntroScene, MeterAlertScene.MeterAlertScene, MeterDisasterScene.MeterDisasterScene, IntroScene.IntroScene]
 from toontown.quest import Quests
+from direct.directnotify import DirectNotifyGlobal
 
 class CutsceneManager(DirectObject):
-    notify = directNotify.newCategory('CutsceneManager')
+    notify = DirectNotifyGlobal.directNotify.newCategory('CutsceneManager')
 
     def initCutscenes(self):
         for cutscene in cutscenes:
