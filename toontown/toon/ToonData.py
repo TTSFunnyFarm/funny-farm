@@ -147,12 +147,14 @@ class ToonData:
         for field in DefaultData:
             if field[0] not in toonData.keys():
                 toonData[field[0]] = field[2]
-            elif toonData[field[0]] is None and field[2] is not None:
-                toonData[field[0]] = field[2]
-            elif type(toonData[field[0]]) not in field[1]:
-                # Corrupted!
-                return False, 'Field %s contains a value of incorrect type. Expected: %s, got %s' % (
-                    field[0], field[1], type(toonData[field[0]])), None
+            else:
+                if toonData[field[0]] is None and field[2] is not None:
+                    toonData[field[0]] = field[2]
+
+                if type(toonData[field[0]]) not in field[1] and field[2] is not None:
+                    # Corrupted!
+                    return False, 'Field %s contains a value of incorrect type. Expected: %s, got %s' % (
+                        field[0], field[1], type(toonData[field[0]])), None
 
         toonDataObj = ToonData.getDefaultToonData(index, setDNA, setName)
         for field in toonData.keys():
