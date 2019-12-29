@@ -621,7 +621,7 @@ QuestDialogDict = {
 }
 CutsceneDialogDict = {
  1001: 'Hmm... It doesn\'t look like Flippy is in here.\x07Maybe you should check back outside.',
- 1002: ('This is a warning.\x07We ask that you cease your operations here and terminate any further lab experiments you may be conducting.',
+ 1002: ('Consider this a warning.\x07We ask that you cease your operations here and terminate any further lab experiments you may be conducting.',
         'You can\'t stop us from doing anything.\x07We are not backing down this time.',
         'The size of our corporation and the plans we have are beyond the stretch of your imagination.\x07You will face consequences if you do not oblige.',
         'We are stronger than we\'ve ever been before.\x07I suggest YOU terminate your presence in our playground, or you\'ll taste my home-baked wrath!',
