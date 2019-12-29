@@ -4,7 +4,6 @@ from toontown.battle.RewardPanel import *
 from toontown.battle.BattleSounds import *
 from toontown.battle import MovieCamera
 from direct.directnotify import DirectNotifyGlobal
-import types
 notify = DirectNotifyGlobal.directNotify.newCategory('MovieToonVictory')
 from otp.nametag import NametagGlobals
 

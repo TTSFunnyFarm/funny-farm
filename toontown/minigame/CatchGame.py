@@ -627,10 +627,6 @@ class CatchGame(Minigame):
         self.notify.debug('num catches: %s' % self.fruitsCaught)
         self.timer.hide()
 
-        #For the Alpha Blueprint ARG
-        if config.GetBool('want-blueprint4-ARG', False):
-            MinigameGlobals.generateDebugARGPhrase()
-
         if self.fruitsCaught >= self.numFruits:
             self.notify.debug('perfect game!')
             perfectTextSubnode = hidden.attachNewNode(self.__genText(TTLocalizer.CatchGamePerfect))

@@ -1,4 +1,3 @@
-import codecs
 import json
 import os
 
@@ -11,6 +10,7 @@ from toontown.toon.ToonData import ToonData
 from toontown.toonbase import FunnyFarmGlobals
 
 BASE_DB_ID = 1000001
+DATABASE_KEY = b'SrDlI9WqX4tsw6L4FkaYDtkCq-8fplC9q4iDsEeBrjI='
 
 
 class DataManager:
@@ -20,7 +20,6 @@ class DataManager:
     def __init__(self):
         self.fileExt = '.dat'
         self.fileDir = os.getcwd() + '/database/'
-        self.__index2key = {}
         self.corrupted = 0
         self.toons = []
         for toonNum in range(FunnyFarmGlobals.MaxAvatars):
@@ -42,9 +41,6 @@ class DataManager:
 
     def createToonData(self, index, dna, name):
         return ToonData.getDefaultToonData(index, dna, name)
-
-    def generateKey(self, size=256):
-        return os.urandom(size)
 
     def saveToonData(self, data):
         if self.corrupted:
@@ -68,27 +64,21 @@ class DataManager:
             return
 
         try:
-            fileData = json.dumps(jsonData, indent=4).encode()
+            fileData = json.dumps(jsonData).encode('utf-8')
         except Exception as e:
             self.handleDataError(e)
             return
 
         try:
-            key = self.__index2key.get(index)
-            if not key:
-                key = self.generateKey(32)
-                key = codecs.encode(key, 'base64')
-                self.__index2key[index] = key
-
-            fernet = Fernet(key)
+            fernet = Fernet(DATABASE_KEY)
             encryptedData = fernet.encrypt(fileData)
-            toonDataToWrite = key.decode() + encryptedData.decode()
+            toonDataToWrite = encryptedData
         except Exception as e:
             self.handleDataError(e)
             return
 
         if toonDataToWrite:
-            with open(filename.toOsSpecific(), 'w') as f:
+            with open(filename.toOsSpecific(), 'wb') as f:
                 f.write(toonDataToWrite)
                 f.close()
 
@@ -101,20 +91,14 @@ class DataManager:
         filename = Filename(self.fileDir + self.toons[index - 1] + self.fileExt)
         toonData = None
         if os.path.exists(filename.toOsSpecific()):
-            with open(filename.toOsSpecific(), 'r') as f:
+            with open(filename.toOsSpecific(), 'rb') as f:
                 toonData = f.read()
                 f.close()
 
         if toonData:
             try:
-                fileData = toonData.encode()
-                key, db = fileData[0:45], fileData[45:]
-                localKey = self.__index2key.get(index)
-                if localKey != key:
-                    self.__index2key[index] = key
-
-                fernet = Fernet(key)
-                decryptedData = fernet.decrypt(db)
+                fernet = Fernet(DATABASE_KEY)
+                decryptedData = fernet.decrypt(toonData)
                 jsonData = json.loads(decryptedData)
             except Exception as e:
                 self.handleDataError(e)
@@ -144,7 +128,7 @@ class DataManager:
         exception = isinstance(err, Exception)
         if exception:
             base.handleGameError(
-                'Your database has possibly been corrupted. Please contact The Toontown\'s Funny Farm Team for assistance.\nError: %s' % err.__class__.__name__)
+                'Your database has possibly been corrupted. Please contact The Toontown\'s Funny Farm Team for assistance.\n\nError: %s' % err.__class__.__name__)
         else:
             base.handleGameError(
                 'Your database has failed verification and possibly been corrupted. Please contact The Toontown\'s Funny Farm Team for assistance.')

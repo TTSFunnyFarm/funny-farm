@@ -24,7 +24,6 @@ from direct.showbase.PythonUtil import Functor
 from toontown.distributed import DelayDelete
 from otp.nametag.NametagConstants import *
 from toontown.toon import AccessoryGlobals
-import types
 
 def cmp(a, b):
     return (a > b) - (a < b)
@@ -2301,7 +2300,7 @@ class Toon(Avatar.Avatar, ToonHead):
             for partName, pieceNames in pieces:
                 part = self.getPart(partName, lodName)
                 if part:
-                    if type(pieceNames) == types.StringType:
+                    if type(pieceNames) == str:
                         pieceNames = (pieceNames,)
                     for pieceName in pieceNames:
                         npc = part.findAllMatches('**/%s;+s' % pieceName)

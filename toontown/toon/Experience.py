@@ -1,52 +1,45 @@
 from panda3d.core import *
 from toontown.toonbase.ToontownBattleGlobals import *
 from direct.directnotify import DirectNotifyGlobal
-from direct.distributed.PyDatagram import PyDatagram
-from direct.distributed.PyDatagramIterator import PyDatagramIterator
 from otp.otpbase import OTPGlobals
 
 class Experience:
     notify = DirectNotifyGlobal.directNotify.newCategory('Experience')
 
-    def __init__(self, expStr = None, owner = None):
+    def __init__(self, expData = None, owner = None):
         self.owner = owner
-        if expStr == None:
+        if expData == None:
             self.experience = []
             for track in range(0, len(Tracks)):
                 self.experience.append(StartingLevel)
 
         else:
-            self.experience = self.makeFromNetString(expStr)
+            self.experience = self.makeFromExperienceData(expData)
         return
 
     def __str__(self):
         return str(self.experience)
 
-    def makeNetString(self):
+    def exportExperienceData(self):
         dataList = self.experience
-        datagram = PyDatagram()
+        experienceData = []
         for track in range(0, len(Tracks)):
-            datagram.addUint16(dataList[track])
+            experienceData.append(dataList[track])
 
-        dgi = PyDatagramIterator(datagram)
-        return dgi.getRemainingBytes()
+        return experienceData
 
-    def makeFromNetString(self, netString):
+    def makeFromExperienceData(self, experienceData):
         dataList = []
-        if type(netString) == str:
-            dg = PyDatagram(netString.encode())
-        else:
-            dg = PyDatagram(netString)
-
-        dgi = PyDatagramIterator(dg)
         for track in range(0, len(Tracks)):
-            dataList.append(dgi.getUint16())
+            dataList.append(experienceData[track])
 
         return dataList
 
     def saveExp(self):
-        base.avatarData.setExperience = self.makeNetString()
-        dataMgr.saveToonData(base.avatarData)
+        experienceData = self.exportExperienceData()
+        if not (base.avatarData.setExperience and base.avatarData.setExperience == experienceData):
+            base.avatarData.setExperience = experienceData
+            dataMgr.saveToonData(base.avatarData)
 
     def addExp(self, track, amount = 1):
         if type(track) == type(''):

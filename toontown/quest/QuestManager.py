@@ -21,11 +21,14 @@ class QuestManager:
         if questId in Quests.ImportantQuests:
             base.localAvatar.addQuestHistory(questId)
         levelUp = 0
+        delay = 0
         if Quests.getQuestFinished(questId) == Quests.Finish:
             # It's the last quest in the progression, give them their reward.
             levelUp = self.giveReward(questId)
+            delay = base.localAvatar.levelUpSfx.length()
             if not levelUp:
                 base.localAvatar.setHealth(base.localAvatar.maxHp, base.localAvatar.maxHp)
+                delay = 2.0
         nextQuest = Quests.getNextQuest(questId)
         if nextQuest == Quests.NA:
             base.localAvatar.enable()
@@ -34,7 +37,7 @@ class QuestManager:
             base.localAvatar.enable()
             base.localAvatar.disable()
             base.localAvatar.setAnimState('neutral')
-            taskMgr.doMethodLater(2.0, self.__handleCompleteQuest, 'completeQuest', [npc, nextQuest])
+            taskMgr.doMethodLater(delay, self.__handleCompleteQuest, 'completeQuest', [npc, nextQuest])
         else:
             self.__handleCompleteQuest(npc, nextQuest)
 
