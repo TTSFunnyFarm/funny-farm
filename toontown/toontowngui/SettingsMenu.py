@@ -14,7 +14,7 @@ class SettingsMenu(DirectFrame):
         base.localAvatar.disable()
         base.localAvatar.chatMgr.disableKeyboardShortcuts()
         base.localAvatar.setAnimState('neutral')
-        self.background = self.settingsGui.find('**/settingsBackground')
+        self.background = self.settingsGui.find('**/background')
         optiondefs = (('relief', None, None),
          ('image', self.background, None),
          ('image_scale', (1.0, 1.0, 1.0), None),
@@ -26,8 +26,8 @@ class SettingsMenu(DirectFrame):
         self.frame = DirectScrolledFrame(self, canvasSize = (-0.85,0.85,-3,1.5), frameSize = (-0.9,0.9,-.45,.25), image=None, relief=None)
         text_scale = (0.1, 0.1, 1.0)
         self.title = DirectLabel(parent=self, relief=None, text_scale=text_scale, text="", text_font=ToontownGlobals.getMinnieFont(), text_pos=(0, 0.23, 0), text_fg=(0.24, 0.13, 0.008, 1), text_align=TextNode.ACenter)
-        buttonIcons = [self.settingsGui.find('**/settingsAudio'), self.settingsGui.find('**/settingsVideo'), self.settingsGui.find('**/settingsControls'), self.settingsGui.find('**/settingsExtra')]
-        self.hover = self.settingsGui.find('**/settingsHover')
+        buttonIcons = [self.settingsGui.find('**/audio'), self.settingsGui.find('**/video'), self.settingsGui.find('**/controls'), self.settingsGui.find('**/extra')]
+        self.hover = self.settingsGui.find('**/hover')
         self.hover = OnscreenImage(image = self.hover, pos = (0, 0, 0))
         self.hover.setTransparency(True)
         self.buttons = []
@@ -41,8 +41,10 @@ class SettingsMenu(DirectFrame):
             button = DirectButton(parent=self, relief=None, pos=(i * 0.22 - 0.28, 0, 0.43), image_scale=(1.0, 1.0, 1.0), state=DGG.NORMAL, image=buttonIcons[i], command=self.switchCategory, extraArgs=[i])
             button.bind(DGG.WITHIN, self._onHover, [button])
             button.bind(DGG.WITHOUT, self._onExit, [button])
-        guiButton = loader.loadModel('phase_3/models/gui/quit_button')
-        self.buttons.append(DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=(0.75, 0.75, 1), text="Apply", text_scale=0.06, text_pos=(0, -0.02), pos=(0.60, 0, -0.47), command=self.handleSettingsApply))
+        guiButton = self.settingsGui.find('**/apply')
+        scrollbar = self.settingsGui.find('**/scrollbar')
+        button = DirectButton(parent=self, relief=None, image=(guiButton), image_scale=(0.75, 0.75, 1), text="Apply", text_scale=0.06, text_pos=(0, -0.02), pos=(0.60, 0, -0.47), command=self.handleSettingsApply)
+        self.buttons.append(button)
         self.finalApply = TTDialog.TTDialog(text="Are you sure you want to apply these settings?", text_align=TextNode.ACenter, style=TTDialog.YesNo, command=self.handleSettingsSave)
         self.finalApply.hide()
         self.resTimeoutSeconds = 15
@@ -50,22 +52,22 @@ class SettingsMenu(DirectFrame):
         self.resDialog.setBin('gui-popup', 0)
         self.resDialog.hide()
         category = self.categories[AUDIO]
-        category["musicVol"] = DirectSlider(parent=self.frame.getCanvas(), scale=(0.35,1.0,0.65), pos=(0.47, 0, -0.165), range=(0,100), value=settings["musicVol"] * 100, pageSize=0, color=(0.33, 0.2, 0.031,255), thumb_relief=None, thumb_image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), thumb_color=(1.0,1.0,1.0,255), command=self._onMusicVolumeUpdate)
+        category["musicVol"] = DirectSlider(parent=self.frame.getCanvas(), scale=(0.35,1.0,0.65), pos=(0.47, 0, -0.165), range=(0,100), value=settings["musicVol"] * 100, pageSize=0, color=(0.33, 0.2, 0.031,255), thumb_relief=None, thumb_image=(scrollbar), thumb_color=(1.0,1.0,1.0,255), command=self._onMusicVolumeUpdate)
         category["musicVolLabel"] = DirectLabel(parent=self.frame.getCanvas(), relief=None, text="", text_fg=(0.24, 0.13, 0.008, 1), text_scale=text_scale, text_pos=(-0.35, -0.195, 0))
-        category["sfxVol"] = DirectSlider(parent=self.frame.getCanvas(), scale=(0.35,1.0,0.65), pos=(0.47, 0, -0.32), range=(0,100), value=settings["sfxVol"] * 100, pageSize=0, color=(0.33, 0.2, 0.031,255), thumb_relief=None, thumb_image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), thumb_color=(1.0,1.0,1.0,255), command=self._onSFXVolumeUpdate)
+        category["sfxVol"] = DirectSlider(parent=self.frame.getCanvas(), scale=(0.35,1.0,0.65), pos=(0.47, 0, -0.32), range=(0,100), value=settings["sfxVol"] * 100, pageSize=0, color=(0.33, 0.2, 0.031,255), thumb_relief=None, thumb_image=(scrollbar), thumb_color=(1.0,1.0,1.0,255), command=self._onSFXVolumeUpdate)
         category["sfxVolLabel"] = DirectLabel(parent=self.frame.getCanvas(), relief=None, text="", text_fg=(0.24, 0.13, 0.008, 1), text_scale=text_scale, text_pos=(-0.35, -0.35, 0))
         category = self.categories[VIDEO]
         if settings["fullscreen"]:
             text = "Fullscreen is on."
-            image = self.settingsGui.find('**/settingsTicked')
+            image = self.settingsGui.find('**/boxOn')
         else:
             text = "Fullscreen is off."
-            image = self.settingsGui.find('**/settingsUnticked')
-        category["fullscreenCheck"] = DirectButton(parent=self.frame.getCanvas(), relief=None, scale=1, pos=(0.58, 0, -0.155), image=(self.settingsGui.find('**/settingsUnticked')), command=self._onFullscreenTick)
+            image = self.settingsGui.find('**/boxOff')
+        category["fullscreenCheck"] = DirectButton(parent=self.frame.getCanvas(), relief=None, scale=1, pos=(0.58, 0, -0.155), image=(self.settingsGui.find('**/boxOff')), command=self._onFullscreenTick)
         category["fullscreenCheck"].key = "fullscreen"
         category["fullscreenCheck"].title = "Fullscreen"
         category["fullscreenCheckLabel"] = DirectLabel(parent=self.frame.getCanvas(), relief=None, text=text, text_fg=(0.24, 0.13, 0.008, 1), text_scale=text_scale, text_pos=(-0.35, -0.195, 0))
-        category["vSyncCheck"] = DirectButton(parent=self.frame.getCanvas(), relief=None, scale=1, pos=(0.58, 0, -0.31), image=(self.settingsGui.find('**/settingsUnticked')), command=self._onVSyncTick)
+        category["vSyncCheck"] = DirectButton(parent=self.frame.getCanvas(), relief=None, scale=1, pos=(0.58, 0, -0.31), image=(self.settingsGui.find('**/boxOff')), command=self._onVSyncTick)
         category["vSyncCheck"].key = "vsync"
         category["vSyncCheck"].title = "V-Sync"
         category["vSyncCheckLabel"] = DirectLabel(parent=self.frame.getCanvas(), relief=None, text=text, text_fg=(0.24, 0.13, 0.008, 1), text_scale=text_scale, text_pos=(-0.35, -0.35, 0))
@@ -78,10 +80,10 @@ class SettingsMenu(DirectFrame):
                 if hasattr(element, "key") and hasattr(element, "title"):
                     category[key + "Ticked"] = settings[element.key]
                     if settings[element.key]:
-                        element["image"] = self.settingsGui.find('**/settingsTicked')
+                        element["image"] = self.settingsGui.find('**/boxOn')
                         category[key + "Label"].setText(element.title + " is on.")
                     else:
-                        element["image"] = self.settingsGui.find('**/settingsUnticked')
+                        element["image"] = self.settingsGui.find('**/boxOff')
                         category[key + "Label"].setText(element.title + " is off.")
 
         self.oldSettings = settings
@@ -189,12 +191,12 @@ class SettingsMenu(DirectFrame):
         base.win.requestProperties(properties)
         base.graphicsEngine.renderFrame()
         if fullscreen:
-            category["fullscreenCheck"]["image"] = self.settingsGui.find('**/settingsTicked')
+            category["fullscreenCheck"]["image"] = self.settingsGui.find('**/boxOn')
             category["fullscreenCheckLabel"]["text"] = "Fullscreen is on."
             # Save their new resolution since we're fullscreened now.
             #settings['res'] = [width, height]
         else:
-            category["fullscreenCheck"]["image"] = self.settingsGui.find('**/settingsUnticked')
+            category["fullscreenCheck"]["image"] = self.settingsGui.find('**/boxOff')
             category["fullscreenCheckLabel"]["text"] = "Fullscreen is off."
         if handle:
             self.handleResChange()
@@ -204,10 +206,10 @@ class SettingsMenu(DirectFrame):
         val = not category["vSyncCheckTicked"]
         category["vSyncCheckTicked"] = val
         if val:
-            category["vSyncCheck"]["image"] = self.settingsGui.find('**/settingsTicked')
+            category["vSyncCheck"]["image"] = self.settingsGui.find('**/boxOn')
             category["vSyncCheckLabel"]["text"] = "V-Sync is on.\nRequires restart!"
         else:
-            category["vSyncCheck"]["image"] = self.settingsGui.find('**/settingsUnticked')
+            category["vSyncCheck"]["image"] = self.settingsGui.find('**/boxOff')
             category["vSyncCheckLabel"]["text"] = "V-Sync is off.\nRequires restart!"
 
     def _resCountdown(self, task):
