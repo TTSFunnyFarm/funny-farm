@@ -45,6 +45,11 @@ DefaultData = [
     ['setTutorialAck', [int], 0]
 ]
 
+StrToBytesVars = [
+    'setInventory',
+    'setExperience'
+]
+
 
 # This is the actual ToonData container class.
 class ToonData:
@@ -135,21 +140,19 @@ class ToonData:
 
         # They also need to be of the correct type, or else they are considered
         # to be corrupted and we cannot move forward.
-        if type(index) != int and type(setDNA) != list and type(setName) != bytes:
+        if type(index) != int or type(setDNA) != list or type(setName) != str:
             return False, 'One or more required database fields contain a value of incorrect type!', None
 
         # Now we check every other field:
         for field in DefaultData:
             if field[0] not in toonData.keys():
                 toonData[field[0]] = field[2]
-            else:
-                if toonData[field[0]] is None and field[0] not in ('setExperience', 'setInventory'):
-                    toonData[field[0]] = field[2]
-
-                if type(toonData[field[0]]) not in field[1] and field[0] not in ('setExperience', 'setInventory'):
-                    # Corrupted!
-                    return False, 'Field %s contains a value of incorrect type. Expected: %s, got %s' % (
-                        field[0], field[1], type(toonData[field[0]])), None
+            elif toonData[field[0]] is None and field[2] is not None:
+                toonData[field[0]] = field[2]
+            elif type(toonData[field[0]]) not in field[1]:
+                # Corrupted!
+                return False, 'Field %s contains a value of incorrect type. Expected: %s, got %s' % (
+                    field[0], field[1], type(toonData[field[0]])), None
 
         toonDataObj = ToonData.getDefaultToonData(index, setDNA, setName)
         for field in toonData.keys():
@@ -176,6 +179,11 @@ class ToonData:
         valid, response, toonData = ToonData.verifyToonData(jsonData)
         if not valid:
             raise Exception(response)
+
+        for var in StrToBytesVars:
+            value = getattr(toonData, var)
+            if value and type(value) == str:
+                setattr(toonData, var, value.encode('utf-8'))
 
         return toonData
 
