@@ -32,7 +32,7 @@ class FFHood(ToonHood):
     def enter(self, shop=None, tunnel=None, init=0):
         self.loadQuestChanges()
         ToonHood.enter(self, shop=shop, tunnel=tunnel, init=init)
-        taskMgr.doMethodLater(1, self.__birds, 'FF-birds')
+        taskMgr.doMethodLater(1, self.doBirds, 'FF-birds')
         self.waterShader.start('water', self.geom, self.sky)
         if hasattr(self, 'snow'):
             self.snow.start(camera, self.snowRender)
@@ -107,8 +107,8 @@ class FFHood(ToonHood):
                     actor.stopLookAround()
                 return
 
-    def __birds(self, task):
+    def doBirds(self, task):
         base.playSfx(random.choice(self.birdSound))
         t = random.random() * 20.0 + 1
-        taskMgr.doMethodLater(t, self.__birds, 'FF-birds')
+        taskMgr.doMethodLater(t, self.doBirds, 'FF-birds')
         return task.done

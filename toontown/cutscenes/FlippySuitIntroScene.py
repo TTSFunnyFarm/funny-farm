@@ -10,6 +10,7 @@ class FlippySuitIntroScene(CutsceneBase):
         self.suit = base.cr.playGame.hood.actors['suit']
         self.flippy = base.cr.playGame.hood.actors['flippy']
         track = Sequence()
+        track.append(Func(taskMgr.remove, 'FF-birds'))
         track.append(LerpPosHprInterval(camera, duration=3.0, pos=Point3(-47, -40, 9), hpr=Vec3(30, -10, 0), blendType='easeInOut'))
         track.append(Func(self.doDialog, 0, 0))
         self.track = track
@@ -39,6 +40,7 @@ class FlippySuitIntroScene(CutsceneBase):
         mtrack.append(Wait(1.0))
         mtrack.append(Func(self.exit))
         mtrack.append(Func(self.flippy.acceptOnce, 'cutscene-done', self.questDone))
+        mtrack.append(Func(taskMgr.doMethodLater, 1, base.cr.playGame.hood.doBirds, 'FF-birds'))
         mtrack.start()
 
     def doDialog(self, index, elapsedTime):
