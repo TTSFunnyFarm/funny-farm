@@ -1139,8 +1139,8 @@ class InventoryNew(InventoryBase.InventoryBase, DirectFrame):
                 self.trackBars[trackIndex]['text'] = TTLocalizer.InventoryTrackExp % {'curExp': curExp,
                  'nextExp': nextExp}
 
-    def updateInvString(self, invString):
-        InventoryBase.InventoryBase.updateInvString(self, invString)
+    def updateInvData(self, invData):
+        InventoryBase.InventoryBase.updateInvData(self, invData)
         self.updateGUI()
         return None
 
