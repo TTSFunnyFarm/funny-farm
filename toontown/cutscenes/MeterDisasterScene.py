@@ -6,11 +6,12 @@ class MeterDisasterScene(CutsceneBase):
     id = 1004
     def __init__(self):
         CutsceneBase.__init__(self, self.id)
-        self.actors = {'flippy': base.cr.playGame.hood.place.flippy,
+        self.actors = {'flippy': [TOON, [-12, -25, 0, 330, 0, 0], 1001, base.cr.playGame.hood.place.interior],
             'dimm': base.cr.playGame.hood.place.npcs[0],
             'surlee': base.cr.playGame.hood.place.npcs[1],
             'prepostera': base.cr.playGame.hood.place.npcs[2]}
         flippy = self.actors['flippy']
+        flippy.initializeBodyCollisions('toon')
         track = Sequence()
         track.append(LerpPosHprInterval(camera, duration=1.5, pos=Point3(8, 8, flippy.getHeight() - 0.5), hpr=Vec3(120, 0, 0), other=flippy, blendType='easeInOut'))
         track.append(Func(self.doDialog, 0, 0))

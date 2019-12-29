@@ -92,7 +92,7 @@ class LoonyLabsInterior(Interior):
         self.npcs[0].loop('scientistJealous', fromFrame=0, toFrame=252)
         self.npcs[1].pingpong('scientistWork', fromFrame=0, toFrame=150)
         self.npcs[2].setAnimState('neutral')
-        
+
         self.ref0 = self.makeToonReflection(self.npcs[0])
         self.ref1 = self.makeToonReflection(self.npcs[1])
         self.ref2 = self.makeToonReflection(self.npcs[2])
@@ -170,16 +170,11 @@ class LoonyLabsInterior(Interior):
                 self.npcs[1].setAnimState('neutral')
                 self.ref1.setAnimState('neutral')
                 self.npcs[2].setHpr(270, 0, 0)
-                self.flippy = NPCToons.createLocalNPC(1001)
-                self.flippy.reparentTo(self.interior)
-                self.flippy.setPosHpr(-12, -25, 0, 330, 0, 0)
-                self.flippy.initializeBodyCollisions('toon')
-                self.flippy.addActive()
 
     def unloadQuestChanges(self):
-        if hasattr(self, 'flippy'):
-            self.flippy.delete()
-            del self.flippy
+        if self.actors.get('flippy'):
+            self.actors.get('flippy').delete()
+            del self.actors.get('flippy')
 
     def sillyMeterIsRunning(self, isRunning):
         if isRunning:
@@ -205,7 +200,7 @@ class LoonyLabsInterior(Interior):
         self.sillyMeter.reparentTo(self.interior)
         if config.GetBool('smooth-animations', True):
             self.sillyMeter.setBlend(frameBlend=True)
-        
+
         # Reflection of the Silly Meter on the floor. Yes, unfortunately this means
         # we have to render everything twice and animate everything twice.
         self.sillyMeterRef = Actor('phase_4/models/props/tt_a_ara_ttc_sillyMeter_default', {'arrowTube': 'phase_4/models/props/tt_a_ara_ttc_sillyMeter_arrowFluid',
@@ -252,7 +247,7 @@ class LoonyLabsInterior(Interior):
         self.sillyMeter.makeSubpart('meter', ['def_pivot'], ['uvj_progressBar*', 'def_springA'])
         self.sillyMeterRef.makeSubpart('arrow', ['uvj_progressBar*', 'def_springA'])
         self.sillyMeterRef.makeSubpart('meter', ['def_pivot'], ['uvj_progressBar*', 'def_springA'])
-        
+
         self.audio3d = Audio3DManager.Audio3DManager(base.sfxManagerList[0], camera)
         self.phase1Sfx = self.audio3d.loadSfx('phase_4/audio/sfx/tt_s_prp_sillyMeterPhaseOne.ogg')
         self.phase1Sfx.setLoop(True)
