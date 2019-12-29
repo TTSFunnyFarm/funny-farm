@@ -10,7 +10,7 @@ DefaultData = [
     ['setBankMoney', [int], 0],
     ['setMaxBankMoney', [int], 12000],
     ['setMaxCarry', [int], 20],
-    ['setInventory', [str], None],
+    ['setInventory', [list], None],
     ['setExperience', [list], None],
     ['setTrackAccess', [list], [0, 0, 0, 0, 1, 1, 0]],
     ['setHat', [list], [0, 0, 0]],
@@ -142,7 +142,7 @@ class ToonData:
                 if toonData[field[0]] is None and field[2] is not None:
                     toonData[field[0]] = field[2]
 
-                if type(toonData[field[0]]) not in field[1] and field[2] is not None:
+                if toonData[field[0]] is not None and type(toonData[field[0]]) not in field[1]:
                     # Corrupted!
                     return False, 'Field %s contains a value of incorrect type. Expected: %s, got %s' % (
                         field[0], field[1], type(toonData[field[0]])), None
