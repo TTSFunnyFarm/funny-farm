@@ -17,8 +17,9 @@ from toontown.book import ToonPage
 from toontown.book import InventoryPage
 from toontown.book import QuestPage
 from toontown.book import TrackPage
+from toontown.cutscenes import CutscenesGlobals
 from toontown.quest import Quests
-from toontown.quest.InfoBubble import InfoBubble
+from toontown.cutscenes.InfoBubble import InfoBubble
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
@@ -925,7 +926,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         else:
             zoneId = currZone.zoneId
         for questDesc in self.quests:
-            if questDesc[0] in Quests.Cutscenes and not self.hasQuestHistory(questDesc[0]):
+            if questDesc[0] in CutscenesGlobals.Cutscenes and not self.hasQuestHistory(questDesc[0]):
                 if zoneId == Quests.getToNpcLocation(questDesc[0]) and questDesc[1] == 0:
                     base.cr.cutsceneMgr.enterCutscene(questDesc[0])
                     return True

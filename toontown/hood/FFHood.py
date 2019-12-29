@@ -87,33 +87,25 @@ class FFHood(ToonHood):
                 if not hasattr(self, 'suit'):
                     dna = SuitDNA()
                     dna.newSuit('tbc')
-                    self.suit = BattleSuit()
-                    self.suit.setDNA(dna)
-                    self.suit.setLevel(4)
-                    self.suit.setElite(1)
-                    self.suit.initializeBodyCollisions('suit')
-                    self.suit.reparentTo(self.geom)
-                    self.suit.setPosHpr(-70, -20, 0, 270, 0, 0)
-                    self.suit.addActive()
-                    self.suit.loop('neutral')
-                if not hasattr(self, 'flippy'):
-                    self.flippy = NPCToons.createLocalNPC(1001, functional=True)
-                    self.flippy.initializeBodyCollisions('toon')
-                    self.flippy.reparentTo(self.geom)
-                    self.flippy.setPosHpr(-50, -20, 0, 90, 0, 0)
-                    self.flippy.setScale(1, 1, 1)
-                    self.flippy.useLOD(1000)
-                    self.flippy.addActive()
-                    self.flippy.stopLookAround()
+                    actor = self.actors['suit'] = BattleSuit()
+                    actor.setDNA(dna)
+                    actor.setLevel(4)
+                    actor.setElite(1)
+                    actor.initializeBodyCollisions('suit')
+                    actor.reparentTo(self.geom)
+                    actor.setPosHpr(-70, -20, 0, 270, 0, 0)
+                    actor.addActive()
+                    actor.loop('neutral')
+                if not self.actors.get('flippy'):
+                    actor = self.actors['flippy'] = NPCToons.createLocalNPC(1001, functional=True)
+                    actor.initializeBodyCollisions('toon')
+                    actor.reparentTo(self.geom)
+                    actor.setPosHpr(-50, -20, 0, 90, 0, 0)
+                    actor.setScale(1, 1, 1)
+                    actor.useLOD(1000)
+                    actor.addActive()
+                    actor.stopLookAround()
                 return
-
-    def unloadQuestChanges(self):
-        if hasattr(self, 'suit'):
-            self.suit.delete()
-            del self.suit
-        if hasattr(self, 'flippy'):
-            self.flippy.delete()
-            del self.flippy
 
     def __birds(self, task):
         base.playSfx(random.choice(self.birdSound))

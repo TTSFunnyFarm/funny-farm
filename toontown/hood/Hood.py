@@ -32,6 +32,7 @@ class Hood(DirectObject):
         self.battleCell = None
         self.unloaded = False
         self.dialog = None
+        self.actors = {}
 
     def enter(self, shop=None, tunnel=None, init=0):
         if tunnel:
@@ -318,3 +319,8 @@ class Hood(DirectObject):
             self.sky.setTag('sky', 'Regular')
             self.sky.setScale(1.0)
             self.startSky()
+
+    def unloadQuestChanges(self):
+        for actor in list(self.actors.values()):
+            actor.delete()
+            del actor
