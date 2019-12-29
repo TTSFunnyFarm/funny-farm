@@ -173,8 +173,8 @@ class LoonyLabsInterior(Interior):
 
     def unloadQuestChanges(self):
         if self.actors.get('flippy'):
-            self.actors.get('flippy').delete()
-            del self.actors.get('flippy')
+            self.actors['flippy'].delete()
+            del self.actors['flippy']
 
     def sillyMeterIsRunning(self, isRunning):
         if isRunning:

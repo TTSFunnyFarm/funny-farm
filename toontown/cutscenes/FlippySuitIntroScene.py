@@ -10,7 +10,6 @@ class FlippySuitIntroScene(CutsceneBase):
         self.suit = base.cr.playGame.hood.actors['suit']
         self.flippy = base.cr.playGame.hood.actors['flippy']
         track = Sequence()
-        track.append(Func(taskMgr.remove, 'FF-birds'))
         track.append(LerpPosHprInterval(camera, duration=3.0, pos=Point3(-47, -40, 9), hpr=Vec3(30, -10, 0), blendType='easeInOut'))
         track.append(Func(self.doDialog, 0, 0))
         self.track = track
@@ -18,6 +17,8 @@ class FlippySuitIntroScene(CutsceneBase):
     def enter(self):
         CutsceneBase.enter(self)
         aspect2d.hide()
+        taskMgr.remove('FF-birds')
+        base.cr.playGame.hood.startSpookySky()
 
     def exit(self):
         CutsceneBase.exit(self)
