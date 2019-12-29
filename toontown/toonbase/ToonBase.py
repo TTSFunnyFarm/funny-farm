@@ -240,7 +240,7 @@ class ToonBase(OTPBase.OTPBase):
         self.walking = pressed
 
     def toggleGui(self):
-        if aspect2d.isHidden() and not base.cutsceneMgr.getCurrentScene():
+        if aspect2d.isHidden() and not base.cr.cutsceneMgr.getCurrentScene():
             if settings['drawFps']:
                 base.setFrameRateMeter(True)
             aspect2d.show()
