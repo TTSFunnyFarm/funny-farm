@@ -82,6 +82,7 @@ class LoonyLabsInterior(Interior):
         base.localAvatar.stopUpdateReflection()
         base.localAvatar.deleteReflection()
         self.sillyFSM.requestFinalState()
+        musicMgr.track.setPlayRate(1)
 
     def generateNPCs(self):
         Interior.generateNPCs(self)
@@ -357,6 +358,14 @@ class LoonyLabsInterior(Interior):
 
     def enterPhase4To5(self):
         self.animSeq = Sequence(Parallel(Func(self.phase4To5Sfx.play), ActorInterval(self.sillyMeter, 'phaseFourToFive', constrainedLoop=0, startFrame=1, endFrame=120), ActorInterval(self.sillyMeterRef, 'phaseFourToFive', constrainedLoop=0, startFrame=1, endFrame=120)), Parallel(Func(self.sillyMeter.loop, 'phaseFive', fromFrame=1, toFrame=48), Func(self.sillyMeterRef.loop, 'phaseFive', fromFrame=1, toFrame=48), Sequence(Func(self.phase5Sfx.play), Func(self.audio3d.attachSoundToObject, self.phase5Sfx, self.sillyMeter))))
+        lerp = LerpFunctionInterval(musicMgr.track.setPlayRate,
+             fromData=1,
+             toData=0,
+             duration=5,
+             blendType='easeIn',
+             extraArgs=[],
+             name=None)
+        lerp.start()
         self.animSeq.start()
         self.smPhase2.show()
         self.smPhase3.show()
@@ -383,6 +392,7 @@ class LoonyLabsInterior(Interior):
 
     def enterPhase5(self):
         self.phase5Sfx.play()
+        musicMgr.track.setPlayRate(0)
         self.audio3d.attachSoundToObject(self.phase5Sfx, self.sillyMeter)
         self.smPhase2.show()
         self.smPhase3.show()

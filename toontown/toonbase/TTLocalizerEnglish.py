@@ -1,5 +1,6 @@
 from toontown.toonbase.TTLocalizerEnglishProperty import *
 from otp.otpbase import OTPLocalizer as OL
+from toontown.cutscenes.CutscenesGlobals import SAD_EYES, ANGRY_EYES, NORMAL_EYES
 OL.SpeedChatStaticText = OL.SpeedChatStaticTextToontown.copy()
 for key in iter(OL.SpeedChatStaticTextCommon):
     OL.SpeedChatStaticText[key] = OL.SpeedChatStaticTextCommon[key]
@@ -628,11 +629,11 @@ CutsceneDialogDict = {
         'Suit yourself.'),
  1003: ('Flippy! We have a problem!\x07This is urgent. Come quick!',
         'Better go see what\'s going on.\x07Come inside with me.'),
- 1004: (('What\'s the matter, guys?',
+ 1004: ('What\'s the matter, guys?',
         'Our Silly Meter readings have plummeted.\x07Ever since you encountered those Cogs, the rates have been decreasing intensely.\x07It\'s almost at zero!',
-        'But then that means...',
-        'Uh, oh.'),
-        'Oh, this is a disaster!'),
+        ['But then that means...', SAD_EYES],
+        ['Uh, oh.', SAD_EYES],
+        ['Oh, this is a disaster!', SAD_EYES]),
  1028: '_avName_! This is Flippy. Something\'s happened and we\'re gonna need your help.\x07Report to the Toon Hall immediately!'
 }
 MovieTutorialReward1 = 'You received 1 Throw point! When you get 10, you will get a new gag!'

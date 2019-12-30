@@ -1,6 +1,9 @@
 TOON = 0
 COG = 1
 
+NORMAL_EYES = 0
+SAD_EYES = 1
+ANGRY_EYES = 2
 Cutscenes = (1,
  1001,
  1002,

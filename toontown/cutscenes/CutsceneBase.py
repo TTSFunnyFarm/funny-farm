@@ -43,8 +43,16 @@ class CutsceneBase:
                             toon.addActive()
                             self.actors[key] = toon
 
-
-
+    def doAnimate(self, actor, emote, anim=None):
+        if emote and actor:
+            if emote < 3:
+                if emote == SAD_EYES:
+                    actor.sadEyes()
+                elif emote == ANGRY_EYES:
+                    actor.angryEyes()
+                else:
+                    actor.normalEyes()
+                actor.blinkEyes()
     def exit(self):
         self.notify.info('Exiting %s!' % self.__class__.__name__)
         base.localAvatar.enable()
