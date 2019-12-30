@@ -31,7 +31,7 @@ class Experience:
     def makeFromExperienceData(self, experienceData):
         dataList = []
         for track in range(0, len(Tracks)):
-            dataList.append(experienceData[track])
+            dataList.append(experienceData.pop(0))
 
         return dataList
 

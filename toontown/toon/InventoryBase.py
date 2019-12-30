@@ -59,7 +59,7 @@ class InventoryBase(DirectObject.DirectObject):
             subList = []
             for level in range(0, len(Levels[track])):
                 if len(inventoryData) > 0:
-                    value = inventoryData[level]
+                    value = inventoryData.pop(0)
                 else:
                     value = 0
                 subList.append(value)
@@ -74,7 +74,7 @@ class InventoryBase(DirectObject.DirectObject):
             subList = []
             for level in range(0, numLevels):
                 if len(inventoryData) > 0:
-                    value = inventoryData[level]
+                    value = inventoryData.pop(0)
                 else:
                     value = 0
                 subList.append(value)
