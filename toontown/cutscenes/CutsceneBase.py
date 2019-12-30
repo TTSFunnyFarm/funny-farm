@@ -1,7 +1,7 @@
 from panda3d.core import *
 from toontown.toonbase import TTLocalizer
 from toontown.cutscenes.CutscenesGlobals import *
-from toontown.toon import NPCToons
+from toontown.toon import NPCToons, Toon
 from direct.directnotify import DirectNotifyGlobal
 
 class CutsceneBase:
@@ -46,7 +46,7 @@ class CutsceneBase:
     def doAnimate(self, actor, anim, emote=None):
         if not actor:
             return
-        if emote:
+        if emote and isinstance(actor, Toon):
             if emote < 3:
                 if emote == SAD_EYES:
                     actor.sadEyes()
