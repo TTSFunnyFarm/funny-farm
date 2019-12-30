@@ -20,6 +20,6 @@ def UnfadeScreen():
 
 def GetExtra(dialog):
     if isinstance(dialog, list):
-        return dialog[0], dialog[1:]
+        return dialog[0], list(dialog[1:])
     else:
         return dialog
