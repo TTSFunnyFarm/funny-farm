@@ -17,3 +17,9 @@ def FadeScreen(val):
 
 def UnfadeScreen():
     screenFader.hide()
+
+def GetExtra(dialog):
+    if isinstance(dialog, list):
+        return dialog[0], dialog[1:]
+    else:
+        return dialog

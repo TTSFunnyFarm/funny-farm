@@ -1,4 +1,5 @@
 from toontown.cutscenes.CutsceneBase import CutsceneBase
+from toontown.cutscenes import CutsceneUtil
 from toontown.cutscenes.CutscenesGlobals import *
 from direct.interval.IntervalGlobal import *
 from panda3d.core import *
@@ -59,13 +60,8 @@ class MeterDisasterScene(CutsceneBase):
         mtrack.start()
 
     def doDialog(self, index, elapsedTime):
-        extra = None
         dialog = self.dialog[index]
-        print(dialog)
-        print(type(dialog))
-        if isinstance(dialog, list):
-            extra = dialog[1:]
-            dialog = dialog[0]
+        dialog, extra = CutsceneUtil.GetExtra(dialog)
         dimm = self.actors['dimm']
         flippy = self.actors['flippy']
         surlee = self.actors['surlee']
