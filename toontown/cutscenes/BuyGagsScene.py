@@ -27,5 +27,3 @@ class BuyGagsScene(CutsceneBase):
 
     def exit(self):
         CutsceneBase.exit(self)
-        base.localAvatar.removeQuest(1001)
-        base.localAvatar.addQuest(1002)
