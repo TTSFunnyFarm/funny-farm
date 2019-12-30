@@ -84,7 +84,7 @@ class FFHood(ToonHood):
     def loadQuestChanges(self):
         for questDesc in base.localAvatar.quests:
             if questDesc[0] == 1002 and questDesc[1] == 0:
-                if not hasattr(self, 'suit'):
+                if not self.actors.get('suit'):
                     dna = SuitDNA()
                     dna.newSuit('tbc')
                     actor = self.actors['suit'] = BattleSuit()
