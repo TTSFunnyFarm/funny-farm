@@ -196,6 +196,7 @@ class ToonHood(Hood):
         door.avatarExit(base.localAvatar)
 
     def exitPlace(self):
+        Hood.exitPlace(self)
         self.place.unload()
         self.place = None
         self.geom.unstash()
