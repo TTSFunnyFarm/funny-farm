@@ -25,7 +25,7 @@ def scene1002():
     flippy = base.cr.playGame.hood.flippy
     track = Sequence()
     track.append(Func(musicMgr.stopMusic))
-    track.append(Func(base.playMusic, bgm, 1))
+    track.append(Func(musicMgr.playMusic, bgm, 1))
     track.append(Func(aspect2d.hide))
     track.append(Func(camera.wrtReparentTo, render))
     track.append(LerpPosHprInterval(camera, duration=3.0, pos=Point3(-47, -40, 9), hpr=Vec3(30, -10, 0), blendType='easeInOut'))
@@ -78,7 +78,7 @@ def scene1003():
     dimm.reparentTo(base.cr.playGame.hood.place.interior)
     dimm.setPosHpr(25, 0, 0.5, 20, 0, 0)
     dimm.addActive()
-    
+
     track = Sequence()
     door = base.cr.playGame.hood.place.labDoor
     doorOrigin = door.getParent()
@@ -115,7 +115,7 @@ def scene1004():
     dimm = base.cr.playGame.hood.place.npcs[0]
     surlee = base.cr.playGame.hood.place.npcs[1]
     prepostera = base.cr.playGame.hood.place.npcs[2]
-    
+
     track = Sequence()
     track.append(Func(aspect2d.hide))
     track.append(Func(camera.wrtReparentTo, render))
@@ -187,7 +187,7 @@ def scene1007():
 
     camTrack2.append(Func(camTrack1.pause))
     camTrack2.append(LerpPosHprInterval(camera, duration=1.5, pos=Point3(30, 20, 9), hpr=Vec3(-15, -2, 0), blendType='easeInOut'))
-    
+
     track = Sequence()
     track.append(Func(base.localAvatar.showInfoBubble, 1, 'cutscene-done'))
     track.append(Func(base.localAvatar.acceptOnce, 'nextInfoPage', camTrack1.start))
@@ -210,12 +210,12 @@ def scene1014():
     track.append(Func(base.localAvatar.questPage.showQuestsOnscreen))
     track.append(Func(base.localAvatar.showInfoBubble, 4, 'cutscene-done'))
     track.append(Func(base.localAvatar.acceptOnce, 'nextInfoPage', base.localAvatar.acceptOnce, ['nextInfoPage', camTrack.start]))
-    
+
     def sceneDone():
         if toonHq.getQuestOffer() == 4:
             toonHq.clearQuestOffer()
         base.localAvatar.addQuestHistory(4)
-    
+
     track.append(Func(base.localAvatar.acceptOnce, 'cutscene-done', sceneDone))
     return track
 

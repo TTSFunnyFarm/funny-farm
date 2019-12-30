@@ -1,7 +1,6 @@
 from panda3d.core import *
 from direct.showbase import DConfig
 import string
-import types
 
 try:
     language = config.GetString('language', 'english')
@@ -38,7 +37,7 @@ if checkLanguage:
         if key not in foreignModule.__dict__:
             print('WARNING: Foreign module: %s missing key: %s' % (_languageModule, key))
             locals()[key] = val
-        elif isinstance(val, types.DictType):
+        elif isinstance(val, dict):
             fval = foreignModule.__dict__.get(key)
             for dkey, dval in val.items():
                 if dkey not in fval:

@@ -5,7 +5,6 @@ from toontown.battle.RewardPanel import *
 from toontown.battle.BattleSounds import *
 from toontown.battle import MovieCamera
 from direct.directnotify import DirectNotifyGlobal
-import types
 notify = DirectNotifyGlobal.directNotify.newCategory('MovieToonVictory')
 
 def __findToonReward(rewards, toon):

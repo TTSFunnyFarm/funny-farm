@@ -62,6 +62,6 @@ class SuitInteriorBase(DirectObject):
         camera.reparentTo(self.entranceElevator.np)
         camera.setH(180)
         camera.setPos(0, 14, 4)
-        base.playMusic(self.elevatorMusic, looping=1, volume=0.8)
+        musicMgr.playMusic(self.elevatorMusic, looping=1, volume=0.8)
         track = Sequence(getRideElevatorInterval(ELEVATOR_NORMAL), Func(self.enter))
         track.start()

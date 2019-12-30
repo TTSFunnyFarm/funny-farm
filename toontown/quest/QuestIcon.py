@@ -1,13 +1,13 @@
 from panda3d.core import *
 from direct.interval.IntervalGlobal import *
 
-Offer = 0
-Main = 1
-Bonus = 2
+OFFER = 0
+MAIN = 1
+BONUS = 2
 
 class QuestIcon(NodePath):
 
-    def __init__(self, typeId = Offer):
+    def __init__(self, typeId = OFFER):
         NodePath.__init__(self, 'QuestIcon_%d_%d' % (typeId, id(self)))
         self.type = typeId
         self.track = None
@@ -15,12 +15,12 @@ class QuestIcon(NodePath):
 
     def load(self):
         gui = loader.loadModel('phase_14/models/props/quest_icons')
-        if self.type == Offer:
-            geom = gui.find('**/quest_icon_offer')
-        elif self.type == Main:
-            geom = gui.find('**/quest_icon_main')
-        elif self.type == Bonus:
-            geom = gui.find('**/quest_icon_bonus')
+        iconPath = {
+         OFFER: '**/quest_icon_offer',
+         MAIN: '**/quest_icon_main',
+         BONUS: '**/quest_icon_bonus'
+        }
+        geom = gui.find(iconPath[self.type])
         geom.reparentTo(self)
         gui.removeNode()
 

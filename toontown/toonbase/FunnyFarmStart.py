@@ -146,12 +146,15 @@ class FunnyFarmStart:
 
         if __debug__ and sys.platform == 'win32':
             Injector = importlib.import_module('toontown.misc.Injector')
-            Injector.openInjector()
+            injector = Injector.Injector()
+            injector.daemon = True
+            injector.start()
 
         self.notify.info('Initializing Client Repository...')
         cr = FFClientRepository()
         base.initNametagGlobals()
         base.startShow(cr)
+
         # Can't start a new thread right away otherwise we'll crash panda
         taskMgr.doMethodLater(0.1, self.startAIThread, 'startAI')
 

@@ -50,7 +50,7 @@ class FireworkShowMixin:
         if self.timestamp:
             self.getLoader().music.stop()
             t = globalClockDelta.localElapsedTime(self.timestamp) - self.startDelay
-            base.playMusic(self.showMusic, 0, 1, 1, max(0, t))
+            musicMgr.playMusic(self.showMusic, 0, 1, 1, max(0, t))
 
     def shootFirework(self, x, y, z, style, color1, color2):
         amp = 5
@@ -155,7 +155,7 @@ class FireworkShowMixin:
                     Func(base.localAvatar.setSystemMessage, 0, instructionMessage),
                     Func(self.getLoader().music.stop),
                     Wait(2.0),
-                    Func(base.playMusic, self.showMusic, 0, 1, 0.8, max(0, startT))
+                    Func(musicMgr.playMusic, self.showMusic, 0, 1, 0.8, max(0, startT))
                     )
             return preShow
         return None
@@ -208,7 +208,7 @@ class FireworkShowMixin:
 
         if self.restorePlaygroundMusic:
             postShow.append(Wait(2.0))
-            postShow.append(Func(base.playMusic, self.getLoader().music, 1, 1, 0.8))
+            postShow.append(Func(musicMgr.playMusic, self.getLoader().music, 1, 1, 0.8))
         return postShow
 
     def createFireworkShow(self):

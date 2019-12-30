@@ -239,8 +239,12 @@ class ToonBase(OTPBase.OTPBase):
 
     def toggleGui(self):
         if aspect2d.isHidden():
+            if settings['drawFps']:
+                base.setFrameRateMeter(True)
             aspect2d.show()
         else:
+            if settings['drawFps']:
+                base.setFrameRateMeter(False)
             aspect2d.hide()
 
     def initNametagGlobals(self):

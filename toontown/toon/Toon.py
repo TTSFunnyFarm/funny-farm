@@ -24,7 +24,6 @@ from toontown.effects import DustCloud, Splash
 from direct.showbase.PythonUtil import Functor
 from toontown.distributed import DelayDelete
 from toontown.toon import AccessoryGlobals
-import types
 
 def cmp(a, b):
     return (a > b) - (a < b)
@@ -504,6 +503,7 @@ class Toon(Avatar.Avatar, ToonHead):
         self.isStunned = 0
         self.isDisguised = 0
         self.wantBattles = 1
+        self.inBattle = 0
         self.defaultColorScale = None
         self.jar = None
         self.setTag('pieCode', str(ToontownGlobals.PieCodeToon))
@@ -2299,7 +2299,7 @@ class Toon(Avatar.Avatar, ToonHead):
             for partName, pieceNames in pieces:
                 part = self.getPart(partName, lodName)
                 if part:
-                    if type(pieceNames) == types.StringType:
+                    if type(pieceNames) == str:
                         pieceNames = (pieceNames,)
                     for pieceName in pieceNames:
                         npc = part.findAllMatches('**/%s;+s' % pieceName)
@@ -3167,6 +3167,12 @@ class Toon(Avatar.Avatar, ToonHead):
 
     def setWantBattles(self, want):
         self.wantBattles = want
+
+    def getInBattle(self):
+        return self.inBattle
+
+    def setInBattle(self, inBattle):
+        self.inBattle = inBattle
 
     def setNametagFont(self, font):
         self.setDisplayName(self.getName(), font)

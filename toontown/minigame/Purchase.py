@@ -260,7 +260,7 @@ class Purchase(PurchaseBase):
             headFrame.setAvatarState(state)
 
     def enter(self):
-        base.playMusic(self.music, looping=1, volume=0.8)
+        musicMgr.playMusic(self.music, looping=1, volume=0.8)
         self.fsm.request('reward')
 
     def enterReward(self):
@@ -739,8 +739,9 @@ class PurchaseHeadFrame(DirectFrame):
         del self.headModel
         self.head.removeNode()
         del self.head
-        self.av.nametag.removeNametag(self.tag1Node)
-        self.av.nametag.removeNametag(self.tag2Node)
+        if hasattr(self.av, 'nametag'):
+            self.av.nametag.removeNametag(self.tag1Node)
+            self.av.nametag.removeNametag(self.tag2Node)
         self.tag1.removeNode()
         self.tag2.removeNode()
         del self.tag1

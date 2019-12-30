@@ -473,7 +473,7 @@ class Tutorial(ToonHood):
             Func(aspect2d.hide),
             Func(camera.setPosHpr, -5, 95, 4, 270, 12, 0),
             Func(base.transitions.fadeIn, 1.0),
-            Func(base.playMusic, self.spookyMusic, looping=1),
+            Func(musicMgr.playMusic, self.spookyMusic, looping=1),
             Wait(1),
             Func(self.suit.reparentTo, render),
             self.suit.beginSupaFlyMove(Point3(45, 95, -0.5), True, 'TutorialSuitFlyIn', walkAfterLanding=True),
@@ -509,14 +509,14 @@ class Tutorial(ToonHood):
         self.battle.reparentTo(self.battleCell)
         self.battle.enter()
         self.spookyMusic.stop()
-        base.playMusic(self.battleMusic, looping=1)
+        musicMgr.playMusic(self.battleMusic, looping=1)
         self.accept(self.townBattle.doneEvent, self.exitBattle)
 
     def exitBattle(self, doneStatus):
         self.enableToon()
         self.toon.book.showButton()
         self.battleMusic.stop()
-        base.playMusic(self.spookyMusic, looping=1)
+        musicMgr.playMusic(self.spookyMusic, looping=1)
         self.ignore(self.townBattle.doneEvent)
         self.battle.cleanupBattle()
         self.battle.delete()

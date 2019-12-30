@@ -67,6 +67,10 @@ class FFHood(ToonHood):
             del self.snow
             del self.snowRender
 
+    def startActive(self):
+        ToonHood.startActive(self)
+        self.ignore('entertunnel_trigger_ff_1200')
+
     def skyTrack(self, task):
         return SkyUtil.cloudSkyTrack(task)
 

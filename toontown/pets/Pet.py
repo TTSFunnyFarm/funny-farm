@@ -14,7 +14,6 @@ from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals
 from direct.showbase import PythonUtil
 import random
-import types
 Component2IconDict = {'boredom': 'Bored',
  'restlessness': None,
  'playfulness': 'Play',
@@ -634,7 +633,7 @@ class Pet(Avatar.Avatar):
 
     def getInteractIval(self, interactId):
         anims = self.InteractAnims[interactId]
-        if type(anims) == types.StringType:
+        if type(anims) == str:
             animIval = ActorInterval(self, anims)
         else:
             animIval = Sequence()

@@ -101,6 +101,8 @@ class FFStreet(Street):
         del self.audio3d
 
     def __handleTrainCollision(self, entry):
+        if base.localAvatar.getInBattle():
+            return
         base.localAvatar.disable()
         base.localAvatar.setAnimState('neutral')
         animalType = base.localAvatar.getStyle().getType()

@@ -499,7 +499,7 @@ class CatchGame(Minigame):
         self.timer.countdown(CatchGameGlobals.GameDuration, self.timerExpired)
         self.timer.setTransparency(1)
         self.timer.setColorScale(1, 1, 1, 0.75)
-        base.playMusic(self.music, looping=0, volume=0.9)
+        musicMgr.playMusic(self.music, looping=0, volume=0.9)
 
     def exitPlay(self):
         self.stopDropTask()
@@ -626,10 +626,6 @@ class CatchGame(Minigame):
         self.notify.debug('num fruits: %s' % self.numFruits)
         self.notify.debug('num catches: %s' % self.fruitsCaught)
         self.timer.hide()
-
-        #For the Alpha Blueprint ARG
-        if config.GetBool('want-blueprint4-ARG', False):
-            MinigameGlobals.generateDebugARGPhrase()
 
         if self.fruitsCaught >= self.numFruits:
             self.notify.debug('perfect game!')

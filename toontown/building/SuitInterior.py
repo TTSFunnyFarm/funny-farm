@@ -160,7 +160,7 @@ class SuitInterior(SuitInteriorBase):
             self.battle.setBossBattle(0)
             music = self.battleMusic
         self.battle.enter(creditMultiplier=2.0)
-        base.playMusic(music, looping=1, volume=0.9)
+        musicMgr.playMusic(music, looping=1, volume=0.9)
         self.accept(self.townBattle.doneEvent, self.exitBattle)
 
     def exitBattle(self, doneStatus):
@@ -195,7 +195,7 @@ class SuitInterior(SuitInteriorBase):
         return task.done
 
     def enterResting(self):
-        base.playMusic(self.waitMusic, looping=1, volume=0.7)
+        musicMgr.playMusic(self.waitMusic, looping=1, volume=0.7)
         self.entranceElevator.closeDoors()
         self.exitElevator.openDoors()
         self.exitElevator.addActive()

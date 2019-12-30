@@ -115,8 +115,6 @@ class CogThiefGame(Minigame):
             self.gameBoard.find('**/floor_DL').show()
         else:
             self.gameBoard.find('**/floor_TT').show()
-        self.gameBoard.setPosHpr(0, 0, 0, 0, 0, 0)
-        self.gameBoard.setScale(1.0)
         self.toonSDs = {}
         avId = self.localAvId
         toonSD = CogThiefGameToonSD.CogThiefGameToonSD(avId, self)
@@ -195,7 +193,7 @@ class CogThiefGame(Minigame):
             self.sndTable['hitBySuit'][i] = base.loader.loadSfx('phase_4/audio/sfx/MG_Tag_C.ogg')
             self.sndTable['falling'][i] = base.loader.loadSfx('phase_4/audio/sfx/MG_cannon_whizz.ogg')
 
-        base.playMusic(self.music, looping=1, volume=0.8)
+        musicMgr.playMusic(self.music, looping=1, volume=0.8)
         self.introTrack = self.getIntroTrack()
         self.introTrack.start()
         return
@@ -938,7 +936,7 @@ class CogThiefGame(Minigame):
                 self.notify.debug('Cog %d hit at starting pos %s, ignoring' % (suitNum, pos))
             else:
                 self.pieHitSuit(self.localAvId, timestamp, suitNum, pos[0], pos[1], pos[2])
-                self.makeSuitRespondToPieHit(timestamp, suitNum)
+                self.makeSuitRespondToPieHit(timestamp, suitNum, pos)
 
     def pieHitSuit(self, avId, timestamp, suitNum, x, y, z):
         if not self.hasLocalToon:
@@ -956,6 +954,7 @@ class CogThiefGame(Minigame):
         if barrelIndex >= 0:
             barrelPos = Point3(x, y, z)
             self.b_makeCogDropBarrel(timestamp, suitNum, barrelIndex, barrelPos)
+        pos = Point3(x, y, z)
         startPos = CTGG.CogStartingPositions[suitNum]
         self.cogInfo[suitNum]['pos'] = startPos
         self.cogInfo[suitNum]['goal'] = CTGG.NoGoal
@@ -963,11 +962,11 @@ class CogThiefGame(Minigame):
         self.sendSuitSync(timestamp, suitNum)
         self.doMethodLater(self.ExplodeWaitTime, self.chooseSuitGoal, self.uniqueName('choseSuitGoal-%d-' % suitNum), extraArgs=[suitNum])
         if avId != self.localAvId:
-            self.makeSuitRespondToPieHit(timestamp, suitNum)
+            self.makeSuitRespondToPieHit(timestamp, suitNum, pos)
 
-    def makeSuitRespondToPieHit(self, timestamp, suitNum):
+    def makeSuitRespondToPieHit(self, timestamp, suitNum, pos):
         cog = self.cogInfo[suitNum]['suit']
-        cog.respondToPieHit(timestamp)
+        cog.respondToPieHit(timestamp, pos)
 
     def sendCogAtReturnPos(self, cogIndex, barrelIndex):
         timestamp = globalClockDelta.localToNetworkTime(globalClock.getFrameTime(), bits=32)

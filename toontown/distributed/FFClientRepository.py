@@ -138,7 +138,12 @@ class FFClientRepository(DirectObject):
         self.enterChooseAvatar()
 
     def cleanupGame(self):
-        self.playGame.exitActiveZone()
+        if hasattr(self.playGame, 'hood') and self.playGame.hood:
+            if hasattr(self.playGame.hood, 'unloaded') and self.playGame.hood.unloaded:
+                self.playGame.hood = None
+            else:
+                self.playGame.exitActiveZone()
+
         camera.reparentTo(render)
         base.air.cheesyEffectMgr.stopTimer()
         # If we're in the tutorial, don't even bother cleaning up localAvatar; too many errors

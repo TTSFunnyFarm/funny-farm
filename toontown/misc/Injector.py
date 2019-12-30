@@ -1,37 +1,41 @@
 from tkinter import *
-from direct.stdpy import thread
+import threading
 import os
 
-def inject():
-    global text
-    exec (text.get(1.0, "end"), globals())
+class Injector(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
 
-def openInjector():
-    return
-    global text
+    def inject(self):
+        global text
+        exec (text.get(1.0, "end"), globals())
 
-    root = Tk()
-    root.resizable(False, False)
-    root.geometry('700x500')
-    root.title('Funny Farm Injector')
+    def openInjector(self):
+        global text
+        self.root.resizable(False, False)
+        self.root.geometry('700x500')
+        self.root.title('Funny Farm Injector')
 
-    frame = Frame(root)
-    frame.pack(fill='y')
-    text = Text(frame, width=70, height=18)
-    text.pack(side='left')
+        frame = Frame(self.root)
+        frame.pack(fill='y')
+        text = Text(frame, width=70, height=18)
+        text.pack(side='left')
 
-    yscroll = Scrollbar(frame)
-    yscroll.pack(fill='y', side='right')
-    yscroll.config(command=text.yview)
-    text.config(yscrollcommand=yscroll.set)
+        yscroll = Scrollbar(frame)
+        yscroll.pack(fill='y', side='right')
+        yscroll.config(command=text.yview)
+        text.config(yscrollcommand=yscroll.set)
 
-    injectBtn = Button(text='Inject Code', height=12, width=90, bd=3, command=inject)
-    injectBtn.place(x=30, y=300)
-    injectBtn.pack()
+        injectBtn = Button(text='Inject Code', height=12, width=90, bd=3, command=self.inject)
+        injectBtn.place(x=30, y=300)
+        injectBtn.pack()
 
-    if os.path.isfile('C:/Windows/Fonts/Minnie.ttf'):
-        injectBtn['width'] = 52
-        injectBtn['height'] = 11
-        injectBtn['font'] = 'Minnie'
+        if os.path.isfile('C:/Windows/Fonts/Minnie.ttf'):
+            injectBtn['width'] = 52
+            injectBtn['height'] = 11
+            injectBtn['font'] = 'Minnie'
 
-    thread.start_new_thread(root.mainloop,())
+    def run(self):
+        self.root = Tk()
+        self.openInjector()
+        self.root.mainloop()

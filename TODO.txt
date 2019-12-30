@@ -1,5 +1,0 @@
-- Cog gallery page
-- Populate Funny Farm with random NPCs
-
-Jobs for people besides Patrick:
-  - Come up with Funny Farm ToonTasks for teleport access, carry 2 toontasks, carry 80 jellybeans, etc.
