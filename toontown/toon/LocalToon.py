@@ -556,11 +556,11 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
     def getPinkSlips(self):
         return 0
 
-    def setInventory(self, inventoryNetString):
+    def setInventory(self, inventoryData):
         if not self.inventory:
-            self.inventory = InventoryNew.InventoryNew(self, inventoryNetString)
+            self.inventory = InventoryNew.InventoryNew(self, inventoryData)
         else:
-            self.inventory.updateInvString(inventoryNetString)
+            self.inventory.updateInvData(inventoryData)
         self.inventory.updateGUI()
         self.inventory.saveInventory()
 

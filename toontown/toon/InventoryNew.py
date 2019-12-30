@@ -33,8 +33,8 @@ class InventoryNew(InventoryBase.InventoryBase, DirectFrame):
     ButtonXOffset = -0.31
     ButtonXSpacing = 0.18
 
-    def __init__(self, toon, invStr = None, ShowSuperGags = 1):
-        InventoryBase.InventoryBase.__init__(self, toon, invStr)
+    def __init__(self, toon, invData = None, ShowSuperGags = 1):
+        InventoryBase.InventoryBase.__init__(self, toon, invData)
         DirectFrame.__init__(self, relief=None)
         self.initialiseoptions(InventoryNew)
         self.battleCreditLevel = None
@@ -1139,8 +1139,8 @@ class InventoryNew(InventoryBase.InventoryBase, DirectFrame):
                 self.trackBars[trackIndex]['text'] = TTLocalizer.InventoryTrackExp % {'curExp': curExp,
                  'nextExp': nextExp}
 
-    def updateInvString(self, invString):
-        InventoryBase.InventoryBase.updateInvString(self, invString)
+    def updateInvData(self, invData):
+        InventoryBase.InventoryBase.updateInvData(self, invData)
         self.updateGUI()
         return None
 

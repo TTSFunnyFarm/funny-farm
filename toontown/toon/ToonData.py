@@ -10,8 +10,8 @@ DefaultData = [
     ['setBankMoney', [int], 0],
     ['setMaxBankMoney', [int], 12000],
     ['setMaxCarry', [int], 20],
-    ['setInventory', [str, bytes], None],
-    ['setExperience', [str, bytes], None],
+    ['setInventory', [list], None],
+    ['setExperience', [list], None],
     ['setTrackAccess', [list], [0, 0, 0, 0, 1, 1, 0]],
     ['setHat', [list], [0, 0, 0]],
     ['setGlasses', [list], [0, 0, 0]],
@@ -43,11 +43,6 @@ DefaultData = [
     ['setFishCollection', [list], []],
     ['setFishTank', [list], []],
     ['setTutorialAck', [int], 0]
-]
-
-StrToBytesVars = [
-    'setInventory',
-    'setExperience'
 ]
 
 
@@ -105,10 +100,6 @@ class ToonData:
 
     def makeJsonData(self):
         jsonData = self.__dict__.copy()
-        for key, value in jsonData.items():
-            if type(value) == bytes:
-                jsonData[key] = value.decode('utf-8')
-
         return jsonData
 
     @staticmethod
@@ -151,7 +142,7 @@ class ToonData:
                 if toonData[field[0]] is None and field[2] is not None:
                     toonData[field[0]] = field[2]
 
-                if type(toonData[field[0]]) not in field[1] and field[2] is not None:
+                if toonData[field[0]] is not None and type(toonData[field[0]]) not in field[1]:
                     # Corrupted!
                     return False, 'Field %s contains a value of incorrect type. Expected: %s, got %s' % (
                         field[0], field[1], type(toonData[field[0]])), None
@@ -181,11 +172,6 @@ class ToonData:
         valid, response, toonData = ToonData.verifyToonData(jsonData)
         if not valid:
             raise Exception(response)
-
-        for var in StrToBytesVars:
-            value = getattr(toonData, var)
-            if value and type(value) == str:
-                setattr(toonData, var, value.encode('utf-8'))
 
         return toonData
 

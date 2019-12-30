@@ -10,6 +10,7 @@ from toontown.toon.ToonData import ToonData
 from toontown.toonbase import FunnyFarmGlobals
 
 BASE_DB_ID = 1000001
+DB_SECRET = b'SrDlI9WqX4tsw6L4FkaYDtkCq-8fplC9q4iDsEeBrjI='
 
 
 class DataManager:
@@ -19,7 +20,6 @@ class DataManager:
     def __init__(self):
         self.fileExt = '.dat'
         self.fileDir = os.getcwd() + '/database/'
-        self.__index2key = {}
         self.corrupted = 0
         self.toons = []
         for toonNum in range(FunnyFarmGlobals.MaxAvatars):
@@ -70,14 +70,9 @@ class DataManager:
             return
 
         try:
-            key = self.__index2key.get(index)
-            if not key:
-                key = Fernet.generate_key()
-                self.__index2key[index] = key
-
-            fernet = Fernet(key)
+            fernet = Fernet(DB_SECRET)
             encryptedData = fernet.encrypt(fileData)
-            toonDataToWrite = key + encryptedData
+            toonDataToWrite = encryptedData
         except Exception as e:
             self.handleDataError(e)
             return
@@ -102,13 +97,8 @@ class DataManager:
 
         if toonData:
             try:
-                key, db = toonData[0:44], toonData[44:]
-                localKey = self.__index2key.get(index)
-                if localKey != key:
-                    self.__index2key[index] = key
-
-                fernet = Fernet(key)
-                decryptedData = fernet.decrypt(db)
+                fernet = Fernet(DB_SECRET)
+                decryptedData = fernet.decrypt(toonData)
                 jsonData = json.loads(decryptedData)
             except Exception as e:
                 self.handleDataError(e)

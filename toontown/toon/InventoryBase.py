@@ -3,17 +3,15 @@ from toontown.toonbase import ToontownGlobals
 from toontown.toonbase.ToontownBattleGlobals import *
 from direct.showbase import DirectObject
 from direct.directnotify import DirectNotifyGlobal
-from direct.distributed.PyDatagram import PyDatagram
-from direct.distributed.PyDatagramIterator import PyDatagramIterator
 
 class InventoryBase(DirectObject.DirectObject):
     notify = DirectNotifyGlobal.directNotify.newCategory('InventoryBase')
 
-    def __init__(self, toon, invStr = None):
+    def __init__(self, toon, invData = None):
         if __debug__:
             self._createStack = str(StackTrace().compact())
         self.toon = toon
-        if invStr == None:
+        if invData == None:
             self.inventory = []
             for track in range(0, len(Tracks)):
                 level = []
@@ -23,7 +21,7 @@ class InventoryBase(DirectObject.DirectObject):
                 self.inventory.append(level)
 
         else:
-            self.inventory = self.makeFromNetString(invStr)
+            self.inventory = self.makeFromInventoryData(invData)
         self.calcTotalProps()
         return
 
@@ -37,8 +35,8 @@ class InventoryBase(DirectObject.DirectObject):
 
         return retStr
 
-    def updateInvString(self, invString):
-        inventory = self.makeFromNetString(invString)
+    def updateInvData(self, invData):
+        inventory = self.makeFromInventoryData(invData)
         self.updateInventory(inventory)
         return None
 
@@ -46,25 +44,22 @@ class InventoryBase(DirectObject.DirectObject):
         self.inventory = inv
         self.calcTotalProps()
 
-    def makeNetString(self):
+    def exportInventoryData(self):
         dataList = self.inventory
-        datagram = PyDatagram()
+        inventoryData = []
         for track in range(0, len(Tracks)):
             for level in range(0, len(Levels[track])):
-                datagram.addUint8(dataList[track][level])
+                inventoryData.append(dataList[track][level])
 
-        dgi = PyDatagramIterator(datagram)
-        return dgi.getRemainingBytes()
+        return inventoryData
 
-    def makeFromNetString(self, netString):
+    def makeFromInventoryData(self, inventoryData):
         dataList = []
-        dg = PyDatagram(netString)
-        dgi = PyDatagramIterator(dg)
         for track in range(0, len(Tracks)):
             subList = []
             for level in range(0, len(Levels[track])):
-                if dgi.getRemainingSize() > 0:
-                    value = dgi.getUint8()
+                if len(inventoryData) > 0:
+                    value = inventoryData.pop(0)
                 else:
                     value = 0
                 subList.append(value)
@@ -73,15 +68,13 @@ class InventoryBase(DirectObject.DirectObject):
 
         return dataList
 
-    def makeFromNetStringForceSize(self, netString, numTracks, numLevels):
+    def makeFromInventoryDataForceSize(self, inventoryData, numTracks, numLevels):
         dataList = []
-        dg = PyDatagram(netString)
-        dgi = PyDatagramIterator(dg)
         for track in range(0, numTracks):
             subList = []
             for level in range(0, numLevels):
-                if dgi.getRemainingSize() > 0:
-                    value = dgi.getUint8()
+                if len(inventoryData) > 0:
+                    value = inventoryData.pop(0)
                 else:
                     value = 0
                 subList.append(value)
@@ -91,9 +84,9 @@ class InventoryBase(DirectObject.DirectObject):
         return dataList
 
     def saveInventory(self):
-        netString = self.makeNetString()
-        if not (base.avatarData.setInventory and base.avatarData.setInventory == netString):
-            base.avatarData.setInventory = netString
+        inventoryData = self.exportInventoryData()
+        if not (base.avatarData.setInventory and base.avatarData.setInventory == inventoryData):
+            base.avatarData.setInventory = inventoryData
             dataMgr.saveToonData(base.avatarData)
 
     def addItem(self, track, level):
@@ -208,10 +201,7 @@ class InventoryBase(DirectObject.DirectObject):
         return None
 
     def validateItemsBasedOnExp(self, newInventory, allowUber = 0):
-        if type(newInventory) == type('String'):
-            tempInv = self.makeFromNetString(newInventory)
-        else:
-            tempInv = newInventory
+        tempInv = newInventory
         for track in range(len(Tracks)):
             for level in range(len(Levels[track])):
                 if tempInv[track][level] > self.getMax(track, level):
@@ -231,10 +221,7 @@ class InventoryBase(DirectObject.DirectObject):
     def validateItemsBasedOnAccess(self, newInventory):
         if self.toon.getGameAccess() == ToontownGlobals.AccessFull:
             return 1
-        if type(newInventory) == type('String'):
-            tempInv = self.makeFromNetString(newInventory)
-        else:
-            tempInv = newInventory
+        tempInv = newInventory
         for track in range(len(Tracks)):
             for level in range(len(Levels[track])):
                 if tempInv[track][level] > self.inventory[track][level]:
