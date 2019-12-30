@@ -8,6 +8,9 @@ class FlippySuitIntroScene(CutsceneBase):
     def __init__(self):
         CutsceneBase.__init__(self, self.id)
         self.bgm = base.loader.loadMusic('phase_12/audio/bgm/Bossbot_Entry_v1.ogg')
+        actors = base.cr.playGame.hood.actors
+        if not actors.get('suit') or not actors.get('flippy'): # this really should not happen
+            base.cr.playGame.hood.loadQuestChanges()
         self.suit = base.cr.playGame.hood.actors['suit']
         self.flippy = base.cr.playGame.hood.actors['flippy']
         track = Sequence()
