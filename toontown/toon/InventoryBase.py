@@ -201,10 +201,7 @@ class InventoryBase(DirectObject.DirectObject):
         return None
 
     def validateItemsBasedOnExp(self, newInventory, allowUber = 0):
-        if type(newInventory) == list:
-            tempInv = self.makeFromInventoryData(newInventory)
-        else:
-            tempInv = newInventory
+        tempInv = newInventory
         for track in range(len(Tracks)):
             for level in range(len(Levels[track])):
                 if tempInv[track][level] > self.getMax(track, level):
@@ -224,10 +221,7 @@ class InventoryBase(DirectObject.DirectObject):
     def validateItemsBasedOnAccess(self, newInventory):
         if self.toon.getGameAccess() == ToontownGlobals.AccessFull:
             return 1
-        if type(newInventory) == list:
-            tempInv = self.makeFromInventoryData(newInventory)
-        else:
-            tempInv = newInventory
+        tempInv = newInventory
         for track in range(len(Tracks)):
             for level in range(len(Levels[track])):
                 if tempInv[track][level] > self.inventory[track][level]:
