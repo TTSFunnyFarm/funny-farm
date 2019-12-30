@@ -19,14 +19,16 @@ class FlippySuitIntroScene(CutsceneBase):
         CutsceneBase.enter(self)
         aspect2d.hide()
         taskMgr.remove('FF-birds')
-        base.cr.playGame.hood.startSpookySky()
         CutsceneUtil.FadeScreen(0.25)
+        if not base.air.holidayMgr.isHalloween() and not base.air.holidayMgr.isWinter():
+            base.cr.playGame.hood.startSpookySky()
 
     def exit(self):
         CutsceneBase.exit(self)
         aspect2d.show()
         CutsceneUtil.UnfadeScreen()
-        base.cr.playGame.hood.endSpookySky()
+        if not base.air.holidayMgr.isHalloween() and not base.air.holidayMgr.isWinter():
+            base.cr.playGame.hood.endSpookySky()
 
     def questDone(self):
         self.flippy.setAllowedToTalk(0)
