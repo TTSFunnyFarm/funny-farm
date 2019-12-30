@@ -1,4 +1,5 @@
 from toontown.cutscenes.CutsceneBase import CutsceneBase
+from toontown.cutscenes.CutscenesGlobals import *
 from direct.interval.IntervalGlobal import *
 from panda3d.core import *
 
@@ -10,16 +11,15 @@ class MeterDisasterScene(CutsceneBase):
             'dimm': base.cr.playGame.hood.place.npcs[0],
             'surlee': base.cr.playGame.hood.place.npcs[1],
             'prepostera': base.cr.playGame.hood.place.npcs[2]}
-        flippy = self.actors['flippy']
-        flippy.initializeBodyCollisions('toon')
-        track = Sequence()
-        track.append(LerpPosHprInterval(camera, duration=1.5, pos=Point3(8, 8, flippy.getHeight() - 0.5), hpr=Vec3(120, 0, 0), other=flippy, blendType='easeInOut'))
-        track.append(Func(self.doDialog, 0, 0))
-        self.track = track
+        self.track = Sequence()
 
     def enter(self):
         CutsceneBase.enter(self)
         aspect2d.hide()
+        flippy = self.actors['flippy']
+        flippy.initializeBodyCollisions('toon')
+        self.track.append(LerpPosHprInterval(camera, duration=1.5, pos=Point3(8, 8, flippy.getHeight() - 0.5), hpr=Vec3(120, 0, 0), other=flippy, blendType='easeInOut'))
+        self.track.append(Func(self.doDialog, 0, 0))
 
     def exit(self):
         CutsceneBase.exit(self)
@@ -40,6 +40,12 @@ class MeterDisasterScene(CutsceneBase):
         smtrack.append(Func(aspect2d.show))
         smtrack.start()
 
+    def byeFlippy(self):
+        if self.actors.get('flippy'):
+            actor = self.actors['flippy']
+            actor.delete()
+            del actor
+
     def sceneFinish(self, elapsedTime):
         base.localAvatar.removeQuest(1004)
         base.localAvatar.addQuestHistory(1004)
@@ -47,7 +53,7 @@ class MeterDisasterScene(CutsceneBase):
         mtrack = Sequence()
         mtrack.append(Func(base.transitions.fadeOut, 1.0))
         mtrack.append(Wait(1.0))
-        mtrack.append(Func(base.cr.playGame.hood.place.unloadQuestChanges))
+        mtrack.append(Func(self.byeFlippy))
         mtrack.append(Func(messenger.send, 'cutscene-done'))
         mtrack.append(Func(base.transitions.fadeIn, 1.0))
         mtrack.start()

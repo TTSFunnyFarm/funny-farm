@@ -30,12 +30,12 @@ class CutsceneManager(DirectObject):
         self.currScene = self.getCutscene(questId)()
         if self.track:
             self.track.finish()
-            self.track = None
+        self.currScene.enter()
+        self.track = None
         self.track = self.currScene.getTrack()
         if self.track:
             self.track.start()
             self.acceptOnce('cutscene-done', self.exitCutscene)
-        self.currScene.enter()
 
     def getCutscene(self, questId):
         print(questId)

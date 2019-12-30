@@ -76,7 +76,8 @@ class BattleSuit(Suit, SuitBase):
         self.notify.debug('BattleSuit %d: deleting' % self.getDoId())
         if hasattr(self, 'dna'):
             del self.dna
-        del self.sp
+        if hasattr(self, 'sp'):
+            del self.sp
         Suit.delete(self)
         SuitBase.delete(self)
 

@@ -8,7 +8,7 @@ class MeterAlertScene(CutsceneBase):
     def __init__(self):
         CutsceneBase.__init__(self, self.id)
         self.door = base.cr.playGame.hood.place.labDoor
-        doorOrigin = door.getParent()
+        doorOrigin = self.door.getParent()
         self.doorSfx = base.loader.loadSfx('phase_3.5/audio/sfx/Door_Open_1.ogg')
         track = Sequence()
         track.append(Parallel(SoundInterval(self.doorSfx, node=self.door), LerpHprInterval(self.door.find('**/door_double_round_ur_left'), duration=0.5, hpr=Vec3(-100, 0, 0), startHpr=Vec3(0, 0, 0), other=doorOrigin, blendType='easeInOut')))

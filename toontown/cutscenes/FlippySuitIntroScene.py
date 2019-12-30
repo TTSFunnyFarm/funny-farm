@@ -22,9 +22,6 @@ class FlippySuitIntroScene(CutsceneBase):
         CutsceneBase.enter(self)
         aspect2d.hide()
         taskMgr.remove('FF-birds')
-        CutsceneUtil.FadeScreen(0.25)
-        if not base.air.holidayMgr.isHalloween() and not base.air.holidayMgr.isWinter():
-            base.cr.playGame.hood.startSpookySky()
 
     def exit(self):
         CutsceneBase.exit(self)

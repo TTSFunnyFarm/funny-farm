@@ -31,9 +31,11 @@ class CutsceneBase:
         base.localAvatar.setAnimState('neutral')
         camera.wrtReparentTo(render)
         if self.actors:
-            for key, value in self.actors:
-                if value[0] == TOON:
-                    if len(value) == 4:
+            for key, value in self.actors.items():
+                if not isinstance(value, list):
+                    continue
+                if len(value) == 4:
+                    if value[0] == TOON:
                         if len(value[1]) == 6 and type(value[2]) == int:
                             toon = NPCToons.createLocalNPC(value[2])
                             toon.reparentTo(value[3])

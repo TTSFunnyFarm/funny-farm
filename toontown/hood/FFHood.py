@@ -12,6 +12,7 @@ from toontown.toon import NPCToons
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import ToontownGlobals
 from toontown.safezone.FFTreasurePlanner import FFTreasurePlanner
+from toontown.cutscenes import CutsceneUtil
 
 
 class FFHood(ToonHood):
@@ -84,6 +85,9 @@ class FFHood(ToonHood):
     def loadQuestChanges(self):
         for questDesc in base.localAvatar.quests:
             if questDesc[0] == 1002 and questDesc[1] == 0:
+                if not base.air.holidayMgr.isHalloween() and not base.air.holidayMgr.isWinter():
+                    self.startSpookySky()
+                CutsceneUtil.FadeScreen(0.25)
                 if not self.actors.get('suit'):
                     dna = SuitDNA()
                     dna.newSuit('tbc')

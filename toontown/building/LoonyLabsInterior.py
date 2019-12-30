@@ -79,7 +79,6 @@ class LoonyLabsInterior(Interior):
                 npc.removeActive()
                 npc.delete()
                 del npc
-        self.unloadQuestChanges()
         base.localAvatar.stopUpdateReflection()
         base.localAvatar.deleteReflection()
         self.sillyFSM.requestFinalState()
@@ -170,11 +169,6 @@ class LoonyLabsInterior(Interior):
                 self.npcs[1].setAnimState('neutral')
                 self.ref1.setAnimState('neutral')
                 self.npcs[2].setHpr(270, 0, 0)
-
-    def unloadQuestChanges(self):
-        if self.actors.get('flippy'):
-            self.actors['flippy'].delete()
-            del self.actors['flippy']
 
     def sillyMeterIsRunning(self, isRunning):
         if isRunning:
