@@ -36,9 +36,12 @@ class QuestManager:
             base.localAvatar.enable()
             return
         if Quests.getQuestFinished(questId) == Quests.Finish:
+            # Resets the camera
             base.localAvatar.enable()
             base.localAvatar.disable()
             base.localAvatar.setAnimState('neutral')
+            if levelUp:
+                base.localAvatar.setAnimState('jump')
             taskMgr.doMethodLater(delay, self.__handleCompleteQuest, 'completeQuest', [npc, nextQuest])
         else:
             self.__handleCompleteQuest(npc, nextQuest)

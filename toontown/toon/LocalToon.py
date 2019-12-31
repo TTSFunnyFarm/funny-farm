@@ -728,10 +728,6 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             self.showLevelUpText(hpGain, exp, token=1)
         else:
             self.showLevelUpText(hpGain, exp)
-        if self.animFSM.getCurrentState().getName() == 'victory':
-            pass
-        else:
-            self.setAnimState('jump')
         Sequence(Func(musicMgr.pauseMusic), Func(base.playSfx, self.levelUpSfx), Wait(self.levelUpSfx.length()), Func(musicMgr.unpauseMusic)).start()
         return True
 
