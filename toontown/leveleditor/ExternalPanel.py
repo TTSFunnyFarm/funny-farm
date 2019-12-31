@@ -14,7 +14,7 @@ class ExternalPanel(wx.Frame, threading.Thread):
     def __init__(self, *args, **kw):
         #wx.Frame.__init__(self, *args, **kw)
         threading.Thread.__init__(self)
-        wx.Frame.__init__(self, None, title='hi')
+        wx.Frame.__init__(self, None, title='External')
         # ensure the parent's __init__ is called
 
     def createPanel(self):
@@ -39,7 +39,8 @@ class ExternalPanel(wx.Frame, threading.Thread):
 
         # and a status bar
         self.CreateStatusBar()
-        self.SetStatusText("Welcome to wxPython!")
+        self.SetStatusText("Welcome to Funny Farm!")
+        messenger.send('CUCK')
         #self.show()
         #app.MainLoop()
 
@@ -55,8 +56,8 @@ class ExternalPanel(wx.Frame, threading.Thread):
         fileMenu = wx.Menu()
         # The "\t..." syntax defines an accelerator key that also triggers
         # the same event
-        helloItem = fileMenu.Append(-1, "&Hello...\tCtrl-H",
-                "Help string shown in status bar for this menu item")
+        loadItem = fileMenu.Append(-1, "&Load...\tCtrl-L",
+                "Load a DNA file!")
         fileMenu.AppendSeparator()
         # When using a stock ID we don't need to specify the menu item's
         # label
@@ -80,7 +81,7 @@ class ExternalPanel(wx.Frame, threading.Thread):
         # Finally, associate a handler function with the EVT_MENU event for
         # each of the menu items. That means that when that menu item is
         # activated then the associated handler function will be called.
-        self.Bind(wx.EVT_MENU, self.OnHello, helloItem)
+        self.Bind(wx.EVT_MENU, self.OnLoad, loadItem)
         self.Bind(wx.EVT_MENU, self.OnExit,  exitItem)
         self.Bind(wx.EVT_MENU, self.OnAbout, aboutItem)
 
@@ -90,9 +91,16 @@ class ExternalPanel(wx.Frame, threading.Thread):
         sys.exit(0)
 
 
-    def OnHello(self, event):
-        """Say hello to the user."""
-        wx.MessageBox("Hello again from wxPython")
+    def OnLoad(self, event):
+        with wx.FileDialog(self, "Open DNA file", wildcard="DNA files (*.dna)|*.dna", style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
+
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                return     # the user changed their mind
+
+            # Proceed loading the file chosen by the user
+            pathname = fileDialog.GetPath()
+            messenger.send('load-dna', [pathname])
+            wx.MessageBox("Loaded %s!" % pathname)
 
 
     def OnAbout(self, event):
