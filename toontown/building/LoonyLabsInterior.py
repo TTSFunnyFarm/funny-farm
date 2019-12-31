@@ -392,7 +392,6 @@ class LoonyLabsInterior(Interior):
 
     def enterPhase5(self):
         self.phase5Sfx.play()
-        musicMgr.track.setPlayRate(0)
         self.audio3d.attachSoundToObject(self.phase5Sfx, self.sillyMeter)
         self.smPhase2.show()
         self.smPhase3.show()

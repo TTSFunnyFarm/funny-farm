@@ -36,8 +36,7 @@ class MeterDisasterScene(CutsceneBase):
         smtrack.append(Func(messenger.send, 'SillyMeterPhase', ['4To5']))
         smtrack.append(Wait(7.0))
         smtrack.append(LerpPosHprInterval(camera, duration=1.5, pos=Point3(12, 10, 5), hpr=Vec3(120, -5, 0), other=flippy, blendType='easeInOut'))
-        smtrack.append(Func(flippy.setLocalPageChat, self.dialog[len(self.dialog) - 1], 1))
-        smtrack.append(Func(flippy.acceptOnce, flippy.uniqueName('doneChatPage'), self.sceneFinish))
+        smtrack.append(Func(self.doDialog, len(self.dialog) - 1, 0))
         smtrack.append(Func(aspect2d.show))
         smtrack.start()
 
@@ -61,7 +60,9 @@ class MeterDisasterScene(CutsceneBase):
 
     def doDialog(self, index, elapsedTime):
         dialog = self.dialog[index]
-        dialog, extra = CutsceneUtil.GetExtra(dialog)
+        extra = CutsceneUtil.GetExtra(dialog)
+        if extra:
+            dialog = dialog[0]
         dimm = self.actors['dimm']
         flippy = self.actors['flippy']
         surlee = self.actors['surlee']
@@ -92,5 +93,9 @@ class MeterDisasterScene(CutsceneBase):
             mtrack.append(Func(actor.setLocalPageChat, dialog, None))
             mtrack.append(Func(actor.acceptOnce, actor.uniqueName('doneChatPage'), self.sillyMeterScene))
             mtrack.start()
+        elif index == len(self.dialog) - 1:
+            actor = flippy
+            actor.setLocalPageChat(dialog, 1)
+            actor.acceptOnce(actor.uniqueName('doneChatPage'), self.sceneFinish)
         if extra:
             self.doAnimate(actor, *extra)

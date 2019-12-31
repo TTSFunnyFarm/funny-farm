@@ -46,7 +46,7 @@ class CutsceneBase:
     def doAnimate(self, actor, anim, emote=None):
         if not actor:
             return
-        if emote and isinstance(actor, Toon):
+        if emote and isinstance(actor, Toon.Toon):
             if emote < 3:
                 if emote == SAD_EYES:
                     actor.sadEyes()
