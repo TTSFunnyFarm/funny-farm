@@ -43,19 +43,36 @@ class CutsceneBase:
                             toon.addActive()
                             self.actors[key] = toon
 
-    def doAnimate(self, actor, anim, emote=None):
+    def doAnimate(self, actor, anim, eyes=None, muzzle=None):
         if not actor:
             return
         if emote and isinstance(actor, Toon.Toon):
-            if emote < 3:
+            if emote < 4:
                 if emote == SAD_EYES:
                     actor.sadEyes()
                 elif emote == ANGRY_EYES:
                     actor.angryEyes()
+                elif emote == SURPRISE_EYES:
+                    actor.surpriseEyes()
                 else:
                     actor.normalEyes()
                 actor.blinkEyes()
-        elif anim:
+        if muzzle and isinstance(actor, Toon.Toon):
+            if muzzle < 6:
+                if emote == SAD_MUZZLE:
+                    actor.showSadMuzzle()
+                elif emote == ANGRY_MUZZLE:
+                    actor.showAngryMuzzle()
+                elif emote == SMILE_MUZZLE:
+                    actor.showSmileMuzzle()
+                elif emote == LAUGH_MUZZLE:
+                    actor.showLaughMuzzle()
+                elif emote == SURPRISE_MUZZLE:
+                    actor.showSurpriseMuzzle()
+                else:
+                    actor.showNormalMuzzle()
+
+        if anim:
             actor.play(anim)
 
     def exit(self):
