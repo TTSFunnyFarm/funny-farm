@@ -8,7 +8,7 @@ class MeterDisasterScene(CutsceneBase):
     id = 1004
     def __init__(self):
         CutsceneBase.__init__(self, self.id)
-        self.actors = {'flippy': [TOON, [-12, -25, 0, 330, 0, 0], 1001, base.cr.playGame.hood.place.interior],
+        self.actors = {'flippy': base.cr.playGame.hood.place.flippy,
             'dimm': base.cr.playGame.hood.place.npcs[0],
             'surlee': base.cr.playGame.hood.place.npcs[1],
             'prepostera': base.cr.playGame.hood.place.npcs[2]}

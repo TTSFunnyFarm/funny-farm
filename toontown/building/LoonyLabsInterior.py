@@ -79,10 +79,17 @@ class LoonyLabsInterior(Interior):
                 npc.removeActive()
                 npc.delete()
                 del npc
+            self.ref0.delete()
+            self.ref1.delete()
+            self.ref2.delete()
+            del self.ref0
+            del self.ref1
+            del self.ref2
+            del self.npcs
+        self.unloadQuestChanges()
         base.localAvatar.stopUpdateReflection()
         base.localAvatar.deleteReflection()
         self.sillyFSM.requestFinalState()
-        musicMgr.track.setPlayRate(1)
 
     def generateNPCs(self):
         Interior.generateNPCs(self)
@@ -170,6 +177,18 @@ class LoonyLabsInterior(Interior):
                 self.npcs[1].setAnimState('neutral')
                 self.ref1.setAnimState('neutral')
                 self.npcs[2].setHpr(270, 0, 0)
+                self.flippy = NPCToons.createLocalNPC(1001)
+                self.flippy.reparentTo(self.interior)
+                self.flippy.setPosHpr(-12, -25, 0, 330, 0, 0)
+                self.flippy.initializeBodyCollisions('toon')
+                self.flippy.addActive()
+
+    def unloadQuestChanges(self):
+        if hasattr(self, 'flippy'):
+            del self.flippy
+            # Restart music when we go back to toonhall
+            musicMgr.playCurrentZoneMusic()
+            musicMgr.track.setPlayRate(1)
 
     def sillyMeterIsRunning(self, isRunning):
         if isRunning:
