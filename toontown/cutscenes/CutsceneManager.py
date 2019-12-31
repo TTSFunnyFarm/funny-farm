@@ -38,8 +38,6 @@ class CutsceneManager(DirectObject):
             self.acceptOnce('cutscene-done', self.exitCutscene)
 
     def getCutscene(self, questId):
-        print(questId)
-        print(self.cutscenes)
         return self.cutscenes.get(questId)
 
     def getCurrentScene():

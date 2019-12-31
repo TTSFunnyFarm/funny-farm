@@ -35,6 +35,7 @@ class Hood(DirectObject):
         self.actors = {}
 
     def enter(self, shop=None, tunnel=None, init=0):
+        musicMgr.playCurrentZoneMusic()
         if tunnel:
             for linkTunnel in self.geom.findAllMatches('**/linktunnel*'):
                 name = linkTunnel.getName().split('_')

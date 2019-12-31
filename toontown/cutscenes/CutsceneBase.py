@@ -26,7 +26,7 @@ class CutsceneBase:
         self.notify.info('Entering %s!' % self.__class__.__name__)
         if self.bgm:
             musicMgr.stopMusic()
-            musicMgr.playMusic(self.bgm)
+            musicMgr.playMusic(self.bgm, looping=1)
         base.localAvatar.disable()
         base.localAvatar.setAnimState('neutral')
         camera.wrtReparentTo(render)
@@ -71,7 +71,6 @@ class CutsceneBase:
                     actor.showSurpriseMuzzle()
                 else:
                     actor.showNormalMuzzle()
-
         if anim:
             actor.play(anim)
 
@@ -80,5 +79,6 @@ class CutsceneBase:
         base.localAvatar.enable()
         if self.bgm:
             self.bgm.stop()
+            self.bgm = None
             musicMgr.stopMusic()
             musicMgr.playCurrentZoneMusic()
