@@ -3,17 +3,22 @@ Hello World, but with more meat.
 """
 
 import wx
+import threading
+import sys
 
-class HelloFrame(wx.Frame, threading.Thread):
+class ExternalPanel(wx.Frame, threading.Thread):
     """
     A Frame that says Hello World
     """
 
     def __init__(self, *args, **kw):
+        #wx.Frame.__init__(self, *args, **kw)
         threading.Thread.__init__(self)
+        wx.Frame.__init__(self, None, title='hi')
         # ensure the parent's __init__ is called
-        super(HelloFrame, self).__init__(*args, **kw)
 
+    def createPanel(self):
+        #super(ExternalPanel, self).__init__(None, title='hi')
         # create a panel in the frame
         pnl = wx.Panel(self)
 
@@ -35,6 +40,8 @@ class HelloFrame(wx.Frame, threading.Thread):
         # and a status bar
         self.CreateStatusBar()
         self.SetStatusText("Welcome to wxPython!")
+        #self.show()
+        #app.MainLoop()
 
 
     def makeMenuBar(self):
@@ -80,7 +87,7 @@ class HelloFrame(wx.Frame, threading.Thread):
 
     def OnExit(self, event):
         """Close the frame, terminating the application."""
-        self.Close(True)
+        sys.exit(0)
 
 
     def OnHello(self, event):
@@ -94,11 +101,8 @@ class HelloFrame(wx.Frame, threading.Thread):
                       "About Hello World 2",
                       wx.OK|wx.ICON_INFORMATION)
 
-
-if __name__ == '__main__':
-    # When this module is run (not imported) then create the app, the
-    # frame, show it, and start the event loop.
-    app = wx.App()
-    frm = HelloFrame(None, title='Hello World 2')
-    frm.Show()
-    app.MainLoop()
+    def run(self):
+        app = wx.App()
+        self.createPanel()
+        self.Show()
+        app.MainLoop()

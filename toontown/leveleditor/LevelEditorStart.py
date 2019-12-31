@@ -1,6 +1,8 @@
 from direct.showbase.ShowBase import ShowBase
 from panda3d.core import *
+from toontown.leveleditor import ExternalPanel
 import libpandadna as LPD
+import wx
 loadPrcFile("config/level_editor.prc")
 
 vfs = VirtualFileSystem.getGlobalPtr()
@@ -22,5 +24,10 @@ test.reparentTo(render)
 base.oobe()
 base.setFrameRateMeter(True)
 base.camera.setPos(0, -50, 0)
+app = wx.App()
+base.panel = ExternalPanel.ExternalPanel(None, title='hi')
+base.panel.daemon = True
+base.panel.start()
+#base.panel.show()
 render.analyze()
 base.run()
