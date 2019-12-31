@@ -5,33 +5,81 @@ Hello World, but with more meat.
 import wx
 import threading
 import sys
+from direct.showbase.DirectObject import DirectObject
 
-class ExternalPanel(wx.Frame, threading.Thread):
+class SceneGraph(wx.Panel, DirectObject):
+    def refresh(self):
+        if base.geom:
+            self.tree.DeleteAllItems()
+            root = self.tree.AddRoot(base.geom.getName())
+            self.recursiveAdd(root, base.geom)
+            self.tree.Expand(root)
+
+    def recursiveAdd(self, parent, node):
+        for n in node.getChildren():
+            print(n, type(n))
+            item = self.tree.AppendItem(parent, n.getName())
+            self.tree.SetPyData(item, ('id', n))
+            self.recursiveAdd(item, n)
+
+    def onSelect(self, event):
+        item = event.GetItem()
+        print(item)
+        print(self.tree.GetPyData(item))
+
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent)
+        self.accept('graph-refresh', self.refresh)
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        #t = wx.StaticText(self, -1, "This is a PageOne object", (20,20))
+        self.tree = wx.TreeCtrl(self, 1)
+        self.Bind(wx.EVT_TREE_SEL_CHANGED, self.onSelect, self.tree)
+        sizer.Add(self.tree, 1, wx.EXPAND, 0)
+        parent.SetSizer(sizer)
+
+class PageTwo(wx.Panel):
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent)
+        t = wx.StaticText(self, -1, "This is a PageTwo object", (40,40))
+
+class PageThree(wx.Panel):
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent)
+        t = wx.StaticText(self, -1, "This is a PageThree object", (60,60))
+
+class ExternalPanel(wx.Frame):
     """
     A Frame that says Hello World
     """
 
     def __init__(self, *args, **kw):
         #wx.Frame.__init__(self, *args, **kw)
-        threading.Thread.__init__(self)
-        wx.Frame.__init__(self, None, title='External')
+        wx.Frame.__init__(self, None, title='External', size=(500, 700))
         # ensure the parent's __init__ is called
 
     def createPanel(self):
         #super(ExternalPanel, self).__init__(None, title='hi')
         # create a panel in the frame
         pnl = wx.Panel(self)
+        nb = wx.Notebook(pnl)
+        p1 = SceneGraph(nb)
+        p2 = PageTwo(nb)
+        p3 = PageThree(nb)
+
+        nb.AddPage(p1, "Scene Graph")
+        nb.AddPage(p2, "2")
+        nb.AddPage(p3, "3")
 
         # put some text with a larger bold font on it
-        st = wx.StaticText(pnl, label="Hello World!")
-        font = st.GetFont()
-        font.PointSize += 10
-        font = font.Bold()
-        st.SetFont(font)
+        #st = wx.StaticText(pnl, label="Hello World!")
+        #font = st.GetFont()
+        #font.PointSize += 10
+        #font = font.Bold()
+        #st.SetFont(font)
 
         # and create a sizer to manage the layout of child widgets
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(st, wx.SizerFlags().Border(wx.TOP|wx.LEFT, 25))
+        sizer.Add(nb, 1, wx.EXPAND)
         pnl.SetSizer(sizer)
 
         # create a menu bar
@@ -40,7 +88,7 @@ class ExternalPanel(wx.Frame, threading.Thread):
         # and a status bar
         self.CreateStatusBar()
         self.SetStatusText("Welcome to Funny Farm!")
-        messenger.send('CUCK')
+        #messenger.send('CUCK')
         #self.show()
         #app.MainLoop()
 
@@ -105,12 +153,6 @@ class ExternalPanel(wx.Frame, threading.Thread):
 
     def OnAbout(self, event):
         """Display an About Dialog"""
-        wx.MessageBox("This is a wxPython Hello World sample",
-                      "About Hello World 2",
+        wx.MessageBox("This is a broken code store product.",
+                      "About Funny Farm Level Editor",
                       wx.OK|wx.ICON_INFORMATION)
-
-    def run(self):
-        app = wx.App()
-        self.createPanel()
-        self.Show()
-        app.MainLoop()

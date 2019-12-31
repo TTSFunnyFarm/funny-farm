@@ -15,13 +15,13 @@ for mount in mounts:
 
 base = ShowBase()
 base.dna_storage = LPD.DNAStorage()
-base.level_editor = LevelEditor.LevelEditor()
+base.lvlEditor = LevelEditor.LevelEditor()
 app = wx.App()
-base.panel = ExternalPanel.ExternalPanel(None, title='hi')
-base.panel.daemon = True
-base.panel.start()
+#base.panel.daemon = True
 base.oobe()
 base.setFrameRateMeter(True)
 base.camera.setPos(0, -50, 0)
+base.camLens.setNear(1.0)
+base.camLens.setFar(3000)
 #base.panel.show()
 base.run()
