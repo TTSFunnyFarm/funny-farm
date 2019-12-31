@@ -603,9 +603,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
                 questDesc[1] = progress
                 break
         messenger.send('questsChanged')
-        if base.avatarData.setQuests != self.quests:
-            base.avatarData.setQuests = self.quests
-            dataMgr.saveToonData(base.avatarData)
+        base.avatarData.setQuests = self.quests
+        dataMgr.saveToonData(base.avatarData)
 
     def removeQuest(self, questId):
         for questDesc in self.quests:
@@ -613,9 +612,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
                 self.quests.remove(questDesc)
                 break
         messenger.send('questsChanged')
-        if base.avatarData.setQuests != self.quests:
-            base.avatarData.setQuests = self.quests
-            dataMgr.saveToonData(base.avatarData)
+        base.avatarData.setQuests = self.quests
+        dataMgr.saveToonData(base.avatarData)
 
     def setQuestHistory(self, history):
         self.questHistory = history
@@ -627,17 +625,15 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         if quest in self.questHistory:
             return
         self.questHistory.append(quest)
-        if base.avatarData.setQuestHistory != self.questHistory:
-            base.avatarData.setQuestHistory = self.questHistory
-            dataMgr.saveToonData(base.avatarData)
+        base.avatarData.setQuestHistory = self.questHistory
+        dataMgr.saveToonData(base.avatarData)
 
     def removeQuestHistory(self, quest):
         if quest not in self.questHistory:
             return
         self.questHistory.remove(quest)
-        if base.avatarData.setQuestHistory != self.questHistory:
-            base.avatarData.setQuestHistory = self.questHistory
-            dataMgr.saveToonData(base.avatarData)
+        base.avatarData.setQuestHistory = self.questHistory
+        dataMgr.saveToonData(base.avatarData)
 
     def hasQuestHistory(self, quest):
         if quest in self.questHistory:
@@ -647,10 +643,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
     def clearQuestHistory(self):
         for quest in self.questHistory:
             self.questHistory.remove(quest)
-
-        if base.avatarData.setQuestHistory != self.questHistory:
-            base.avatarData.setQuestHistory = self.questHistory
-            dataMgr.saveToonData(base.avatarData)
+        base.avatarData.setQuestHistory = self.questHistory
+        dataMgr.saveToonData(base.avatarData)
 
     def setTrackProgress(self, trackId, progress):
         self.trackProgressId = trackId
