@@ -17,8 +17,10 @@ from toontown.book import ToonPage
 from toontown.book import InventoryPage
 from toontown.book import QuestPage
 from toontown.book import TrackPage
+from toontown.cutscenes import CutscenesGlobals
+from toontown.cutscenes import *
 from toontown.quest import Quests
-from toontown.quest.InfoBubble import InfoBubble
+from toontown.cutscenes.InfoBubble import InfoBubble
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
@@ -592,9 +594,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             return
         self.quests.append([questId, 0])
         messenger.send('questsChanged')
-        if base.avatarData.setQuests != self.quests:
-            base.avatarData.setQuests = self.quests
-            dataMgr.saveToonData(base.avatarData)
+        base.avatarData.setQuests = self.quests
+        dataMgr.saveToonData(base.avatarData)
 
     def setQuestProgress(self, questId, progress):
         for questDesc in self.quests:
@@ -602,9 +603,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
                 questDesc[1] = progress
                 break
         messenger.send('questsChanged')
-        if base.avatarData.setQuests != self.quests:
-            base.avatarData.setQuests = self.quests
-            dataMgr.saveToonData(base.avatarData)
+        base.avatarData.setQuests = self.quests
+        dataMgr.saveToonData(base.avatarData)
 
     def removeQuest(self, questId):
         for questDesc in self.quests:
@@ -612,9 +612,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
                 self.quests.remove(questDesc)
                 break
         messenger.send('questsChanged')
-        if base.avatarData.setQuests != self.quests:
-            base.avatarData.setQuests = self.quests
-            dataMgr.saveToonData(base.avatarData)
+        base.avatarData.setQuests = self.quests
+        dataMgr.saveToonData(base.avatarData)
 
     def setQuestHistory(self, history):
         self.questHistory = history
@@ -626,17 +625,15 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         if quest in self.questHistory:
             return
         self.questHistory.append(quest)
-        if base.avatarData.setQuestHistory != self.questHistory:
-            base.avatarData.setQuestHistory = self.questHistory
-            dataMgr.saveToonData(base.avatarData)
+        base.avatarData.setQuestHistory = self.questHistory
+        dataMgr.saveToonData(base.avatarData)
 
     def removeQuestHistory(self, quest):
         if quest not in self.questHistory:
             return
         self.questHistory.remove(quest)
-        if base.avatarData.setQuestHistory != self.questHistory:
-            base.avatarData.setQuestHistory = self.questHistory
-            dataMgr.saveToonData(base.avatarData)
+        base.avatarData.setQuestHistory = self.questHistory
+        dataMgr.saveToonData(base.avatarData)
 
     def hasQuestHistory(self, quest):
         if quest in self.questHistory:
@@ -646,10 +643,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
     def clearQuestHistory(self):
         for quest in self.questHistory:
             self.questHistory.remove(quest)
-
-        if base.avatarData.setQuestHistory != self.questHistory:
-            base.avatarData.setQuestHistory = self.questHistory
-            dataMgr.saveToonData(base.avatarData)
+        base.avatarData.setQuestHistory = self.questHistory
+        dataMgr.saveToonData(base.avatarData)
 
     def setTrackProgress(self, trackId, progress):
         self.trackProgressId = trackId
@@ -733,10 +728,6 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             self.showLevelUpText(hpGain, exp, token=1)
         else:
             self.showLevelUpText(hpGain, exp)
-        if self.animFSM.getCurrentState().getName() == 'victory':
-            pass
-        else:
-            self.setAnimState('jump')
         Sequence(Func(musicMgr.pauseMusic), Func(base.playSfx, self.levelUpSfx), Wait(self.levelUpSfx.length()), Func(musicMgr.unpauseMusic)).start()
         return True
 
@@ -925,20 +916,22 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         else:
             zoneId = currZone.zoneId
         for questDesc in self.quests:
-            if questDesc[0] in Quests.Cutscenes and not self.hasQuestHistory(questDesc[0]):
+            if questDesc[0] in CutscenesGlobals.Cutscenes and not self.hasQuestHistory(questDesc[0]):
                 if zoneId == Quests.getToNpcLocation(questDesc[0]) and questDesc[1] == 0:
                     base.cr.cutsceneMgr.enterCutscene(questDesc[0])
                     return True
             # Special cases
             # "Ride the trolley" info bubble
-            if questDesc[0] == 1007 and not self.hasQuestHistory(1):
+            id = BuyGagsScene.BuyGagsScene.id
+            if questDesc[0] == id and not self.hasQuestHistory(1):
                 if zoneId == FunnyFarmGlobals.FunnyFarm:
-                    base.cr.cutsceneMgr.enterCutscene(1007)
+                    base.cr.cutsceneMgr.enterCutscene(id)
                     return True
             # Carry 2 ToonTasks info bubble
-            if questDesc[0] == 1014 and not self.hasQuestHistory(4):
+            id = DualTasksScene.DualTasksScene.id
+            if questDesc[0] == id and not self.hasQuestHistory(4):
                 if zoneId == FunnyFarmGlobals.FunnyFarm:
-                    base.cr.cutsceneMgr.enterCutscene(1014)
+                    base.cr.cutsceneMgr.enterCutscene(id)
                     return True
             # Not a cutscene, but this is the easiest way to do this.
             if questDesc[0] in [1028, 1029]:

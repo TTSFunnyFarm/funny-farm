@@ -6,7 +6,7 @@ from toontown.discord.FFDiscordIntegration import FFDiscordIntegration
 from toontown.distributed.PlayGame import PlayGame
 from toontown.login.AvatarChooser import AvatarChooser
 from toontown.makeatoon.MakeAToon import MakeAToon
-from toontown.quest.CutsceneManager import CutsceneManager
+from toontown.cutscenes.CutsceneManager import CutsceneManager
 from toontown.quest.QuestManager import QuestManager
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toontowngui import TTDialog

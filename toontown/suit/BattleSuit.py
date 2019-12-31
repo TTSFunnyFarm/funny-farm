@@ -74,8 +74,10 @@ class BattleSuit(Suit, SuitBase):
 
     def delete(self):
         self.notify.debug('BattleSuit %d: deleting' % self.getDoId())
-        del self.dna
-        del self.sp
+        if hasattr(self, 'dna'):
+            del self.dna
+        if hasattr(self, 'sp'):
+            del self.sp
         Suit.delete(self)
         SuitBase.delete(self)
 
@@ -419,7 +421,7 @@ class BattleSuit(Suit, SuitBase):
 
         delta = posB - posA
         pos = posA + delta * (time / self.getLegTime(posA, posB))
-        
+
         return pos
 
     def setSkelecog(self, flag):
@@ -541,7 +543,7 @@ class BattleSuit(Suit, SuitBase):
             self.hpText.setScale(1)
             self.hpText.setBillboardPointEye()
             self.hpText.setBin('fixed', 100)
-            
+
             stringText.clearShadow()
             stringText.setAlign(TextNode.ACenter)
             stringText.setTextColor(r, g, b, a)
@@ -550,7 +552,7 @@ class BattleSuit(Suit, SuitBase):
             self.strText.setScale(0.5)
             self.strText.setBillboardPointEye()
             self.strText.setBin('fixed', 100)
-            
+
             self.nametag3d.setDepthTest(0)
             self.nametag3d.setBin('fixed', 99)
             self.hpText.setPos(0, 0, self.height / 2)
