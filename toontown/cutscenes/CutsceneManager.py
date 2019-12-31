@@ -27,11 +27,11 @@ class CutsceneManager(DirectObject):
         # else:
         #     if currZone.zoneId != Quests.getToNpcLocation(questId):
         #         return self.notify.warning('Failed to start cutscene %d, not in correct zone.' % questId)
-        self.currScene = self.getCutscene(questId)()
         if self.track:
             self.track.finish()
+            self.track = None
+        self.currScene = self.getCutscene(questId)()
         self.currScene.enter()
-        self.track = None
         self.track = self.currScene.getTrack()
         if self.track:
             self.track.start()
