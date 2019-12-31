@@ -18,5 +18,3 @@ vfs-mount resources/phase_13 resources/phase_13
 vfs-mount resources/phase_14 resources/phase_14
 model-path resources
 default-model-extension .bam
-model-cache-models #f
-model-cache-textures #f
