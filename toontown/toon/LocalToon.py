@@ -594,9 +594,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             return
         self.quests.append([questId, 0])
         messenger.send('questsChanged')
-        if base.avatarData.setQuests != self.quests:
-            base.avatarData.setQuests = self.quests
-            dataMgr.saveToonData(base.avatarData)
+        base.avatarData.setQuests = self.quests
+        dataMgr.saveToonData(base.avatarData)
 
     def setQuestProgress(self, questId, progress):
         for questDesc in self.quests:
