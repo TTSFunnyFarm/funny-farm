@@ -28,6 +28,10 @@ class MeterAlertScene(CutsceneBase):
         aspect2d.show()
 
     def sceneFinish(self, elapsedTime):
+        if self.actors.get('dimm'):
+            actor = self.actors['dimm']
+            actor.delete()
+            del actor
         messenger.send('cutscene-done')
 
     def doDialog(self, index, elapsedTime):
