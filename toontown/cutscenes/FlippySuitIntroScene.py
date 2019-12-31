@@ -25,6 +25,7 @@ class FlippySuitIntroScene(CutsceneBase):
 
     def exit(self):
         CutsceneBase.exit(self)
+        base.localAvatar.enable()
         aspect2d.show()
         CutsceneUtil.UnfadeScreen()
         if not base.air.holidayMgr.isHalloween() and not base.air.holidayMgr.isWinter():
@@ -33,19 +34,20 @@ class FlippySuitIntroScene(CutsceneBase):
     def questDone(self):
         self.flippy.setAllowedToTalk(0)
         self.flippy.enterTeleportOut(callback=base.cr.playGame.hood.unloadQuestChanges)
+        del self.flippy
+        del self.suit
 
     def sceneFinish(self, elapsedTime):
         mtrack = Sequence()
         mtrack.append(self.suit.beginSupaFlyMove(self.suit.getPos(), 0, 'toSky'))
         mtrack.append(Func(base.transitions.fadeOut, 1.0))
         mtrack.append(Wait(1.0))
-        mtrack.append(Func(base.localAvatar.enable))
         mtrack.append(Func(self.suit.removeActive))
         mtrack.append(Func(self.flippy.setHpr, 195, 0, 0))
         mtrack.append(Func(self.flippy.setMainQuest, 1002))
+        mtrack.append(Func(self.exit))
         mtrack.append(Func(base.transitions.fadeIn, 1.0))
         mtrack.append(Wait(1.0))
-        mtrack.append(Func(self.exit))
         mtrack.append(Func(self.flippy.acceptOnce, 'cutscene-done', self.questDone))
         mtrack.append(Func(taskMgr.doMethodLater, 1, base.cr.playGame.hood.doBirds, 'FF-birds'))
         mtrack.start()
