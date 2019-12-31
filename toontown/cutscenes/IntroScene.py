@@ -4,6 +4,7 @@ from panda3d.core import *
 
 class IntroScene(CutsceneBase):
     id = 1001
+    
     def __init__(self):
         CutsceneBase.__init__(self, self.id)
         track = Sequence()

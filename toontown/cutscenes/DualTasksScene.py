@@ -4,6 +4,7 @@ from panda3d.core import *
 
 class DualTasksScene(CutsceneBase):
     id = 1014
+    
     def __init__(self):
         CutsceneBase.__init__(self, self.id)
         self.toonHq = None
@@ -16,6 +17,10 @@ class DualTasksScene(CutsceneBase):
         track.append(Func(base.localAvatar.showInfoBubble, 4, 'cutscene-done'))
         track.append(Func(base.localAvatar.acceptOnce, 'nextInfoPage', base.localAvatar.acceptOnce, ['nextInfoPage', camTrack.start]))
         self.track = track
+
+    def delete(self):
+        CutsceneBase.delete(self)
+        del self.toonHq
 
     def enter(self):
         CutsceneBase.enter(self)

@@ -9,15 +9,15 @@ from direct.directnotify import DirectNotifyGlobal
 class CutsceneManager(DirectObject):
     notify = DirectNotifyGlobal.directNotify.newCategory('CutsceneManager')
 
-    def initCutscenes(self):
-        for cutscene in cutscenes:
-            self.cutscenes[cutscene.id] = cutscene
-
     def __init__(self):
         self.track = None
         self.currScene = None
         self.cutscenes = {}
         self.initCutscenes()
+
+    def initCutscenes(self):
+        for cutscene in cutscenes:
+            self.cutscenes[cutscene.id] = cutscene
 
     def enterCutscene(self, questId):
         currZone = base.cr.playGame.getActiveZone()
@@ -46,7 +46,8 @@ class CutsceneManager(DirectObject):
     def exitCutscene(self):
         if not self.currScene:
             return
-        self.currScene.exit()
-        self.currScene = None
         self.track.finish()
         self.track = None
+        self.currScene.exit()
+        self.currScene.delete()
+        self.currScene = None

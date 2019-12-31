@@ -5,6 +5,7 @@ from panda3d.core import *
 
 class MeterAlertScene(CutsceneBase):
     id = 1003
+    
     def __init__(self):
         CutsceneBase.__init__(self, self.id)
         self.door = base.cr.playGame.hood.place.labDoor
@@ -16,7 +17,12 @@ class MeterAlertScene(CutsceneBase):
         track.append(Func(self.doDialog, 0, 0))
         self.track = track
         self.actors = {'flippy': base.cr.playGame.hood.place.npcs[0],
-            'dimm': [TOON, [25, 0, 0.5, 20, 0, 0], 1013, base.cr.playGame.hood.place.interior]}
+         'dimm': [TOON, [25, 0, 0.5, 20, 0, 0], 1013, base.cr.playGame.hood.place.interior]}
+
+    def delete(self):
+        CutsceneBase.delete(self)
+        del self.door
+        del self.doorSfx
 
     def enter(self):
         CutsceneBase.enter(self)
@@ -42,8 +48,8 @@ class MeterAlertScene(CutsceneBase):
             dimm.setLocalPageChat(dialog, 1)
             dimm.acceptOnce(dimm.uniqueName('doneChatPage'), self.doDialog, [index + 1])
         else:
-            mtrack = Sequence()
-            mtrack.append(camera.posHprInterval(1.5, Point3(-5, 9, flippy.getHeight() - 0.5), Vec3(210, -2, 0), other=flippy, blendType='easeInOut'))
-            mtrack.append(Func(flippy.setLocalPageChat, dialog, 1))
-            mtrack.append(Func(flippy.acceptOnce, flippy.uniqueName('doneChatPage'), self.sceneFinish))
-            mtrack.start()
+            track = Sequence()
+            track.append(camera.posHprInterval(1.5, Point3(-5, 9, flippy.getHeight() - 0.5), Vec3(210, -2, 0), other=flippy, blendType='easeInOut'))
+            track.append(Func(flippy.setLocalPageChat, dialog, 1))
+            track.append(Func(flippy.acceptOnce, flippy.uniqueName('doneChatPage'), self.sceneFinish))
+            track.start()

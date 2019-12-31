@@ -25,6 +25,12 @@ class FirstBuildingScene(CutsceneBase):
         track.append(Func(base.localAvatar.addQuestHistory, 1028))
         self.track = track
 
+    def delete(self):
+        CutsceneBase.delete(self)
+        del self.interior
+        del self.street
+        del self.sky
+
     def loadStreet(self):
         aspect2d.hide()
         self.interior.reparentTo(hidden)

@@ -5,14 +5,13 @@ from panda3d.core import *
 
 class FlippySuitIntroScene(CutsceneBase):
     id = 1002
+    
     def __init__(self):
         CutsceneBase.__init__(self, self.id)
         self.bgm = base.loader.loadMusic('phase_12/audio/bgm/Bossbot_Entry_v1.ogg')
-        actors = base.cr.playGame.hood.actors
-        if not actors.get('suit') or not actors.get('flippy'): # this really should not happen
+        self.actors = base.cr.playGame.hood.actors
+        if not self.actors.get('suit') or not self.actors.get('flippy'): # this really should not happen
             base.cr.playGame.hood.loadQuestChanges()
-        self.suit = base.cr.playGame.hood.actors['suit']
-        self.flippy = base.cr.playGame.hood.actors['flippy']
         track = Sequence()
         track.append(LerpPosHprInterval(camera, duration=3.0, pos=Point3(-47, -40, 9), hpr=Vec3(30, -10, 0), blendType='easeInOut'))
         track.append(Func(self.doDialog, 0, 0))
@@ -30,36 +29,41 @@ class FlippySuitIntroScene(CutsceneBase):
         CutsceneUtil.UnfadeScreen()
         if not base.air.holidayMgr.isHalloween() and not base.air.holidayMgr.isWinter():
             base.cr.playGame.hood.endSpookySky()
+        base.cr.cutsceneMgr.ignore('cutscene-done')
 
     def questDone(self):
-        self.flippy.setAllowedToTalk(0)
-        self.flippy.enterTeleportOut(callback=base.cr.playGame.hood.unloadQuestChanges)
-        del self.flippy
-        del self.suit
+        flippy = self.actors['flippy']
+        flippy.setAllowedToTalk(0)
+        flippy.enterTeleportOut(callback=base.cr.playGame.hood.unloadQuestChanges)
+        self.delete()
 
     def sceneFinish(self, elapsedTime):
-        mtrack = Sequence()
-        mtrack.append(self.suit.beginSupaFlyMove(self.suit.getPos(), 0, 'toSky'))
-        mtrack.append(Func(base.transitions.fadeOut, 1.0))
-        mtrack.append(Wait(1.0))
-        mtrack.append(Func(self.suit.removeActive))
-        mtrack.append(Func(self.flippy.setHpr, 195, 0, 0))
-        mtrack.append(Func(self.flippy.setMainQuest, 1002))
-        mtrack.append(Func(self.exit))
-        mtrack.append(Func(base.transitions.fadeIn, 1.0))
-        mtrack.append(Wait(1.0))
-        mtrack.append(Func(self.flippy.acceptOnce, 'cutscene-done', self.questDone))
-        mtrack.append(Func(taskMgr.doMethodLater, 1, base.cr.playGame.hood.doBirds, 'FF-birds'))
-        mtrack.start()
+        suit = self.actors['suit']
+        flippy = self.actors['flippy']
+        track = Sequence()
+        track.append(suit.beginSupaFlyMove(suit.getPos(), 0, 'toSky'))
+        track.append(Func(base.transitions.fadeOut, 1.0))
+        track.append(Wait(1.0))
+        track.append(Func(suit.removeActive))
+        track.append(Func(flippy.setHpr, 195, 0, 0))
+        track.append(Func(flippy.setMainQuest, 1002))
+        track.append(Func(self.exit))
+        track.append(Func(base.transitions.fadeIn, 1.0))
+        track.append(Wait(1.0))
+        track.append(Func(flippy.acceptOnce, 'cutscene-done', self.questDone))
+        track.append(Func(taskMgr.doMethodLater, 1, base.cr.playGame.hood.doBirds, 'FF-birds'))
+        track.start()
 
     def doDialog(self, index, elapsedTime):
         dialog = self.dialog[index]
+        suit = self.actors['suit']
+        flippy = self.actors['flippy']
         if index >= (len(self.dialog) - 1):
-            self.suit.setLocalPageChat(dialog, 1)
-            self.suit.acceptOnce(self.suit.uniqueName('doneChatPage'), self.sceneFinish)
+            suit.setLocalPageChat(dialog, 1)
+            suit.acceptOnce(suit.uniqueName('doneChatPage'), self.sceneFinish)
         elif (index % 2) == 0:
-            self.suit.setLocalPageChat(dialog, None)
-            self.suit.acceptOnce(self.suit.uniqueName('doneChatPage'), self.doDialog, [index + 1])
+            suit.setLocalPageChat(dialog, None)
+            suit.acceptOnce(suit.uniqueName('doneChatPage'), self.doDialog, [index + 1])
         else:
-            self.flippy.setLocalPageChat(dialog, None)
-            self.flippy.acceptOnce(self.flippy.uniqueName('doneChatPage'), self.doDialog, [index + 1])
+            flippy.setLocalPageChat(dialog, None)
+            flippy.acceptOnce(flippy.uniqueName('doneChatPage'), self.doDialog, [index + 1])

@@ -16,6 +16,13 @@ class CutsceneBase:
         if TTLocalizer.CutsceneDialogDict.get(id): # This automatically grabs the dialog for the associated ID.
             self.dialog = TTLocalizer.CutsceneDialogDict[id]
 
+    def delete(self):
+        del self.id
+        del self.track
+        del self.dialog
+        del self.bgm
+        del self.actors
+
     def getId(self):
         return self.id
 
@@ -23,7 +30,7 @@ class CutsceneBase:
         return self.track
 
     def enter(self):
-        self.notify.info('Entering %s!' % self.__class__.__name__)
+        self.notify.debug('Entering %s!' % self.__class__.__name__)
         if self.bgm:
             musicMgr.stopMusic()
             musicMgr.playMusic(self.bgm, looping=1)
@@ -42,6 +49,15 @@ class CutsceneBase:
                             toon.setPosHpr(*value[1])
                             toon.addActive()
                             self.actors[key] = toon
+
+    def exit(self):
+        self.notify.debug('Exiting %s!' % self.__class__.__name__)
+        base.localAvatar.enable()
+        if self.bgm:
+            self.bgm.stop()
+            self.bgm = None
+            musicMgr.stopMusic()
+            musicMgr.playCurrentZoneMusic()
 
     def doAnimate(self, actor, anim, emote=None, muzzle=None):
         if not actor:
@@ -73,12 +89,3 @@ class CutsceneBase:
                     actor.showNormalMuzzle()
         if anim:
             actor.play(anim)
-
-    def exit(self):
-        self.notify.info('Exiting %s!' % self.__class__.__name__)
-        base.localAvatar.enable()
-        if self.bgm:
-            self.bgm.stop()
-            self.bgm = None
-            musicMgr.stopMusic()
-            musicMgr.playCurrentZoneMusic()

@@ -4,6 +4,7 @@ from panda3d.core import *
 
 class BuyGagsScene(CutsceneBase):
     id = 1007
+    
     def __init__(self):
         CutsceneBase.__init__(self, self.id)
         camTrack1 = Sequence()
