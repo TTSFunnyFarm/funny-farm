@@ -43,7 +43,7 @@ class CutsceneBase:
                             toon.addActive()
                             self.actors[key] = toon
 
-    def doAnimate(self, actor, anim, eyes=None, muzzle=None):
+    def doAnimate(self, actor, anim, emote=None, muzzle=None):
         if not actor:
             return
         if emote and isinstance(actor, Toon.Toon):
