@@ -21,6 +21,24 @@ class LevelEditor(DirectObject):
         for storage in storage_files:
             LPD.loadDNAFile(base.dna_storage, self.dna_path + storage)
         self.accept('load-dna', self.loadDNA)
+        self.accept('arrow_left', self.moveObj, [-0.5, 0, 0])
+        self.accept('arrow_right', self.moveObj, [0.5, 0, 0])
+        self.accept('arrow_up', self.moveObj, [0, 0.5, 0])
+        self.accept('arrow_down', self.moveObj, [0, -0.5, 0])
+        self.accept('arrow_left-repeat', self.moveObj, [-3, 0, 0])
+        self.accept('arrow_right-repeat', self.moveObj, [3, 0, 0])
+        self.accept('arrow_up-repeat', self.moveObj, [0, 3, 0])
+        self.accept('arrow_down-repeat', self.moveObj, [0, -3, 0])
+        #self.accept('oobe-down', self.printt)
+
+    def moveObj(self, x, y, z):
+        if self.selected:
+            obj = self.selected
+            obj.setX(obj.getX() + x)
+            obj.setY(obj.getY() + y)
+            obj.setZ(obj.getZ() + z)
+            self.updateText()
+
 
     def loadDNA(self, file):
         if base.geom:
@@ -32,6 +50,9 @@ class LevelEditor(DirectObject):
             messenger.send('graph-refresh')
         return base.geom
 
+    def updateText(self):
+        self.info.setText('Selected: %s\nX: %s Y: %s Z: %s\nH: %s P: %s R: %s' % (node.getName(), str(node.getX()), str(node.getY()), str(node.getZ()), str(node.getH()), str(node.getP()), str(node.getR())))
+
     def selectItem(self, node):
         self.selected = node
-        self.info.setText('Selected: %s\nX: %s Y: %s Z: %s\nH: %s P: %s R: %s' % (node.getName(), str(node.getX()), str(node.getY()), str(node.getZ()), str(node.getH()), str(node.getP()), str(node.getR())))
+        self.updateText()

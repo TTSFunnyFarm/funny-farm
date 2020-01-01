@@ -6,6 +6,7 @@ import wx
 import threading
 import sys
 from direct.showbase.DirectObject import DirectObject
+from panda3d.core import *
 
 class SceneGraph(wx.Panel, DirectObject):
     def refresh(self):
@@ -32,6 +33,8 @@ class SceneGraph(wx.Panel, DirectObject):
                 name = n.getName()
                 if name.endswith('_DNARoot'):
                     name += "_" + str(hash(n))
+                    n.setTag('clickable', bytes(1))
+                    n.setCollideMask(BitMask32.bit(2))
                 if self.previous.get(name):
                     parent = self.previous[name]
                     if name in ['buildings', 'props', 'streets']:
