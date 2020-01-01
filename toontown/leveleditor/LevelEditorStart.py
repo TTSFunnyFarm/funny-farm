@@ -9,7 +9,6 @@ loadPrcFile("config/level_editor.prc")
 
 vfs = VirtualFileSystem.getGlobalPtr()
 mounts = ConfigVariableList('vfs-mount')
-print(mounts)
 for mount in mounts:
     mountfile, mountpoint = (mount.split(' ', 2) + [None, None, None])[:2]
     vfs.mount(Filename(mountfile), Filename(mountpoint), 0)

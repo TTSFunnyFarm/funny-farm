@@ -4,7 +4,6 @@ from direct.showbase.DirectObject import DirectObject
 notify = directNotify.newCategory("SelectManager")
 class SelectManager(DirectObject):
     def __init__(self):
-        print("HHHhh")
         #CollisionTraverser  and a Collision Handler is set up
         self.picker = CollisionTraverser()
         #self.picker.showCollisions(render)
@@ -14,22 +13,15 @@ class SelectManager(DirectObject):
         self.pickerNP = camera.attachNewNode(self.pickerNode)
         self.pickerNode.setFromCollideMask(BitMask32.bit(2))
         #box.setCollideMask(BitMask32.bit(1))
-        #panda.setCollideMask(BitMask32.bit(1))
 
         self.pickerRay = CollisionRay()
         self.pickerNode.addSolid(self.pickerRay)
         self.picker.addCollider(self.pickerNP,self.pq)
 
         self.accept('mouse1',self.mouseDown)
-
-    def event(self, obj):
-        print(obj)
-
     def mouseDown(self):
         # check if we have access to the mouse
         if base.mouseWatcherNode.hasMouse():
-            print("AAAAAA")
-            print(camera.getPos())
             # get the mouse position
             mat = Mat4(camera.getMat())
             mat.invertInPlace()
@@ -49,9 +41,6 @@ class SelectManager(DirectObject):
                 if not pickedObj:
                     return
                 print('click on ' + pickedObj.getName())
-                #obj = base.objectMgr.getObject(hash(pickedObj))
-                #print(obj.holo)
-                #pickedObj = base.nodes[hash(pickedObj)]
                 if base.lvlEditor.selected == pickedObj:
                     return
                 base.lvlEditor.selectItem(pickedObj)
