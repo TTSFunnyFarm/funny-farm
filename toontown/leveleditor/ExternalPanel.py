@@ -10,22 +10,47 @@ from direct.showbase.DirectObject import DirectObject
 class SceneGraph(wx.Panel, DirectObject):
     def refresh(self):
         if base.geom:
+            self.buildings = None
+            self.streets = None
+            self.props = None
+            self.previous = {}
             self.tree.DeleteAllItems()
             root = self.tree.AddRoot(base.geom.getName())
             self.recursiveAdd(root, base.geom)
             self.tree.Expand(root)
 
     def recursiveAdd(self, parent, node):
+        #new_parent = None
+        forced = False
         for n in node.getChildren():
-            print(n, type(n))
-            item = self.tree.AppendItem(parent, n.getName())
-            self.tree.SetPyData(item, ('id', n))
-            self.recursiveAdd(item, n)
+            try:
+                if forced:
+                    raise ValueError()
+                int(n.getName())
+                self.recursiveAdd(parent, n)
+            except ValueError as e:
+                name = n.getName()
+                if name.endswith('_DNARoot'):
+                    name += "_" + str(hash(n))
+                if self.previous.get(name):
+                    parent = self.previous[name]
+                    if name in ['buildings', 'props', 'streets']:
+                        self.recursiveAdd(parent, n)
+                        continue
+                item = self.tree.AppendItem(parent, name)
+                if not self.previous.get(name):
+                    self.previous[name] = item
+                self.tree.SetPyData(item, ('node', n))
+                if forced:
+                    item = parent
+                self.recursiveAdd(item, n)
 
     def onSelect(self, event):
         item = event.GetItem()
-        print(item)
-        print(self.tree.GetPyData(item))
+        item = self.tree.GetItemData(item)
+        if item:
+            item = item[1]
+            base.lvlEditor.selectItem(item)
 
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)
@@ -34,7 +59,7 @@ class SceneGraph(wx.Panel, DirectObject):
         #t = wx.StaticText(self, -1, "This is a PageOne object", (20,20))
         self.tree = wx.TreeCtrl(self, 1)
         self.Bind(wx.EVT_TREE_SEL_CHANGED, self.onSelect, self.tree)
-        sizer.Add(self.tree, 1, wx.EXPAND, 0)
+        sizer.Add(self.tree, 1, wx.BOTTOM|wx.EXPAND, 25)
         parent.SetSizer(sizer)
 
 class PageTwo(wx.Panel):
