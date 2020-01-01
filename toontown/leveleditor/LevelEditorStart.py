@@ -14,10 +14,10 @@ for mount in mounts:
     vfs.mount(Filename(mountfile), Filename(mountpoint), 0)
 
 base = ShowBase()
+app = wx.App()
 base.dna_storage = LPD.DNAStorage()
 base.lvlEditor = LevelEditor.LevelEditor()
 base.selectMgr = SelectManager.SelectManager()
-app = wx.App()
 base.oobe()
 bt = base.buttonThrowers[0].node() # reverse rdb's code :^
 bt.setSpecificFlag(1)

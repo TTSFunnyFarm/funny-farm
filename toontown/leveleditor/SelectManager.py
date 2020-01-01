@@ -34,13 +34,28 @@ class SelectManager(DirectObject):
             self.picker.traverse(render)
             # if we have hit something sort the hits so that the closest is first and highlight the node
             if self.pq.getNumEntries() > 0:
+                pickedObj = None
                 self.pq.sortEntries()
+                print(self.pq)
+                for i in range(self.pq.getNumEntries()): #let's make sure we're doing this in order
+                    n = self.pq.getEntry(i).getIntoNodePath()
+                    if n:
+                        if len(n.getTag('clickable')) > 0:
+                            pickedObj = n
+                            break
+                if pickedObj:
+                    if base.lvlEditor.selected == pickedObj:
+                        return
+                    base.lvlEditor.selectItem(pickedObj)
+                    return
                 pickedObj = self.pq.getEntry(0).getIntoNodePath()
+                #print(pickedObj)
                 pickedObj = pickedObj.getParent()
                 pickedObj = pickedObj.findNetTag('clickable')
                 #pickedObj.setZ(pickedObj.getZ() + 5)
                 if not pickedObj:
                     return
+                print('\n')
                 print('click on ' + pickedObj.getName())
                 if base.lvlEditor.selected == pickedObj:
                     return

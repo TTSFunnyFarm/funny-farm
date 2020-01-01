@@ -15,7 +15,6 @@ class LevelEditor(DirectObject):
         self.hpr = False
         self.DNAData = None
         self.info = OnscreenText(text = '', pos = (-1, -0.7), scale = 0.06, bg = (1,1,1,1), font = ImpressBT)
-        app = wx.App()
         pnl = ExternalPanel.ExternalPanel()
         pnl.createPanel()
         pnl.Show()
@@ -60,8 +59,10 @@ class LevelEditor(DirectObject):
     def loadDNA(self, file):
         if base.geom:
             base.geom.removeNode()
+        dna2 = LPD.loadDNAFileAI(base.dna_storage, Filename.fromOsSpecific(file))
+        print(dir(base.dna_storage))
         dna = LPD.loadDNAFile(base.dna_storage, Filename.fromOsSpecific(file))
-        if dna:
+        if True:
             base.root = LPD.loadDNAFileAI(base.dna_storage, Filename.fromOsSpecific(file))
             #print(base.root.traverse())
             base.geom = NodePath(dna)
@@ -69,7 +70,7 @@ class LevelEditor(DirectObject):
             node = self.findDNANode(base.geom)
             self.DNAData = LPD.DNAData('DNAData')
             self.DNAData.add(base.root)
-            print(dir(base.root.getParent()), type(base.root))
+            print(dir(base.root))
             messenger.send('graph-refresh')
         return base.geom
 

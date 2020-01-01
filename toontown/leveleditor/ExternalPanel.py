@@ -31,6 +31,10 @@ class SceneGraph(wx.Panel, DirectObject):
                 self.recursiveAdd(parent, n)
             except ValueError as e:
                 name = n.getName()
+                if len(n.getTag('DNACode')) > 0:
+                    if not 'camera_barrier' in name:
+                        n.setTag('clickable', bytes(1))
+                        n.setCollideMask(BitMask32.bit(2))
                 if name.endswith('_DNARoot'):
                     name += "_" + str(hash(n))
                     n.setTag('clickable', bytes(1))
