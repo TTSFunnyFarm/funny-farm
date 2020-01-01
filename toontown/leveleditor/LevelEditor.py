@@ -18,7 +18,7 @@ class LevelEditor(DirectObject):
         self.info = OnscreenText(text = '', pos = (-1, -0.7), scale = 0.06, bg = (1,1,1,1), font = ImpressBT)
         self.ls = LineSegs()
         self.ls.setThickness(2)
-        self.ls.setColor(0, 0, 0)
+        self.ls.setColor(1, 1, 1)
         pnl = ExternalPanel.ExternalPanel()
         pnl.createPanel()
         pnl.Show()
@@ -52,6 +52,7 @@ class LevelEditor(DirectObject):
         elif obj:
             obj.setH(obj.getH() + x)
             obj.setP(obj.getP() + y )
+        self.updateLs()
         self.updateText()
 
     def findDNANode(self, nodePath):
@@ -84,19 +85,13 @@ class LevelEditor(DirectObject):
             strm.addFile(Filename(file))
             self.DNAData.writeDna(strm, True, 0)
 
-    def updateText(self):
+    def updateLs(self):
         if not self.selected:
-            self.info.setText('Selected: None')
             return
-        node = self.selected
-        self.info.setText('Selected: %s\nX: %s Y: %s Z: %s\nH: %s P: %s R: %s \nHPR: %s' % (node.getName(), str(node.getX()), str(node.getY()), str(node.getZ()), str(node.getH()), str(node.getP()), str(node.getR()), str(self.hpr)))
-
-    def selectItem(self, node):
-        self.selected = node
         self.ls.reset()
         if self.lsNode:
             self.lsNode.removeNode()
-        min, max = node.getTightBounds()
+        min, max = self.selected.getTightBounds()
         self.ls.moveTo(min)
         self.ls.drawTo(min.x, min.y, max.z)
         self.ls.moveTo(min)
@@ -115,7 +110,18 @@ class LevelEditor(DirectObject):
         self.ls.drawTo(max.x, max.y, max.z)
         self.ls.drawTo(min.x, max.y, max.z)
         self.ls.drawTo(min.x, min.y, max.z)
-        self.lsNode = node.attachNewNode(self.ls.create(False))
+        self.lsNode = render.attachNewNode(self.ls.create(False))
+
+    def updateText(self):
+        if not self.selected:
+            self.info.setText('Selected: None')
+            return
+        node = self.selected
+        self.info.setText('Selected: %s\nX: %s Y: %s Z: %s\nH: %s P: %s R: %s \nHPR: %s' % (node.getName(), str(node.getX()), str(node.getY()), str(node.getZ()), str(node.getH()), str(node.getP()), str(node.getR()), str(self.hpr)))
+
+    def selectItem(self, node):
+        self.selected = node
+        self.updateLs()
         self.updateText()
 
     def toggleHpr(self):
