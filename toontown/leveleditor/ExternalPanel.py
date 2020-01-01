@@ -134,6 +134,8 @@ class ExternalPanel(wx.Frame):
         # the same event
         loadItem = fileMenu.Append(-1, "&Load...\tCtrl-L",
                 "Load a DNA file!")
+        saveItem = fileMenu.Append(0, "&Save...\tCTRL-S",
+                "Save a DNA file!")
         fileMenu.AppendSeparator()
         # When using a stock ID we don't need to specify the menu item's
         # label
@@ -158,6 +160,7 @@ class ExternalPanel(wx.Frame):
         # each of the menu items. That means that when that menu item is
         # activated then the associated handler function will be called.
         self.Bind(wx.EVT_MENU, self.OnLoad, loadItem)
+        self.Bind(wx.EVT_MENU, self.OnSave, saveItem)
         self.Bind(wx.EVT_MENU, self.OnExit,  exitItem)
         self.Bind(wx.EVT_MENU, self.OnAbout, aboutItem)
 
@@ -177,6 +180,17 @@ class ExternalPanel(wx.Frame):
             pathname = fileDialog.GetPath()
             messenger.send('load-dna', [pathname])
             wx.MessageBox("Loaded %s!" % pathname)
+
+    def OnSave(self, event):
+        with wx.FileDialog(self, "Save DNA file", wildcard="DNA files (*.dna)|*.dna", style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT) as fileDialog:
+
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                return     # the user changed their mind
+
+            # Proceed loading the file chosen by the user
+            pathname = fileDialog.GetPath()
+            messenger.send('save-dna', [pathname])
+            wx.MessageBox("Saved to %s!" % pathname)
 
 
     def OnAbout(self, event):

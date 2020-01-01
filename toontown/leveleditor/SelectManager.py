@@ -19,6 +19,7 @@ class SelectManager(DirectObject):
         self.picker.addCollider(self.pickerNP,self.pq)
 
         self.accept('mouse1',self.mouseDown)
+
     def mouseDown(self):
         # check if we have access to the mouse
         if base.mouseWatcherNode.hasMouse():
