@@ -15,6 +15,9 @@ class LevelEditor(DirectObject):
         self.hpr = False
         self.DNAData = None
         self.info = OnscreenText(text = '', pos = (-1, -0.7), scale = 0.06, bg = (1,1,1,1), font = ImpressBT)
+        self.ls = LineSegs()
+        self.ls.setThickness(4)
+        self.ls.setColor(1, 0, 0)
         pnl = ExternalPanel.ExternalPanel()
         pnl.createPanel()
         pnl.Show()
@@ -89,6 +92,26 @@ class LevelEditor(DirectObject):
 
     def selectItem(self, node):
         self.selected = node
+        self.ls.reset()
+        min, max = node.getTightBounds()
+        self.ls.moveTo(min)
+        self.ls.drawTo(min.getX(), min.getY(), max.getZ())
+        self.ls.moveTo(min)
+        self.ls.drawTo(max.getX(), min.getY(), min.getZ())
+        self.ls.drawTo(max.getX(), min.getY(), max.getZ())
+        self.ls.moveTo(max.getX(), min.getY(), min.getZ())
+        self.ls.drawTo(max.getX(), max.getY(), min.getZ())
+        self.ls.drawTo(max.getX(), max.getY(), max.getZ())
+        self.ls.moveTo(max.getX(), max.getY(), min.getZ())
+        self.ls.drawTo(min.getX(), max.getY(), min.getZ())
+        self.ls.drawTo(min.getX(), max.getY(), max.getZ())
+        self.ls.moveTo(min.getX(), max.getY(), min.getZ())
+        self.ls.drawTo(min)
+        self.ls.moveTo(min.getX(), min.getY(), max.getZ())
+        self.ls.drawTo(max.getX(), min.getY(), max.getZ())
+        self.ls.drawTo(max.getX(), max.getY(), max.getZ())
+        self.ls.drawTo(min.getX(), max.getY(), max.getZ())
+        self.ls.drawTo(min.getX(), min.getY(), max.getZ())
         self.updateText()
 
     def toggleHpr(self):
