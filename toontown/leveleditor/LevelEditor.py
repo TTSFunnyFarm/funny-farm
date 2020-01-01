@@ -11,6 +11,7 @@ class LevelEditor(DirectObject):
         self.dna_path = config.GetString('dna-path')
         base.geom = None
         self.selected = None
+        self.hpr = False
         self.info = OnscreenText(text = '', pos = (-1, -0.8), scale = 0.06, bg = (1,1,1,1), font = ImpressBT)
         app = wx.App()
         pnl = ExternalPanel.ExternalPanel()
@@ -29,15 +30,19 @@ class LevelEditor(DirectObject):
         self.accept('arrow_right-repeat', self.moveObj, [3, 0, 0])
         self.accept('arrow_up-repeat', self.moveObj, [0, 3, 0])
         self.accept('arrow_down-repeat', self.moveObj, [0, -3, 0])
+        self.accept('mouse2', self.toggleHpr)
         #self.accept('oobe-down', self.printt)
 
     def moveObj(self, x, y, z):
-        if self.selected:
-            obj = self.selected
+        obj = self.selected
+        if obj and not self.hpr:
             obj.setX(obj.getX() + x)
             obj.setY(obj.getY() + y)
             obj.setZ(obj.getZ() + z)
-            self.updateText()
+        elif obj:
+            obj.setH(obj.getH() + x)
+            obj.setP(obj.getP() + y )
+        self.updateText()
 
 
     def loadDNA(self, file):
@@ -51,8 +56,16 @@ class LevelEditor(DirectObject):
         return base.geom
 
     def updateText(self):
-        self.info.setText('Selected: %s\nX: %s Y: %s Z: %s\nH: %s P: %s R: %s' % (node.getName(), str(node.getX()), str(node.getY()), str(node.getZ()), str(node.getH()), str(node.getP()), str(node.getR())))
+        if not self.selected:
+            self.info.setText('Selected: None')
+            return
+        node = self.selected
+        self.info.setText('Selected: %s\nX: %s Y: %s Z: %s\nH: %s P: %s R: %s \nHPR: %s' % (node.getName(), str(node.getX()), str(node.getY()), str(node.getZ()), str(node.getH()), str(node.getP()), str(node.getR()), str(self.hpr)))
 
     def selectItem(self, node):
         self.selected = node
+        self.updateText()
+
+    def toggleHpr(self):
+        self.hpr = not self.hpr
         self.updateText()
