@@ -1,4 +1,5 @@
-# Toontown's Funny Farm
+# Toontown's Funny Farm Level Editor
+# DO NOT MERGE
 The first ever single-player adaptation of Disney's Toontown Online, with a twist!
 
 ## Requirements before playing
@@ -6,6 +7,8 @@ The first ever single-player adaptation of Disney's Toontown Online, with a twis
   - Grab the latest Panda3D SDK from [here](https://www.panda3d.org/download/).
   - (Windows users) We currently use Python 3.7, so if the SDK installer gives you the option to choose the Python version, select Python 3.7
   - Either 32-bit or 64-bit will work for development -- the game will be supporting both, so take your pick.
+- libpandadna
+  - Grab the latest install of our fork [here](https://github.com/NathanX-S/libpandadna).
 - Install anything in requirements.txt by running this command: ppython -m pip install -r requirements.txt
 
 ## Other notes
