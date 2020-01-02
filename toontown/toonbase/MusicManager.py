@@ -43,14 +43,12 @@ class MusicManager(DirectObject):
         return self.volume
 
     def setMultiplier(self, multi):
-        self.multipier = multi
+        self.multiplier = multi
 
     def getMultiplier(self):
         return self.multiplier
 
     def playMusic(self, music, looping=0, volume=1.0, time=0.0):
-        if not settings['music']:
-            return None
         if music:
             self.stopMusic()
             if self.pauseTime:
