@@ -633,7 +633,7 @@ CutsceneDialogDict = {
         'Our Silly Meter readings have plummeted.\x07Ever since you encountered those Cogs, the rates have been decreasing intensely.\x07It\'s almost at zero!',
         ['But then that means...', None, SAD_EYES],
         ['Uh, oh.', None, SAD_EYES],
-        ['Oh, this is a disaster!', None, SAD_EYES]),
+        ['Oh, this is a disaster!\x07_avName_, meet me back at my desk!', None, SAD_EYES]),
  1028: '_avName_! This is Flippy. Something\'s happened and we\'re gonna need your help.\x07Report to the Toon Hall immediately!'
 }
 MovieTutorialReward1 = 'You received 1 Throw point! When you get 10, you will get a new gag!'

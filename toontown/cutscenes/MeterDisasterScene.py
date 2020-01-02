@@ -1,6 +1,7 @@
 from toontown.cutscenes.CutsceneBase import CutsceneBase
 from toontown.cutscenes import CutsceneUtil
 from toontown.cutscenes.CutscenesGlobals import *
+from toontown.quest import Quests
 from direct.interval.IntervalGlobal import *
 from panda3d.core import *
 
@@ -96,6 +97,7 @@ class MeterDisasterScene(CutsceneBase):
             track.start()
         elif index == len(self.dialog) - 1:
             actor = flippy
+            dialog = Quests.fillInQuestNames(dialog, avName=base.avatarData.setName)
             actor.setLocalPageChat(dialog, 1)
             actor.acceptOnce(actor.uniqueName('doneChatPage'), self.sceneFinish)
         if extra:
