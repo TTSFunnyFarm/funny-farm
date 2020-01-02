@@ -10,7 +10,7 @@ from direct.task.Task import Task
 from toontown.effects import Ripples
 from toontown.toonbase import TTLocalizer, ToontownGlobals
 from toontown.toontowngui import TTDialog
-import FishingCodes
+from toontown.fishing import FishingCodes
 
 class FishingSpot(DirectObject):
     notify = DirectNotifyGlobal.directNotify.newCategory('FishingSpot')

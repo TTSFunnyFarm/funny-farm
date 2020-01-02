@@ -230,3 +230,35 @@ class ToonHood(Hood):
             spot.disable()
             del spot
         del self.fishingSpots
+
+    def generateButterfly(self, requestStatus):
+        butterfly = Butterfly(base.cr)
+        butterfly.setDoId(requestStatus['doId'])
+        butterfly.setArea(*requestStatus['area'])
+        butterfly.generate()
+        butterfly.setState(*requestStatus['state'])
+        self.butterflies.append(butterfly)
+
+    def loadButterflies(self):
+        ourHood = None
+        for hood in base.air.hoods:
+            if hood.zoneId == self.zoneId:
+                ourHood = hood
+                break
+
+        if not ourHood:
+            return
+
+        currentButterflies = ourHood.butterflies[:]
+        for currentButterfly in currentButterflies:
+            if currentButterfly:
+                self.generateButterfly({'area': currentButterfly.getArea(),
+                                        'doId': currentButterfly.getDoId(),
+                                        'state': currentButterfly.getState()})
+
+    def unloadButterflies(self):
+        for butterfly in self.butterflies:
+            butterfly.disable()
+            butterfly.delete()
+
+        self.butterflies = []
