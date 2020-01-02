@@ -63,8 +63,10 @@ class Door(DirectObject):
 
     def exitDone(self):
         base.localAvatar.enable()
-        if self.code == 'toonhall_int':
-            base.camLens.setMinFov(ToontownGlobals.CogHQCameraFov/(4./3.))
+        if self.code == 'toonhall_int' or self.code == 'loonylabs_int':
+            base.localAvatar.setCameraFov(ToontownGlobals.CogHQCameraFov)
+        else:
+            base.localAvatar.setCameraFov(ToontownGlobals.DefaultCameraFov)
 
     def getAvatarEnqueueTrack(self, avatar, duration):
         back = -5.0
@@ -72,8 +74,9 @@ class Door(DirectObject):
             back = -9.0
         offset = Point3(self.doorX, back, ToontownGlobals.FloorOffset)
         otherNP = self.getDoorNodePath()
-        walkLike = ActorInterval(avatar, 'walk', startTime = 1, duration = duration, endTime = 0.0001)
-        standHere = Sequence(LerpPosHprInterval(nodePath = avatar, other = otherNP, duration = duration, pos = offset, hpr = VBase3(0, 0, 0), blendType = 'easeInOut'), Func(avatar.setAnimState, 'neutral'))
+        #walkLike = ActorInterval(avatar, 'walk', startTime = 1, duration = duration, endTime = 0.0001)
+        walkLike = Func(avatar.setAnimState, 'walk', -1.0)
+        standHere = Sequence(LerpPosHprInterval(nodePath = avatar, other = otherNP, duration = duration, pos = offset, hpr = VBase3(0, 0, 0), blendType = 'easeInOut'), Func(avatar.setAnimState, 'neutral', 1.0))
         trackName = self.uniqueName('avatarEnqueueDoor')
         track = Parallel(walkLike, standHere, name = trackName)
         return track
@@ -84,7 +87,7 @@ class Door(DirectObject):
         otherNP = self.getDoorNodePath()
         track.append(LerpPosHprInterval(nodePath = camera, other = avatar, duration = duration, pos = Point3(0, -8, avatar.getHeight()), hpr = VBase3(0, 0, 0), blendType = 'easeInOut'))
         finalPos = avatar.getParent().getRelativePoint(otherNP, Point3(self.doorX, 2, ToontownGlobals.FloorOffset))
-        moveHere = Sequence(Func(avatar.setAnimState, 'walk'), LerpPosInterval(nodePath = avatar, duration = duration, pos = finalPos, blendType = 'easeIn'))
+        moveHere = Sequence(Func(avatar.setAnimState, 'walk', 1.0), LerpPosInterval(nodePath = avatar, duration = duration, pos = finalPos, blendType = 'easeIn'))
         track.append(moveHere)
         track.append(Sequence(Wait(duration * 0.5), Func(base.transitions.irisOut, duration * 0.5), Wait(duration * 0.5)))
         return track

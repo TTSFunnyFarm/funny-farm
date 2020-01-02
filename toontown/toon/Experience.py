@@ -1,48 +1,45 @@
 from panda3d.core import *
 from toontown.toonbase.ToontownBattleGlobals import *
 from direct.directnotify import DirectNotifyGlobal
-from direct.distributed.PyDatagram import PyDatagram
-from direct.distributed.PyDatagramIterator import PyDatagramIterator
 from otp.otpbase import OTPGlobals
 
 class Experience:
     notify = DirectNotifyGlobal.directNotify.newCategory('Experience')
 
-    def __init__(self, expStr = None, owner = None):
+    def __init__(self, expData = None, owner = None):
         self.owner = owner
-        if expStr == None:
+        if expData == None:
             self.experience = []
-            for track in xrange(0, len(Tracks)):
+            for track in range(0, len(Tracks)):
                 self.experience.append(StartingLevel)
 
         else:
-            self.experience = self.makeFromNetString(expStr)
+            self.experience = self.makeFromExperienceData(expData)
         return
 
     def __str__(self):
         return str(self.experience)
 
-    def makeNetString(self):
+    def exportExperienceData(self):
         dataList = self.experience
-        datagram = PyDatagram()
-        for track in xrange(0, len(Tracks)):
-            datagram.addUint16(dataList[track])
+        experienceData = []
+        for track in range(0, len(Tracks)):
+            experienceData.append(dataList[track])
 
-        dgi = PyDatagramIterator(datagram)
-        return dgi.getRemainingBytes()
+        return experienceData
 
-    def makeFromNetString(self, netString):
+    def makeFromExperienceData(self, experienceData):
         dataList = []
-        dg = PyDatagram(netString)
-        dgi = PyDatagramIterator(dg)
-        for track in xrange(0, len(Tracks)):
-            dataList.append(dgi.getUint16())
+        for track in range(0, len(Tracks)):
+            dataList.append(experienceData.pop(0))
 
         return dataList
 
     def saveExp(self):
-        base.avatarData.setExperience = self.makeNetString()
-        dataMgr.saveToonData(base.avatarData)
+        experienceData = self.exportExperienceData()
+        if not (base.avatarData.setExperience and base.avatarData.setExperience == experienceData):
+            base.avatarData.setExperience = experienceData
+            dataMgr.saveToonData(base.avatarData)
 
     def addExp(self, track, amount = 1):
         if type(track) == type(''):
@@ -62,7 +59,7 @@ class Experience:
         self.saveExp()
 
     def maxOutExp(self):
-        for track in xrange(0, len(Tracks)):
+        for track in range(0, len(Tracks)):
             if track == HEAL_TRACK:
                 self.experience[track] = MaxPowerUpSkill
             else:
@@ -71,33 +68,33 @@ class Experience:
         self.saveExp()
 
     def maxOutExpMinusOne(self):
-        for track in xrange(0, len(Tracks)):
+        for track in range(0, len(Tracks)):
             self.experience[track] = MaxSkill - 1
         self.owner.inventory.updateGUI()
         self.saveExp()
 
     def makeExpHigh(self):
-        for track in xrange(0, len(Tracks)):
+        for track in range(0, len(Tracks)):
             self.experience[track] = Levels[track][len(Levels[track]) - 1] - 1
         self.owner.inventory.updateGUI()
         self.saveExp()
 
     def makeExpRegular(self):
         import random
-        for track in xrange(0, len(Tracks)):
+        for track in range(0, len(Tracks)):
             rank = random.choice((0, int(random.random() * 1500.0), int(random.random() * 2000.0)))
             self.experience[track] = Levels[track][len(Levels[track]) - 1] - rank
         self.owner.inventory.updateGUI()
         self.saveExp()
 
     def zeroOutExp(self):
-        for track in xrange(0, len(Tracks)):
+        for track in range(0, len(Tracks)):
             self.experience[track] = StartingLevel
         self.owner.inventory.updateGUI()
         self.saveExp()
 
     def setAllExp(self, num):
-        for track in xrange(0, len(Tracks)):
+        for track in range(0, len(Tracks)):
             self.experience[track] = num
         self.owner.inventory.updateGUI()
         self.saveExp()

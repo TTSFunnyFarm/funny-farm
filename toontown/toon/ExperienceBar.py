@@ -23,7 +23,7 @@ class ExperienceBar(DirectFrame):
         self.container.setPos(-0.37, 0, 0.04)
         self.container.setScale(0.08, 1, 0.02)
         self.bar = DirectWaitBar(parent=self.container, relief=DGG.SUNKEN, value=self.exp, range=self.maxExp, barColor=(0.5, 1, 0.6, 1), pos=(4.49, 0, 0.5), scale=(4.55, 1, 13.5), frameColor=(0.98, 1, 0.75, 1))
-        self.barText = DirectLabel(parent=self.bar, relief=None, text=TTLocalizer.ToonPageExperience % (self.exp, self.maxExp), text_font=ToontownGlobals.getInterfaceFont(), pos=(0, 0, -0.03), scale=(0.08, 1, 0.1))
+        self.barText = DirectLabel(parent=self.bar, relief=None, text="", text_font=ToontownGlobals.getMinnieFont(), pos=(0, 0, -0.05), scale=(0.08, 1, 0.12))
         frameImage.removeNode()
 
     def destroy(self):

@@ -19,7 +19,7 @@ class Settings(collections.MutableMapping):
 
     def write(self):
         with open(self.filename, 'w') as f:
-            json.dump(self.store, f)
+            json.dump(self.store, f, indent=4)
 
     def __setitem__(self, key, value):
         self.store[key] = value

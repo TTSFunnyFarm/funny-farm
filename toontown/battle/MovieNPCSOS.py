@@ -1,12 +1,12 @@
 from direct.interval.IntervalGlobal import *
-from BattleProps import *
-from BattleSounds import *
+from toontown.battle.BattleProps import *
+from toontown.battle.BattleSounds import *
 from direct.directnotify import DirectNotifyGlobal
-import MovieCamera
+from toontown.battle import MovieCamera
 import random
-import MovieUtil
-import BattleParticles
-import HealJokes
+from toontown.battle import MovieUtil
+from toontown.battle import BattleParticles
+from toontown.battle import HealJokes
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.toon import NPCToons

@@ -3,7 +3,7 @@ from direct.gui.DirectGui import *
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownBattleGlobals
-import ShtikerPage
+from toontown.book import ShtikerPage
 
 class InventoryPage(ShtikerPage.ShtikerPage):
 

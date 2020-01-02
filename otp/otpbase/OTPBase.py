@@ -1,11 +1,15 @@
 from direct.showbase.ShowBase import ShowBase
+if not __debug__:
+    from direct.showbase import PhysicsManagerGlobal
+    from direct.particles import ParticleManagerGlobal
+    from panda3d.physics import *
+
 from panda3d.core import Camera, TPLow, VBase4, ColorWriteAttrib, Filename, getModelPath, NodePath, TexturePool, Multifile
-import OTPRender
+from otp.otpbase import OTPRender
 import time
 import math
 import re
 
-from otp.ai.MagicWordGlobal import *
 import glob
 from panda3d.core import VirtualFileSystem
 import os
@@ -247,94 +251,19 @@ class OTPBase(ShowBase):
             import traceback
             traceback.print_exc()
 
+    if not __debug__:
+        def enableParticles(self):
+            if not self.particleMgrEnabled:
+                if not self.particleMgr:
+                    self.particleMgr = ParticleManagerGlobal.particleMgr
+                    self.particleMgr.setFrameStepping(1)
 
-@magicWord(category=CATEGORY_GRAPHICAL)
-def oobe():
-    'Toggle "out of body experience" view.'
-    base.oobe()
+                if not self.physicsMgr:
+                    self.physicsMgr = PhysicsManagerGlobal.physicsMgr
+                    integrator = LinearEulerIntegrator()
+                    self.physicsMgr.attachLinearIntegrator(integrator)
 
-@magicWord(category=CATEGORY_GRAPHICAL)
-def oobeCull():
-    'Toggle "out of body experience" view, with culling debugging.'
-    base.oobeCull()
-
-@magicWord(category=CATEGORY_GRAPHICAL)
-def wire():
-    'Toggle wireframe view.'
-    base.toggleWireframe()
-
-@magicWord(category=CATEGORY_GRAPHICAL)
-def textures():
-    'Toggle textures on and off.'
-    base.toggleTexture()
-
-@magicWord(category=CATEGORY_GRAPHICAL)
-def fps():
-    'Toggle frame rate meter on or off.'
-    base.setFrameRateMeter(not base.frameRateMeter)
-
-@magicWord(category=CATEGORY_GUI)
-def showAvIds():
-    'Show avId in Nametags.'
-    messenger.send('nameTagShowAvId')
-
-@magicWord(category=CATEGORY_GUI)
-def showNames():
-    'Remove avIds in Nametags.'
-    messenger.send('nameTagShowName')
-
-@magicWord(access=200)
-def showAccess():
-    return "Access level: " + str(spellbook.getTarget().getAdminAccess())
-
-@magicWord(category=CATEGORY_GUI)
-def toga2d():
-    if aspect2d.isHidden():
-        aspect2d.show()
-    else:
-        aspect2d.hide()
-
-@magicWord(category=CATEGORY_GUI)
-def placer():
-    base.camera.place()
-
-@magicWord(category=CATEGORY_GUI)
-def explorer():
-    base.render.explore()
-
-@magicWord(category=CATEGORY_GRAPHICAL, aliases=['syncTextures', 'reloadTex', 'synctex', 'rt'], types=[str])
-def reloadTextures(textureName=''):
-    """
-    Artfart command to reload all of the textures.
-
-    TODO: A panel that says "Reloading textures... Please wait!"
-    ...though it's not important since it's a staff command and
-    only staff will see it.
-
-    Stolen from ToontownStart.py
-    Remount all phase files. This maybe might work? Idk. Lets see
-    if Panda craps itself.
-
-    Place raw files in /resources/non-mf/phase_*/ and they will be
-    mounted without needing to multify!
-    """
-
-    # Lock ...
-    vfs = VirtualFileSystem.getGlobalPtr()
-    for file in glob.glob('resources/non-mf/phase_*/'):
-        # Slightly hacky. We remove the trailing slash so we have a tail,
-        # and select the tail value from the returned tuple. Finally we
-        # prepend a slash for the mount point.
-        mount_point = '/' + str(os.path.split(file[:-1])[1])
-        vfs.mount(Filename(file), Filename(mount_point), 0)
-
-    # ... and load.
-    if textureName:
-        pool = TexturePool.findAllTextures('*'+textureName+'*')
-    else:
-        pool = TexturePool.findAllTextures()
-    for texture in pool:
-        texture.reload()
-    if textureName:
-        return "Reloaded all textures matching '%s'" % textureName
-    return "Reloaded all of the textures!"
+                self.particleMgrEnabled = 1
+                self.physicsMgrEnabled = 1
+                self.taskMgr.remove('manager-update')
+                self.taskMgr.add(self.updateManagers, 'manager-update')

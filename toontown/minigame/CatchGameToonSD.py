@@ -4,7 +4,7 @@ from toontown.toonbase.ToontownGlobals import *
 from direct.fsm import StateData
 from direct.fsm import ClassicFSM, State
 from direct.fsm import State
-import CatchGameGlobals
+from toontown.minigame import CatchGameGlobals
 from direct.task.Task import Task
 
 class CatchGameToonSD(StateData.StateData):

@@ -1,6 +1,6 @@
 from panda3d.core import *
 from toontown.toonbase import TTLocalizer, ToontownGlobals
-import NPCToonBase
+from toontown.toon import NPCToonBase
 
 class NPCScientist(NPCToonBase.NPCToonBase):
 
@@ -22,8 +22,9 @@ class NPCScientist(NPCToonBase.NPCToonBase):
         self.setScale(1.0)
 
     def handleCollisionSphereEnter(self, collEntry):
-        self.nametag3d.setDepthTest(0)
-        self.nametag3d.setBin('fixed', 0)
+        pass
+        # self.nametag3d.setDepthTest(0)
+        # self.nametag3d.setBin('fixed', 0)
 
     def setChat(self, topic, partPos, partId, progress, flags):
         msg = TTLocalizer.toontownDialogues[topic][partPos, partId][progress]
@@ -47,7 +48,8 @@ class NPCScientist(NPCToonBase.NPCToonBase):
         self.__bookActors = []
         self.__holeActors = []
         self.setupToonNodes()
-        self.setBlend(frameBlend=True)
+        if config.GetBool('smooth-animations', True):
+            self.setBlend(frameBlend=True)
         if self.style.getTorsoSize() == 'short' and self.style.getAnimal() == 'duck':
             sillyReader = loader.loadModel('phase_4/models/props/tt_m_prp_acs_sillyReader')
             for rHand in self.getRightHands():

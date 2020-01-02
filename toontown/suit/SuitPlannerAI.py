@@ -2,170 +2,209 @@ from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
 from direct.task import Task
 from toontown.building import SuitBuildingGlobals
+from toontown.building.BuildingAI import BuildingAI
 from toontown.battle import SuitBattleGlobals
-from BattleSuitAI import BattleSuitAI
-import SuitPoints
-import SuitDNA
+from toontown.suit.BattleSuitAI import BattleSuitAI
+from toontown.suit import SuitPoints
+from toontown.suit import SuitDNA
 import random
 
 class SuitPlannerAI(DirectObject):
     notify = directNotify.newCategory('SuitPlannerAI')
     notify.setInfo(True)
     SuitHoodInfo = {
-        1100: [4,
+        1100: (4,
             8,
             0,
-            3,
+            0,
+            0,
             1,
-            (10,
-            10,
-            40,
-            40),
+            (5,
+            5,
+            45,
+            45),
             (1, 2, 3),
-            []
-        ],
-        1200: [4,
+            (0,)
+        ),
+        1200: (4,
             8,
             0,
-            3,
+            1,
+            0,
             1,
             (40,
             40,
             10,
             10),
             (2, 3, 4),
-            []
-        ],
-        2100: [4,
+            (0, 1)
+        ),
+        2100: (4,
             8,
             0,
             3,
+            1,
             2,
             (10,
             40,
             40,
             10),
             (3, 4, 5),
-            []
-        ],
-        2200: [4,
+            (1, 2)
+        ),
+        2200: (4,
             8,
             0,
             3,
+            1,
             2,
             (40,
             10,
             10,
             40),
             (4, 5, 6),
-            []
-        ],
-        3100: [4,
+            (2, 3)
+        ),
+        3100: (4,
             8,
             0,
             3,
+            1,
             2,
             (10,
             70,
             10,
             10),
             (5, 6, 7),
-            []
-        ],
-        3200: [4,
+            (3, 4)
+        ),
+        3200: (4,
             8,
             0,
             3,
+            1,
             2,
             (30,
             10,
             30,
             30),
             (6, 7, 8),
-            []
-        ],
-        3300: [4,
+            (4, 5)
+        ),
+        3300: (4,
             8,
             0,
             3,
+            1,
             2,
             (25,
             25,
             25,
             25),
             (6, 7, 8),
-            []
-        ],
-        4100: [4,
+            (5, 6)
+        ),
+        4100: (4,
             8,
             0,
             3,
+            1,
             2,
             (40,
             10,
             40,
             10),
             (7, 8, 9),
-            []
-        ],
-        4200: [4,
+            (6, 7)
+        ),
+        4200: (4,
             8,
             0,
             3,
+            1,
             2,
             (10,
             40,
             10,
             40),
             (8, 9, 10),
-            []
-        ],
+            (6, 7, 8)
+        ),
     }
-    SUIT_HOOD_INFO_MIN = 0
-    SUIT_HOOD_INFO_MAX = 1
-    SUIT_HOOD_INFO_BMIN = 2
-    SUIT_HOOD_INFO_BMAX = 3
-    SUIT_HOOD_INFO_SMAX = 4
-    SUIT_HOOD_INFO_TRACK = 5
-    SUIT_HOOD_INFO_LVL = 6
-    SUIT_HOOD_INFO_HEIGHTS = 7
+    SUIT_HOOD_INFO_MIN = 0 # min number of active suits
+    SUIT_HOOD_INFO_MAX = 1 # max number of active suits
+    SUIT_HOOD_INFO_BMIN = 2 # min number of suit buildings
+    SUIT_HOOD_INFO_BMAX = 3 # max number of suit buildings
+    SUIT_HOOD_INFO_ELITE = 4 # elite buildings yes or no
+    SUIT_HOOD_INFO_SMAX = 5 # max number of suits in a battle
+    SUIT_HOOD_INFO_TRACK = 6 # suit dept probabilities
+    SUIT_HOOD_INFO_LVL = 7 # possible suit levels
+    SUIT_HOOD_INFO_HEIGHTS = 8 # possible bldg difficulties
     MAX_SUIT_TYPES = 8
     POP_UPKEEP_DELAY = 10
     POP_ADJUST_DELAY = 120
-    for zoneId in SuitHoodInfo.keys():
-        currHoodInfo = SuitHoodInfo[zoneId]
-        levels = currHoodInfo[SUIT_HOOD_INFO_LVL]
-        heights = [0,
-         0,
-         0,
-         0,
-         0]
-        for level in levels:
-            minFloors, maxFloors = SuitBuildingGlobals.SuitBuildingInfo[level - 1][0]
-            for i in range(minFloors - 1, maxFloors):
-                heights[i] += 1
-        currHoodInfo[SUIT_HOOD_INFO_HEIGHTS] = heights
+    BLDG_ADJUST_DELAY = 240
+    # for zoneId in list(SuitHoodInfo.keys()):
+    #     currHoodInfo = SuitHoodInfo[zoneId]
+    #     levels = currHoodInfo[SUIT_HOOD_INFO_LVL]
+    #     heights = [0,
+    #      0,
+    #      0,
+    #      0,
+    #      0]
+    #     for level in levels:
+    #         minFloors, maxFloors = SuitBuildingGlobals.SuitBuildingInfo[level - 1][0]
+    #         for i in range(minFloors - 1, maxFloors):
+    #             heights[i] += 1
+    #     currHoodInfo[SUIT_HOOD_INFO_HEIGHTS] = heights
 
     def __init__(self, zoneId):
         self.zoneId = zoneId
         self.activeSuits = {}
+        self.buildingMap = {}
+        self.toonBuildings = None
+        self.setBattlesJoinable()
 
     def generate(self):
         self.createSuits()
+        self.createBuildings()
         self.initTasks()
         self.accept('createNewSuit-%d' % self.zoneId, self.createNewSuit)
         self.accept('upkeepPopulation-%d' % self.zoneId, self.upkeepPopulation)
         self.accept('requestBattle-%d' % self.zoneId, self.requestBattle)
+        self.accept('spawnBuilding-%d' % self.zoneId, self.spawnBuilding)
+        self.accept('collapseBuilding-%d' % self.zoneId, self.collapseBuilding)
+
+    def setBattlesJoinable(self):
+        self.battlesJoinable = 0
+        if self.SuitHoodInfo[self.zoneId][self.SUIT_HOOD_INFO_SMAX] > 1:
+            self.battlesJoinable = 1
 
     def createSuits(self):
         hoodInfo = self.SuitHoodInfo[self.zoneId]
-        suitMin = hoodInfo[0]
-        suitMax = hoodInfo[1]
-        for i in xrange(0, random.randint(suitMin, suitMax)):
+        suitMin = hoodInfo[self.SUIT_HOOD_INFO_MIN]
+        suitMax = hoodInfo[self.SUIT_HOOD_INFO_MAX]
+        for i in range(0, random.randint(suitMin, suitMax)):
             self.createNewSuit()
 
+    def createBuildings(self):
+        # Randomly generates some suit buildings on the street (or none at all).
+        # Algorithm may be adjusted as I see fit.
+        for block in SuitPoints.BuildingBlocks[self.zoneId]:
+            self.buildingMap[block] = BuildingAI(self.zoneId, block)
+        self.toonBuildings = list(self.buildingMap.keys())[:]
+        hoodInfo = self.SuitHoodInfo[self.zoneId]
+        bldgMin = hoodInfo[self.SUIT_HOOD_INFO_BMIN]
+        bldgMax = hoodInfo[self.SUIT_HOOD_INFO_BMAX]
+        bldgRange = [0, 0, 0]
+        bldgRange.extend(range(bldgMin, bldgMax + 1))
+        spawn = random.choice(bldgRange)
+        if spawn > 0:
+            for i in range(spawn):
+                self.spawnBuilding()
+
     def createNewSuit(self):
-        # Currently just generates a random suit based on the hood info. 
+        # Currently just generates a random suit based on the hood info.
         # We can add arguments to create specific suits later, if needed.
         newSuit = BattleSuitAI(self)
         newSuit.setDoId(base.air.getNextSuitIndex())
@@ -174,7 +213,7 @@ class SuitPlannerAI(DirectObject):
         newSuit.setupSuitDNA(level, type, track)
         newSuit.generate()
         self.activeSuits[newSuit.doId] = newSuit
-        self.notify.info('creating suit %d in zone %d' % (newSuit.doId, self.zoneId))
+        self.notify.debug('creating suit %d in zone %d' % (newSuit.doId, self.zoneId))
 
     def removeSuit(self, doId):
         # Removes both AI and client
@@ -183,7 +222,7 @@ class SuitPlannerAI(DirectObject):
 
     def removeSuitAI(self, doId):
         # Removes only the AI side
-        if doId in self.activeSuits.keys():
+        if doId in list(self.activeSuits.keys()):
             suit = self.activeSuits[doId]
             suit.delete()
             self.activeSuits.pop(doId)
@@ -191,7 +230,7 @@ class SuitPlannerAI(DirectObject):
     def requestSuits(self):
         # SuitPlanner asked what suits are on its street; give it all the info
         suits = []
-        for doId in self.activeSuits.keys():
+        for doId in list(self.activeSuits.keys()):
             suit = self.activeSuits[doId]
             suits.append({'doId': doId,
              'zoneId': suit.zoneId,
@@ -206,7 +245,7 @@ class SuitPlannerAI(DirectObject):
         # Now it requested the task time of a suit's walking task
         # so it can accurately place him in the right spot.
         # * Can't confirm that this is working properly yet; needs some work
-        if doId in self.activeSuits.keys():
+        if doId in list(self.activeSuits.keys()):
             suit = self.activeSuits[doId]
             if taskMgr.hasTaskNamed(suit.uniqueName('move')):
                 task = taskMgr.getTasksNamed(suit.uniqueName('move'))[0]
@@ -222,6 +261,54 @@ class SuitPlannerAI(DirectObject):
         self.notify.debug('pickLevelTypeAndTrack: %d %d %s' % (level, type, track))
         return (level, type, track)
 
+    def spawnBuilding(self, block=None):
+        # Generates a random suit building on the given block,
+        # or on a random block if not provided.
+        track, difficulty, numFloors = self.pickBuildingStats()
+        if not block:
+            block = random.choice(self.toonBuildings)
+        bldg = self.buildingMap[block]
+        if self.SuitHoodInfo[self.zoneId][self.SUIT_HOOD_INFO_ELITE]:
+            elite = 0
+            if random.randint(0, 99) >= 50:
+                elite = 1
+            if elite:
+                bldg.eliteTakeOver(track)
+            else:
+                bldg.suitTakeOver(track, difficulty, numFloors)
+        else:
+            bldg.suitTakeOver(track, difficulty, numFloors)
+        if block in self.toonBuildings:
+            self.toonBuildings.remove(block)
+        self.notify.debug('spawning suit building in zone %d, block %d' % (self.zoneId, block))
+
+    def collapseBuilding(self, block):
+        bldg = self.buildingMap[block]
+        if bldg.mode == 'toon':
+            self.notify.warning('Unable to collapse toon building. Block: %d' % block)
+            return
+        bldg.toonTakeOver()
+        if block not in self.toonBuildings:
+            self.toonBuildings.append(block)
+
+    def pickBuildingStats(self):
+        track = SuitDNA.suitDepts[SuitBattleGlobals.pickFromFreqList(self.SuitHoodInfo[self.zoneId][self.SUIT_HOOD_INFO_TRACK])]
+        difficulty = random.choice(self.SuitHoodInfo[self.zoneId][self.SUIT_HOOD_INFO_HEIGHTS])
+        numFloors = random.randint(*SuitBuildingGlobals.SuitBuildingInfo[difficulty][0])
+        return (track, difficulty, numFloors)
+
+    def requestBuildings(self):
+        buildings = []
+        for block in list(self.buildingMap.keys()):
+            bldg = self.buildingMap[block]
+            if bldg.mode != 'toon':
+                buildings.append({'block': block,
+                 'track': bldg.track,
+                 'difficulty': bldg.difficulty,
+                 'numFloors': bldg.numFloors,
+                 'elite': bldg.mode == 'elite'})
+        return buildings
+
     def initTasks(self):
         self.__waitForNextAdjust()
 
@@ -236,22 +323,21 @@ class SuitPlannerAI(DirectObject):
         suitCount = len(self.activeSuits)
         # See how many suits we should add / remove
         adjustment = random.choice((-1, -1, 0, 0, 0, 1, 1))
-        self.notify.info('adjustment: %d' % adjustment)
+        self.notify.debug('adjustment: %d' % adjustment)
         # Calculate the total suits we'd have on the street with the adjustment
         suitCount += adjustment
         if suitCount < min or suitCount > max:
             # The total is not within the range of suits for this street, try again later.
             self.__waitForNextAdjust()
             return task.done
-        for i in xrange(abs(adjustment)):
-            if adjustment < 0:
-                # Negative adjustment, take away a suit
-                doId = random.choice(self.activeSuits.keys())
-                self.notify.info('removing suit %d' % doId)
-                self.removeSuit(doId)
-            else:
-                # Positive adjustment, create a new suit
-                self.createNewSuit()
+        if adjustment < 0:
+            # Negative adjustment, take away a suit
+            doId = list(self.activeSuits.keys())[0]
+            self.notify.debug('removing suit %d' % doId)
+            self.removeSuit(doId)
+        else:
+            # Positive adjustment, create a new suit
+            self.createNewSuit()
         self.__waitForNextAdjust()
         return task.done
 
@@ -270,27 +356,15 @@ class SuitPlannerAI(DirectObject):
             self.createNewSuit()
         return Task.done
 
-    '''
-    def checkPopulation(self, task):
-        # Checks to make sure the activeSuits remain consistent between the AI and client
-        # (With all the AI and client madness happening on the same application, stuff screws up)
-        if not base.cr.playGame.street:
-            return Task.done
-        if not base.cr.playGame.street.zoneId == self.zoneId:
-            return Task.done
-        clientSuits = base.cr.playGame.street.sp.activeSuits
-        if len(clientSuits.keys()) != len(self.activeSuits.keys()):
-            # There's an imbalance somewhere. Let's figure out what it is.
-            for s in render.findAllMatches('**/suit-*'):
-                doId = s.getName()[5:]
-                print s.getName()
-                print doId + '/n'
-                if doId not in clientSuits:
-                    base.cr.playGame.street.sp.activeSuits[int(doId)]
-    '''
-
     def requestBattle(self, suitId, pos):
-        if suitId not in self.activeSuits.keys():
+        if suitId not in list(self.activeSuits.keys()):
+            return
+        toon = None
+        if hasattr(base, "localAvatar"):
+            toon = base.localAvatar
+        if not toon:
+            return
+        if not toon.getWantBattles():
             return
         # Don't need the suit AI anymore, the battle will take it from here
         self.removeSuitAI(suitId)

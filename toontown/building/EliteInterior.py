@@ -1,16 +1,17 @@
 from panda3d.core import *
-from ElevatorConstants import *
-from ElevatorUtils import *
-import Elevator
-import SuitInteriorBase
+from toontown.building.ElevatorConstants import *
+from toontown.building.ElevatorUtils import *
+from toontown.building import Elevator
+from toontown.building import SuitInteriorBase
 
 class EliteInterior(SuitInteriorBase.SuitInteriorBase):
 
-    def __init__(self, zoneId):
-        SuitInteriorBase.SuitInteriorBase.__init__(self, zoneId)
+    def __init__(self, zoneId, track):
+        SuitInteriorBase.SuitInteriorBase.__init__(self, zoneId, track)
         self.floorModelA = 'phase_11/models/lawbotHQ/LB_Zone04a'
         self.floorModelB = 'phase_5/models/cogdominium/tt_m_ara_cbr_barrelRoom'
         self.floorModelC = 'phase_5/models/cogdominium/tt_m_ara_crg_penthouse_law'
+        self.elevatorFilename = 'phase_5/models/cogdominium/tt_m_ara_csa_elevatorB'
         self.entranceElevator = Elevator.Elevator(ELEVATOR_NORMAL)
         self.exitElevator = Elevator.Elevator(ELEVATOR_NORMAL)
         self.numFloors = 7

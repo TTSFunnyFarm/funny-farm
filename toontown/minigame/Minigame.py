@@ -4,12 +4,12 @@ from direct.distributed.ClockDelta import *
 from toontown.toonbase import ToontownGlobals
 from direct.showbase.DirectObject import DirectObject
 from direct.fsm import ClassicFSM, State
-import MinigameRulesPanel
+from toontown.minigame import MinigameRulesPanel
 from toontown.toon import Toon
 from direct.showbase import RandomNumGen
 from toontown.toonbase import TTLocalizer
 import random
-import MinigameGlobals
+from toontown.minigame import MinigameGlobals
 from direct.showbase import PythonUtil
 from toontown.toon import TTEmote
 from otp.avatar import Emote
@@ -287,7 +287,7 @@ class Minigame(DirectObject):
         if not len(startingVotesArray) == len(self.avIdList):
             self.notify.error('length does not match, startingVotes=%s, avIdList=%s' % (startingVotesArray, self.avIdList))
             return
-        for index in xrange(len(self.avIdList)):
+        for index in range(len(self.avIdList)):
             avId = self.avIdList[index]
             self.startingVotes[avId] = startingVotesArray[index]
 

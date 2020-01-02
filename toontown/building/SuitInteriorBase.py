@@ -1,58 +1,57 @@
 from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
 from toontown.toonbase import ToontownGlobals
-from ElevatorConstants import *
-from ElevatorUtils import *
+from toontown.building.ElevatorConstants import *
+from toontown.building.ElevatorUtils import *
 
 class SuitInteriorBase(DirectObject):
     notify = directNotify.newCategory('SuitInterior')
 
-    def __init__(self, zoneId):
+    def __init__(self, zoneId, track):
         self.zoneId = zoneId
+        self.block = int(str(self.zoneId)[2:])
+        self.track = track
         self.floorModelA = None
         self.floorModelB = None
         self.floorModelC = None
         self.floor = None
+        self.elevatorFilename = None
+        self.elevatorModel = None
         self.entranceElevator = None
         self.exitElevator = None
         self.numFloors = 0
         self.currentFloor = 0
-        self.waitMusic = base.loader.loadMusic('phase_7/audio/bgm/encntr_toon_winning_indoor.ogg')
         self.elevatorMusic = base.loader.loadMusic('phase_7/audio/bgm/tt_elevator.ogg')
 
     def enter(self):
-        self.entranceElevator.openDoors(callback=self.exitTheElevator)
+        self.entranceElevator.openDoors(callback=self.enterFloor)
 
-    def exitTheElevator(self):
-        # This is where we would normally start the cog battle.
-        base.localAvatar.wrtReparentTo(render)
-        self.entranceElevator.hopOff(0, True)
+    def enterFloor(self):
         self.elevatorMusic.stop()
-        self.exitElevator.openDoors()
-        self.exitElevator.addActive()
+        base.localAvatar.wrtReparentTo(render)
 
-    def loadFloorA(self):
-        self.floor = loader.loadModel(self.floorModelA)
+    def loadFloor(self, floorModel):
+        self.floor = loader.loadModel(floorModel)
         self.floor.reparentTo(render)
-
-    def loadFloorB(self):
-        self.floor = loader.loadModel(self.floorModelB)
-        self.floor.reparentTo(render)
-
-    def loadFloorC(self):
-        self.floor = loader.loadModel(self.floorModelC)
-        self.floor.reparentTo(render)
+        self.elevatorModel = loader.loadModel(self.elevatorFilename)
 
     def unloadFloor(self):
         self.floor.removeNode()
-        del self.floor
+        self.floor = None
         self.entranceElevator.delete()
         self.exitElevator.delete()
 
     def unload(self):
         self.unloadFloor()
+        del self.floorModelA
+        del self.floorModelB
+        del self.floorModelC
+        del self.floor
+        del self.elevatorFilename
+        del self.elevatorModel
         del self.entranceElevator
         del self.exitElevator
+        del self.elevatorMusic
 
     def playElevator(self):
         base.camLens.setMinFov(ToontownGlobals.CBElevatorFov/(4./3.))
@@ -63,6 +62,6 @@ class SuitInteriorBase(DirectObject):
         camera.reparentTo(self.entranceElevator.np)
         camera.setH(180)
         camera.setPos(0, 14, 4)
-        base.playMusic(self.elevatorMusic, looping=1, volume=0.8)
+        musicMgr.playMusic(self.elevatorMusic, looping=1, volume=0.8)
         track = Sequence(getRideElevatorInterval(ELEVATOR_NORMAL), Func(self.enter))
         track.start()

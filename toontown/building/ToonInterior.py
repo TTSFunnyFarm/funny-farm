@@ -1,8 +1,8 @@
 from panda3d.core import *
 from toontown.hood import ZoneUtil
-from Interior import Interior
-import ToonInteriorColors
-import InteriorStorage
+from toontown.building.Interior import Interior
+from toontown.building import ToonInteriorColors
+from toontown.building import InteriorStorage
 import random
 
 SIGN_LEFT = -4
@@ -31,15 +31,23 @@ class ToonInterior(Interior):
                 model.reparentTo(np)
                 if key2 == 'r':
                     self.replaceRandomInModel(model)
-            '''
             elif key1 == 't':
-                texture = InteriorStorage.findTexture(category, self.zoneId)
+                if self.zoneId in InteriorStorage.ZoneStyles.keys() and category in InteriorStorage.ZoneStyles[self.zoneId]:
+                    texture = InteriorStorage.findTexture(category, self.zoneId)
+                else:
+                    texture = InteriorStorage.findRandomTexture(category, self.randomGenerator)
                 np.setTexture(texture, 100)
                 newNP = np
-                if key2 == 'c':
+            if key2 == 'c':
+                if self.zoneId in InteriorStorage.ZoneStyles.keys() and category in InteriorStorage.ZoneStyles[self.zoneId]:
                     colorIndex = InteriorStorage.ZoneStyles[self.zoneId][category][1]
                     newNP.setColorScale(self.colors[category][colorIndex])
-            '''
+                else:
+                    if category == 'TI_wallpaper' or category == 'TI_wallpaper_border':
+                        self.randomGenerator.seed(self.zoneId)
+                        newNP.setColorScale(self.randomGenerator.choice(self.colors[category]))
+                    else:
+                        newNP.setColorScale(self.randomGenerator.choice(self.colors[category]))
 
     def load(self):
         self.randomGenerator = random.Random()

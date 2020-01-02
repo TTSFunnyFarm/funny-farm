@@ -55,11 +55,16 @@ class CogThief(DirectObject):
         self.kaboom = loader.loadModel('phase_4/models/minigames/ice_game_kaboom')
         self.kaboom.setScale(2.0)
         self.kaboom.setBillboardPointEye()
+        self.kaboom.reparentTo(render)
         self.kaboom.hide()
         self.kaboomTrack = None
+        self.splatTrack = None
         splatName = 'splat-creampie'
         self.splat = globalPropPool.getProp(splatName)
+        self.splat.setScale(0.1)
         self.splat.setBillboardPointEye()
+        self.splat.reparentTo(render)
+        self.splat.hide()
         self.splatType = globalPropPool.getPropType(splatName)
         self.pieHitSound = globalBattleSoundCache.getSound('AA_wholepie_only.ogg')
         return
@@ -217,7 +222,7 @@ class CogThief(DirectObject):
             return
         if not hasattr(self.game, 'barrels'):
             return
-        if self.goalId not in xrange(len(self.game.barrels)):
+        if self.goalId not in range(len(self.game.barrels)):
             return
         if not self.lastThinkTime:
             self.lastThinkTime = globalClock.getFrameTime()
@@ -307,11 +312,11 @@ class CogThief(DirectObject):
         barrelModel.setPos(barrelPos)
         self.barrel = CTGG.NoBarrelCarried
 
-    def respondToPieHit(self, timestamp):
+    def respondToPieHit(self, timestamp, pos):
         localStamp = globalClockDelta.networkToLocalTime(timestamp, bits=32)
         if self.netTimeSentToStartByHit < timestamp:
             self.clearGoal()
-            self.showSplat()
+            self.showSplat(pos)
             startPos = CTGG.CogStartingPositions[self.cogIndex]
             oldPos = self.suit.getPos()
             self.suit.setPos(startPos)
@@ -458,17 +463,18 @@ class CogThief(DirectObject):
     def showKaboom(self):
         if self.kaboomTrack and self.kaboomTrack.isPlaying():
             self.kaboomTrack.finish()
-        self.kaboom.reparentTo(render)
-        self.kaboom.setPos(self.suit.getPos())
+        self.kaboom.setPos(base.localAvatar.getPos(render))
         self.kaboom.setZ(3)
-        self.kaboomTrack = Parallel(SoundInterval(self.kaboomSound, volume=0.5), Sequence(Func(self.kaboom.showThrough), LerpScaleInterval(self.kaboom, duration=0.5, scale=Point3(10, 10, 10), startScale=Point3(1, 1, 1), blendType='easeOut'), Func(self.kaboom.hide)))
+        self.kaboom.showThrough()
+        self.kaboomTrack = Parallel(SoundInterval(self.kaboomSound, volume=0.5), Sequence(LerpScaleInterval(self.kaboom, duration=0.5, scale=Point3(10, 10, 10), blendType='easeOut'), Func(self.kaboom.hide)))
         self.kaboomTrack.start()
 
-    def showSplat(self):
-        if self.kaboomTrack and self.kaboomTrack.isPlaying():
-            self.kaboomTrack.finish()
-        self.splat.reparentTo(render)
-        self.splat.setPos(self.suit.getPos())
-        self.splat.setZ(3)
-        self.kaboomTrack = Parallel(SoundInterval(self.pieHitSound, volume=1.0), Sequence(Func(self.splat.showThrough), LerpScaleInterval(self.splat, duration=0.5, scale=1.75, startScale=Point3(0.1, 0.1, 0.1), blendType='easeOut'), Func(self.splat.hide)))
-        self.kaboomTrack.start()
+    def showSplat(self, pos):
+        if self.splatTrack and self.splatTrack.isPlaying():
+            self.splatTrack.finish()
+        pos.z = 3
+        self.splat.setPos(pos)
+        self.splat.setScale(0.1)
+        self.splat.showThrough()
+        self.splatTrack = Parallel(SoundInterval(self.pieHitSound, volume=1.0), Sequence(LerpScaleInterval(self.splat, duration=0.4, scale=2, blendType='easeOut'), Func(self.splat.hide)))
+        self.splatTrack.start()

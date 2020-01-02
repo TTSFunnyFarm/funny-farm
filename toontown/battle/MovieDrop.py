@@ -1,13 +1,14 @@
 from direct.interval.IntervalGlobal import *
-from BattleBase import *
-from BattleProps import *
-from BattleSounds import *
-import MovieCamera
+from toontown.battle.BattleBase import *
+from toontown.battle.BattleProps import *
+from toontown.battle.BattleSounds import *
+from toontown.battle import MovieCamera
 from direct.directnotify import DirectNotifyGlobal
-import MovieUtil
-import MovieNPCSOS
-from MovieUtil import calcAvgSuitPos
+from toontown.battle import MovieUtil
+from toontown.battle import MovieNPCSOS
+from toontown.battle.MovieUtil import calcAvgSuitPos
 from direct.showutil import Effects
+import functools
 notify = DirectNotifyGlobal.directNotify.newCategory('MovieDrop')
 hitSoundFiles = ('AA_drop_flowerpot.ogg', 'AA_drop_sandbag.ogg', 'AA_drop_anvil.ogg', 'AA_drop_bigweight.ogg', 'AA_drop_safe.ogg', 'AA_drop_piano.ogg', 'AA_drop_boat.ogg')
 missSoundFiles = ('AA_drop_flowerpot_miss.ogg', 'AA_drop_sandbag_miss.ogg', 'AA_drop_anvil_miss.ogg', 'AA_drop_bigweight_miss.ogg', 'AA_drop_safe_miss.ogg', 'AA_drop_piano_miss.ogg', 'AA_drop_boat_miss.ogg')
@@ -59,7 +60,7 @@ def doDrops(drops):
                 else:
                     suitDropsDict[suitId] = [(drop, target)]
 
-    suitDrops = suitDropsDict.values()
+    suitDrops = list(suitDropsDict.values())
 
     def compFunc(a, b):
         if len(a) > len(b):
@@ -68,7 +69,7 @@ def doDrops(drops):
             return -1
         return 0
 
-    suitDrops.sort(compFunc)
+    suitDrops.sort(key=functools.cmp_to_key(compFunc))
     delay = 0.0
     mtrack = Parallel(name='toplevel-drop')
     npcDrops = {}
@@ -164,7 +165,7 @@ def __doGroupDrops(groupDrops):
         numTargets = len(targets)
         closestTarget = -1
         nearestDistance = 100000.0
-        for i in xrange(numTargets):
+        for i in range(numTargets):
             suit = drop['target'][i]['suit']
             suitPos = suit.getPos(battle)
             displacement = Vec3(centerPos)
@@ -196,7 +197,7 @@ def __dropGroupObject(drop, delay, closestTarget, alreadyDodged, alreadyTeased):
     npcDrops = {}
     npcs = []
     returnedParallel = __dropObject(drop, delay, objName, level, alreadyDodged, alreadyTeased, npcs, target, npcDrops)
-    for i in xrange(len(drop['target'])):
+    for i in range(len(drop['target'])):
         target = drop['target'][i]
         suitTrack = __createSuitTrack(drop, delay, level, alreadyDodged, alreadyTeased, target, npcs)
         if suitTrack:
@@ -407,12 +408,14 @@ def __createSuitTrack(drop, delay, level, alreadyDodged, alreadyTeased, target, 
             anim = 'drop-react'
         suitReact = ActorInterval(suit, anim)
         suitTrack.append(Wait(delay + tObjectAppears))
-        suitTrack.append(showDamage)
+        if level != UBER_GAG_LEVEL_INDEX:
+            suitTrack.append(showDamage)
         suitTrack.append(updateHealthBar)
         suitGettingHit = Parallel(suitReact)
         if level == UBER_GAG_LEVEL_INDEX:
             gotHitSound = globalBattleSoundCache.getSound('AA_drop_boat_cog.ogg')
             suitGettingHit.append(SoundInterval(gotHitSound, node=toon))
+            suitGettingHit.append(Sequence(Wait(2.7), showDamage))
         suitTrack.append(suitGettingHit)
         bonusTrack = None
         if hpbonus > 0:

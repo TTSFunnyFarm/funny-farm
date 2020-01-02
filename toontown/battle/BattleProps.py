@@ -337,10 +337,6 @@ class PropPool:
             tie.getChild(0).setHpr(23.86, -16.03, 9.18)
         elif name == 'small-magnet':
             self.props[name].setScale(0.5)
-            tex = loader.loadTexture('phase_5/maps/battle_props_palette_4amla_2.jpg')
-            tex.setMinfilter(Texture.FTLinearMipmapLinear)
-            tex.setMagfilter(Texture.FTLinear)
-            self.props[name].setTexture(tex, 1)
         elif name == 'shredder-paper':
             paper = self.props[name]
             paper.setPosHpr(2.22, -0.95, 1.16, -48.61, 26.57, -111.51)
@@ -361,7 +357,7 @@ class PropPool:
             self.props[name].setTexture(tex, 1)
         elif name == 'dust':
             bin = 110
-            for cloudNum in xrange(1, 12):
+            for cloudNum in range(1, 12):
                 cloudName = '**/cloud' + str(cloudNum)
                 cloud = self.props[name].find(cloudName)
                 cloud.setBin('fixed', bin)
@@ -432,7 +428,8 @@ class PropPool:
                 self.storeProp(name, prop)
                 if name in Variants:
                     self.makeVariant(name)
-                prop.setBlend(frameBlend = True)
+                if config.GetBool('smooth-animations', True):
+                    prop.setBlend(frameBlend = True)
             return Actor.Actor(other=self.props[name])
         else:
             if name not in self.props:

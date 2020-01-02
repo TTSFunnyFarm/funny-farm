@@ -1,8 +1,8 @@
 from panda3d.core import *
 from toontown.toonbase import FunnyFarmGlobals
-from Interior import Interior
-import ToonInteriorColors
-import InteriorStorage
+from toontown.building.Interior import Interior
+from toontown.building import ToonInteriorColors
+from toontown.building import InteriorStorage
 import random
 
 class HQInterior(Interior):

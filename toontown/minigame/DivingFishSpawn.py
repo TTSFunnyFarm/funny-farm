@@ -4,7 +4,7 @@ from direct.directnotify import DirectNotifyGlobal
 from direct.interval.IntervalGlobal import *
 from direct.actor import Actor
 import random
-import DivingGameGlobals
+from toontown.minigame import DivingGameGlobals
 
 class DivingFishSpawn(DirectObject):
     RADIUS = 0.7
@@ -53,7 +53,8 @@ class DivingFishSpawn(DirectObject):
         self.fishArray[idCode] = fish
         fish.reparentTo(render)
         fish.setScale(1)
-        fish.setBlend(frameBlend=True)
+        if config.GetBool('smooth-animations', True):
+            fish.setBlend(frameBlend=True)
         fish.moveLerp = Sequence()
         if fish.name == 'clown':
             fish.setH(90 * self.direction)

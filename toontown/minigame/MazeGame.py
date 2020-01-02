@@ -9,17 +9,18 @@ from panda3d.core import Point3, Vec3
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownTimer
 from toontown.toonbase import ToontownGlobals
-from Minigame import Minigame
-from MazeSuit import MazeSuit
-from OrthoWalk import OrthoWalk
-from OrthoDrive import OrthoDrive
-import MazeGameGlobals
-import MazeData
-import MazeTreasure
-import Trajectory
-import Maze
-import MinigameAvatarScorePanel
-import MinigameGlobals
+from toontown.minigame.Minigame import Minigame
+from toontown.minigame.MazeSuit import MazeSuit
+from toontown.minigame.OrthoWalk import OrthoWalk
+from toontown.minigame.OrthoDrive import OrthoDrive
+from toontown.minigame import MazeGameGlobals
+from toontown.minigame import MazeData
+from toontown.minigame import MazeTreasure
+from toontown.minigame import Trajectory
+from toontown.minigame import Maze
+from toontown.minigame import MinigameAvatarScorePanel
+from toontown.minigame import MinigameGlobals
+import functools
 
 class MazeGame(Minigame):
     notify = directNotify.newCategory('MazeGame')
@@ -41,6 +42,7 @@ class MazeGame(Minigame):
             ToontownGlobals.TheBrrrgh: 0.2,
             ToontownGlobals.DonaldsDreamland: 0.25
         }
+        self.totalGrabbed = 0
 
     def getTitle(self):
         return TTLocalizer.MazeGameTitle
@@ -576,11 +578,11 @@ class MazeGame(Minigame):
         camera.setPos(self.camOffset)
         self.__spawnCameraTask()
         self.toonRNGs = []
-        for i in xrange(self.numPlayers):
+        for i in range(self.numPlayers):
             self.toonRNGs.append(RandomNumGen.RandomNumGen(self.randomNumGen))
 
         self.treasures = []
-        for i in xrange(self.maze.numTreasures):
+        for i in range(self.maze.numTreasures):
             self.treasures.append(MazeTreasure.MazeTreasure(self.treasureModel, self.maze.treasurePosList[i], i, self.doId))
 
         self.__loadSuits()
@@ -589,12 +591,12 @@ class MazeGame(Minigame):
 
         self.sndTable = {'hitBySuit': [None] * self.numPlayers,
          'falling': [None] * self.numPlayers}
-        for i in xrange(self.numPlayers):
+        for i in range(self.numPlayers):
             self.sndTable['hitBySuit'][i] = base.loader.loadSfx('phase_4/audio/sfx/MG_Tag_C.ogg')
             self.sndTable['falling'][i] = base.loader.loadSfx('phase_4/audio/sfx/MG_cannon_whizz.ogg')
 
         self.grabSounds = []
-        for i in xrange(5):
+        for i in range(5):
             self.grabSounds.append(base.loader.loadSfx('phase_4/audio/sfx/MG_maze_pickup.ogg'))
 
         self.grabSoundIndex = 0
@@ -699,7 +701,7 @@ class MazeGame(Minigame):
 
     def enterPlay(self):
         self.notify.debug('enterPlay')
-        for i in xrange(self.numPlayers):
+        for i in range(self.numPlayers):
             avId = self.avIdList[i]
             avName = self.getAvatarName()
             scorePanel = MinigameAvatarScorePanel.MinigameAvatarScorePanel(avId, avName)
@@ -720,7 +722,7 @@ class MazeGame(Minigame):
         self.timer.setTime(MazeGameGlobals.GAME_DURATION)
         self.timer.countdown(MazeGameGlobals.GAME_DURATION, self.timerExpired)
         self.accept('resetClock', self.__resetClock)
-        base.playMusic(self.music, looping=0, volume=0.8)
+        musicMgr.playMusic(self.music, looping=0, volume=0.8)
 
     def exitPlay(self):
         self.notify.debug('exitPlay')
@@ -775,7 +777,7 @@ class MazeGame(Minigame):
         if self.gameFSM.getCurrentState().getName() not in ['play', 'showScores']:
             self.notify.warning('ignoring msg: av %s hit by suit' % avId)
             return
-        self.notify.debug('avatar ' + `avId` + ' hit by a suit')
+        self.notify.debug('avatar ' + repr(avId) + ' hit by a suit')
         if avId != self.localAvId:
             self.__showToonHitBySuit(avId, timestamp)
 
@@ -790,7 +792,7 @@ class MazeGame(Minigame):
             oldTrack.finish()
         toon.setPos(curPos)
         toon.setZ(self.TOON_Z)
-        parentNode = render.attachNewNode('mazeFlyToonParent-' + `avId`)
+        parentNode = render.attachNewNode('mazeFlyToonParent-' + repr(avId))
         parentNode.setPos(toon.getPos())
         toon.reparentTo(parentNode)
         toon.setPos(0,0,0)
@@ -832,7 +834,7 @@ class MazeGame(Minigame):
                 camera.setPos(startCamPos + camOffset*u)
                 camera.lookAt(toon)
                 return Task.cont
-            camTaskName = 'mazeToonFlyCam-' + `avId`
+            camTaskName = 'mazeToonFlyCam-' + repr(avId)
             taskMgr.add(camTask, camTaskName, priority=20)
             def cleanupCamTask(self = self, toon = toon, camTaskName = camTaskName, startCamPos = startCamPos):
                 taskMgr.remove(camTaskName)
@@ -1012,9 +1014,9 @@ class MazeGame(Minigame):
             fasterTable = self.fasterSuitPeriodsCurve
         fasterPeriods = fasterTable[safeZone][self.numSuits]
         suitPeriods = slowerPeriods + fasterPeriods
-        self.notify.debug('suit periods: ' + `suitPeriods`)
+        self.notify.debug('suit periods: ' + repr(suitPeriods))
         self.randomNumGen.shuffle(suitPeriods)
-        for i in xrange(self.numSuits):
+        for i in range(self.numSuits):
             self.suits.append(MazeSuit(i, self.maze, self.randomNumGen, suitPeriods[i], self.getDifficulty()))
 
     def __unloadSuits(self):
@@ -1042,14 +1044,14 @@ class MazeGame(Minigame):
         curT = globalClock.getFrameTime() - self.gameStartTime
         curTic = int(curT * float(MazeGameGlobals.SUIT_TIC_FREQ))
         suitUpdates = []
-        for i in xrange(len(self.suits)):
+        for i in range(len(self.suits)):
             updateTics = self.suits[i].getThinkTimestampTics(curTic)
             suitUpdates.extend(zip(updateTics, [i] * len(updateTics)))
 
-        suitUpdates.sort(lambda a, b: a[0] - b[0])
+        suitUpdates.sort(key=functools.cmp_to_key(lambda a, b: a[0] - b[0]))
         if len(suitUpdates) > 0:
             curTic = 0
-            for i in xrange(len(suitUpdates)):
+            for i in range(len(suitUpdates)):
                 update = suitUpdates[i]
                 tic = update[0]
                 suitIndex = update[1]
@@ -1064,10 +1066,10 @@ class MazeGame(Minigame):
                         j += 1
 
                 unwalkables = []
-                for si in xrange(suitIndex):
+                for si in range(suitIndex):
                     unwalkables.extend(self.suits[si].occupiedTiles)
 
-                for si in xrange(suitIndex + 1, len(self.suits)):
+                for si in range(suitIndex + 1, len(self.suits)):
                     unwalkables.extend(self.suits[si].occupiedTiles)
 
                 suit.think(curTic, curT, unwalkables)
@@ -1093,7 +1095,7 @@ class MazeGame(Minigame):
           (lX, bY),
           (rX, bY)))
         scorePanelLocs = scorePanelLocs[self.numPlayers - 1]
-        for i in xrange(self.numPlayers):
+        for i in range(self.numPlayers):
             panel = self.scorePanels[i]
             pos = scorePanelLocs[i]
             panel.wrtReparentTo(aspect2d)
@@ -1101,10 +1103,6 @@ class MazeGame(Minigame):
 
         self.showScoreTrack = Parallel(lerpTrack, Sequence(Wait(MazeGameGlobals.SHOWSCORES_DURATION), Func(self.gameOver)))
         self.showScoreTrack.start()
-
-        #For the Alpha Blueprint ARG
-        if config.GetBool('want-blueprint4-ARG', False):
-            MinigameGlobals.generateDebugARGPhrase()
 
     def exitShowScores(self):
         self.showScoreTrack.pause()
@@ -1154,6 +1152,7 @@ class MazeGame(Minigame):
             return
         avId = self.localAvId
         self.setTreasureGrabbed(avId, treasureNum)
-        if treasureNum >= self.maze.numTreasures:
+        self.totalGrabbed += 1
+        if self.totalGrabbed >= self.maze.numTreasures:
             self.allTreasuresTaken()
         return

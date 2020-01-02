@@ -54,7 +54,7 @@ class ToontownLoadingScreen:
         self.__expectedCount = range
         self.logo.setPos(0, 0, 0.6)
         self.logo.setSz(0.8)
-        self.gui.reparentTo(aspect2d, NO_FADE_SORT_INDEX)
+        self.gui.reparentTo(aspect2d, 2000)
         self.waitBar.update(self.__count)
 
     def end(self):

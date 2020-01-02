@@ -1,29 +1,30 @@
 from panda3d.core import *
-from Minigame import *
+from toontown.minigame.Minigame import *
 from direct.interval.IntervalGlobal import *
-from OrthoWalk import *
+from toontown.minigame.OrthoWalk import *
 from direct.showbase.PythonUtil import Functor, bound, lineupPos, lerp
 from direct.fsm import ClassicFSM, State
 from direct.fsm import State
 from toontown.toonbase import TTLocalizer
-import CatchGameGlobals
+from toontown.minigame import CatchGameGlobals
 from direct.task.Task import Task
 from toontown.toon import Toon
 from toontown.suit import Suit
-import MinigameAvatarScorePanel
+from toontown.minigame import MinigameAvatarScorePanel
 from toontown.toonbase import ToontownTimer
 from toontown.toonbase import ToontownGlobals
-import CatchGameToonSD
-import Trajectory
+from toontown.minigame import CatchGameToonSD
+from toontown.minigame import Trajectory
 import math
 from direct.showbase.RandomNumGen import RandomNumGen
-import MinigameGlobals
+from toontown.minigame import MinigameGlobals
 from toontown.toon import ToonDNA
 from toontown.suit import SuitDNA
-from CatchGameGlobals import DropObjectTypes
-from CatchGameGlobals import Name2DropObjectType
-from DropPlacer import *
-from DropScheduler import *
+from toontown.minigame.CatchGameGlobals import DropObjectTypes
+from toontown.minigame.CatchGameGlobals import Name2DropObjectType
+from toontown.minigame.DropPlacer import *
+from toontown.minigame.DropScheduler import *
+from functools import reduce
 
 class CatchGame(Minigame):
     DropTaskName = 'dropSomething'
@@ -281,7 +282,7 @@ class CatchGame(Minigame):
          Toon.Toon(),
          Toon.Toon(),
          Toon.Toon()]
-        for i in xrange(len(self.posts)):
+        for i in range(len(self.posts)):
             toon = self.posts[i]
             toon.setDNA(base.localAvatar.getStyle())
             toon.reparentTo(render)
@@ -303,12 +304,12 @@ class CatchGame(Minigame):
     def showDropGrid(self):
         self.hideDropGrid()
         self.dropMarkers = []
-        print 'dropRows: %s' % self.DropRows
-        print 'dropCols: %s' % self.DropColumns
-        for row in xrange(self.DropRows):
+        print('dropRows: %s' % self.DropRows)
+        print('dropCols: %s' % self.DropColumns)
+        for row in range(self.DropRows):
             self.dropMarkers.append([])
             rowList = self.dropMarkers[row]
-            for column in xrange(self.DropColumns):
+            for column in range(self.DropColumns):
                 toon = Toon.Toon()
                 toon.setDNA(base.localAvatar.getStyle())
                 toon.reparentTo(render)
@@ -472,7 +473,7 @@ class CatchGame(Minigame):
 
         self.scores = [0] * self.numPlayers
         spacing = 0.4
-        for i in xrange(self.numPlayers):
+        for i in range(self.numPlayers):
             avId = self.avIdList[i]
             avName = self.getAvatarName()
             scorePanel = MinigameAvatarScorePanel.MinigameAvatarScorePanel(avId, avName)
@@ -498,7 +499,7 @@ class CatchGame(Minigame):
         self.timer.countdown(CatchGameGlobals.GameDuration, self.timerExpired)
         self.timer.setTransparency(1)
         self.timer.setColorScale(1, 1, 1, 0.75)
-        base.playMusic(self.music, looping=0, volume=0.9)
+        musicMgr.playMusic(self.music, looping=0, volume=0.9)
 
     def exitPlay(self):
         self.stopDropTask()
@@ -625,10 +626,6 @@ class CatchGame(Minigame):
         self.notify.debug('num fruits: %s' % self.numFruits)
         self.notify.debug('num catches: %s' % self.fruitsCaught)
         self.timer.hide()
-
-        #For the Alpha Blueprint ARG
-        if config.GetBool('want-blueprint4-ARG', False):
-            MinigameGlobals.generateDebugARGPhrase()
 
         if self.fruitsCaught >= self.numFruits:
             self.notify.debug('perfect game!')

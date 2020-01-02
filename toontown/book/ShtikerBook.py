@@ -18,8 +18,9 @@ class ShtikerBook(DirectFrame):
         self.pageTabFrame = DirectFrame(parent=self, relief=None, pos=(0.93, 1, 0.575), scale=1.25)
         self.pageTabFrame.hide()
         self.isOpen = 0
-        self.esc = False
+        self.__obscured = 0
         self.__shown = 0
+        self.esc = False
         self.hide()
         self.setPos(0, 0, 0.1)
 
@@ -118,8 +119,9 @@ class ShtikerBook(DirectFrame):
 
         def goToPage():
             messenger.send('wakeup')
-            base.playSfx(self.pageSound)
-            self.setPage(page)
+            if self.currPage != pageIndex:
+                base.playSfx(self.pageSound)
+                self.setPage(page)
 
         yOffset = 0.07 * pageIndex
         iconGeom = None
@@ -135,6 +137,7 @@ class ShtikerBook(DirectFrame):
         elif pageName == TTLocalizer.ToonPageTitle:
             iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
             iconGeom = iconModels.find('**/district')
+            iconScale = (0.8, 1, 1)
             iconModels.detachNode()
         elif pageName == TTLocalizer.MapPageTitle:
             iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
@@ -251,6 +254,13 @@ class ShtikerBook(DirectFrame):
             self.prevArrow.show()
             self.nextArrow.show()
 
+    def obscureButton(self, obscured):
+        self.__obscured = obscured
+        self.__setButtonVisibility()
+
+    def isObscured(self):
+        return self.__obscured
+
     def showButton(self):
         self.__shown = 1
         self.__setButtonVisibility()
@@ -276,8 +286,7 @@ class ShtikerBook(DirectFrame):
 
     def open(self, esc=False):
         self.esc = esc
-        base.localAvatar.disableAvatarControls()
-        base.localAvatar.endAllowPies()
+        base.localAvatar.disable()
         base.localAvatar.enterOpenBook()
         Sequence(Wait(base.localAvatar.track.getDuration() - 0.1), Func(self.enter)).start()
 
@@ -298,6 +307,4 @@ class ShtikerBook(DirectFrame):
 
     def __handleClose(self):
         self.showButton()
-        base.localAvatar.exitCloseBook()
-        base.localAvatar.enableAvatarControls()
-        base.localAvatar.beginAllowPies()
+        base.localAvatar.enable()

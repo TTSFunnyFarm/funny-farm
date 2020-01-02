@@ -1783,10 +1783,10 @@ def getRandomBottom(gender, tailorId = MAKE_A_TOON, generator = None, girlBottom
     elif girlBottomType is None:
         style = generator.choice(collection[GIRL_BOTTOMS])
     elif girlBottomType == SKIRT:
-        skirtCollection = filter(lambda style: GirlBottoms[BottomStyles[style][0]][1] == SKIRT, collection[GIRL_BOTTOMS])
+        skirtCollection = list(filter(lambda style: GirlBottoms[BottomStyles[style][0]][1] == SKIRT, collection[GIRL_BOTTOMS]))
         style = generator.choice(skirtCollection)
     elif girlBottomType == SHORTS:
-        shortsCollection = filter(lambda style: GirlBottoms[BottomStyles[style][0]][1] == SHORTS, collection[GIRL_BOTTOMS])
+        shortsCollection = list(filter(lambda style: GirlBottoms[BottomStyles[style][0]][1] == SHORTS, collection[GIRL_BOTTOMS]))
         style = generator.choice(shortsCollection)
     else:
         notify.error('Bad girlBottomType: %s' % girlBottomType)
@@ -1954,7 +1954,8 @@ allColorsList = [VBase4(1.0, 1.0, 1.0, 1.0),
  VBase4(0.898438, 0.617188, 0.90625, 1.0),
  VBase4(0.7, 0.7, 0.8, 1.0),
  VBase4(0.3, 0.3, 0.35, 1.0)]
-defaultBoyColorList = [1,
+defaultBoyColorList = [0,
+ 1,
  2,
  3,
  4,
@@ -1980,7 +1981,8 @@ defaultBoyColorList = [1,
  24,
  25,
  26]
-defaultGirlColorList = [1,
+defaultGirlColorList = [0,
+ 1,
  2,
  3,
  4,
@@ -2006,8 +2008,8 @@ defaultGirlColorList = [1,
  24,
  25,
  26]
-allColorsListApproximations = map(lambda x: VBase4(round(x[0], 3), round(x[1], 3), round(x[2], 3), round(x[3], 3)), allColorsList)
-allowedColors = set(map(lambda x: allColorsListApproximations[x], set([0] + defaultBoyColorList + defaultGirlColorList + [26])))
+allColorsListApproximations = [VBase4(round(x[0], 3), round(x[1], 3), round(x[2], 3), round(x[3], 3)) for x in allColorsList]
+allowedColors = set([allColorsListApproximations[x] for x in set(defaultBoyColorList + defaultGirlColorList + [26])])
 HatModels = [None,
  'phase_4/models/accessories/tt_m_chr_avt_acc_hat_baseball',
  'phase_4/models/accessories/tt_m_chr_avt_acc_hat_safari',

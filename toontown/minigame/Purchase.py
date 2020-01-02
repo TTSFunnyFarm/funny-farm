@@ -1,4 +1,4 @@
-from PurchaseBase import *
+from toontown.minigame.PurchaseBase import *
 from otp.nametag.NametagFloat2d import *
 from otp.nametag import NametagGlobals
 from direct.task.Task import Task
@@ -10,7 +10,7 @@ from direct.showbase.PythonUtil import Functor
 from toontown.minigame import TravelGameGlobals
 from toontown.distributed import DelayDelete
 from toontown.toonbase import ToontownGlobals
-import MinigameGlobals
+from toontown.minigame import MinigameGlobals
 COUNT_UP_RATE = 0.15
 COUNT_UP_DURATION = 0.5
 DELAY_BEFORE_COUNT_UP = 1.0
@@ -77,7 +77,7 @@ class Purchase(PurchaseBase):
         numAvs = 0
         count = 0
         localToonIndex = 0
-        for index in xrange(len(self.ids)):
+        for index in range(len(self.ids)):
             avId = self.ids[index]
             if avId == base.localAvatar.doId:
                 localToonIndex = index
@@ -261,7 +261,7 @@ class Purchase(PurchaseBase):
             headFrame.setAvatarState(state)
 
     def enter(self):
-        base.playMusic(self.music, looping=1, volume=0.8)
+        musicMgr.playMusic(self.music, looping=1, volume=0.8)
         self.fsm.request('reward')
 
     def enterReward(self):
@@ -301,7 +301,7 @@ class Purchase(PurchaseBase):
         floorNode.addSolid(floor)
         self.collisionFloor = render.attachNewNode(floorNode)
         NametagGlobals.setOnscreenChatForced(1)
-        for index in xrange(len(self.ids)):
+        for index in range(len(self.ids)):
             avId = self.ids[index]
             if self.states[index] != PURCHASE_NO_CLIENT_STATE and self.states[index] != PURCHASE_DISCONNECTED_STATE:
                 numToons += 1
@@ -503,7 +503,7 @@ class Purchase(PurchaseBase):
         totalDelay = 0
         self.convertingVotesToBeansLabel.show()
         counterIndex = 0
-        for index in xrange(len(self.ids)):
+        for index in range(len(self.ids)):
             avId = self.ids[index]
             if self.states[index] != PURCHASE_NO_CLIENT_STATE and self.states[index] != PURCHASE_DISCONNECTED_STATE:
                 self.counters[counterIndex].count = 0
@@ -518,7 +518,7 @@ class Purchase(PurchaseBase):
                 base.playSfx(state.countSound)
             return Task.done
 
-        for count in xrange(0, self.maxVotes):
+        for count in range(0, self.maxVotes):
             for counter in self.counters:
                 index = self.counters.index(counter)
                 if count < counter.max:
@@ -547,7 +547,7 @@ class Purchase(PurchaseBase):
                     base.playSfx(state.overMaxSound)
             return Task.done
 
-        for count in xrange(0, self.maxVotes):
+        for count in range(0, self.maxVotes):
             for counter in self.counters:
                 if count < counter.max:
                     index = self.counters.index(counter)
@@ -740,8 +740,9 @@ class PurchaseHeadFrame(DirectFrame):
         del self.headModel
         self.head.removeNode()
         del self.head
-        self.av.nametag.removeNametag(self.tag1Node)
-        self.av.nametag.removeNametag(self.tag2Node)
+        if hasattr(self.av, 'nametag'):
+            self.av.nametag.removeNametag(self.tag1Node)
+            self.av.nametag.removeNametag(self.tag2Node)
         self.tag1.removeNode()
         self.tag2.removeNode()
         del self.tag1

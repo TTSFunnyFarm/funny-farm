@@ -1,17 +1,23 @@
-from panda3d.core import *
-from direct.showbase.DirectObject import DirectObject
-from direct.interval.IntervalGlobal import *
 from direct.gui.DirectGui import *
-from toontown.building import Door
-from toontown.toonbase import ToontownGlobals
+from direct.interval.IntervalGlobal import *
+from direct.showbase.DirectObject import DirectObject
+from panda3d.core import *
+
+from toontown.building.SuitInterior import SuitInterior
+from toontown.hood import ZoneUtil
+from toontown.quest import Quests
+from toontown.toon import NPCToons
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
-import ZoneUtil
+from toontown.toonbase import ToontownGlobals
+from toontown.toontowngui import TTDialog
+
 
 class Hood(DirectObject):
     notify = directNotify.newCategory('Hood')
 
     def __init__(self):
+        DirectObject.__init__(self)
         self.zoneId = None
         self.hoodFile = None
         self.spookyHoodFile = None
@@ -24,8 +30,12 @@ class Hood(DirectObject):
         self.place = None
         self.battle = None
         self.battleCell = None
+        self.unloaded = False
+        self.dialog = None
+        self.actors = {}
 
     def enter(self, shop=None, tunnel=None, init=0):
+        musicMgr.playCurrentZoneMusic()
         if tunnel:
             for linkTunnel in self.geom.findAllMatches('**/linktunnel*'):
                 name = linkTunnel.getName().split('_')
@@ -33,6 +43,7 @@ class Hood(DirectObject):
                 if tunnel == zoneStr:
                     tunnelOrigin = linkTunnel.find('**/tunnel_origin')
                     base.localAvatar.tunnelIn(tunnelOrigin)
+            self.startActive()
         else:
             base.localAvatar.setRandomSpawn(self.zoneId)
             if init:
@@ -43,10 +54,16 @@ class Hood(DirectObject):
                     base.localAvatar.setSystemMessage(0, TTLocalizer.WinterHolidayMessage)
             else:
                 base.localAvatar.enterTeleportIn(callback=self.handleEntered)
-        base.avatarData.setLastHood = self.zoneId
-        dataMgr.saveToonData(base.avatarData)
+        if ZoneUtil.getCanonicalHoodId(self.zoneId) not in base.localAvatar.getHoodsVisited():
+            hoodList = base.localAvatar.getHoodsVisited()
+            hoodList.append(ZoneUtil.getCanonicalHoodId(self.zoneId))
+            base.localAvatar.setHoodsVisited(hoodList)
+
+        if base.avatarData.setLastHood != self.zoneId:
+            base.avatarData.setLastHood = self.zoneId
+            dataMgr.saveToonData(base.avatarData)
+
         self.spawnTitleText()
-        self.startActive()
 
     def exit(self):
         musicMgr.stopMusic()
@@ -56,6 +73,8 @@ class Hood(DirectObject):
             self.titleTrack = None
             self.title.cleanup()
             self.title = None
+        for npc in self.npcs:
+            npc.removeActive()
 
     def load(self):
         if base.air.holidayMgr.isHalloween():
@@ -74,16 +93,25 @@ class Hood(DirectObject):
         self.sky.flattenMedium()
         self.geom.reparentTo(render)
         self.geom.flattenMedium()
+        self.generateNPCs()
         gsg = base.win.getGsg()
         if gsg:
             self.geom.prepareScene(gsg)
 
+        self.unloaded = False
+
     def unload(self):
         self.stopSky()
+        if hasattr(self, 'npcs'):
+            for npc in self.npcs:
+                npc.removeActive()
+                npc.delete()
+                del npc
         self.geom.removeNode()
         self.sky.removeNode()
         del self.geom
         del self.sky
+        self.unloaded = True
 
     def getHoodText(self):
         hoodId = FunnyFarmGlobals.getHoodId(self.zoneId)
@@ -94,8 +122,10 @@ class Hood(DirectObject):
         return hoodText
 
     def spawnTitleText(self):
-        self.title = OnscreenText(self.getHoodText(), fg=self.titleColor, font=ToontownGlobals.getSignFont(), pos=(0, -0.5), scale=TTLocalizer.HtitleText, drawOrder=0, mayChange=1)
-        self.titleTrack = Sequence(Wait(0.1), Wait(6.0), self.title.colorScaleInterval(0.5, Vec4(1.0, 1.0, 1.0, 0.0)), Func(self.title.hide))
+        self.title = OnscreenText(self.getHoodText(), fg=self.titleColor, font=ToontownGlobals.getSignFont(),
+                                  pos=(0, -0.5), scale=TTLocalizer.HtitleText, drawOrder=0, mayChange=1)
+        self.titleTrack = Sequence(Wait(0.1), Wait(6.0), self.title.colorScaleInterval(0.5, Vec4(1.0, 1.0, 1.0, 0.0)),
+                                   Func(self.title.hide))
         self.titleTrack.start()
 
     def handleEntered(self):
@@ -103,10 +133,57 @@ class Hood(DirectObject):
         base.localAvatar.enable()
         if base.localAvatar.hp <= 0:
             base.localAvatar.setAnimState('Sad')
+            self.showSadDialog()
+        self.startActive()
+
+    def showSadDialog(self):
+        base.localAvatar.disable()
+        base.localAvatar.setAnimState('sad-neutral')
+        self.dialog = TTDialog.TTDialog(text=TTLocalizer.PlaygroundDeathAckMessage, style=TTDialog.Acknowledge, command=self.exitDialog)
+        self.dialog.show()
+
+    def exitDialog(self, response):
+        self.dialog.destroy()
+        self.dialog = None
+        base.localAvatar.enable()
+
+    def generateNPCs(self):
+        self.npcs = NPCToons.createNpcsInZone(self.zoneId)
+        for i in range(len(self.npcs)):
+            origin = self.geom.find('**/npc_origin_%d' % i)
+            if not origin.isEmpty():
+                self.npcs[i].reparentTo(self.geom)
+                self.npcs[i].setPosHpr(origin, 0, 0, 0, 0, 0, 0)
+                self.npcs[i].origin = origin
+                self.npcs[i].initializeBodyCollisions('toon')
+                self.npcs[i].addActive()
+                self.npcs[i].setAllowedToTalk(0)
+            else:
+                self.notify.warning('generateNPCs(): Could not find npc_origin_%d' % i)
+        self.refreshQuestIcons()
+
+    def refreshQuestIcons(self):
+        for npc in self.npcs:
+            for questDesc in base.localAvatar.quests:
+                quest = Quests.getQuest(questDesc[0])
+                quest.setQuestProgress(questDesc[1])
+                if quest.getCompletionStatus() == Quests.COMPLETE or quest.getType() in [Quests.QuestTypeGoTo,
+                                                                                         Quests.QuestTypeChoose,
+                                                                                         Quests.QuestTypeDeliver,
+                                                                                         Quests.QuestTypeDeliverGag]:
+                    if quest.toNpc == npc.getNpcId():
+                        if quest.questCategory == Quests.MainQuest:
+                            npc.setMainQuest(questDesc[0])
+                        else:
+                            npc.setSideQuest(questDesc[0])
+                        break
+                    else:
+                        npc.clearQuestIcon()
+            # todo: display quest offers on toons
 
     def startActive(self):
         for door in self.geom.findAllMatches('**/*door_trigger*'):
-            self.acceptOnce('enter%s' % door.getName(), self.handleDoorTrigger)
+            self.accept('enter%s' % door.getName(), self.handleDoorTrigger)
         for linkTunnel in self.geom.findAllMatches('**/linktunnel*'):
             name = linkTunnel.getName().split('_')
             hoodStr = name[1]
@@ -115,12 +192,17 @@ class Hood(DirectObject):
             if linkSphere.isEmpty():
                 linkSphere = linkTunnel.find('**/tunnel_sphere')
             linkSphere.setName('tunnel_trigger_%s_%s' % (hoodStr, zoneStr))
-            self.acceptOnce('enter%s' % linkSphere.getName(), self.handleEnterTunnel)
+            self.accept('enter%s' % linkSphere.getName(), self.handleEnterTunnel)
+        base.localAvatar.checkQuestCutscene()
+        self.accept('questsChanged', self.refreshQuestIcons)
 
     def handleDoorTrigger(self):
         pass
 
     def handleEnterTunnel(self, collEntry):
+        if base.localAvatar.hp <= 0:
+            self.showSadDialog()
+            return
         tunnel = collEntry.getIntoNodePath()
         name = tunnel.getName().split('_')
         zoneId = int(name[3])
@@ -153,6 +235,19 @@ class Hood(DirectObject):
     def exitPlace(self):
         pass
 
+    def enterSuitBuilding(self, block, track, difficulty, numFloors):
+        self.exit()
+        self.geom.reparentTo(hidden)
+        self.geom.stash()
+        self.sky.reparentTo(hidden)
+        self.sky.stash()
+        zone = self.zoneId + 500 + block
+        self.place = SuitInterior(zone, track, difficulty, numFloors)
+        self.place.loadNextFloor()
+
+    def enterEliteBuilding(self):
+        pass
+
     def startSky(self):
         self.sky.reparentTo(camera)
         self.sky.setZ(0.0)
@@ -179,7 +274,8 @@ class Hood(DirectObject):
         self.sky.setBin('background', 100)
         self.sky.reparentTo(camera)
         self.sky.setTransparency(TransparencyAttrib.MDual, 1)
-        fadeIn = self.sky.colorScaleInterval(1.5, Vec4(1, 1, 1, 1), startColorScale=Vec4(1, 1, 1, 0.25), blendType='easeInOut')
+        fadeIn = self.sky.colorScaleInterval(1.5, Vec4(1, 1, 1, 1), startColorScale=Vec4(1, 1, 1, 0.25),
+                                             blendType='easeInOut')
         fadeIn.start()
         self.sky.setZ(0.0)
         self.sky.setHpr(0.0, 0.0, 0.0)
@@ -208,7 +304,8 @@ class Hood(DirectObject):
         self.sky.setFogOff()
         self.sky.reparentTo(camera)
         self.sky.setTransparency(TransparencyAttrib.MDual, 1)
-        fadeIn = self.sky.colorScaleInterval(1.5, Vec4(1, 1, 1, 1), startColorScale=Vec4(1, 1, 1, 0.25), blendType='easeInOut')
+        fadeIn = self.sky.colorScaleInterval(1.5, Vec4(1, 1, 1, 1), startColorScale=Vec4(1, 1, 1, 0.25),
+                                             blendType='easeInOut')
         fadeIn.start()
         self.sky.setZ(0.0)
         self.sky.setHpr(0.0, 0.0, 0.0)
@@ -223,3 +320,8 @@ class Hood(DirectObject):
             self.sky.setTag('sky', 'Regular')
             self.sky.setScale(1.0)
             self.startSky()
+
+    def unloadQuestChanges(self):
+        for actor in list(self.actors.values()):
+            actor.delete()
+            del actor

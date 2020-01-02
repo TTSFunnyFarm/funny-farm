@@ -5,15 +5,15 @@ from direct.fsm.ClassicFSM import *
 from direct.fsm.State import *
 from direct.distributed.ClockDelta import globalClockDelta
 from otp.avatar import Avatar
+from otp.nametag import NametagGroup
 from direct.actor import Actor
 from direct.task import Task
 from toontown.pets import PetDNA
-from PetDNA import HeadParts, EarParts, NoseParts, TailParts, BodyTypes, BodyTextures, AllPetColors, getColors, ColorScales, PetEyeColors, EarTextures, TailTextures, getFootTexture, getEarTexture, GiraffeTail, LeopardTail, PetGenders
+from toontown.pets.PetDNA import HeadParts, EarParts, NoseParts, TailParts, BodyTypes, BodyTextures, AllPetColors, getColors, ColorScales, PetEyeColors, EarTextures, TailTextures, getFootTexture, getEarTexture, GiraffeTail, LeopardTail, PetGenders
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals
 from direct.showbase import PythonUtil
 import random
-import types
 Component2IconDict = {'boredom': 'Bored',
  'restlessness': None,
  'playfulness': 'Play',
@@ -633,7 +633,7 @@ class Pet(Avatar.Avatar):
 
     def getInteractIval(self, interactId):
         anims = self.InteractAnims[interactId]
-        if type(anims) == types.StringType:
+        if type(anims) == str:
             animIval = ActorInterval(self, anims)
         else:
             animIval = Sequence()

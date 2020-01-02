@@ -1,11 +1,10 @@
 from panda3d.core import *
-from toontown.toon import Toon
 from direct.gui import DirectGuiGlobals
 from otp.margins.MarginManager import MarginManager
 from otp.nametag import NametagGlobals
 from otp.nametag.ChatBalloon import ChatBalloon
-import TTLocalizer
-from ToontownGlobals import *
+from toontown.toonbase import TTLocalizer
+from toontown.toonbase.ToontownGlobals import *
 
 def getVar(var):
     return globals()[var]
@@ -29,10 +28,10 @@ HoodHierarchy = {
 }
 hoodNameMap = {
     Tutorial: TTLocalizer.Tutorial,
-    FunnyFarm: TTLocalizer.FunnyFarm,
-    SillySprings: TTLocalizer.SillySprings,
-    ChillyVillage: TTLocalizer.ChillyVillage,
-    MoonlitMeadow: TTLocalizer.MoonlitMeadow,
+    FunnyFarm: TTLocalizer.lFunnyFarm,
+    SillySprings: TTLocalizer.lSillySprings,
+    ChillyVillage: TTLocalizer.lChillyVillage,
+    MoonlitMeadow: TTLocalizer.lMoonlitMeadow,
 }
 StreetNames = {
     FunnyFarm: 'Playground',
@@ -74,7 +73,7 @@ def getNameFromId(hoodId):
 def getHoodId(zoneId):
     for zones in HoodHierarchy.values():
         if zoneId in zones:
-            return HoodHierarchy.keys()[HoodHierarchy.values().index(zones)]
+            return list(HoodHierarchy.keys())[list(HoodHierarchy.values()).index(zones)]
     return zoneId
 
 phaseMap = {
@@ -93,14 +92,15 @@ townCountMap = {
 }
 SpawnPoints = {
     FunnyFarm: [
-        (Point3(0, -140, 0), Vec3(0, 0, 0)),
-        (Point3(-40, -90, 0), Vec3(315, 0, 0)),
-        (Point3(40, -90, 0), Vec3(45, 0, 0)),
-        (Point3(60, -20, 0), Vec3(90, 0, 0)),
-        (Point3(-60, -20, 0), Vec3(270, 0, 0)),
-        (Point3(-50, 45, 0), Vec3(225, 0, 0)),
-        (Point3(5, 60, 0), Vec3(180, 0, 0)),
-        (Point3(60, 35, 0), Vec3(135, 0, 0))
+        (Point3(0, -100, 0.025), Vec3(0, 0, 0)),
+        (Point3(82, -89, 0.025), Vec3(45, 0, 0)),
+        (Point3(-82, -89, 0.025), Vec3(315, 0, 0)),
+        (Point3(-85, -30, 0.025), Vec3(270, 0, 0)),
+        (Point3(85, -30, 0.025), Vec3(90, 0, 0)),
+        (Point3(5, 65, 0.536), Vec3(180, 0, 0)),
+        (Point3(-63, 59, 0.025), Vec3(215, 0, 0)),
+        (Point3(-30, 15, 0.536), Vec3(190, 0, 0)),
+        (Point3(-95, -153, 0.025), Vec3(270, 0, 0))
     ]
 }
 nametagFonts = []
@@ -182,7 +182,7 @@ PetShopBearSwimPoints = [
     Point3(-5, 30, 3),
     Point3(0, 35, 3)
 ]
-ToonLevelCap = 10
+ToonLevelCap = 5
 LevelExperience = [
     # FF
     50,
@@ -229,3 +229,75 @@ LevelExperience = [
     20000,
     21000
 ]
+MaxAvatars = 6
+ShaderOff = 0
+ShaderLow = 1
+ShaderMed = 2
+ShaderHigh = 3
+ShaderUltra = 4
+ShaderCustom = 5
+WaterReflectFactorLow = 0.1
+WaterReflectFactorMed = 0.25
+WaterReflectFactorHigh = 0.5
+WaterReflectFactorUltra = 1.0
+WaterRefractFactorLow = 0.25
+WaterRefractFactorMed = 0.5
+WaterRefractFactorHigh = 0.75
+WaterRefractFactorUltra = 1.0
+WaterShaderLevels = [
+    [0, 0],
+    [WaterReflectFactorLow, WaterRefractFactorLow],
+    [WaterReflectFactorMed, WaterRefractFactorMed],
+    [WaterReflectFactorHigh, WaterRefractFactorHigh],
+    [WaterReflectFactorUltra, WaterRefractFactorUltra]
+]
+SuitBuildingMap = {
+    's': 'phase_4/models/modules/suit_landmark_sales',
+    'm': 'phase_4/models/modules/suit_landmark_money',
+    'l': 'phase_4/models/modules/suit_landmark_legal',
+    'c': 'phase_4/models/modules/suit_landmark_corp'
+}
+CheesyEffectDict = {
+    FunnyFarm: {
+        CEBigToon: ('m', 10),
+        CESmallToon: ('m', 10),
+        CEBigHead: ('m', 10),
+        CESmallHead: ('m', 10)
+    },
+    SillySprings: {
+        CEBigToon: ('m', 60),
+        CESmallToon: ('m', 60),
+        CEBigHead: ('m', 60),
+        CESmallHead: ('m', 60),
+        CEBigLegs: ('m', 30),
+        CESmallLegs: ('m', 30),
+        CEFlatPortrait: ('m', 30),
+        CEFlatProfile: ('m', 30)
+    },
+    ChillyVillage: {
+        CEBigToon: ('h', 24),
+        CESmallToon: ('h', 24),
+        CEBigHead: ('h', 24),
+        CESmallHead: ('h', 24),
+        CEBigLegs: ('h', 24),
+        CESmallLegs: ('h', 24),
+        CEFlatPortrait: ('h', 4),
+        CEFlatProfile: ('h', 4),
+        CETransparent: ('h', 2),
+        CENoColor: ('h', 2),
+        CEInvisible: ('h', 2)
+    },
+    MoonlitMeadow: {
+        CEBigToon: ('d', 2),
+        CESmallToon: ('d', 2),
+        CEBigHead: ('h', 24),
+        CESmallHead: ('h', 24),
+        CEBigLegs: ('h', 24),
+        CESmallLegs: ('h', 24),
+        CEFlatPortrait: ('h', 24),
+        CEFlatProfile: ('h', 24),
+        CETransparent: ('h', 24),
+        CENoColor: ('h', 24),
+        CEInvisible: ('h', 24)
+    }
+}

@@ -41,8 +41,8 @@ class TownBattleToonPanel(DirectFrame):
         gui.removeNode()
         return
 
-    def setLaffMeter(self, avatar):
-        self.notify.debug('setLaffMeter: new avatar %s' % avatar.doId)
+    def setAvatar(self, avatar):
+        self.notify.debug('setAvatar: new avatar %s' % avatar.doId)
         if self.avatar == avatar:
             messenger.send(self.avatar.uniqueName('hpChange'), [avatar.hp, avatar.maxHp, 1])
             return None
@@ -124,7 +124,7 @@ class TownBattleToonPanel(DirectFrame):
 
     def determineWhichText(self, numTargets, targetIndex, localNum, index):
         returnStr = ''
-        targetList = range(numTargets)
+        targetList = list(range(numTargets))
         targetList.reverse()
         for i in targetList:
             if targetIndex == -1:

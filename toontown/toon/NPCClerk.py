@@ -1,8 +1,8 @@
-from pandac.PandaModules import *
-from NPCToonBase import *
+from panda3d.core import *
+from toontown.toon.NPCToonBase import *
 from toontown.minigame import ClerkPurchase
 from toontown.book.PurchaseManagerConstants import *
-import NPCToons
+from toontown.toon import NPCToons
 from direct.task.Task import Task
 from toontown.toonbase import TTLocalizer
 from toontown.hood import ZoneUtil
@@ -45,6 +45,7 @@ class NPCClerk(NPCToonBase):
 
     def handleCollisionSphereEnter(self, collEntry):
         if self.allowedToEnter():
+            base.localAvatar.disable()
             base.localAvatar.setAnimState('neutral', 1)
             self.avatarEnter()
         else:
@@ -120,11 +121,11 @@ class NPCClerk(NPCToonBase):
         return Task.done
 
     def __handleBoughtGag(self):
-        self.setInventory(base.localAvatar.inventory.makeNetString(), base.localAvatar.getMoney(), 0)
+        self.setInventory(base.localAvatar.inventory.exportInventoryData(), base.localAvatar.getMoney(), 0)
 
     def __handlePurchaseDone(self):
         self.ignore('boughtGag')
-        self.setInventory(base.localAvatar.inventory.makeNetString(), base.localAvatar.getMoney(), 1)
+        self.setInventory(base.localAvatar.inventory.exportInventoryData(), base.localAvatar.getMoney(), 1)
         if self.purchase:
             self.purchase.exit()
             self.purchase.unload()
@@ -193,7 +194,7 @@ class NPCClerk(NPCToonBase):
         self.sendClearMovie(None)
         return
 
-    def setInventory(self, blob, newMoney, done):
+    def setInventory(self, invData, newMoney, done):
         avId = base.localAvatar.getDoId()
         if self.busy != avId:
             if self.busy != 0:
@@ -201,16 +202,16 @@ class NPCClerk(NPCToonBase):
             return
         if avId:
             av = base.localAvatar
-            newInventory = av.inventory.makeFromNetString(blob)
+            newInventory = av.inventory.makeFromInventoryData(invData)
             currentMoney = av.getMoney()
             if av.inventory.validatePurchase(newInventory, currentMoney, newMoney):
                 av.setMoney(newMoney)
                 if done:
-                    av.setInventory(av.inventory.makeNetString())
+                    av.setInventory(av.inventory.exportInventoryData())
                     av.setMoney(newMoney)
             else:
                 self.notify.warning('Avatar ' + str(avId) + ' attempted an invalid purchase.')
-                av.setInventory(av.inventory.makeNetString())
+                av.setInventory(av.inventory.exportInventoryData())
                 av.setMoney(av.getMoney())
         if self.timedOut:
             return

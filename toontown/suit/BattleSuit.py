@@ -9,10 +9,10 @@ from toontown.toonbase import ToontownGlobals
 from toontown.battle import BattleProps
 from otp.otpbase import OTPGlobals
 from otp.nametag.NametagConstants import *
-from SuitBase import SuitBase
-from Suit import Suit
-import SuitDialog
-import SuitTimings
+from toontown.suit.SuitBase import SuitBase
+from toontown.suit.Suit import Suit
+from toontown.suit import SuitDialog
+from toontown.suit import SuitTimings
 import math
 
 class BattleSuit(Suit, SuitBase):
@@ -49,7 +49,7 @@ class BattleSuit(Suit, SuitBase):
         self.hpText = None
         self.strText = None
         self.hp = None
-        self.maxHp = None
+        self.maxHP = None
         return
 
     def setDoId(self, doId):
@@ -74,8 +74,10 @@ class BattleSuit(Suit, SuitBase):
 
     def delete(self):
         self.notify.debug('BattleSuit %d: deleting' % self.getDoId())
-        del self.dna
-        del self.sp
+        if hasattr(self, 'dna'):
+            del self.dna
+        if hasattr(self, 'sp'):
+            del self.sp
         Suit.delete(self)
         SuitBase.delete(self)
 
@@ -223,7 +225,7 @@ class BattleSuit(Suit, SuitBase):
                 animTrack.append(Func(self.loop, 'neutral'))
             self.attachPropeller()
             propTrack = Parallel(Sequence(ActorInterval(self.prop, 'propeller', constrainedLoop=1, duration=waitTime + spinTime, startTime=0.0, endTime=spinTime), ActorInterval(self.prop, 'propeller', duration=propDur - openTime, startTime=openTime), Func(self.detachPropeller)))
-            if not base.cr.playGame.getActiveZone().place:
+            if hasattr(base.cr.playGame.getActiveZone(), 'place') and not base.cr.playGame.getActiveZone().place:
                 propTrack.append(SoundInterval(self.propInSound, duration=waitTime + dur, node=self))
             return Parallel(lerpPosTrack, shadowTrack, fadeInTrack, animTrack, propTrack, name=self.uniqueName('trackName'))
         else:
@@ -234,7 +236,7 @@ class BattleSuit(Suit, SuitBase):
             self.attachPropeller()
             self.prop.hide()
             propTrack = Parallel(Sequence(Func(self.prop.show), ActorInterval(self.prop, 'propeller', endTime=openTime, startTime=propDur), ActorInterval(self.prop, 'propeller', constrainedLoop=1, duration=propDur - openTime, startTime=spinTime, endTime=0.0), Func(self.detachPropeller)))
-            if not base.cr.playGame.getActiveZone().place:
+            if hasattr(base.cr.playGame.getActiveZone(), 'place') and not base.cr.playGame.getActiveZone().place:
                 propTrack.append(SoundInterval(self.propOutSound, duration=waitTime + dur, node=self))
             return Parallel(ParallelEndTogether(lerpPosTrack, shadowTrack, fadeOutTrack), actInt, propTrack, name=self.uniqueName('trackName'))
         return
@@ -276,6 +278,9 @@ class BattleSuit(Suit, SuitBase):
         self.lifter.setReach(6.0)
         self.lifter.setMaxVelocity(8.0)
         self.lifter.addCollider(self.cRayNodePath, self)
+        self.lifter.addInPattern('enter%in')
+        self.lifter.addAgainPattern(str(self.doId) + '-again%in')
+        self.lifter.addOutPattern('exit%in')
         self.cTrav = base.cTrav
 
     def disableBodyCollisions(self):
@@ -416,7 +421,7 @@ class BattleSuit(Suit, SuitBase):
 
         delta = posB - posA
         pos = posA + delta * (time / self.getLegTime(posA, posB))
-        
+
         return pos
 
     def setSkelecog(self, flag):
@@ -538,7 +543,7 @@ class BattleSuit(Suit, SuitBase):
             self.hpText.setScale(1)
             self.hpText.setBillboardPointEye()
             self.hpText.setBin('fixed', 100)
-            
+
             stringText.clearShadow()
             stringText.setAlign(TextNode.ACenter)
             stringText.setTextColor(r, g, b, a)
@@ -547,7 +552,7 @@ class BattleSuit(Suit, SuitBase):
             self.strText.setScale(0.5)
             self.strText.setBillboardPointEye()
             self.strText.setBin('fixed', 100)
-            
+
             self.nametag3d.setDepthTest(0)
             self.nametag3d.setBin('fixed', 99)
             self.hpText.setPos(0, 0, self.height / 2)

@@ -15,6 +15,7 @@ from toontown.minigame import TugOfWarGame
 from toontown.minigame import MazeGame
 from toontown.minigame import DivingGame
 from toontown.minigame import CogThiefGame
+from toontown.building.SuitInteriorBase import SuitInteriorBase
 import random
 
 class PlayGame(DirectObject):
@@ -26,6 +27,7 @@ class PlayGame(DirectObject):
     Street2ClassDict = {
         FunnyFarmGlobals.FunnyFarm: FFStreet.FFStreet
     }
+    FORCE_MINIGAME = config.GetString('force-minigame', "")
     MINIGAMES = [
         RingGame.RingGame,
         CannonGame.CannonGame,
@@ -35,7 +37,11 @@ class PlayGame(DirectObject):
         DivingGame.DivingGame,
         CogThiefGame.CogThiefGame
     ]
-
+    tmp = {}
+    for minigame in MINIGAMES:
+        tmp[minigame.getTitle(minigame)] = minigame
+    MINIGAMES = tmp
+    del tmp
     def __init__(self):
         self.hood = None
         self.street = None
@@ -54,14 +60,15 @@ class PlayGame(DirectObject):
         loader.endBulkLoad('hood')
         self.hood.enter(tunnel=tunnel, init=init)
 
-    def exitHood(self):
-        ModelPool.garbageCollect()
-        TexturePool.garbageCollect()
+    def exitHood(self, delete=True):
         if self.hood.place:
             self.hood.exitPlace()
         self.hood.exit()
         self.hood.unload()
-        self.hood = None
+        if delete:
+            self.hood = None
+        ModelPool.garbageCollect()
+        TexturePool.garbageCollect()
 
     def enterStreet(self, zoneId, tunnel=None):
         hoodId = ZoneUtil.getCanonicalHoodId(zoneId)
@@ -81,13 +88,13 @@ class PlayGame(DirectObject):
         self.street.enter(tunnel=tunnel)
 
     def exitStreet(self):
-        ModelPool.garbageCollect()
-        TexturePool.garbageCollect()
         if self.street.place:
             self.street.exitPlace()
         self.street.exit()
         self.street.unload()
         self.street = None
+        ModelPool.garbageCollect()
+        TexturePool.garbageCollect()
 
     def exitActiveZone(self):
         if self.hood:
@@ -96,10 +103,14 @@ class PlayGame(DirectObject):
             self.exitStreet()
 
     def getActiveZone(self):
+        zone = None
         if self.hood:
-            return self.hood
+            zone = self.hood
         elif self.street:
-            return self.street
+            zone = self.street
+        if zone.place and isinstance(zone.place, SuitInteriorBase):
+            zone = zone.place
+        return zone
 
     def enterTutorial(self):
         name = TTLocalizer.Tutorial
@@ -112,12 +123,13 @@ class PlayGame(DirectObject):
 
     def enterRandomMinigame(self):
         if hasattr(self.hood, 'geom'):
-            ModelPool.garbageCollect()
-            TexturePool.garbageCollect()
-            self.hood.exit()
-            self.hood.unload()
-        game = random.choice(self.MINIGAMES)()
-        if self.lastGame:
+            self.exitHood(False)
+        if self.MINIGAMES.get(self.FORCE_MINIGAME):
+            self.notify.info('Forcing %s.' % self.FORCE_MINIGAME)
+            game = self.MINIGAMES[self.FORCE_MINIGAME]()
+        else:
+            game = random.choice(list(self.MINIGAMES.values()))()
+        if self.lastGame and not self.MINIGAMES.get(self.FORCE_MINIGAME):
             if game.getTitle() == self.lastGame:
                 del game
                 self.enterRandomMinigame()
@@ -133,10 +145,10 @@ class PlayGame(DirectObject):
         self.lastGame = self.minigame.getTitle()
 
     def exitMinigame(self):
-        ModelPool.garbageCollect()
-        TexturePool.garbageCollect()
         self.minigame.delete()
         self.minigame = None
+        ModelPool.garbageCollect()
+        TexturePool.garbageCollect()
 
     def enterMinigamePurchase(self, toon, pointsArray, playerMoney, ids, states, remain, doneEvent):
         self.purchase = Purchase.Purchase(toon, pointsArray, playerMoney, ids, states, remain, doneEvent)
@@ -144,9 +156,9 @@ class PlayGame(DirectObject):
         self.purchase.enter()
 
     def exitMinigamePurchase(self):
-        ModelPool.garbageCollect()
-        TexturePool.garbageCollect()
         self.purchase.exitPurchase()
         self.purchase.exit()
         self.purchase.unload()
         self.purchase = None
+        ModelPool.garbageCollect()
+        TexturePool.garbageCollect()

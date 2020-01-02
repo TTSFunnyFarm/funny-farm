@@ -183,21 +183,13 @@ CRLostConnection = 'Your internet connection to the servers has been unexpectedl
 CRBootedReasons = {1: 'Yikes - An unexpected problem occured.  Your connection has been lost, but you should be able to connect again and go right back into Toontown.',
  100: 'You have been disconnected because someone else just logged in using your account on another computer.',
  120: 'You have been disconnected because of a problem with your authorization to use keyboard chat.',
- 122: 'There was an issue getting you into Toontown.  If the problem persists, please contact Toontown Rewritten Support.',
- 124: 'Your installed files are out of date!  Use the official launcher to download the newest version, or contact Toontown Rewritten Support if the problem persists.',
- 125: 'Your installed files appear to be invalid.  Use the official launcher to download the newest version, or contact Toontown Rewritten Support if the problem persists.',
+ 122: 'There was an issue getting you into Toontown.  If the problem persists, please contact the Toontown\'s Funny Farm team.',
+ 124: 'Your installed files are out of date!  Use the official launcher to download the newest version, or contact the Toontown\'s Funny Farm team if the problem persists.',
+ 125: 'Your installed files appear to be invalid.  Use the official launcher to download the newest version, or contact the Toontown\'s Funny Farm team if the problem persists.',
  126: 'You aren\'t authorized to use administrator privileges. The request has been noted.',
- 127: 'There appears to be a problem with your Toon.  Don\'t worry - we\'ll get it straightened out. Please contact Toontown Rewritten Support and referece Error Code 127.',
+ 127: 'There appears to be a problem with your Toon.  Don\'t worry - we\'ll get it straightened out. Please contact the Toontown\'s Funny Farm team and referece Error Code 127.',
  128: 'There appears to have been a hiccup in your connection to Toontown. Don\'t worry -- we\'re working on straightening it out. You should be able to connect again and go right back into Toontown.',
- 151: 'You were kicked out by one of the developers working on the servers.',
- 152: "You have been banned from the game for a reported violation of our Terms of Use connected to '%(name)s'. For more details, please check the Toontown Rewritten website.",
- 153: 'The district you were playing on has been reset.  Everyone who was playing on that district has also been disconnected, however, you should be able to connect again and go right back into Toontown.',
- 154: 'Toontown Rewritten is going down for an update!  Stay Tooned on our website for details, or try logging in again later.',
- 155: 'You\'ve been warned for %(dc_reason)s. Try to behave next time!',
- 200: 'Logins are currently disabled. Please try again later.',
- 288: 'Sorry, you have used up all of your available minutes this month.',
- 349: 'Sorry, you have used up all of your available minutes this month.',
- 350: 'Sorry, your play time is up for today! You\'re welcome to hop on the queue or schedule a new session at any time. Thanks for testing with us, and come back soon!',}
+ 153: 'The district you were playing on has been reset.'}
 CRBootedReasonUnknownCode = 'Yikes - An unexpected problem occured. (Error code %s)  Your connection has been lost, but you should be able to connect again and go right back into Toontown.'
 CRSystemMessages = {
     # General, generic messages:
@@ -207,18 +199,6 @@ CRSystemMessages = {
     3: 'Loony Labs: %s',
     4: 'Toon Council: %s',
     5: 'SYSTEM: %s',
-
-    # Maintenance notifications:
-    50: 'Toontown Rewritten will be closing for an update soon. Start wrapping things up!',
-    51: 'Toontown Rewritten will be closing for an update in %s minutes.',
-    52: 'Toontown Rewritten will be closing for an update in %s seconds.',
-    53: 'Toontown Rewritten will be closing for an update in just a moment. Hang tight!',
-
-    55: 'Toontown Rewritten will be closing for maintenance soon. Start wrapping things up!',
-    56: 'Toontown Rewritten will be closing for maintenance in %s minutes.',
-    57: 'Toontown Rewritten will be closing for maintenance in %s seconds.',
-    58: 'Toontown Rewritten will be closing for maintanance in just a moment.',
-
 
     60: 'The district that you\'re playing in will be closed off for maintenance soon. Try to move if you can.',
     61: 'The district that you\'re on will be closed for maintenance in %s minutes.',
@@ -241,7 +221,7 @@ CRServerDateTryAgain = 'Could not get server date from %s. Try again?'
 AfkForceAcknowledgeMessage = 'Your toon got sleepy and went to bed.'
 PeriodTimerWarning = 'Your available time is almost over!'
 PeriodForceAcknowledgeMessage = 'Sorry, you have used up all of your available time. Please exit to purchase more.'
-CREnteringToontown = 'Toontown Rewritten'
+CREnteringToontown = 'Toontown\'s Funny Farm'
 DownloadWatcherUpdate = 'Downloading %s'
 DownloadWatcherInitializing = 'Download Initializing...'
 LoginScreenUserName = 'Account Name'
@@ -264,15 +244,12 @@ DialogLength2 = 12
 DialogLength3 = 20
 GlobalSpeedChatName = 'SpeedChat'
 SCMenuPromotion = 'PROMOTIONAL'
-SCMenuElection = 'ELECTION'
 SCMenuEmotions = 'ANIMATIONS'
 SCMenuCustom = 'MY PHRASES'
 SCMenuResistance = 'UNITE!'
 SCMenuPets = 'PETS'
 SCMenuPetTricks = 'TRICKS'
 SCMenuCog = 'COG SPEAK'
-SCMenuTesting = 'TESTING'
-SCMenuBugs = 'BUGS'
 SCMenuHello = 'HELLO'
 SCMenuBye = 'GOODBYE'
 SCMenuConvo = 'CHIT CHAT'
@@ -335,38 +312,6 @@ SCMenuWinter = 'WINTER'
 SCMenuSellbotInvasion = 'SELLBOT INVASION'
 SCMenuFieldOffice = 'FIELD OFFICES'
 SCMenuIdesOfMarch = 'GREEN'
-SCMenuRogerDog = 'roger dog'
-FriendSecretNeedsPasswordWarningTitle = 'Parental Controls'
-FriendSecretNeedsParentLoginWarning = 'To get or enter a True Friend Code, log in with the Parent Account.  You can disable this prompt by changing your True Friend options.'
-FriendSecretNeedsPasswordWarning = 'To get or enter a True Friend Code, you must enter the Parent Account Password.  You can disable this prompt by changing your True Friends options.'
-FriendSecretNeedsPasswordWarningOK = lOK
-FriendSecretNeedsPasswordWarningCancel = lCancel
-FriendSecretNeedsPasswordWarningWrongUsername = "That's not the correct username.  Please enter the username of the parental account.  This is not the same username used to play the game."
-FriendSecretNeedsPasswordWarningWrongPassword = "That's not the correct password.  Please enter the password of the parental account.  This is not the same password used to play the game."
-FriendSecretIntro = "If you are playing Toontown Rewritten with someone you know in the real world, you can become True Friends.  You can chat using the keyboard with your True Friends.  Other Toons won't understand what you're saying.\n\nYou do this by getting a True Friend Code.  Tell the True Friend Code to your friend, but not to anyone else.  When your friend types in your True Friend Code on his or her screen, you'll be True Friends in Toontown!"
-FriendSecretGetSecret = 'Get a True Friend Code'
-FriendSecretEnterSecret = 'If you have a True Friend Code from someone you know, type it here.'
-FriendSecretOK = lOK
-FriendSecretEnter = 'Enter True Friend Code'
-FriendSecretCancel = lCancel
-FriendSecretGettingSecret = 'Getting True Friend Code. . .'
-FriendSecretGotSecret = "Here is your new True Friend Code.  Be sure to write it down!\n\nYou may give this True Friend Code to one person only.  Once someone types in your True Friend Code, it will not work for anyone else.  If you want to give a True Friend Code to more than one person, get another True Friend Code.\n\nThe True Friend Code will only work for the next two days.  Your friend will have to type it in before it goes away, or it won't work.\n\nYour True Friend Code is:"
-FriendSecretTooMany = "Sorry, you can't have any more True Friend Codes today.  You've already had more than your fair share!\n\nTry again tomorrow."
-FriendSecretTryingSecret = 'Trying True Friend Code. . .'
-FriendSecretEnteredSecretSuccess = 'You are now True Friends with %s!'
-FriendSecretTimeOut = 'Sorry, secrets are not working right now.'
-FriendSecretEnteredSecretUnknown = "That's not anyone's True Friend Code.  Are you sure you spelled it correctly?\n\nIf you did type it correctly, it may have expired.  Ask your friend to get a new True Friend Code for you (or get a new one yourself and give it to your friend)."
-FriendSecretEnteredSecretFull = "You can't be friends with %s because one of you has too many friends on your friends list."
-FriendSecretEnteredSecretFullNoName = "You can't be friends because one of you has too many friends on your friends list."
-FriendSecretEnteredSecretSelf = 'You just typed in your own True Friend Code!  Now no one else can use that True Friend Code.'
-FriendSecretEnteredSecretWrongProduct = "You have entered the wrong type of True Friend Code.\nThis game uses codes that begin with '%s'."
-FriendSecretNowFriends = 'You are now True Friends with %s!'
-FriendSecretNowFriendsNoName = 'You are now True Friends!'
-FriendSecretDetermineSecret = 'What type of True Friend would you like to make?'
-FriendSecretDetermineSecretAvatar = 'Avatar'
-FriendSecretDetermineSecretAvatarRollover = 'A friend only in this game'
-FriendSecretDetermineSecretAccount = 'Account'
-FriendSecretDetermineSecretAccountRollover = 'A friend across the Toontown Rewritten network'
 GuildMemberTitle = 'Member Options'
 GuildMemberPromote = 'Make Officer'
 GuildMemberPromoteInvite = 'Make Veteran'
@@ -1439,20 +1384,6 @@ SpeedChatStaticTextToontown = {100: 'Hi!',
  5320: 'These fireworks are beautiful!',
  5321: 'Nice decorations.',
  5322: 'I wish I could eat this cake!',
- 5400: "Welcome to Toontown Rewritten!",
- 5401: "I'm glad Toontown is back.",
- 5401: "Found any bugs yet?",
- 5402: "How many times have you crashed?",
- 5403: "Have you voted for the next update yet?",
- 5404: "Do you have a Toonbook?",
- 5405: "Smile! I'm livestreaming!",
- 5406: "I'm stuck.",
- 5407: "I think I found a bug.",
- 5408: "I found a bug over here.",
- 5409: "Be careful! That's buggy.",
- 5410: "Sorry, my game crashed.",
- 5411: "Send in a bug report.",
- 5412: "I hope they fix that soon!",
  5500: ":)",
  5501: ":(",
  5502: ":D",
@@ -1529,19 +1460,6 @@ SpeedChatStaticTextToontown = {100: 'Hi!',
  10005: 'Be a honey! Vote Bear!',
  10006: 'Think big! Vote Pig!',
  10007: "Vote Goat - and that's all she wrote!",
- 10100: "Who are you voting for?",
- 10101: "I'm flipping for Flippy!",
- 10102: "Clobber the competition! Flip for Flippy!",
- 10103: "Don't be wacky - Vote for Slappy!",
- 10104: "Jump for joy? Why not Jellybeans?",
- 10105: "I'm loving the election decorations!",
- 11000: "hi im roger dog",
- 11001: "no im roger dog",
- 11002: "i might be roger dog",
- 11003: "im the real roger dog",
- 11004: "this is my friend roger dog",
- 11005: "have you seen my friend roger dog",
- 11006: "you can call me roger dog for short",
  20000: SuitBrushOffs[None][0],
  20001: SuitBrushOffs[None][1],
  20002: SuitBrushOffs[None][2],

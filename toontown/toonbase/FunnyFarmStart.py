@@ -1,33 +1,59 @@
 from panda3d.core import *
-import __builtin__, os
+
+import os, glob
+
+# Mount our resources through the VirtualFileSystem:
+vfs = VirtualFileSystem.getGlobalPtr()
+mounts = ConfigVariableList('vfs-mount')
+for mount in mounts:
+    mountfile, mountpoint = (mount.split(' ', 2) + [None, None, None])[:2]
+    vfs.mount(Filename(mountfile), Filename(mountpoint), 0)
+
+if not __debug__:
+    # Mount any custom resources through the VirtualFileSystem that may exist:
+    for file in glob.glob('resources/custom/*.mf'):
+        mf = Multifile()
+        mf.openReadWrite(Filename(file))
+        names = mf.getSubfileNames()
+        for name in names:
+            ext = os.path.splitext(name)[1]
+            if ext not in ['.jpg', '.jpeg', '.png', '.ogg', '.rgb']:
+                mf.removeSubfile(name)
+
+        vfs.mount(mf, Filename('resources'), 0)
+
+import sys, builtins, importlib
 from otp.settings.Settings import Settings
 from toontown.toonbase.FunnyFarmLogger import FunnyFarmLogger
 
-__builtin__.logger = FunnyFarmLogger()
+builtins.logger = FunnyFarmLogger()
 
-if __debug__:
-    loadPrcFile('config/general.prc')
-
-# This has to be done before ToonBase loads so we can use antialiasing
 preferencesFilename = ConfigVariableString('preferences-filename', 'preferences.json').getValue()
 dir = os.path.dirname(os.getcwd() + '/' + preferencesFilename)
 if not os.path.exists(dir):
     os.makedirs(dir)
 print('Reading %s...' % preferencesFilename)
-__builtin__.settings = Settings(preferencesFilename)
+builtins.settings = Settings(preferencesFilename)
+# These have to be set before ToonBase loads
+if 'res' not in settings:
+    settings['res'] = [1280, 720]
+if 'vsync' not in settings:
+    settings['vsync'] = False
 if 'antialiasing' not in settings:
     settings['antialiasing'] = 0
+loadPrcFileData('Settings: res', 'win-size %d %d' % tuple(settings['res']))
+loadPrcFileData('Settings: vsync', 'sync-video %s' % settings['vsync'])
 loadPrcFileData('Settings: MSAA', 'framebuffer-multisample %s' % (settings['antialiasing'] > 0))
 loadPrcFileData('Settings: MSAA samples', 'multisamples %i' % settings['antialiasing'])
 
-import ToonBase
+from toontown.toonbase import ToonBase
 ToonBase.ToonBase()
 
 class game:
     name = 'toontown'
     process = 'client'
 
-__builtin__.game = game()
+builtins.game = game()
 
 from direct.gui import DirectGuiGlobals
 from direct.interval.IntervalGlobal import *
@@ -41,7 +67,6 @@ from toontown.login.DataManager import DataManager
 from toontown.login.TitleScreen import TitleScreen
 from toontown.ai.FFAIRepository import FFAIRepository
 from toontown.distributed.FFClientRepository import FFClientRepository
-from toontown.misc import Injector
 from toontown.misc import PythonUtil
 
 class FunnyFarmStart:
@@ -51,8 +76,6 @@ class FunnyFarmStart:
     def __init__(self):
         self.notify.info('Starting the game.')
 
-        if 'fullscreen' not in settings:
-            settings['fullscreen'] = False
         if 'music' not in settings:
             settings['music'] = True
         if 'sfx' not in settings:
@@ -65,9 +88,24 @@ class FunnyFarmStart:
             settings['loadDisplay'] = 'pandagl'
         if 'toonChatSounds' not in settings:
             settings['toonChatSounds'] = True
+        if 'fullscreen' not in settings:
+            settings['fullscreen'] = False
         if 'drawFps' not in settings:
             settings['drawFps'] = False
-        loadPrcFileData('Settings: res', 'win-size %d %d' % tuple(settings.get('res', (800, 600))))
+        if 'smoothAnimations' not in settings:
+            settings['smoothAnimations'] = True
+        if 'enableLODs' not in settings:
+            settings['enableLODs'] = False
+        if 'waterShader' not in settings:
+            settings['waterShader'] = False
+        if 'waterReflectionScale' not in settings:
+            settings['waterReflectionScale'] = 0
+        if 'waterRefractionScale' not in settings:
+            settings['waterRefractionScale'] = 0
+        # Resolution is set above for windowed mode. This is in case the user is running fullscreen mode.
+        # If we set the windowed resolution down here, the game wouldn't notice.
+        # However, for fullscreen, we refresh the window properties anyway.
+        loadPrcFileData('Settings: res', 'win-size %d %d' % tuple(settings['res']))
         loadPrcFileData('Settings: fullscreen', 'fullscreen %s' % settings['fullscreen'])
         loadPrcFileData('Settings: music', 'audio-music-active %s' % settings['music'])
         loadPrcFileData('Settings: sfx', 'audio-sfx-active %s' % settings['sfx'])
@@ -75,17 +113,19 @@ class FunnyFarmStart:
         loadPrcFileData('Settings: sfxVol', 'audio-master-sfx-volume %s' % settings['sfxVol'])
         loadPrcFileData('Settings: loadDisplay', 'load-display %s' % settings['loadDisplay'])
         loadPrcFileData('Settings: toonChatSounds', 'toon-chat-sounds %s' % settings['toonChatSounds'])
-        if settings['fullscreen'] == True:
-            properties = WindowProperties()
-            properties.setSize(settings['res'][0], settings['res'][1])
-            properties.setFullscreen(1)
-            properties.setParentWindow(0)
-            base.win.requestProperties(properties)
-        if settings['music'] == False:
+        loadPrcFileData('Settings: enableLODs', 'enable-lods %s' % settings['enableLODs'])
+        # Panda's interpolate-frames flag isn't very intuitive, so we will create our own variable to do smooth animations on a per-actor basis.
+        loadPrcFileData('Settings: smoothAnimations', 'smooth-animations %s' % settings['smoothAnimations'])
+        if not settings['music']:
             base.enableMusic(0)
-        if settings['sfx'] == False:
+        if not settings['sfx']:
             base.enableSoundEffects(0)
-        if settings['drawFps'] == True:
+        if settings['fullscreen']:
+            properties = WindowProperties()
+            properties.setSize(*settings['res'])
+            properties.setFullscreen(settings['fullscreen'])
+            base.win.requestProperties(properties)
+        if settings['drawFps']:
             base.setFrameRateMeter(True)
             base.drawFps = 1
 
@@ -97,25 +137,35 @@ class FunnyFarmStart:
 
         self.notify.info('Initializing AI Repository...')
         base.air = FFAIRepository()
-        base.air.preloadAvatars()
         base.air.createManagers()
         loader.loadingScreen.load()
 
-        __builtin__.musicMgr = MusicManager()
-        __builtin__.screenshotMgr = ScreenshotManager()
-        __builtin__.dataMgr = DataManager()
+        builtins.musicMgr = MusicManager()
+        builtins.screenshotMgr = ScreenshotManager()
+        builtins.dataMgr = DataManager()
+
+        if __debug__ and sys.platform == 'win32':
+            Injector = importlib.import_module('toontown.misc.Injector')
+            injector = Injector.Injector()
+            injector.daemon = True
+            injector.start()
 
         self.notify.info('Initializing Client Repository...')
         cr = FFClientRepository()
         base.initNametagGlobals()
         base.startShow(cr)
-        # Can't start a new thread right away otherwise we'll crash panda
-        taskMgr.doMethodLater(0.1, self.startAI, 'startAI')
 
-    def startAI(self, task):
-        threading.Thread(target=base.air.createSafeZones).start()
+        # Can't start a new thread right away otherwise we'll crash panda
+        taskMgr.doMethodLater(0.1, self.startAIThread, 'startAI')
+
+    def startAIThread(self, task):
+        threading.Thread(target=self.startAI).start()
         return task.done
 
-__builtin__.start = FunnyFarmStart()
+    def startAI(self):
+        base.air.preloadAvatars()
+        base.air.createSafeZones()
+
+builtins.start = FunnyFarmStart()
 
 base.run()

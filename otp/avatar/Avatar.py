@@ -10,8 +10,6 @@ from direct.distributed import ClockDelta
 from otp.avatar.ShadowCaster import ShadowCaster
 import random
 from otp.otpbase import OTPRender
-from otp.ai.MagicWordGlobal import *
-from otp.ai import MagicWordManager
 teleportNotify = DirectNotifyGlobal.directNotify.newCategory('Teleport')
 teleportNotify.showTime = True
 if config.GetBool('want-teleport-debug', 1):
@@ -327,11 +325,6 @@ class Avatar(Actor, ShadowCaster):
         else:
             notify.error('unrecognized dialogue type: ', type)
 
-        # The standard cog phrase gets too repetitive when there are so many cogs running around.
-        # Let's just choose a random one.
-        if config.GetBool('want-doomsday', False) and self.playerType == NametagGroup.CCSuit:
-            sfxIndex = random.choice([1, 2, 2, 2, 2, 3, 3, 3]) #Duplicates are Intentional
-
         if sfxIndex != None and sfxIndex < len(dialogueArray) and dialogueArray[sfxIndex] != None:
             base.playSfx(dialogueArray[sfxIndex], node=self)
         return
@@ -425,7 +418,7 @@ class Avatar(Actor, ShadowCaster):
         self.nametag.setActive(flag)
 
     def clickedNametag(self):
-        MagicWordManager.lastClickedNametag = self
+        #MagicWordManager.lastClickedNametag = self
         if self.nametag.hasButton():
             self.advancePageNumber()
         elif self.nametag.isActive():
@@ -603,30 +596,9 @@ class Avatar(Actor, ShadowCaster):
             except ValueError:
                 pass
 
-            self.nametag.unmanage(base.marginManager)
-            self.ignore(self.nametag.getUniqueId())
+            if hasattr(self, "nametag"):
+                self.nametag.unmanage(base.marginManager)
+                self.ignore(self.nametag.getUniqueId())
 
     def loop(self, animName, restart = 1, partName = None, fromFrame = None, toFrame = None):
         return Actor.loop(self, animName, restart, partName, fromFrame, toFrame)
-
-@magicWord(category=CATEGORY_GUI, types=[int])
-def clickNametag(avId):
-    """Simulate a click on an avatar's nametag, given their ID."""
-    try:
-        base
-    except NameError:
-        return
-
-    av = base.cr.doId2do.get(avId)
-    if not av:
-        return 'avId not found!'
-    if not isinstance(av, Avatar):
-        return 'ID not Avatar!'
-    if str(avId)[:2] == "40": #This implies AI object, since toons start with '1'
-        return '%s is an NPC!' % av.getName()
-    av.clickedNametag()
-
-@magicWord(category=CATEGORY_MODERATION)
-def showTarget():
-    """Show the moderators current Magic Word target."""
-    return 'Your current target is: %s [avId: %s]' % (spellbook.getTarget().getName(), spellbook.getTarget().doId)

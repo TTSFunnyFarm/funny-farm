@@ -2,8 +2,6 @@
 # deprecated. Rather than deprecating the possible several calls in our code, we'll
 # just add back the removed functions to our own PythonUtil.
 
-import __builtin__
-
 def choice(condition, ifTrue, ifFalse):
     # equivalent of C++ (condition ? ifTrue : ifFalse)
     if condition:
@@ -11,4 +9,4 @@ def choice(condition, ifTrue, ifFalse):
     else:
         return ifFalse
 
-__builtin__.choice = choice
+__builtins__['choice'] = choice

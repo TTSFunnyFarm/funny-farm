@@ -5,6 +5,7 @@ import math
 from direct.directnotify import DirectNotifyGlobal
 from toontown.toon import NPCToons
 from toontown.toonbase import TTLocalizer
+import functools
 TOON_ID_COL = 0
 TOON_TRACK_COL = 1
 TOON_LVL_COL = 2
@@ -158,7 +159,7 @@ def findToonAttack(toons, attacks, track):
             return -1
         return 0
 
-    foundAttacks.sort(compFunc)
+    foundAttacks.sort(key=functools.cmp_to_key(compFunc))
     return foundAttacks
 
 

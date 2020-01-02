@@ -177,8 +177,13 @@ def assignRewards(activeToons, toonSkillPtsGained, suitsKilled, zoneId, helpfulT
                     newGagList = toon.experience.getNewGagIndexList(i, exp)
                     toon.experience.addExp(i, amount=exp)
                     toon.inventory.addItemWithList(i, newGagList)
-        toon.setExperience(toon.experience.makeNetString())
-        toon.setInventory(toon.inventory.makeNetString())
+        toon.setExperience(toon.experience.exportExperienceData())
+        toon.setInventory(toon.inventory.exportInventoryData())
         toon.setAnimState('victory', 1)
-
+        levelExp = 0
+        for suitDict in suitsKilled:
+            level = suitDict['level']
+            levelExp += level
+        if base.localAvatar.tutorialAck:
+            base.localAvatar.addLevelExp(levelExp)
     return

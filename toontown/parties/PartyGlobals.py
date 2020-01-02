@@ -166,21 +166,6 @@ DecorationIds = PythonUtil.Enum(('BalloonAnvil',
  'snowman',
  'snowDoodle',
  'BalloonAnvilValentine'))
-TTRUnreleasedDecor = [DecorationIds.HeartTarget,
- DecorationIds.HeartBanner,
- DecorationIds.FlyingHeart,
- DecorationIds.Hydra,
- DecorationIds.BannerVictory,
- DecorationIds.CannonVictory,
- DecorationIds.CogStatueVictory,
- DecorationIds.TubeCogVictory,
- DecorationIds.CogIceCreamVictory,
- DecorationIds.cogIceCreamWinter,
- DecorationIds.StageWinter,
- DecorationIds.CogStatueWinter,
- DecorationIds.snowman,
- DecorationIds.snowDoodle,
- DecorationIds.BalloonAnvilValentine]
 DECORATION_VOLUME = 1.0
 DECORATION_CUTOFF = 45
 VictoryPartyDecorationIds = frozenset([DecorationIds.Hydra,
@@ -233,7 +218,7 @@ PlayGroundToPartyClockColors = {'the_burrrgh': (53.0 / 255.0,
 PartyGridUnitLength = [14.4, 14.6]
 PartyGridHeadingConverter = 15.0
 PartyGridToPandaOffset = (-PartyGridUnitLength[0] * PartyEditorGridSize[0] / 2.0, -PartyGridUnitLength[1] * PartyEditorGridSize[1] / 2.0)
-PartyCostMultiplier = 0 # ALPHA ONLY - remove after parties are legit
+PartyCostMultiplier = 1
 MinimumPartyCost = 100 * PartyCostMultiplier
 ActivityInformationDict = {ActivityIds.PartyJukebox: {'cost': int(50 * PartyCostMultiplier),
                             'gridsize': (1, 1),
@@ -667,9 +652,9 @@ for type in DropObjectTypes:
     Name2DropObjectType[type.name] = type
 
 Name2DOTypeId = {}
-names = Name2DropObjectType.keys()
+names = list(Name2DropObjectType.keys())
 names.sort()
-for i in xrange(len(names)):
+for i in range(len(names)):
     Name2DOTypeId[names[i]] = i
 
 DOTypeId2Name = names
@@ -828,12 +813,12 @@ def countMusic():
     for key in PhaseToMusicData:
         numMusic += len(PhaseToMusicData[key])
 
-    print 'PhaseToMusicData %d' % numMusic
+    print('PhaseToMusicData %d' % numMusic)
     numMusic = 0
     for key in PhaseToMusicData40:
         numMusic += len(PhaseToMusicData40[key])
 
-    print 'PhaseToMusicData40 %d' % numMusic
+    print('PhaseToMusicData40 %d' % numMusic)
 
 
 def getMusicRepeatTimes(length, minLength = MUSIC_MIN_LENGTH_SECONDS):

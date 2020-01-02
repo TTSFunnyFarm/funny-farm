@@ -5,9 +5,9 @@ from toontown.toonbase.ToontownGlobals import *
 from toontown.toonbase import TTLocalizer
 from toontown.parties import PartyGlobals
 from toontown.hood import *
-import Fireworks
-import FireworkShows
-from FireworkGlobals import skyTransitionDuration, preShowPauseDuration, postShowPauseDuration, preNormalMusicPauseDuration
+from toontown.effects import Fireworks
+from toontown.effects import FireworkShows
+from toontown.effects.FireworkGlobals import skyTransitionDuration, preShowPauseDuration, postShowPauseDuration, preNormalMusicPauseDuration
 from toontown.effects.FireworkShow import FireworkShow
 
 class FireworkShowMixin:
@@ -20,7 +20,7 @@ class FireworkShowMixin:
         self.timestamp = None
         self.fireworkShow = None
         self.eventId = JULY4_FIREWORKS
-        #self.accept('MusicEnabled', self.startMusic)
+        # self.accept('MusicEnabled', self.startMusic)
         return
 
     def disable(self):
@@ -31,26 +31,26 @@ class FireworkShowMixin:
                 ivalMgr.finishIntervalsMatching('shootFirework*')
             else:
                 self.destroyFireworkShow()
-        '''from toontown.hood import DDHood
-        if isinstance(self.getHood(), DDHood.DDHood):
-            self.getHood().whiteFogColor = Vec4(0.8, 0.8, 0.8, 1)
-        self.restoreCameraLens()
-        if hasattr(self.getHood(), 'loader'):
-            self.getGeom().clearColorScale()
-        if hasattr(self.getHood(), 'sky'):
-            self.getSky().show()
-            self.getSky().clearColorScale()
-        if hasattr(base, 'localAvatar') and base.localAvatar:
-            base.localAvatar.clearColorScale()
-        self.trySettingBackground(1)
-        self.ignoreAll()'''
+        # from toontown.hood import DDHood
+        # if isinstance(self.getHood(), DDHood.DDHood):
+        #     self.getHood().whiteFogColor = Vec4(0.8, 0.8, 0.8, 1)
+        # self.restoreCameraLens()
+        # if hasattr(self.getHood(), 'loader'):
+        #     self.getGeom().clearColorScale()
+        # if hasattr(self.getHood(), 'sky'):
+        #     self.getSky().show()
+        #     self.getSky().clearColorScale()
+        # if hasattr(base, 'localAvatar') and base.localAvatar:
+        #     base.localAvatar.clearColorScale()
+        # self.trySettingBackground(1)
+        # self.ignoreAll()
         return
 
     def startMusic(self):
         if self.timestamp:
             self.getLoader().music.stop()
             t = globalClockDelta.localElapsedTime(self.timestamp) - self.startDelay
-            base.playMusic(self.showMusic, 0, 1, 1, max(0, t))
+            musicMgr.playMusic(self.showMusic, 0, 1, 1, max(0, t))
 
     def shootFirework(self, x, y, z, style, color1, color2):
         amp = 5
@@ -155,7 +155,7 @@ class FireworkShowMixin:
                     Func(base.localAvatar.setSystemMessage, 0, instructionMessage),
                     Func(self.getLoader().music.stop),
                     Wait(2.0),
-                    Func(base.playMusic, self.showMusic, 0, 1, 0.8, max(0, startT))
+                    Func(musicMgr.playMusic, self.showMusic, 0, 1, 0.8, max(0, startT))
                     )
             return preShow
         return None
@@ -208,7 +208,7 @@ class FireworkShowMixin:
 
         if self.restorePlaygroundMusic:
             postShow.append(Wait(2.0))
-            postShow.append(Func(base.playMusic, self.getLoader().music, 1, 1, 0.8))
+            postShow.append(Func(musicMgr.playMusic, self.getLoader().music, 1, 1, 0.8))
         return postShow
 
     def createFireworkShow(self):
@@ -226,47 +226,46 @@ class FireworkShowMixin:
             self.fireworkShow.begin(timeStamp)
             self.fireworkShow.reparentTo(root)
             self.fireworkShow.setPosHpr(0, 300, 60, 0, 0, 0)
-            '''hood = self.getHood()
+            # hood = self.getHood()
 
-            # Dammit disney
-            from toontown.hood import TTHood
-            from toontown.hood import DDHood
-            from toontown.hood import MMHood
-            from toontown.hood import BRHood
-            from toontown.hood import DGHood
-            from toontown.hood import DLHood
-            from toontown.hood import GSHood
-            from toontown.hood import OZHood
-            from toontown.hood import GZHood
+            # from toontown.hood import TTHood
+            # from toontown.hood import DDHood
+            # from toontown.hood import MMHood
+            # from toontown.hood import BRHood
+            # from toontown.hood import DGHood
+            # from toontown.hood import DLHood
+            # from toontown.hood import GSHood
+            # from toontown.hood import OZHood
+            # from toontown.hood import GZHood
 
-            if isinstance(hood, TTHood.TTHood):
-                self.fireworkShow.setPos(150, 0, 80)
-                self.fireworkShow.setHpr(90, 0, 0)
-            elif isinstance(hood, BRHood.BRHood):
-                self.fireworkShow.setPos(-200, -60, 50)
-                self.fireworkShow.setHpr(270, 0, 0)
-            elif isinstance(hood, MMHood.MMHood):
-                self.fireworkShow.setPos(150, -25, 40)
-                self.fireworkShow.setHpr(90, 0, 0)
-            elif isinstance(hood, DGHood.DGHood):
-                self.fireworkShow.setPos(-80, -50, 60)
-                self.fireworkShow.setHpr(0, 0, 0)
-            elif isinstance(hood, DLHood.DLHood):
-                self.fireworkShow.setPos(-160, 0, 80)
-                self.fireworkShow.setHpr(270, 0, 0)
-            elif isinstance(hood, GSHood.GSHood):
-                self.fireworkShow.setPos(60, -350, 80)
-                self.fireworkShow.setHpr(20, 0, 0)
-            elif isinstance(hood, DDHood.DDHood):
-                self.fireworkShow.setPos(150, 0, 50)
-                self.fireworkShow.setHpr(90, 0, 0)
-            elif isinstance(hood, OZHood.OZHood):
-                self.fireworkShow.setPos(-450, -80, 140)
-                self.fireworkShow.setHpr(300, 0, 0)
-            elif isinstance(hood, PartyHood.PartyHood):
-                self.fireworkShow.setPos(0, -400, 120)
-                self.fireworkShow.lookAt(0, 0, 0)
-                self.fireworkShow.setScale(1.8)'''
+            # if isinstance(hood, TTHood.TTHood):
+            #     self.fireworkShow.setPos(150, 0, 80)
+            #     self.fireworkShow.setHpr(90, 0, 0)
+            # elif isinstance(hood, BRHood.BRHood):
+            #     self.fireworkShow.setPos(-200, -60, 50)
+            #     self.fireworkShow.setHpr(270, 0, 0)
+            # elif isinstance(hood, MMHood.MMHood):
+            #     self.fireworkShow.setPos(150, -25, 40)
+            #     self.fireworkShow.setHpr(90, 0, 0)
+            # elif isinstance(hood, DGHood.DGHood):
+            #     self.fireworkShow.setPos(-80, -50, 60)
+            #     self.fireworkShow.setHpr(0, 0, 0)
+            # elif isinstance(hood, DLHood.DLHood):
+            #     self.fireworkShow.setPos(-160, 0, 80)
+            #     self.fireworkShow.setHpr(270, 0, 0)
+            # elif isinstance(hood, GSHood.GSHood):
+            #     self.fireworkShow.setPos(60, -350, 80)
+            #     self.fireworkShow.setHpr(20, 0, 0)
+            # elif isinstance(hood, DDHood.DDHood):
+            #     self.fireworkShow.setPos(150, 0, 50)
+            #     self.fireworkShow.setHpr(90, 0, 0)
+            # elif isinstance(hood, OZHood.OZHood):
+            #     self.fireworkShow.setPos(-450, -80, 140)
+            #     self.fireworkShow.setHpr(300, 0, 0)
+            # elif isinstance(hood, PartyHood.PartyHood):
+            #     self.fireworkShow.setPos(0, -400, 120)
+            #     self.fireworkShow.lookAt(0, 0, 0)
+            #     self.fireworkShow.setScale(1.8)
 
     def getFireworkShowIval(self, eventId, index, songId, startT):
         show = FireworkShows.getShow(eventId, index)
