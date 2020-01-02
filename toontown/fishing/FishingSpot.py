@@ -139,10 +139,7 @@ class FishingSpot(DirectObject):
         self.notify.debug("Reeling")
         taskMgr.remove('timeOut%d' % id(self))
         taskMgr.doMethodLater(45, self.removeFromPierWithAnim, 'timeOut%d' % id(self))
-        if self.currentFish == None:
-            self.uncast()
-            self.setMovie(FishingGlobals.PullInMovie, FishingGlobals.TooSoon, 0, 0)
-        elif self.crankedBefore == False:
+        if self.crankedBefore == False:
             self.crankedBefore = True
             self.setMovie(FishingGlobals.BeginReelMovie, 0, 0, speed)
             taskMgr.remove('nibbleDone%d' % id(self))
@@ -153,7 +150,7 @@ class FishingSpot(DirectObject):
         self.totalDistance += netDistance
 
     def getSphereRadius(self):
-        return 1.5
+        return FishingGlobals.SphereRadius
 
     def setParentNodePath(self, np):
         self.parentNodePath = np
@@ -168,7 +165,7 @@ class FishingSpot(DirectObject):
         self.notify.debug("Setting occupied to {0}".format(isOccupied))
         if self.isOccupied == isOccupied:
             return # already occupied/deoccupied!
-        if self.track != None:
+        if self.track:
             if self.track.isPlaying():
                 self.track.finish()
             self.track = None
@@ -227,14 +224,14 @@ class FishingSpot(DirectObject):
 
     def setMovie(self, mode, code, item, speed):
         self.notify.debug("setMovie {0} {1} {2} {3}".format(mode, code, item, speed))
-        if self.track != None:
+        if self.track:
             if self.track.isPlaying():
                 self.track.finish()
             self.track = None
 
         self.__hideLine()
         if mode == FishingGlobals.NoMovie:
-            pass
+            return
         if mode == FishingGlobals.EnterMovie:
             self.track = Parallel()
             base.localAvatar.stopLookAround()
@@ -243,7 +240,11 @@ class FishingSpot(DirectObject):
             base.localAvatar.setBlend(animBlend = False)
             base.localAvatar.setPlayRate(1.0, 'walk')
             base.localAvatar.loop('walk')
-            toonTrack = Sequence(LerpPosHprInterval(base.localAvatar, 1.5, Point3(0, 0, 0), Point3(0, 0, 0)), Func(self.__setupNeutralBlend), Func(self.__holdPole), Parallel(ActorInterval(base.localAvatar, 'cast', playRate = 0.5, duration = 27.0 / 12.0), ActorInterval(self.pole, 'cast', playRate = 0.5, duration = 27.0 / 12.0), LerpScaleInterval(self.pole, duration = 2.0, scale = 1.0, startScale = 0.01)), Func(base.localAvatar.pose, 'cast', 88), Func(self.pole.pose, 'cast', 88))
+            toonTrack = Sequence(LerpPosHprInterval(base.localAvatar, 1.5, Point3(0, 0, 0), Point3(0, 0, 0)),
+                Func(self.__setupNeutralBlend),
+                Func(self.__holdPole),
+                Parallel(ActorInterval(base.localAvatar, 'cast', playRate = 0.5, duration = 27.0 / 12.0), ActorInterval(self.pole, 'cast', playRate = 0.5, duration = 27.0 / 12.0), LerpScaleInterval(self.pole, 1.0, 1.0, startScale = 0.01)),
+                Func(base.localAvatar.pose, 'cast', 88), Func(self.pole.pose, 'cast', 88))
             if self.isOccupied:
                 toonTrack.append(Func(self.__showCastGui))
             self.track.append(toonTrack)
@@ -325,7 +326,7 @@ class FishingSpot(DirectObject):
         return (self.nodePath, Point3())
 
     def __loadStuff(self):
-        if self.pole == None:
+        if not self.pole:
             self.pole = Actor.Actor()
             self.pole.loadModel('phase_4/models/props/fishing-pole-mod')
             self.pole.setBlend(frameBlend = config.GetBool('interpolate-animations', True))
@@ -333,12 +334,12 @@ class FishingSpot(DirectObject):
             self.pole.pose('cast', 0)
             self.ptop = self.pole.find('**/joint_attachBill')
 
-        if self.bob == None:
+        if not self.bob:
             self.bob = loader.loadModel('phase_4/models/props/fishing_bob')
             self.ripples = Ripples.Ripples(self.nodePath)
             self.ripples.hide()
 
-        if self.splashSound == None:
+        if not self.splashSound:
             self.splashSound = base.loader.loadSfx('phase_4/audio/sfx/TT_splash1.ogg')
 
     def __placeAvatar(self):
@@ -362,7 +363,7 @@ class FishingSpot(DirectObject):
     def __dropPole(self):
         self.__hideBob()
         self.__hideLine()
-        if self.pole != None:
+        if self.pole:
             self.pole.clearMat()
             self.pole.detachNode()
 
@@ -419,14 +420,12 @@ class FishingSpot(DirectObject):
         self.bobBobTask = taskMgr.add(self.__doNibbleBob, self.uniqueName('bob'))
 
     def __hideBob(self):
-        if self.bob != None:
+        if self.bob:
             self.bob.detachNode()
-
-        if self.bobBobTask != None:
+        if self.bobBobTask:
             taskMgr.remove(self.bobBobTask)
             self.bobBobTask = None
-
-        if self.ripples != None:
+        if self.ripples:
             self.ripples.stop()
             self.ripples.detachNode()
 
@@ -504,13 +503,14 @@ class FishingSpot(DirectObject):
         self.reelButton.hide()
         self.crankHeld = 1
         self.doReel(1.0, self.netTime, self.netDistance)
-        mpos = param.getMouse()
+        mw = base.mouseWatcherNode
+        mpos = (mw.getMouseX(), mw.getMouseY())
         angle = self.__getMouseAngleToCrank(mpos[0], mpos[1])
         self.crankR = self.crankHandle.getR() - angle
         self.crankAngle = angle
         self.crankDelta = 0
         self.crankTime = globalClock.getFrameTime()
-        if self.turnCrankTask == None:
+        if not self.turnCrankTask:
             self.turnCrankTask = taskMgr.add(self.__turnCrank, self.uniqueName('turnCrank'))
 
     def __releaseCrank(self, unused):
@@ -536,7 +536,7 @@ class FishingSpot(DirectObject):
             self.crankAngle = angle
 
         self.__updateCrankSpeed(0)
-        if self.targetSpeed != None:
+        if self.targetSpeed:
             self.__updateSpeedGauge()
 
         return Task.cont
@@ -568,7 +568,7 @@ class FishingSpot(DirectObject):
             totalDistance = self.netDistance
         self.tooSlow.hide()
         self.tooFast.hide()
-        if totalTime > 0:
+        if totalTime > 0 and self.currentFish:
             avgSpeed = totalDistance / totalTime
             pctDiff = 100.0 * (avgSpeed - self.targetSpeed) / self.targetSpeed
             self.speedGauge['value'] = pctDiff + 50.0
@@ -617,7 +617,7 @@ class FishingSpot(DirectObject):
             if self.crankHeld:
                 self.__releaseCrank(None)
 
-            if self.turnCrankTask != None:
+            if self.turnCrankTask:
                 taskMgr.remove(self.turnCrankTask)
                 self.turnCrankTask = None
 
@@ -713,7 +713,7 @@ class FishingSpot(DirectObject):
         except:
             world = None
 
-        if world != None:
+        if world:
             trav = CollisionTraverser()
             trav.addCollider(rayNodePath, cqueue)
             trav.traverse(world)
@@ -728,8 +728,11 @@ class FishingSpot(DirectObject):
             self.bobSpot = Point3(entry.getInteriorPoint(self.nodePath))
         self.gotBobSpot = 1
 
+    def b_fishReleaseQuery(self, fish):
+        pass
+
     def fishReleaseQuery(self, fish):
-        return # todo?
+        pass # todo?
 
     def fishReleased(self, fish):
         # todo?
