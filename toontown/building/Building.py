@@ -110,6 +110,8 @@ class Building(DirectObject):
             self.nametag.setContents(Nametag.CName)
             self.nametag.setActive(0)
             self.nametag.setObjectCode(self.block)
+            if not self.mode:
+                self.setState('toon')
             if self.mode != self.TOON_STATE:
                 self.nametag.setColorCode(NametagGroup.CCSuitBuilding)
                 self.nametag.setAvatar(self.suitDoorOrigin)
