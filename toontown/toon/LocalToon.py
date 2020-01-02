@@ -734,7 +734,9 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             self.showLevelUpText(hpGain, exp, token=1)
         else:
             self.showLevelUpText(hpGain, exp)
-        Sequence(Func(musicMgr.pauseMusic), Func(base.playSfx, self.levelUpSfx), Wait(self.levelUpSfx.length()), Func(musicMgr.unpauseMusic)).start()
+        musicMgr.pauseMusic()
+        base.playSfx(self.levelUpSfx, volume=0.5)
+        Sequence(Wait(self.levelUpSfx.length()), Func(musicMgr.unpauseMusic)).start()
         return True
 
     def showLevelUpText(self, hp, exp, token = 0):

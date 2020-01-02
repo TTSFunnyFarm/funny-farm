@@ -277,7 +277,7 @@ class LoonyLabsInterior(Interior):
         self.phase5Sfx.setLoop(True)
         self.arrowSfx = self.audio3d.loadSfx('phase_4/audio/sfx/tt_s_prp_sillyMeterArrow.ogg')
         self.arrowSfx.setLoop(False)
-        self.audio3d.setDropOffFactor(0.25)
+        self.audio3d.setDropOffFactor(0.1)
         self.accept('SillyMeterIsRunning', self.sillyMeterIsRunning)
 
     def exitSetup(self):
@@ -377,14 +377,6 @@ class LoonyLabsInterior(Interior):
 
     def enterPhase4To5(self):
         self.animSeq = Sequence(Parallel(Func(self.phase4To5Sfx.play), ActorInterval(self.sillyMeter, 'phaseFourToFive', constrainedLoop=0, startFrame=1, endFrame=120), ActorInterval(self.sillyMeterRef, 'phaseFourToFive', constrainedLoop=0, startFrame=1, endFrame=120)), Parallel(Func(self.sillyMeter.loop, 'phaseFive', fromFrame=1, toFrame=48), Func(self.sillyMeterRef.loop, 'phaseFive', fromFrame=1, toFrame=48), Sequence(Func(self.phase5Sfx.play), Func(self.audio3d.attachSoundToObject, self.phase5Sfx, self.sillyMeter))))
-        lerp = LerpFunctionInterval(musicMgr.track.setPlayRate,
-             fromData=1,
-             toData=0,
-             duration=5,
-             blendType='easeIn',
-             extraArgs=[],
-             name=None)
-        lerp.start()
         self.animSeq.start()
         self.smPhase2.show()
         self.smPhase3.show()
@@ -392,6 +384,7 @@ class LoonyLabsInterior(Interior):
         self.smPhase2Ref.show()
         self.smPhase3Ref.show()
         self.smPhase4Ref.show()
+        LerpFunctionInterval(musicMgr.track.setPlayRate, fromData=1, toData=0, duration=5, blendType='easeIn', extraArgs=[], name=None).start()
         self.accept('SillyMeterPhase', self.selectPhase)
 
     def exitPhase4To5(self):
