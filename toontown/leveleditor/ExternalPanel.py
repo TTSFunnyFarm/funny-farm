@@ -138,7 +138,7 @@ class ExternalPanel(wx.Frame):
         # the same event
         loadItem = fileMenu.Append(-1, "&Load...\tCtrl-L",
                 "Load a DNA file!")
-        saveItem = fileMenu.Append(0, "&Save...\tCTRL-S",
+        saveItem = fileMenu.Append(0, "&Save...\tCtrl-S",
                 "Save a DNA file!")
         fileMenu.AppendSeparator()
         # When using a stock ID we don't need to specify the menu item's
