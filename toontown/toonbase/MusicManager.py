@@ -121,7 +121,7 @@ class MusicManager(DirectObject):
             self.pauseTime = self.track.getTime()
 
     def __audioRestarted(self):
-        if hasattr(base, "localAvatar"):
+        if hasattr(base, "localAvatar") and base.localAvatar:
             base.localAvatar.stopSound()
         if self.pauseTime and self.track:
             self.track.setTime(self.pauseTime)
