@@ -10,7 +10,7 @@ from direct.task.Task import Task
 from toontown.effects import Ripples
 from toontown.toonbase import TTLocalizer, ToontownGlobals
 from toontown.toontowngui import TTDialog
-from toontown.fishing import FishingCodes
+from toontown.fishing import FishingGlobals
 
 class FishingSpot(DirectObject):
     notify = DirectNotifyGlobal.directNotify.newCategory('FishingSpot')
@@ -106,7 +106,7 @@ class FishingSpot(DirectObject):
     def requestEnter(self):
         self.notify.debug("Entering fishing dock")
         self.setOccupied(True)
-        self.setMovie(FishingCodes.EnterMovie, 0, 0, 0)
+        self.setMovie(FishingGlobals.EnterMovie, 0, 0, 0)
         taskMgr.remove('cancelAnimation%d' % id(self))
         taskMgr.doMethodLater(2, self.cancelAnimation, 'cancelAnimation%d' % id(self))
         taskMgr.remove('timeOut%d' % id(self))
@@ -129,8 +129,8 @@ class FishingSpot(DirectObject):
         self.cast = True
         self.currentFish = None
         self.targetSpeed = None
-        self.setMovie(FishingCodes.CastMovie, 0, 0, 0)
-        taskMgr.doMethodLater(random.randrange(FishingCodes.NibbleMinWait, FishingCodes.NibbleMaxWait), self.makeNibble, 'makeNibble%d' % id(self))
+        self.setMovie(FishingGlobals.CastMovie, 0, 0, 0)
+        taskMgr.doMethodLater(random.randrange(FishingGlobals.NibbleMinWait, FishingGlobals.NibbleMaxWait), self.makeNibble, 'makeNibble%d' % id(self))
 
     def doAutoReel(self):
         return # todo?
@@ -141,14 +141,14 @@ class FishingSpot(DirectObject):
         taskMgr.doMethodLater(45, self.removeFromPierWithAnim, 'timeOut%d' % id(self))
         if self.currentFish == None:
             self.uncast()
-            self.setMovie(FishingCodes.PullInMovie, FishingCodes.TooSoon, 0, 0)
+            self.setMovie(FishingGlobals.PullInMovie, FishingGlobals.TooSoon, 0, 0)
         elif self.crankedBefore == False:
             self.crankedBefore = True
-            self.setMovie(FishingCodes.BeginReelMovie, 0, 0, speed)
+            self.setMovie(FishingGlobals.BeginReelMovie, 0, 0, speed)
             taskMgr.remove('nibbleDone%d' % id(self))
-            taskMgr.doMethodLater(FishingCodes.PostNibbleWait, self.nibbleDone, 'nibbleDone%d' % id(self))
+            taskMgr.doMethodLater(FishingGlobals.PostNibbleWait, self.nibbleDone, 'nibbleDone%d' % id(self))
         else:
-            self.setMovie(FishingCodes.ContinueReelMovie, 0, 0, speed)
+            self.setMovie(FishingGlobals.ContinueReelMovie, 0, 0, speed)
         self.totalTime += netTime
         self.totalDistance += netDistance
 
@@ -233,9 +233,9 @@ class FishingSpot(DirectObject):
             self.track = None
 
         self.__hideLine()
-        if mode == FishingCodes.NoMovie:
+        if mode == FishingGlobals.NoMovie:
             pass
-        if mode == FishingCodes.EnterMovie:
+        if mode == FishingGlobals.EnterMovie:
             self.track = Parallel()
             base.localAvatar.stopLookAround()
             if self.isOccupied:
@@ -248,7 +248,7 @@ class FishingSpot(DirectObject):
                 toonTrack.append(Func(self.__showCastGui))
             self.track.append(toonTrack)
             self.track.start()
-        elif mode == FishingCodes.ExitMovie:
+        elif mode == FishingGlobals.ExitMovie:
             if self.isOccupied:
                 self.__hideGui()
             base.localAvatar.stopLookAround()
@@ -258,7 +258,7 @@ class FishingSpot(DirectObject):
             self.__hideBob()
             self.track = Sequence(Parallel(ActorInterval(base.localAvatar, 'cast', duration = 1.0, startTime = 1.0, endTime = 0.0), ActorInterval(self.pole, 'cast', duration = 1.0, startTime = 1.0, endTime = 0.0), LerpScaleInterval(self.pole, duration = 0.5, scale = 0.01, startScale = 1.0)), Func(self.__dropPole))
             self.track.start()
-        elif mode == FishingCodes.CastMovie:
+        elif mode == FishingGlobals.CastMovie:
             base.localAvatar.stopLookAround()
             base.localAvatar.startLookAround()
             self.__placeAvatar()
@@ -268,13 +268,13 @@ class FishingSpot(DirectObject):
                 self.track.append(Func(self.__showReelGui))
 
             self.track.start()
-        elif mode == FishingCodes.NibbleMovie:
+        elif mode == FishingGlobals.NibbleMovie:
             self.__placeAvatar()
             base.localAvatar.pose('cast', 71)
             self.pole.pose('cast', 71)
             self.__showLineWaiting()
             self.__nibbleBob()
-        elif mode == FishingCodes.BeginReelMovie:
+        elif mode == FishingGlobals.BeginReelMovie:
             base.localAvatar.stopLookAround()
             self.__placeAvatar()
             self.__hideBob()
@@ -283,7 +283,7 @@ class FishingSpot(DirectObject):
             self.pole.setPlayRate(speed, 'cast')
             self.track = Sequence(Parallel(ActorInterval(base.localAvatar, 'cast', duration = 1.0 / speed, startTime = 3.0 / speed, playRate = speed), ActorInterval(self.pole, 'cast', duration = 1.0 / speed, startTime = 3.0 / speed, playRate = speed)), Func(base.localAvatar.loop, 'cast', 1, None, 57, 65), Func(self.pole.loop, 'cast', 1, None, 96, 126))
             self.track.start()
-        elif mode == FishingCodes.ContinueReelMovie:
+        elif mode == FishingGlobals.ContinueReelMovie:
             base.localAvatar.stopLookAround()
             self.__showLineReelTaught()
             if not (self.placedAvatar):
@@ -299,7 +299,7 @@ class FishingSpot(DirectObject):
                 self.pole.loop('cast', restart = 0, fromFrame = 88, toFrame = 126)
             base.localAvatar.setPlayRate(speed/2, 'cast')
             self.pole.setPlayRate(speed/2, 'cast')
-        elif mode == FishingCodes.PullInMovie:
+        elif mode == FishingGlobals.PullInMovie:
             base.localAvatar.startLookAround()
             self.__placeAvatar()
             self.__hideBob()
@@ -309,11 +309,11 @@ class FishingSpot(DirectObject):
             self.pole.pose('cast', 94)
             if self.isOccupied:
                 self.__showCastGui()
-                if code == FishingCodes.QuestItem:
+                if code == FishingGlobals.QuestItem:
                     self.__showQuestItem(item)
-                elif code == FishingCodes.FishItem:
+                elif code == FishingGlobals.FishItem:
                     self.__showFishItem(item)
-                elif code == FishingCodes.OverLimitFishItem:
+                elif code == FishingGlobals.OverLimitFishItem:
                     self.__hideGui()
                     self.b_fishReleaseQuery(item)
                 else:
@@ -439,11 +439,11 @@ class FishingSpot(DirectObject):
     def __doNibbleBob(self, task):
         now = globalClock.getFrameTime()
         elapsed = now - self.nibbleStart
-        if elapsed > FishingCodes.NibbleTime:
+        if elapsed > FishingGlobals.NibbleTime:
             self.__showBob()
             return Task.done
 
-        x = (elapsed / FishingCodes.NibbleTime + 1.0) * 0.5
+        x = (elapsed / FishingGlobals.NibbleTime + 1.0) * 0.5
         y = math.sin(x * math.pi)
         amplitude = y * y * y * 0.2
         nibbleEffect = math.sin(now * 12) * amplitude
@@ -464,8 +464,8 @@ class FishingSpot(DirectObject):
         self.failureGui.detachNode()
         if base.localAvatar.getMoney() > 0:
             self.__hideCastButtons()
-            self.jar['text'] = str(max(base.localAvatar.getMoney() - 1, 0))
             self.doCast()
+            self.jar['text'] = str(base.localAvatar.getMoney())
         else:
             self.__showBroke()
 
@@ -544,9 +544,9 @@ class FishingSpot(DirectObject):
     def __updateCrankSpeed(self, forceUpdate):
         now = globalClock.getFrameTime()
         elapsed = now - self.crankTime
-        if elapsed != 0 and forceUpdate or elapsed >= FishingCodes.CalcCrankSpeed:
+        if elapsed != 0 and forceUpdate or elapsed >= FishingGlobals.CalcCrankSpeed:
             degreesPerSecond = -(self.crankDelta / elapsed)
-            speed = degreesPerSecond / FishingCodes.StandardCrankSpeed
+            speed = degreesPerSecond / FishingGlobals.StandardCrankSpeed
             self.netTime += elapsed
             self.netDistance += speed * elapsed
             self.doReel(speed, self.netTime, self.netDistance)
@@ -560,7 +560,7 @@ class FishingSpot(DirectObject):
         elapsed = now - self.crankTime
         if elapsed > 0:
             degreesPerSecond = -(self.crankDelta / elapsed)
-            speed = degreesPerSecond / FishingCodes.StandardCrankSpeed
+            speed = degreesPerSecond / FishingGlobals.StandardCrankSpeed
             totalTime = self.netTime + elapsed
             totalDistance = self.netDistance + speed * elapsed
         else:
@@ -572,9 +572,9 @@ class FishingSpot(DirectObject):
             avgSpeed = totalDistance / totalTime
             pctDiff = 100.0 * (avgSpeed - self.targetSpeed) / self.targetSpeed
             self.speedGauge['value'] = pctDiff + 50.0
-            if pctDiff >= FishingCodes.ManualReelMatch:
+            if pctDiff >= FishingGlobals.ManualReelMatch:
                 self.tooFast.show()
-            elif pctDiff <= -(FishingCodes.ManualReelMatch):
+            elif pctDiff <= -(FishingGlobals.ManualReelMatch):
                 self.tooSlow.show()
 
     def __getMouseAngleToCrank(self, x, y):
@@ -584,24 +584,24 @@ class FishingSpot(DirectObject):
 
     def __showFishItem(self, itemId):
         self.__makeGui()
-        itemName = FishingCodes.getFishName(itemId)
-        itemValue = int(FishingCodes.FishValues[itemId] * self.targetSpeed)
+        itemName = FishingGlobals.getFishName(itemId)
+        itemValue = int(FishingGlobals.FishValues[itemId] * self.targetSpeed)
         self.itemLabel['text'] = '{0}\nValue: {1} jellybean{2}'.format(itemName, itemValue, '' if itemValue == 1 else 's')
-        self.jar['text'] = str(min(base.localAvatar.getMoney() + itemValue, base.localAvatar.getMaxMoney()))
+        #self.jar['text'] = str(min(base.localAvatar.getMoney() + itemValue, base.localAvatar.getMaxMoney()))
         self.itemGui.reparentTo(aspect2d)
 
     def __showFailureReason(self, code):
         self.__makeGui()
         reason = ''
-        if code == FishingCodes.TooSoon:
+        if code == FishingGlobals.TooSoon:
             reason = TTLocalizer.FishingFailureTooSoon
-        elif code == FishingCodes.TooLate:
+        elif code == FishingGlobals.TooLate:
             reason = TTLocalizer.FishingFailureTooLate
-        elif code == FishingCodes.AutoReel:
+        elif code == FishingGlobals.AutoReel:
             reason = TTLocalizer.FishingFailureAutoReel
-        elif code == FishingCodes.TooSlow:
+        elif code == FishingGlobals.TooSlow:
             reason = TTLocalizer.FishingFailureTooSlow
-        elif code == FishingCodes.TooFast:
+        elif code == FishingGlobals.TooFast:
             reason = TTLocalizer.FishingFailureTooFast
 
         self.failureLabel['text'] = reason
@@ -737,11 +737,11 @@ class FishingSpot(DirectObject):
 
     def cancelAnimation(self, task = None):
         self.notify.debug("Cancelling animation")
-        self.setMovie(FishingCodes.NoMovie, 0, 0, 0)
+        self.setMovie(FishingGlobals.NoMovie, 0, 0, 0)
 
     def removeFromPierWithAnim(self, task = None):
         taskMgr.remove('cancelAnimation%d' % id(self))
-        self.setMovie(FishingCodes.ExitMovie, 0, 0, 0)
+        self.setMovie(FishingGlobals.ExitMovie, 0, 0, 0)
         taskMgr.doMethodLater(1, self.removeFromPier, 'remove%d' % id(self))
 
     def removeFromPier(self, task = None):
@@ -755,8 +755,8 @@ class FishingSpot(DirectObject):
         self.currentFish = random.randrange(0, numFish)
         self.setTargetSpeed(round(random.uniform(1.0, 3.0), 3))
         self.notify.debug('A {0} with speed {1} bit our line.'.format(TTLocalizer.ClassicFishNames[self.currentFish][0], self.targetSpeed))
-        self.setMovie(FishingCodes.NibbleMovie, 0, 0, 0)
-        taskMgr.doMethodLater(FishingCodes.NibbleTime, self.nibbleDone, 'nibbleDone%d' % id(self))
+        self.setMovie(FishingGlobals.NibbleMovie, 0, 0, 0)
+        taskMgr.doMethodLater(FishingGlobals.NibbleTime, self.nibbleDone, 'nibbleDone%d' % id(self))
         return Task.done
 
     def nibbleDone(self, task):
@@ -765,17 +765,17 @@ class FishingSpot(DirectObject):
         if self.totalTime:
             avgSpeed = self.totalDistance / self.totalTime
         if avgSpeed == 0:
-            self.setMovie(FishingCodes.PullInMovie, FishingCodes.TooLate, 0, 0)
+            self.setMovie(FishingGlobals.PullInMovie, FishingGlobals.TooLate, 0, 0)
             return Task.done
         pctDiff = 100.0 * (avgSpeed - self.targetSpeed) / self.targetSpeed
         self.notify.debug('pctDiff: {0}, avgSpeed: {1}'.format(pctDiff, avgSpeed))
-        if pctDiff >= FishingCodes.ManualReelMatch:
-            self.setMovie(FishingCodes.PullInMovie, FishingCodes.TooFast, 0, 0)
-        elif pctDiff <= -(FishingCodes.ManualReelMatch):
-            self.setMovie(FishingCodes.PullInMovie, FishingCodes.TooSlow, 0, 0)
+        if pctDiff >= FishingGlobals.ManualReelMatch:
+            self.setMovie(FishingGlobals.PullInMovie, FishingGlobals.TooFast, 0, 0)
+        elif pctDiff <= -(FishingGlobals.ManualReelMatch):
+            self.setMovie(FishingGlobals.PullInMovie, FishingGlobals.TooSlow, 0, 0)
         else:
-            self.setMovie(FishingCodes.PullInMovie, FishingCodes.FishItem, self.currentFish, 0)
-            base.localAvatar.addMoney(int(FishingCodes.FishValues[self.currentFish] * self.targetSpeed))
+            self.setMovie(FishingGlobals.PullInMovie, FishingGlobals.FishItem, self.currentFish, 0)
+            base.localAvatar.addMoney(int(FishingGlobals.FishValues[self.currentFish] * self.targetSpeed))
         return Task.done
 
     def uncast(self):
