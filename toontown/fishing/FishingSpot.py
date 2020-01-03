@@ -11,6 +11,7 @@ from toontown.effects import Ripples
 from toontown.toonbase import TTLocalizer, ToontownGlobals
 from toontown.toontowngui import TTDialog
 from toontown.fishing import FishingGlobals
+from toontown.toonbase import ToontownTimer
 
 class FishingSpot(DirectObject):
     notify = DirectNotifyGlobal.directNotify.newCategory('FishingSpot')
@@ -105,12 +106,12 @@ class FishingSpot(DirectObject):
 
     def requestEnter(self):
         self.notify.debug("Entering fishing dock")
+        self.timer = ToontownTimer.ToontownTimer()
+        self.timer.posInTopRightCorner()
         self.setOccupied(True)
         self.setMovie(FishingGlobals.EnterMovie, 0, 0, 0)
         taskMgr.remove('cancelAnimation%d' % id(self))
         taskMgr.doMethodLater(2, self.cancelAnimation, 'cancelAnimation%d' % id(self))
-        taskMgr.remove('timeOut%d' % id(self))
-        taskMgr.doMethodLater(45, self.removeFromPierWithAnim, 'timeOut%d' % id(self))
         self.lastFish = [None, None, None]
         self.cast = False
 
@@ -120,8 +121,7 @@ class FishingSpot(DirectObject):
 
     def doCast(self):
         self.notify.debug("Cast line")
-        taskMgr.remove('timeOut%d' % id(self))
-        taskMgr.doMethodLater(45, self.removeFromPierWithAnim, 'timeOut%d' % id(self))
+        self.timer.countdown(45, self.removeFromPierWithAnim)
         base.localAvatar.takeMoney(1, False)
         self.crankedBefore = False
         self.totalDistance = 0
@@ -137,13 +137,12 @@ class FishingSpot(DirectObject):
 
     def doReel(self, speed, netTime, netDistance):
         self.notify.debug("Reeling")
-        taskMgr.remove('timeOut%d' % id(self))
-        taskMgr.doMethodLater(45, self.removeFromPierWithAnim, 'timeOut%d' % id(self))
-        if self.crankedBefore == False:
+        self.timer.countdown(45, self.removeFromPierWithAnim)
+        if not self.crankedBefore:
             self.crankedBefore = True
             self.setMovie(FishingGlobals.BeginReelMovie, 0, 0, speed)
             taskMgr.remove('nibbleDone%d' % id(self))
-            taskMgr.doMethodLater(FishingGlobals.PostNibbleWait, self.nibbleDone, 'nibbleDone%d' % id(self))
+            #taskMgr.doMethodLater(FishingGlobals.PostNibbleWait, self.nibbleDone, 'nibbleDone%d' % id(self))
         else:
             self.setMovie(FishingGlobals.ContinueReelMovie, 0, 0, speed)
         self.totalTime += netTime
@@ -249,6 +248,7 @@ class FishingSpot(DirectObject):
                 toonTrack.append(Func(self.__showCastGui))
             self.track.append(toonTrack)
             self.track.start()
+            self.timer.countdown(45, self.removeFromPierWithAnim)
         elif mode == FishingGlobals.ExitMovie:
             if self.isOccupied:
                 self.__hideGui()
@@ -403,7 +403,7 @@ class FishingSpot(DirectObject):
         self.__getBobSpot()
         self.bob.reparentTo(self.nodePath)
         self.bob.setPos(self.bobSpot)
-        self.ripples.reparentTo(self.nodePath)
+        self.ripples.stop()
         self.ripples.setPos(self.bobSpot)
         self.ripples.play(0.75)
         self.bobBobTask = taskMgr.add(self.__doBobBob, self.uniqueName('bob'))
@@ -413,7 +413,7 @@ class FishingSpot(DirectObject):
         self.__getBobSpot()
         self.bob.reparentTo(self.nodePath)
         self.bob.setPos(self.bobSpot)
-        self.ripples.reparentTo(self.nodePath)
+        self.ripples.stop()
         self.ripples.setPos(self.bobSpot)
         self.ripples.play()
         self.nibbleStart = globalClock.getFrameTime()
@@ -427,7 +427,6 @@ class FishingSpot(DirectObject):
             self.bobBobTask = None
         if self.ripples:
             self.ripples.stop()
-            self.ripples.detachNode()
 
     def __doBobBob(self, task):
         now = globalClock.getFrameTime()
@@ -509,7 +508,6 @@ class FishingSpot(DirectObject):
         self.crankR = self.crankHandle.getR() - angle
         self.crankAngle = angle
         self.crankDelta = 0
-        self.crankTime = globalClock.getFrameTime()
         if not self.turnCrankTask:
             self.turnCrankTask = taskMgr.add(self.__turnCrank, self.uniqueName('turnCrank'))
 
@@ -533,10 +531,15 @@ class FishingSpot(DirectObject):
                 delta = delta + 360
 
             self.crankDelta += delta
+            if self.crankDelta > 360:
+                self.crankDelta = 360
+            elif self.crankDelta < -360:
+                self.crankDelta = -360
             self.crankAngle = angle
+            print(self.crankDelta, self.crankAngle)
 
-        self.__updateCrankSpeed(0)
-        if self.targetSpeed:
+        if self.targetSpeed and self.currentFish:
+            self.__updateCrankSpeed(0)
             self.__updateSpeedGauge()
 
         return Task.cont
@@ -555,27 +558,32 @@ class FishingSpot(DirectObject):
 
     def __updateSpeedGauge(self):
         now = globalClock.getFrameTime()
-        if self.crankTime == -1:
+        if self.crankTime < 0:
             self.crankTime = now
         elapsed = now - self.crankTime
+        degreesPerSecond = 0
+        speed = 0
         if elapsed > 0:
             degreesPerSecond = -(self.crankDelta / elapsed)
             speed = degreesPerSecond / FishingGlobals.StandardCrankSpeed
             totalTime = self.netTime + elapsed
             totalDistance = self.netDistance + speed * elapsed
+            print("NINJA")
         else:
             totalTime = self.netTime
             totalDistance = self.netDistance
-        self.tooSlow.hide()
-        self.tooFast.hide()
+            print("FORTNITE")
         if totalTime > 0 and self.currentFish:
             avgSpeed = totalDistance / totalTime
+            print(avgSpeed, self.targetSpeed, totalDistance, totalTime, elapsed, degreesPerSecond, speed)
             pctDiff = 100.0 * (avgSpeed - self.targetSpeed) / self.targetSpeed
             self.speedGauge['value'] = pctDiff + 50.0
             if pctDiff >= FishingGlobals.ManualReelMatch:
-                self.tooFast.show()
+                self.speedJudger.setText(TTLocalizer.FishingCrankTooFast)
             elif pctDiff <= -(FishingGlobals.ManualReelMatch):
-                self.tooSlow.show()
+                self.speedJudger.setText(TTLocalizer.FishingCrankTooSlow)
+            else:
+                self.speedJudger.setText("Just right!")
 
     def __getMouseAngleToCrank(self, x, y):
         p = self.crankGui.getRelativePoint(NodePath(), Point3(x, 0, y))
@@ -665,10 +673,7 @@ class FishingSpot(DirectObject):
         self.crankHandle = DirectFrame(parent = self.crankGui, state = DGG.NORMAL, relief = None, image = crank)
         self.speedGauge = DirectWaitBar(parent = self.crankGui, relief = DGG.SUNKEN, frameSize = (-0.8, 0.8, -0.15, 0.15), borderWidth = (0.02, 0.02), scale = 0.42, pos = (0, 0, 0.75), barColor = (0, 0.69, 0, 1))
         self.speedGauge.hide()
-        self.tooSlow = DirectLabel(parent = self.speedGauge, relief = None, text = TTLocalizer.FishingCrankTooSlow, scale = 0.2, pos = (-1, 0, 0.5))
-        self.tooFast = DirectLabel(parent = self.speedGauge, relief = None, text = TTLocalizer.FishingCrankTooFast, scale = 0.2, pos = (1, 0, 0.5))
-        self.tooSlow.hide()
-        self.tooFast.hide()
+        self.speedJudger = DirectLabel(parent = self.speedGauge, relief = None, text = '', scale = 0.3, pos = (0, 0, 0.5))
         self.itemGui = NodePath('itemGui')
         self.itemFrame = DirectFrame(parent = self.itemGui, relief = None, geom = DGG.getDefaultDialogGeom(), geom_color = ToontownGlobals.GlobalDialogColor, geom_scale = (1, 1, 0.5), text = TTLocalizer.FishingItemFound, text_pos = (0, 0.08), text_scale = 0.08, pos = (0, 0, 0.59))
         self.itemLabel = DirectLabel(parent = self.itemFrame, text = '', text_scale = 0.06, pos = (0, 0, -0.08))
@@ -749,14 +754,14 @@ class FishingSpot(DirectObject):
 
     def removeFromPier(self, task = None):
         self.uncast()
-        taskMgr.remove('timeOut%d' % id(self))
+        self.timer.destroy()
         self.cancelAnimation()
         self.setOccupied(False)
 
     def makeNibble(self, task):
         numFish = len(TTLocalizer.ClassicFishNames)
-        self.currentFish = random.randrange(0, numFish)
         self.setTargetSpeed(round(random.uniform(1.0, 3.0), 3))
+        self.currentFish = random.randrange(0, numFish)
         self.notify.debug('A {0} with speed {1} bit our line.'.format(TTLocalizer.ClassicFishNames[self.currentFish][0], self.targetSpeed))
         self.setMovie(FishingGlobals.NibbleMovie, 0, 0, 0)
         taskMgr.doMethodLater(FishingGlobals.NibbleTime, self.nibbleDone, 'nibbleDone%d' % id(self))
@@ -779,6 +784,7 @@ class FishingSpot(DirectObject):
         else:
             self.setMovie(FishingGlobals.PullInMovie, FishingGlobals.FishItem, self.currentFish, 0)
             base.localAvatar.addMoney(int(FishingGlobals.FishValues[self.currentFish] * self.targetSpeed))
+        self.currentFish = None
         return Task.done
 
     def uncast(self):

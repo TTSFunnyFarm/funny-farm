@@ -4061,8 +4061,8 @@ ClassicFishNames = (
     ('Old Tire', 'Old Tires'))
 FishingAutoReel = 'Auto Reel'
 FishingItemFound = 'You caught:'
-FishingCrankTooSlow = 'Too\nslow'
-FishingCrankTooFast = 'Too\nfast'
+FishingCrankTooSlow = 'Too\nslow!'
+FishingCrankTooFast = 'Too\nfast!!!'
 FishingFailure = "You didn't catch anything!"
 FishingFailureTooSoon = "Don't start to reel in the line until you see a nibble.  Wait for your float to bob up and down rapidly!"
 FishingFailureTooLate = 'Be sure to reel in the line while the fish is still nibbling!'
