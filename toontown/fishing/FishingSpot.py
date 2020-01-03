@@ -119,6 +119,87 @@ class FishingSpot(DirectObject):
         self.notify.debug("Exited fishing dock")
         self.removeFromPierWithAnim()
 
+
+    def __hideGui(self):
+        if self.madeGui:
+            if self.crankHeld:
+                self.__releaseCrank(None)
+
+            if self.turnCrankTask:
+                taskMgr.remove(self.turnCrankTask)
+                self.turnCrankTask = None
+
+            self.castGui.detachNode()
+            self.reelGui.detachNode()
+            self.crankHandle.unbind(DGG.B1PRESS)
+            self.crankHandle.unbind(DGG.B1RELEASE)
+            self.itemGui.detachNode()
+            self.failureGui.detachNode()
+            self.brokeGui.detachNode()
+
+    def __makeGui(self):
+        self.notify.debug("Making fishing gui")
+        if self.madeGui:
+            return None
+
+        buttonModels = loader.loadModel('phase_3.5/models/gui/inventory_gui')
+        upButton = buttonModels.find('**/InventoryButtonUp')
+        downButton = buttonModels.find('**/InventoryButtonDown')
+        rolloverButton = buttonModels.find('**/InventoryButtonRollover')
+        buttonModels.removeNode()
+        crankModels = loader.loadModel('phase_4/models/gui/fishing_crank')
+        crank = crankModels.find('**/fishing_crank')
+        crankArrow = crankModels.find('**/fishing_crank_arrow')
+        crankModels.removeNode()
+        jarGui = loader.loadModel('phase_3.5/models/gui/jar_gui')
+        jarImage = jarGui.find('**/Jar')
+        jarGui.removeNode()
+        self.castGui = NodePath('castGui')
+        self.exitButton = DirectButton(parent = self.castGui, relief = None, text = TTLocalizer.FishingExit, text_fg = (1, 1, 0.6, 1), text_pos = (0, -0.23), text_scale = 0.8, image = (upButton, downButton, rolloverButton), image_color = (1, 0, 0, 1), image_scale = (15, 1, 11), pos = (-0.2, 0, -0.8), scale = 0.12, command = self.__userExit)
+        self.castButton = DirectButton(parent = self.castGui, relief = None, text = TTLocalizer.FishingCast, text_fg = (1, 1, 0.6, 1), text3_fg = (0.8, 0.8, 0.8, 1), text_pos = (0, -0.23), text_scale = 0.8, image = (upButton, downButton, rolloverButton), image_color = (1, 0, 0, 1), image3_color = (0.8, 0.5, 0.5, 1), image_scale = (15, 1, 11), pos = (-0.2, 0, -0.62), scale = 0.12, command = self.__userCast)
+        self.jar = DirectLabel(parent = self.castGui, relief = None, text = str(base.localAvatar.getMoney()), text_scale = 0.2, text_fg = (0.95, 0.95, 0, 1), text_shadow = (0, 0, 0, 1), text_pos = (0, -0.1, 0), text_font = ToontownGlobals.getSignFont(), image = jarImage, pos = (-0.2, 0, -0.35), scale = 0.6)
+        self.reelGui = NodePath('reelGui')
+        self.reelButton = DirectButton(parent = self.reelGui, relief = None, text = TTLocalizer.FishingAutoReel, text_fg = (1, 1, 0.6, 1), text_pos = (0, -0.23), text_scale = 0.8, image = (upButton, downButton, rolloverButton), image_color = (0, 0.69, 0, 1), image_scale = (24, 1, 11), pos = (1.0, 0, -0.3), scale = 0.1, command = self.__userReel)
+        self.crankGui = self.reelGui.attachNewNode('crankGui')
+        arrow1 = crankArrow.copyTo(self.crankGui)
+        arrow1.setColor(1, 0, 0, 1)
+        arrow1.setPos(0.25, 0, -0.25)
+        arrow2 = crankArrow.copyTo(self.crankGui)
+        arrow2.setColor(1, 0, 0, 1)
+        arrow2.setPos(-0.25, 0, 0.25)
+        arrow2.setR(180)
+        self.crankGui.setPos(-0.2, 0, -0.69)
+        self.crankGui.setScale(0.5)
+        self.crankHandle = DirectFrame(parent = self.crankGui, state = DGG.NORMAL, relief = None, image = crank)
+        self.speedGauge = DirectWaitBar(parent = self.crankGui, relief = DGG.SUNKEN, frameSize = (-0.8, 0.8, -0.15, 0.15), borderWidth = (0.02, 0.02), scale = 0.42, pos = (0, 0, 0.75), barColor = (0, 0.69, 0, 1))
+        self.speedGauge.hide()
+        self.speedJudger = DirectLabel(parent = self.speedGauge, relief = None, text = '', scale = 0.3, pos = (0, 0, 0.5))
+        self.itemGui = NodePath('itemGui')
+        self.itemFrame = DirectFrame(parent = self.itemGui, relief = None, geom = DGG.getDefaultDialogGeom(), geom_color = ToontownGlobals.GlobalDialogColor, geom_scale = (1, 1, 0.5), text = TTLocalizer.FishingItemFound, text_pos = (0, 0.08), text_scale = 0.08, pos = (0, 0, 0.59))
+        self.itemLabel = DirectLabel(parent = self.itemFrame, text = '', text_scale = 0.06, pos = (0, 0, -0.08))
+        self.failureGui = NodePath('failureGui')
+        self.failureFrame = DirectFrame(parent = self.failureGui, relief = None, geom = DGG.getDefaultDialogGeom(), geom_color = ToontownGlobals.GlobalDialogColor, geom_scale = (1.2, 1, 0.6), text = TTLocalizer.FishingFailure, text_pos = (0, 0.12), text_scale = 0.08, pos = (0, 0, 0.59))
+        self.failureLabel = DirectLabel(parent = self.failureFrame, text = '', text_scale = 0.06, text_wordwrap = 16, pos = (0, 0, -0.04))
+        self.brokeGui = NodePath('brokeGui')
+        self.brokeFrame = DirectFrame(parent = self.brokeGui, relief = None, geom = DGG.getDefaultDialogGeom(), geom_color = ToontownGlobals.GlobalDialogColor, geom_scale = (1.2, 1, 0.6), text = TTLocalizer.FishingBrokeHeader, text_pos = (0, 0.12), text_scale = 0.08, pos = (0, 0, 0.59))
+        self.brokeLabel = DirectLabel(parent = self.brokeFrame, relief = None, text = TTLocalizer.FishingBroke, text_scale = 0.06, text_wordwrap = 16, pos = (0, 0, -0.04))
+        self.madeGui = 1
+
+    def __unmakeGui(self):
+        if not (self.madeGui):
+            return None
+
+        self.exitButton.destroy()
+        self.castButton.destroy()
+        self.jar.destroy()
+        self.reelButton.destroy()
+        self.crankHandle.destroy()
+        self.speedGauge.destroy()
+        self.itemFrame.destroy()
+        self.failureFrame.destroy()
+        self.brokeFrame.destroy()
+        self.madeGui = 0
+
     def doCast(self):
         self.notify.debug("Cast line")
         self.timer.countdown(45, self.removeFromPierWithAnim)
@@ -536,7 +617,6 @@ class FishingSpot(DirectObject):
             elif self.crankDelta < -360:
                 self.crankDelta = -360
             self.crankAngle = angle
-            print(self.crankDelta, self.crankAngle)
 
         if self.targetSpeed and self.currentFish:
             self.__updateCrankSpeed(0)
@@ -568,14 +648,11 @@ class FishingSpot(DirectObject):
             speed = degreesPerSecond / FishingGlobals.StandardCrankSpeed
             totalTime = self.netTime + elapsed
             totalDistance = self.netDistance + speed * elapsed
-            print("NINJA")
         else:
             totalTime = self.netTime
             totalDistance = self.netDistance
-            print("FORTNITE")
         if totalTime > 0 and self.currentFish:
             avgSpeed = totalDistance / totalTime
-            print(avgSpeed, self.targetSpeed, totalDistance, totalTime, elapsed, degreesPerSecond, speed)
             pctDiff = 100.0 * (avgSpeed - self.targetSpeed) / self.targetSpeed
             self.speedGauge['value'] = pctDiff + 50.0
             if pctDiff >= FishingGlobals.ManualReelMatch:
@@ -619,86 +696,6 @@ class FishingSpot(DirectObject):
         self.__makeGui()
         self.brokeGui.reparentTo(aspect2d)
         self.castButton['state'] = DGG.DISABLED
-
-    def __hideGui(self):
-        if self.madeGui:
-            if self.crankHeld:
-                self.__releaseCrank(None)
-
-            if self.turnCrankTask:
-                taskMgr.remove(self.turnCrankTask)
-                self.turnCrankTask = None
-
-            self.castGui.detachNode()
-            self.reelGui.detachNode()
-            self.crankHandle.unbind(DGG.B1PRESS)
-            self.crankHandle.unbind(DGG.B1RELEASE)
-            self.itemGui.detachNode()
-            self.failureGui.detachNode()
-            self.brokeGui.detachNode()
-
-    def __makeGui(self):
-        self.notify.debug("Making fishing gui")
-        if self.madeGui:
-            return None
-
-        buttonModels = loader.loadModel('phase_3.5/models/gui/inventory_gui')
-        upButton = buttonModels.find('**/InventoryButtonUp')
-        downButton = buttonModels.find('**/InventoryButtonDown')
-        rolloverButton = buttonModels.find('**/InventoryButtonRollover')
-        buttonModels.removeNode()
-        crankModels = loader.loadModel('phase_4/models/gui/fishing_crank')
-        crank = crankModels.find('**/fishing_crank')
-        crankArrow = crankModels.find('**/fishing_crank_arrow')
-        crankModels.removeNode()
-        jarGui = loader.loadModel('phase_3.5/models/gui/jar_gui')
-        jarImage = jarGui.find('**/Jar')
-        jarGui.removeNode()
-        self.castGui = NodePath('castGui')
-        self.exitButton = DirectButton(parent = self.castGui, relief = None, text = TTLocalizer.FishingExit, text_fg = (1, 1, 0.6, 1), text_pos = (0, -0.23), text_scale = 0.8, image = (upButton, downButton, rolloverButton), image_color = (1, 0, 0, 1), image_scale = (15, 1, 11), pos = (-0.2, 0, -0.8), scale = 0.12, command = self.__userExit)
-        self.castButton = DirectButton(parent = self.castGui, relief = None, text = TTLocalizer.FishingCast, text_fg = (1, 1, 0.6, 1), text3_fg = (0.8, 0.8, 0.8, 1), text_pos = (0, -0.23), text_scale = 0.8, image = (upButton, downButton, rolloverButton), image_color = (1, 0, 0, 1), image3_color = (0.8, 0.5, 0.5, 1), image_scale = (15, 1, 11), pos = (-0.2, 0, -0.62), scale = 0.12, command = self.__userCast)
-        self.jar = DirectLabel(parent = self.castGui, relief = None, text = str(base.localAvatar.getMoney()), text_scale = 0.2, text_fg = (0.95, 0.95, 0, 1), text_shadow = (0, 0, 0, 1), text_pos = (0, -0.1, 0), text_font = ToontownGlobals.getSignFont(), image = jarImage, pos = (-0.2, 0, -0.35), scale = 0.6)
-        self.reelGui = NodePath('reelGui')
-        self.reelButton = DirectButton(parent = self.reelGui, relief = None, text = TTLocalizer.FishingAutoReel, text_fg = (1, 1, 0.6, 1), text_pos = (0, -0.23), text_scale = 0.8, image = (upButton, downButton, rolloverButton), image_color = (0, 0.69, 0, 1), image_scale = (24, 1, 11), pos = (1.0, 0, -0.3), scale = 0.1, command = self.__userReel)
-        self.crankGui = self.reelGui.attachNewNode('crankGui')
-        arrow1 = crankArrow.copyTo(self.crankGui)
-        arrow1.setColor(1, 0, 0, 1)
-        arrow1.setPos(0.25, 0, -0.25)
-        arrow2 = crankArrow.copyTo(self.crankGui)
-        arrow2.setColor(1, 0, 0, 1)
-        arrow2.setPos(-0.25, 0, 0.25)
-        arrow2.setR(180)
-        self.crankGui.setPos(-0.2, 0, -0.69)
-        self.crankGui.setScale(0.5)
-        self.crankHandle = DirectFrame(parent = self.crankGui, state = DGG.NORMAL, relief = None, image = crank)
-        self.speedGauge = DirectWaitBar(parent = self.crankGui, relief = DGG.SUNKEN, frameSize = (-0.8, 0.8, -0.15, 0.15), borderWidth = (0.02, 0.02), scale = 0.42, pos = (0, 0, 0.75), barColor = (0, 0.69, 0, 1))
-        self.speedGauge.hide()
-        self.speedJudger = DirectLabel(parent = self.speedGauge, relief = None, text = '', scale = 0.3, pos = (0, 0, 0.5))
-        self.itemGui = NodePath('itemGui')
-        self.itemFrame = DirectFrame(parent = self.itemGui, relief = None, geom = DGG.getDefaultDialogGeom(), geom_color = ToontownGlobals.GlobalDialogColor, geom_scale = (1, 1, 0.5), text = TTLocalizer.FishingItemFound, text_pos = (0, 0.08), text_scale = 0.08, pos = (0, 0, 0.59))
-        self.itemLabel = DirectLabel(parent = self.itemFrame, text = '', text_scale = 0.06, pos = (0, 0, -0.08))
-        self.failureGui = NodePath('failureGui')
-        self.failureFrame = DirectFrame(parent = self.failureGui, relief = None, geom = DGG.getDefaultDialogGeom(), geom_color = ToontownGlobals.GlobalDialogColor, geom_scale = (1.2, 1, 0.6), text = TTLocalizer.FishingFailure, text_pos = (0, 0.12), text_scale = 0.08, pos = (0, 0, 0.59))
-        self.failureLabel = DirectLabel(parent = self.failureFrame, text = '', text_scale = 0.06, text_wordwrap = 16, pos = (0, 0, -0.04))
-        self.brokeGui = NodePath('brokeGui')
-        self.brokeFrame = DirectFrame(parent = self.brokeGui, relief = None, geom = DGG.getDefaultDialogGeom(), geom_color = ToontownGlobals.GlobalDialogColor, geom_scale = (1.2, 1, 0.6), text = TTLocalizer.FishingBrokeHeader, text_pos = (0, 0.12), text_scale = 0.08, pos = (0, 0, 0.59))
-        self.brokeLabel = DirectLabel(parent = self.brokeFrame, relief = None, text = TTLocalizer.FishingBroke, text_scale = 0.06, text_wordwrap = 16, pos = (0, 0, -0.04))
-        self.madeGui = 1
-
-    def __unmakeGui(self):
-        if not (self.madeGui):
-            return None
-
-        self.exitButton.destroy()
-        self.castButton.destroy()
-        self.jar.destroy()
-        self.reelButton.destroy()
-        self.crankHandle.destroy()
-        self.speedGauge.destroy()
-        self.itemFrame.destroy()
-        self.failureFrame.destroy()
-        self.brokeFrame.destroy()
-        self.madeGui = 0
 
     def __getBobSpot(self):
         if self.gotBobSpot:
