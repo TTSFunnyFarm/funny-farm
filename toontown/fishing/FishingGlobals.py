@@ -9,7 +9,7 @@ ContinueReelMovie = 6
 PullInMovie = 7
 
 CastTime = 2.0
-NibbleTime = 3.0
+NibbleTime = 6.0
 NibbleMinWait = 5.0
 NibbleMaxWait = 15.0
 PostNibbleWait = 5.0
