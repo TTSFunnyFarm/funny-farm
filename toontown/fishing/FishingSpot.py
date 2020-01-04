@@ -4,6 +4,7 @@ from direct.actor import Actor
 from direct.directnotify import DirectNotifyGlobal
 from direct.gui.DirectGui import *
 from direct.interval.IntervalGlobal import *
+from direct.interval.LerpInterval import *
 from direct.showbase.DirectObject import DirectObject
 from direct.showutil import Rope
 from direct.task.Task import Task
@@ -63,6 +64,7 @@ class FishingSpot(DirectObject):
         self.lineStrength = 0.0
         self.fishing = False
         self.parentNodePath = render
+        self.lerp = None
 
     def disable(self):
         self.ignore(self.uniqueName('enterFishingSpotSphere'))
@@ -226,12 +228,10 @@ class FishingSpot(DirectObject):
         if not self.crankedBefore:
             self.crankedBefore = True
             self.setMovie(FishingGlobals.BeginReelMovie, 0, 0, speed)
-            taskMgr.remove('nibbleDone%d' % id(self))
+            #taskMgr.remove('nibbleDone-%d' % id(self))
             #taskMgr.doMethodLater(FishingGlobals.PostNibbleWait, self.nibbleDone, 'nibbleDone%d' % id(self))
         else:
             self.setMovie(FishingGlobals.ContinueReelMovie, 0, 0, speed)
-        self.totalTime += netTime
-        self.totalDistance += netDistance
 
     def getSphereRadius(self):
         return FishingGlobals.SphereRadius
@@ -307,6 +307,9 @@ class FishingSpot(DirectObject):
 
     def getTargetSpeed(self):
         return self.targetSpeed
+
+    def setGaugeVal(self, val):
+        self.speedGauge['value'] = val
 
     def setMovie(self, mode, code, item, speed):
         self.notify.debug("setMovie {0} {1} {2} {3}".format(mode, code, item, speed))
@@ -623,10 +626,11 @@ class FishingSpot(DirectObject):
                 delta = abs(delta)
                 print(delta)
                 print(globalClock.getFrameTime() -self.crankTime)
+                old = self.lineStrength
                 self.lineStrength += delta / (globalClock.getFrameTime() - self.crankTime)
                 if self.lineStrength > 100:
                     self.lineStrength = 100
-                print(self.lineStrength)
+
 
         return Task.cont
 
@@ -634,16 +638,17 @@ class FishingSpot(DirectObject):
         self.fishing = True
         self.speedGauge.show()
         self.speedJudger.show()
-        taskMgr.doMethodLater(0.1, self.updateThings, 'update-%d' % id(self))
+        taskMgr.doMethodLater(0.05, self.updateThings, 'update-%d' % id(self))
 
     def stopFishing(self):
-        self.lineStrength = 0.0
+        #self.lineStrength = 0.0
         self.crankTime = 0
         self.fishing = False
 
     def updateThings(self, task):
         if not self.isFishing():
             return task.done
+        old = self.lineStrength
         self.lineStrength -= self.getTargetSpeed()
         if self.lineStrength < 0:
             self.lineStrength = 0
@@ -665,9 +670,9 @@ class FishingSpot(DirectObject):
             #print(avgSpeed, self.targetSpeed)
             #print(pctDiff)
             self.speedGauge['value'] = self.lineStrength
-            if self.lineStrength >= 60:
+            if self.lineStrength >= 65:
                 self.speedJudger.setText(TTLocalizer.FishingCrankTooFast)
-            elif self.lineStrength <= 40:
+            elif self.lineStrength <= 35:
                 self.speedJudger.setText(TTLocalizer.FishingCrankTooSlow)
             else:
                 self.speedJudger.setText("Just right!")
@@ -771,11 +776,13 @@ class FishingSpot(DirectObject):
         self.currentFish = random.randrange(0, numFish)
         self.notify.debug('A {0} with speed {1} bit our line.'.format(TTLocalizer.ClassicFishNames[self.currentFish][0], self.targetSpeed))
         self.setMovie(FishingGlobals.NibbleMovie, 0, 0, 0)
-        taskMgr.doMethodLater(FishingGlobals.NibbleTime, self.finishNibble, 'nibbleDone%d' % id(self))
+        taskMgr.doMethodLater(FishingGlobals.NibbleTime, self.finishNibble, 'nibbleDone-%d' % id(self))
         self.startFishing()
         return Task.done
 
     def finishNibble(self, task):
+        print("HIII??")
+        self.stopFishing()
         self.uncast()
         avgSpeed = 0
         if self.totalTime:
@@ -784,18 +791,21 @@ class FishingSpot(DirectObject):
             #self.setMovie(FishingGlobals.PullInMovie, FishingGlobals.TooLate, 0, 0)
             #return Task.done
         pctDiff = self.lineStrength
+        self.lineStrength = 0.0
         self.notify.debug('pctDiff: {0}, avgSpeed: {1}'.format(pctDiff, avgSpeed))
-        if pctDiff >= 60:
+        print("LOLLL",  pctDiff)
+        if pctDiff >= 65:
             self.setMovie(FishingGlobals.PullInMovie, FishingGlobals.TooFast, 0, 0)
-        elif pctDiff <= 40:
+        elif pctDiff <= 35:
             self.setMovie(FishingGlobals.PullInMovie, FishingGlobals.TooSlow, 0, 0)
         else:
             self.setMovie(FishingGlobals.PullInMovie, FishingGlobals.FishItem, self.currentFish, 0)
             base.localAvatar.addMoney(int(FishingGlobals.FishValues[self.currentFish] * self.targetSpeed))
+            self.jar['text'] = str(base.localAvatar.getMoney())
         self.currentFish = None
         return Task.done
 
     def uncast(self):
         self.casted = False
         taskMgr.remove('nibble-%d' % id(self))
-        taskMgr.remove('nibbleDone%d' % id(self))
+        taskMgr.remove('nibbleDone-%d' % id(self))
