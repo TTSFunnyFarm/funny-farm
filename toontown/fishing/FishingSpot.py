@@ -33,7 +33,7 @@ class FishingSpot(DirectObject):
         self.castGui = None
         self.reelGui = None
         self.crankGui = None
-        self.crankHeld = 0
+        self.crankHeld = False
         self.turnCrankTask = None
         self.itemGui = None
         self.failureGui = None
@@ -53,14 +53,12 @@ class FishingSpot(DirectObject):
         self.netDistance = 0.0
         self.line = None
         self.lineSphere = None
-        self.pendingFish = 0
-        self.crankTime = -1
+        #self.pendingFish = 0 unused
+        self.crankTime = 0
         self.crankDelta = 0
         self.casted = False
         self.currentFish = None
         self.crankedBefore = False
-        self.totalDistance = 0
-        self.totalTime = 0
         self.lineStrength = 0.0
         self.fishing = False
         self.parentNodePath = render
@@ -75,7 +73,7 @@ class FishingSpot(DirectObject):
 
     def generate(self):
         self.nodePath = NodePath(self.uniqueName('FishingSpot'))
-        self.line = Rope.Rope(self.uniqueName('Line'))
+        self.line = Rope.Rope(self.uniqueName('FishingLine'))
         self.line.setColor(1, 1, 1, 0.4)
         self.line.setTransparency(1)
         self.lineSphere = BoundingSphere(Point3(-0.6, -2, -5), 5.5)
@@ -211,8 +209,6 @@ class FishingSpot(DirectObject):
         self.timer.countdown(45, self.removeFromPierWithAnim)
         base.localAvatar.takeMoney(1, False)
         self.crankedBefore = False
-        self.totalDistance = 0
-        self.totalTime = 0
         self.casted = True
         self.currentFish = None
         self.targetSpeed = None
@@ -784,9 +780,6 @@ class FishingSpot(DirectObject):
         print("HIII??")
         self.stopFishing()
         self.uncast()
-        avgSpeed = 0
-        if self.totalTime:
-            avgSpeed = self.totalDistance / self.totalTime
         #if avgSpeed == 0:
             #self.setMovie(FishingGlobals.PullInMovie, FishingGlobals.TooLate, 0, 0)
             #return Task.done
