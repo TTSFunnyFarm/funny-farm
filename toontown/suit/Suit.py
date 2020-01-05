@@ -340,7 +340,7 @@ class Suit(Avatar.Avatar):
         Avatar.Avatar.__init__(self)
         self.setFont(ToontownGlobals.getSuitFont())
         self.setPlayerType(NametagGroup.CCSuit)
-        self.setPickable(1)
+        self.setPickable(0)  # NOTE: Change 0 to 1 to make name tags clickable.
         self.leftHand = None
         self.rightHand = None
         self.shadowJoint = None
