@@ -2,6 +2,8 @@ from direct.task.Task import Task
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.quest import Quests
+from toontown.cutscenes import CutscenesGlobals
+from toontown.cutscenes import *
 
 class QuestManager:
     notify = directNotify.newCategory('QuestManager')
@@ -10,7 +12,7 @@ class QuestManager:
         toNpcId = Quests.getToNpcId(questId)
         npc.assignQuest(base.localAvatar.doId, questId, toNpcId)
         base.localAvatar.addQuest(questId)
-        # This is a special case for delivery quests; we want it to show the 
+        # This is a special case for delivery quests; we want it to show the
         # green complete task when they're heading back to whoever assigned it.
         if Quests.getQuestType(questId)[0] == Quests.QuestTypeDeliver and Quests.getFromNpcId(questId) == Quests.getToNpcId(questId):
             base.localAvatar.setQuestProgress(questId, 1)
@@ -34,18 +36,21 @@ class QuestManager:
             base.localAvatar.enable()
             return
         if Quests.getQuestFinished(questId) == Quests.Finish:
+            # Resets the camera
             base.localAvatar.enable()
             base.localAvatar.disable()
             base.localAvatar.setAnimState('neutral')
+            if levelUp:
+                base.localAvatar.setAnimState('jump')
             taskMgr.doMethodLater(delay, self.__handleCompleteQuest, 'completeQuest', [npc, nextQuest])
         else:
             self.__handleCompleteQuest(npc, nextQuest)
 
     def __handleCompleteQuest(self, npc, nextQuest):
-        if nextQuest in Quests.Cutscenes:
-            if nextQuest == 1004:
+        if nextQuest in CutscenesGlobals.Cutscenes:
+            if nextQuest == MeterDisasterScene.MeterDisasterScene.id:
                 # Loony Labs cutscene is a very special case; unfortunately we have to just hack this in for now.
-                base.cr.cutsceneMgr.enterCutscene(1003)
+                base.cr.cutsceneMgr.enterCutscene(MeterAlertScene.MeterAlertScene.id)
             else:
                 base.cr.cutsceneMgr.enterCutscene(nextQuest)
             base.localAvatar.addQuest(nextQuest)
@@ -113,7 +118,7 @@ class QuestManager:
                         # They have zero of the required gags to deliver. Send them off with a default dialog.
                         npc.incompleteQuest(toon.doId, questId, Quests.INCOMPLETE, toNpcId)
                     elif numInvGags < numQuestGags:
-                        # They can deliver SOME of the required gags. Take what they have. 
+                        # They can deliver SOME of the required gags. Take what they have.
                         toon.inventory.setItem(track, level, 0)
                         toon.setQuestProgress(questId, progress + numInvGags)
                         npc.incompleteQuest(toon.doId, questId, Quests.INCOMPLETE_PROGRESS, toNpcId)
@@ -157,7 +162,7 @@ class QuestManager:
                         # Keep working on that task, _avName_!
                         npc.incompleteQuest(toon.doId, questId, Quests.INCOMPLETE, toNpcId)
                 return # Yes, the NPC's response is only based on the player's first quest.
-        
+
         # If we made it here, that means the player has space for a new quest. Let's determine what we should give them.
         # First try to give them the main quest if they don't have it for some odd reason.
         if npc.getMainQuest():
@@ -180,19 +185,19 @@ class QuestManager:
                 # todo: maybe make this a quest choice instead of directly assigning it?
                 self.npcGiveQuest(npc, questId)
                 return
-        
-        # We don't have a storyline quest or a side quest to give them; 
+
+        # We don't have a storyline quest or a side quest to give them;
         # Let's offer them a list of suitable quests for their current quest tier.
         tier = self.determineQuestTier(toon)
         bestQuests = Quests.chooseBestQuests(tier, npc, toon)
-        
+
         # Present the quests to the player.
         npc.presentQuestChoice(toon.doId, bestQuests)
 
     def determineQuestTier(self, avatar):
         # Determines the current quest tier of the toon using their quest history.
         # Only important quests are added to the history, and we use those to determine if they're ready to start the next tier.
-        
+
         # In this case, 1030 is the final task in tier 1, and they'll also have to have teleport access and carry 30 gags.
         # (I will finish this method as I write the quests.)
         if avatar.hasQuestHistory(1030) and avatar.hasQuestHistory(1046) and avatar.hasQuestHistory(1053):

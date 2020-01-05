@@ -84,7 +84,7 @@ class NPCToon(NPCToonBase):
             self.setMainQuest(1)
         if mode == NPCToons.QUEST_MOVIE_ASSIGN:
             questId, toNpcId = quests
-            # More hacks, sorry
+            # For Flippy/Suit intro scene
             if questId == 1003:
                 messenger.send('cutscene-done')
         if mode == NPCToons.QUEST_MOVIE_COMPLETE:

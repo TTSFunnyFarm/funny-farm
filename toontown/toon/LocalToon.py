@@ -15,8 +15,10 @@ from toontown.book import ToonPage
 from toontown.book import InventoryPage
 from toontown.book import QuestPage
 from toontown.book import TrackPage
+from toontown.cutscenes import CutscenesGlobals
+from toontown.cutscenes import *
 from toontown.quest import Quests
-from toontown.quest.InfoBubble import InfoBubble
+from toontown.cutscenes.InfoBubble import InfoBubble
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
@@ -360,28 +362,28 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         Toon.Toon.setHat(self, hatIdx, textureIdx, colorIdx, fromRTM = False)
         hat = [hatIdx, textureIdx, colorIdx]
         if base.avatarData.setHat != hat:
-            base.avatarData.setHat = hat
+            base.avatarData.setHat = list(hat)
             dataMgr.saveToonData(base.avatarData)
 
     def setGlasses(self, glassesIdx, textureIdx, colorIdx, fromRTM = False):
         Toon.Toon.setGlasses(self, glassesIdx, textureIdx, colorIdx, fromRTM = False)
         glasses = [glassesIdx, textureIdx, colorIdx]
         if base.avatarData.setGlasses != glasses:
-            base.avatarData.setGlasses = glasses
+            base.avatarData.setGlasses = list(glasses)
             dataMgr.saveToonData(base.avatarData)
 
     def setBackpack(self, backpackIdx, textureIdx, colorIdx, fromRTM = False):
         Toon.Toon.setBackpack(self, backpackIdx, textureIdx, colorIdx, fromRTM = False)
         backpack = [backpackIdx, textureIdx, colorIdx]
         if base.avatarData.setBackpack != backpack:
-            base.avatarData.setBackpack = backpack
+            base.avatarData.setBackpack = list(backpack)
             dataMgr.saveToonData(base.avatarData)
 
     def setShoes(self, shoesIdx, textureIdx, colorIdx):
         Toon.Toon.setShoes(self, shoesIdx, textureIdx, colorIdx)
         shoes = [shoesIdx, textureIdx, colorIdx]
         if base.avatarData.setShoes != shoes:
-            base.avatarData.setShoes = shoes
+            base.avatarData.setShoes = list(shoes)
             dataMgr.saveToonData(base.avatarData)
 
     def setCheesyEffect(self, effect):
@@ -463,8 +465,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
     def setMoney(self, money):
         self.money = money
         messenger.send(self.uniqueName('moneyChange'), [money])
-        if base.avatarData.setMoney != self.money:
-            base.avatarData.setMoney = self.money
+        if base.avatarData.setMoney != money:
+            base.avatarData.setMoney = money
             dataMgr.saveToonData(base.avatarData)
 
     def getMoney(self):
@@ -472,8 +474,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def setMaxMoney(self, maxMoney):
         self.maxMoney = maxMoney
-        if base.avatarData.setMaxMoney != self.maxMoney:
-            base.avatarData.setMaxMoney = self.maxMoney
+        if base.avatarData.setMaxMoney != maxMoney:
+            base.avatarData.setMaxMoney = maxMoney
             dataMgr.saveToonData(base.avatarData)
 
     def getMaxMoney(self):
@@ -481,8 +483,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def setBankMoney(self, bankMoney):
         self.bankMoney = bankMoney
-        if base.avatarData.setBankMoney != self.bankMoney:
-            base.avatarData.setBankMoney = self.bankMoney
+        if base.avatarData.setBankMoney != bankMoney:
+            base.avatarData.setBankMoney = bankMoney
             dataMgr.saveToonData(base.avatarData)
 
     def getBankMoney(self):
@@ -490,8 +492,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def setMaxBankMoney(self, maxBankMoney):
         self.maxBankMoney = maxBankMoney
-        if base.avatarData.setMaxBankMoney != self.maxBankMoney:
-            base.avatarData.setMaxBankMoney = self.maxBankMoney
+        if base.avatarData.setMaxBankMoney != maxBankMoney:
+            base.avatarData.setMaxBankMoney = maxBankMoney
             dataMgr.saveToonData(base.avatarData)
 
     def getMaxBankMoney(self):
@@ -511,8 +513,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         if self.inventory:
             self.inventory.updateGUI()
 
-        if base.avatarData.setTrackAccess != self.trackArray:
-            base.avatarData.setTrackAccess = self.trackArray
+        if base.avatarData.setTrackAccess != trackArray:
+            base.avatarData.setTrackAccess = list(trackArray)
             dataMgr.saveToonData(base.avatarData)
 
     def getTrackAccess(self):
@@ -529,8 +531,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         if self.inventory:
             self.inventory.updateGUI()
 
-        if base.avatarData.setMaxCarry != self.maxCarry:
-            base.avatarData.setMaxCarry = self.maxCarry
+        if base.avatarData.setMaxCarry != maxCarry:
+            base.avatarData.setMaxCarry = maxCarry
             dataMgr.saveToonData(base.avatarData)
 
     def getMaxCarry(self):
@@ -578,7 +580,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         self.quests.append([questId, 0])
         messenger.send('questsChanged')
         if base.avatarData.setQuests != self.quests:
-            base.avatarData.setQuests = self.quests
+            base.avatarData.setQuests = list(self.quests)
             dataMgr.saveToonData(base.avatarData)
 
     def setQuestProgress(self, questId, progress):
@@ -588,17 +590,17 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
                 break
         messenger.send('questsChanged')
         if base.avatarData.setQuests != self.quests:
-            base.avatarData.setQuests = self.quests
+            base.avatarData.setQuests = list(self.quests)
             dataMgr.saveToonData(base.avatarData)
 
     def removeQuest(self, questId):
-        for questDesc in self.quests:
+        for questDesc in list(self.quests):
             if questId == questDesc[0]:
                 self.quests.remove(questDesc)
                 break
         messenger.send('questsChanged')
         if base.avatarData.setQuests != self.quests:
-            base.avatarData.setQuests = self.quests
+            base.avatarData.setQuests = list(self.quests)
             dataMgr.saveToonData(base.avatarData)
 
     def setQuestHistory(self, history):
@@ -612,7 +614,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             return
         self.questHistory.append(quest)
         if base.avatarData.setQuestHistory != self.questHistory:
-            base.avatarData.setQuestHistory = self.questHistory
+            base.avatarData.setQuestHistory = list(self.questHistory)
             dataMgr.saveToonData(base.avatarData)
 
     def removeQuestHistory(self, quest):
@@ -620,7 +622,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             return
         self.questHistory.remove(quest)
         if base.avatarData.setQuestHistory != self.questHistory:
-            base.avatarData.setQuestHistory = self.questHistory
+            base.avatarData.setQuestHistory = list(self.questHistory)
             dataMgr.saveToonData(base.avatarData)
 
     def hasQuestHistory(self, quest):
@@ -629,11 +631,10 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         return False
 
     def clearQuestHistory(self):
-        for quest in self.questHistory:
+        for quest in list(self.questHistory):
             self.questHistory.remove(quest)
-
         if base.avatarData.setQuestHistory != self.questHistory:
-            base.avatarData.setQuestHistory = self.questHistory
+            base.avatarData.setQuestHistory = list(self.questHistory)
             dataMgr.saveToonData(base.avatarData)
 
     def setTrackProgress(self, trackId, progress):
@@ -644,25 +645,25 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
         trackProgress = self.getTrackProgress()
         if base.avatarData.setTrackProgress != trackProgress:
-            base.avatarData.setTrackProgress = trackProgress
+            base.avatarData.setTrackProgress = list(trackProgress)
             dataMgr.saveToonData(base.avatarData)
 
     def getTrackProgress(self):
         return [self.trackProgressId, self.trackProgress]
 
-    def setHoodsVisited(self, hoodList):
-        self.hoodsVisited = hoodList
-        if base.avatarData.setHoodsVisited != self.hoodsVisited:
-            base.avatarData.setHoodsVisited = self.hoodsVisited
+    def setHoodsVisited(self, hoodsVisited):
+        self.hoodsVisited = hoodsVisited
+        if base.avatarData.setHoodsVisited != hoodsVisited:
+            base.avatarData.setHoodsVisited = list(hoodsVisited)
             dataMgr.saveToonData(base.avatarData)
 
     def getHoodsVisited(self):
         return self.hoodsVisited
 
-    def setTeleportAccess(self, hoodList):
-        self.teleportAccess = hoodList
-        if base.avatarData.setTeleportAccess != self.teleportAccess:
-            base.avatarData.setTeleportAccess = self.teleportAccess
+    def setTeleportAccess(self, teleportAccess):
+        self.teleportAccess = teleportAccess
+        if base.avatarData.setTeleportAccess != teleportAccess:
+            base.avatarData.setTeleportAccess = list(teleportAccess)
             dataMgr.saveToonData(base.avatarData)
 
     def getTeleportAccess(self):
@@ -670,8 +671,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def setLevel(self, level):
         self.level = level
-        if base.avatarData.setLevel != self.level:
-            base.avatarData.setLevel = self.level
+        if base.avatarData.setLevel != level:
+            base.avatarData.setLevel = level
             dataMgr.saveToonData(base.avatarData)
 
     def getLevel(self):
@@ -682,8 +683,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         if self.experienceBar:
             self.experienceBar.setExperience(self.levelExp, self.getMaxLevelExp())
 
-        if base.avatarData.setLevelExp != self.levelExp:
-            base.avatarData.setLevelExp = self.levelExp
+        if base.avatarData.setLevelExp != levelExp:
+            base.avatarData.setLevelExp = levelExp
             dataMgr.saveToonData(base.avatarData)
 
     def getLevelExp(self):
@@ -718,11 +719,9 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             self.showLevelUpText(hpGain, exp, token=1)
         else:
             self.showLevelUpText(hpGain, exp)
-        if self.animFSM.getCurrentState().getName() == 'victory':
-            pass
-        else:
-            self.setAnimState('jump')
-        Sequence(Func(musicMgr.pauseMusic), Func(base.playSfx, self.levelUpSfx), Wait(self.levelUpSfx.length()), Func(musicMgr.unpauseMusic)).start()
+        musicMgr.pauseMusic()
+        base.playSfx(self.levelUpSfx, volume=0.5)
+        Sequence(Wait(self.levelUpSfx.length()), Func(musicMgr.unpauseMusic)).start()
         return True
 
     def showLevelUpText(self, hp, exp, token = 0):
@@ -799,8 +798,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def setDamage(self, damageArray):
         self.damage = damageArray
-        if base.avatarData.setDamage != self.damage:
-            base.avatarData.setDamage = self.damage
+        if base.avatarData.setDamage != damageArray:
+            base.avatarData.setDamage = list(damageArray)
             dataMgr.saveToonData(base.avatarData)
 
     def getDamage(self):
@@ -808,8 +807,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def setDefense(self, defenseArray):
         self.defense = defenseArray
-        if base.avatarData.setDefense != self.defense:
-            base.avatarData.setDefense = self.defense
+        if base.avatarData.setDefense != defenseArray:
+            base.avatarData.setDefense = list(defenseArray)
             dataMgr.saveToonData(base.avatarData)
 
     def getDefense(self):
@@ -817,8 +816,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def setAccuracy(self, accuracyArray):
         self.accuracy = accuracyArray
-        if base.avatarData.setAccuracy != self.accuracy:
-            base.avatarData.setAccuracy = self.accuracy
+        if base.avatarData.setAccuracy != accuracyArray:
+            base.avatarData.setAccuracy = list(accuracyArray)
             dataMgr.saveToonData(base.avatarData)
 
     def getAccuracy(self):
@@ -910,20 +909,22 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         else:
             zoneId = currZone.zoneId
         for questDesc in self.quests:
-            if questDesc[0] in Quests.Cutscenes and not self.hasQuestHistory(questDesc[0]):
+            if questDesc[0] in CutscenesGlobals.Cutscenes and not self.hasQuestHistory(questDesc[0]):
                 if zoneId == Quests.getToNpcLocation(questDesc[0]) and questDesc[1] == 0:
                     base.cr.cutsceneMgr.enterCutscene(questDesc[0])
                     return True
             # Special cases
             # "Ride the trolley" info bubble
-            if questDesc[0] == 1007 and not self.hasQuestHistory(1):
+            id = BuyGagsScene.BuyGagsScene.id
+            if questDesc[0] == id and not self.hasQuestHistory(1):
                 if zoneId == FunnyFarmGlobals.FunnyFarm:
-                    base.cr.cutsceneMgr.enterCutscene(1007)
+                    base.cr.cutsceneMgr.enterCutscene(id)
                     return True
             # Carry 2 ToonTasks info bubble
-            if questDesc[0] == 1014 and not self.hasQuestHistory(4):
+            id = DualTasksScene.DualTasksScene.id
+            if questDesc[0] == id and not self.hasQuestHistory(4):
                 if zoneId == FunnyFarmGlobals.FunnyFarm:
-                    base.cr.cutsceneMgr.enterCutscene(1014)
+                    base.cr.cutsceneMgr.enterCutscene(id)
                     return True
             # Not a cutscene, but this is the easiest way to do this.
             if questDesc[0] in [1028, 1029]:
