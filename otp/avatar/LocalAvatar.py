@@ -10,7 +10,7 @@ from direct.controls.ObserverWalker import ObserverWalker
 from direct.controls.PhysicsWalker import PhysicsWalker
 from direct.controls.SwimWalker import SwimWalker
 from direct.controls.TwoDWalker import TwoDWalker
-from direct.controls import ControlManager
+from toontown.toon import ControlManager
 from direct.task import Task
 from otp.otpbase import OTPGlobals
 from otp.otpbase import OTPLocalizer

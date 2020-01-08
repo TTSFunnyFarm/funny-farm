@@ -1,6 +1,6 @@
 from panda3d.core import *
 from direct.showbase import PythonUtil
-from direct.controls.ControlManager import CollisionHandlerRayStart
+from toontown.ControlManager import CollisionHandlerRayStart
 from direct.interval.IntervalGlobal import *
 from direct.task import Task
 from toontown.toonbase import TTLocalizer
