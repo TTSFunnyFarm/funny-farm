@@ -1,11 +1,14 @@
 from panda3d.core import *
 from direct.gui.DirectGui import *
 from direct.task import Task
+from direct.showbase import PythonUtil
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals, FunnyFarmGlobals
 from toontown.toontowngui import TTDialog
 from toontown.book.DisplaySettingsDialog import DisplaySettingsDialog
 from toontown.book import ShtikerPage
+from direct.directnotify import DirectNotifyGlobal
+PageMode = PythonUtil.Enum('Options, Controls')
 
 class OptionsPage(ShtikerPage.ShtikerPage):
     notify = directNotify.newCategory('OptionsPage')
@@ -14,26 +17,39 @@ class OptionsPage(ShtikerPage.ShtikerPage):
         ShtikerPage.ShtikerPage.__init__(self)
 
         self.optionsTabPage = None
-        self.codesTabPage = None
+        self.controlsTabPage = None
         self.title = None
         self.optionsTab = None
-        self.codesTab = None
+        self.controlsTab = None
 
     def load(self):
         ShtikerPage.ShtikerPage.load(self)
         self.optionsTabPage = OptionsTabPage(self)
         self.optionsTabPage.hide()
+        self.controlsTabPage = ControlsTabPage(self)
+        self.controlsTabPage.hide()
         self.title = DirectLabel(
                 parent=self, relief=None, text=TTLocalizer.OptionsPageTitle,
                 text_scale=0.12, pos=(0, 0, 0.61))
+        gui = loader.loadModel('phase_3.5/models/gui/fishingBook')
+        normalColor = (1, 1, 1, 1)
+        clickColor = (0.8, 0.8, 0, 1)
+        rolloverColor = (0.15, 0.82, 1.0, 1)
+        diabledColor = (1.0, 0.98, 0.15, 1)
+        titleHeight = 0.61
+        self.optionsTab = DirectButton(parent=self, relief=None, text=TTLocalizer.OptionsPageTitle, text_scale=TTLocalizer.OPoptionsTab, text_align=TextNode.ALeft, text_pos=(0.01, 0.0, 0.0), image=gui.find('**/tabs/polySurface1'), image_pos=(0.55, 1, -0.91), image_hpr=(0, 0, -90), image_scale=(0.033, 0.033, 0.035), image_color=normalColor, image1_color=clickColor, image2_color=rolloverColor, image3_color=diabledColor, text_fg=Vec4(0.2, 0.1, 0, 1), command=self.setMode, extraArgs=[PageMode.Options], pos=(-0.36, 0, 0.77))
+        self.controlsTab = DirectButton(parent=self, relief=None, text="Controls", text_scale=TTLocalizer.OPoptionsTab, text_align=TextNode.ALeft, text_pos=(0.01, 0.0, 0.0), image=gui.find('**/tabs/polySurface2'), image_pos=(0.12, 1, -0.91), image_hpr=(0, 0, -90), image_scale=(0.033, 0.033, 0.035), image_color=normalColor, image1_color=clickColor, image2_color=rolloverColor, image3_color=diabledColor, text_fg=Vec4(0.2, 0.1, 0, 1), command=self.setMode, extraArgs=[PageMode.Controls], pos=(0.11, 0, 0.77))
+        return
 
     def enter(self):
-        self.optionsTabPage.enter()
+        #self.optionsTabPage.enter()
+        self.setMode(PageMode.Options, updateAnyways=1)
         ShtikerPage.ShtikerPage.enter(self)
         self.accept('exitFunnyFarm', self.book.exitFunnyFarm)
 
     def exit(self):
         self.optionsTabPage.exit()
+        self.controlsTabPage.exit()
         ShtikerPage.ShtikerPage.exit(self)
 
     def unload(self):
@@ -41,9 +57,9 @@ class OptionsPage(ShtikerPage.ShtikerPage):
             self.optionsTabPage.unload()
             self.optionsTabPage = None
 
-        if self.codesTabPage is not None:
-            self.codesTabPage.unload()
-            self.codesTabPage = None
+        if self.controlsTabPage is not None:
+            self.controlsTabPage.unload()
+            self.controlsTabPage = None
 
         if self.title is not None:
             self.title.destroy()
@@ -53,11 +69,35 @@ class OptionsPage(ShtikerPage.ShtikerPage):
             self.optionsTab.destroy()
             self.optionsTab = None
 
-        if self.codesTab is not None:
-            self.codesTab.destroy()
-            self.codesTab = None
+        if self.controlsTab is not None:
+            self.controlsTab.destroy()
+            self.controlsTab = None
 
         ShtikerPage.ShtikerPage.unload(self)
+
+    def setMode(self, mode, updateAnyways = 0):
+        messenger.send('wakeup')
+        if not updateAnyways:
+            if self.mode == mode:
+                return
+            else:
+                self.mode = mode
+        if mode == PageMode.Options:
+            self.mode = PageMode.Options
+            self.title['text'] = TTLocalizer.OptionsPageTitle
+            self.optionsTab['state'] = DGG.DISABLED
+            self.optionsTabPage.enter()
+            self.controlsTab['state'] = DGG.NORMAL
+            self.controlsTabPage.exit()
+        elif mode == PageMode.Controls:
+            self.mode = PageMode.Controls
+            self.title['text'] = "Controls"
+            self.optionsTab['state'] = DGG.NORMAL
+            self.optionsTabPage.exit()
+            self.controlsTab['state'] = DGG.DISABLED
+            self.controlsTabPage.enter()
+        else:
+            raise(StandardError, 'OptionsPage::setMode - Invalid Mode %s' % mode)
 
 class OptionsTabPage(DirectFrame):
     notify = directNotify.newCategory('OptionsTabPage')
@@ -668,3 +708,71 @@ class OptionsTabPage(DirectFrame):
         del self.confirm
         if status == 'ok':
             messenger.send('exitFunnyFarm')
+
+class ControlsTabPage(DirectFrame):
+    notify = DirectNotifyGlobal.directNotify.newCategory('ControlsTabPage')
+
+    def __init__(self, parent = aspect2d):
+        self._parent = parent
+        DirectFrame.__init__(self, parent=self._parent, relief=None, pos=(0.0, 0.0, 0.0), scale=(1.0, 1.0, 1.0))
+        self.load()
+        #messenger.toggleVerbose()
+        return
+
+    def destroy(self):
+        self._parent = None
+        DirectFrame.destroy(self)
+        return
+
+    def load(self):
+        button_image_scale = (0.7, 1, 1)
+        normalColor = (1, 1, 1, 1)
+        clickColor = (0.8, 0.8, 0, 1)
+        rolloverColor = (0.15, 0.82, 1.0, 1)
+        diabledColor = (1.0, 0.98, 0.15, 1)
+        guiButton = loader.loadModel('phase_3/models/gui/quit_button')
+        button_set = (guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR'))
+        self.bindDialog = None
+        self.current_event = None
+        self.Forward_Label = DirectLabel(parent=self, relief=None, text='Forward', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.65, 0, 0.5))
+        self.Forward_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.65, 1, 1), text=settings['customKeybinds']['forward'], text_scale=0.052, text_pos=(0.0, -0.02), pos=(-0.55, 0, 0.4), command=self.showBindDialog, extraArgs=['forward'])
+        #self.audioLabel = DirectLabel(parent=self, relief=None, text="Controls", text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_align=TextNode.ALeft, text_scale=0.07, pos=(-0.8, 0, textStartHeight - 0.03))
+        #self.bindDialog = TTDialog.TTDialog(text="", text_wordwrap=14, pos=(0, 0, 0.2), style=TTDialog.CancelOnly, command=self.hideBindDialog)
+        return
+
+    def refresh(self):
+        keybinds = settings['customKeybinds']
+        self.Forward_Bind.setText(keybinds['forward'])
+
+    def showBindDialog(self, event):
+        if self.bindDialog:
+            self.hideBindDialog(None)
+        self.current_event = event
+        self.bindDialog = TTDialog.TTDialog(text='Binding: %s\n\nPress any key to bind.' % event, text_wordwrap=14, pos=(0, 0, 0.2), style=TTDialog.CancelOnly, command=self.hideBindDialog)
+
+    def hideBindDialog(self, unused):
+        self.bindDialog.removeNode()
+        self.bindDialog = None
+
+    def keyPressed(self, key):
+        if key.startswith('mouse'): #no mouse events sorry
+            return
+        if self.bindDialog and self.current_event:
+            settings['customKeybinds'][self.current_event] = key
+            self.refresh()
+            self.hideBindDialog(None)
+        print(key)
+        print(len(key))
+
+    def enter(self):
+        base.buttonThrowers[0].node().setButtonUpEvent('key-pressed')
+        self.show()
+        self.accept('key-pressed', self.keyPressed)
+
+    def exit(self):
+        self.hide()
+
+    def unload(self):
+        #self.submitButton.destroy()
+        #self.submitButton = None
+        return
