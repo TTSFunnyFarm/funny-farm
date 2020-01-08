@@ -234,11 +234,9 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def startChat(self):
         self.chatMgr.createGui()
-        self.chatMgr.enableKeyboardShortcuts()
 
     def stopChat(self):
         self.chatMgr.deleteGui()
-        self.chatMgr.disableKeyboardShortcuts()
 
     def setChatAbsolute(self, chatString, chatFlags, dialogue = None, interrupt = 1):
         # Only makes the local avatar active when they say something,
