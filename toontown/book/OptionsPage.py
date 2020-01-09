@@ -191,10 +191,14 @@ class OptionsTabPage(DirectFrame):
         self.exitButton.show()
         self.enterVideoOptions()
         self.accept(base.win.getWindowEvent(), self.__handleWindowEvent)
+        self.book.ignore('arrow_left')
+        self.book.ignore('arrow_right')
 
     def exit(self):
         self.ignoreAll()
         self.hide()
+        self.book.accept('arrow_right', self.__rightArrow)
+        self.book.accept('arrow_left', self.__leftArrow)
 
     def unload(self):
         self.writeDisplaySettings()

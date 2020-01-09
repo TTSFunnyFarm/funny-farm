@@ -75,8 +75,8 @@ class ShtikerBook(DirectFrame):
         self.bookCloseButton = DirectButton(image=(bookModel.find('**/BookIcon_OPEN'), bookModel.find('**/BookIcon_CLSD'), bookModel.find('**/BookIcon_RLVR2')), relief=None, pos=(-0.158, 0, 0.17), parent=base.a2dBottomRight, scale=0.305, command=self.close)
         self.bookOpenButton.hide()
         self.bookCloseButton.hide()
-        self.nextArrow = DirectButton(parent=self, relief=None, image=(bookModel.find('**/arrow_button'), bookModel.find('**/arrow_down'), bookModel.find('**/arrow_rollover')), scale=(0.1, 0.1, 0.1), pos=(0.838, 0, -0.661), command=self.__rightArrow)
-        self.prevArrow = DirectButton(parent=self, relief=None, image=(bookModel.find('**/arrow_button'), bookModel.find('**/arrow_down'), bookModel.find('**/arrow_rollover')), scale=(-0.1, 0.1, 0.1), pos=(-0.838, 0, -0.661), command=self.__leftArrow)
+        self.nextArrow = DirectButton(parent=self, relief=None, image=(bookModel.find('**/arrow_button'), bookModel.find('**/arrow_down'), bookModel.find('**/arrow_rollover')), scale=(0.1, 0.1, 0.1), pos=(0.838, 0, -0.661), command=self.rightArrow)
+        self.prevArrow = DirectButton(parent=self, relief=None, image=(bookModel.find('**/arrow_button'), bookModel.find('**/arrow_down'), bookModel.find('**/arrow_rollover')), scale=(-0.1, 0.1, 0.1), pos=(-0.838, 0, -0.661), command=self.leftArrow)
         bookModel.removeNode()
         self.openSound = base.loader.loadSfx('phase_3.5/audio/sfx/GUI_stickerbook_open.ogg')
         self.closeSound = base.loader.loadSfx('phase_3.5/audio/sfx/GUI_stickerbook_delete.ogg')
@@ -232,14 +232,14 @@ class ShtikerBook(DirectFrame):
         self.pageTabs[self.currPageTab]['relief'] = DGG.SUNKEN
         return
 
-    def __rightArrow(self):
+    def rightArrow(self):
         base.playSfx(self.pageSound)
         if self.currPage == self.pages.index(self.pages[-1]):
             self.setPage(self.pages[0])
         else:
             self.setPage(self.pages[self.currPage + 1])
 
-    def __leftArrow(self):
+    def leftArrow(self):
         base.playSfx(self.pageSound)
         self.setPage(self.pages[self.currPage - 1])
 
