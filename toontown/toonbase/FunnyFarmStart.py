@@ -102,8 +102,8 @@ class FunnyFarmStart:
             settings['waterReflectionScale'] = 0
         if 'waterRefractionScale' not in settings:
             settings['waterRefractionScale'] = 0
-        if 'customKeybinds' not in settings:
-            settings['customKeybinds'] = {'forward': 'w', 'reverse': 's', 'turn_left': 'a', 'turn_right': 'd', 'jump': 'space',
+        if 'keybinds' not in settings:
+            settings['keybinds'] = {'forward': 'arrow_up', 'reverse': 'arrow_down', 'turn_left': 'arrow_left', 'turn_right': 'arrow_right', 'jump': 'control',
              'chat': 'enter', 'gags': 'home', 'tasks': 'end',
              'camera': 'tab', 'gui': 'f3', 'action': 'delete', 'shtiker': 'f8'}
         # Resolution is set above for windowed mode. This is in case the user is running fullscreen mode.
