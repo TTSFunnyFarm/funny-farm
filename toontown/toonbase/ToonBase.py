@@ -156,6 +156,7 @@ class ToonBase(OTPBase.OTPBase):
         self.needRestartSmoothing = False
         self.needRestartLOD = False
         self.accept('connect-device', self.handleControllerConnect)
+        self.accept('disconnect-device', self.handleControllerDisconnect)
         self.gamepad = None
         self._controllerDialog = None
         return
@@ -431,7 +432,12 @@ class ToonBase(OTPBase.OTPBase):
 
     def handleControllerAck(self, val, controller):
         if val == DGG.DIALOG_OK:
-            base.gamepad = controller
+            self.gamepad = controller
             messenger.send('gamepad—enable')
         if self._controllerDialog:
             self._controllerDialog.hide()
+
+    def handleControllerDisconnect(self, controller):
+        if self.gamepad == controller:
+            self.gamepad = None
+            messenger.send('gamepad-disable')
