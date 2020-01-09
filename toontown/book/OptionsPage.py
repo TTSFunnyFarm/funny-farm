@@ -220,7 +220,7 @@ class OptionsTabPage(DirectFrame):
         self.Fps_Help.destroy()
         self.WaterShader_Help.destroy()
         self.leftArrow.destroy()
-      . self.rightArrow.destroy()
+        self.rightArrow.destroy()
         del self.audioLabel
         del self.videoLabel
         del self.Music_Label
