@@ -44,8 +44,8 @@ class ShtikerBook(DirectFrame):
             self.setPage(self.pages[self.currPage])
         self.accept(ToontownGlobals.StickerBookHotkey, self.close)
         self.accept(ToontownGlobals.OptionsPageHotkey, self.close)
-        self.accept('arrow_right', self.__rightArrow)
-        self.accept('arrow_left', self.__leftArrow)
+        self.accept('arrow_right', self.rightArrow)
+        self.accept('arrow_left', self.leftArrow)
 
     def exit(self):
         if not self.isOpen:
