@@ -219,6 +219,8 @@ class OptionsTabPage(DirectFrame):
         self.LOD_Help.destroy()
         self.Fps_Help.destroy()
         self.WaterShader_Help.destroy()
+        self.leftArrow.destroy()
+      . self.rightArrow.destroy()
         del self.audioLabel
         del self.videoLabel
         del self.Music_Label
@@ -250,6 +252,8 @@ class OptionsTabPage(DirectFrame):
         del self.Fps_Help
         del self.LOD_Help
         del self.WaterShader_Help
+        del self.leftArrow
+        del self.rightArrow
         self.currentSizeIndex = None
 
     def enterVideoOptions(self):
@@ -742,16 +746,15 @@ class ControlsTabPage(DirectFrame):
         self.rightArrow = DirectButton(parent=self, relief=None, image=matButton_set, pos=(0.4, 0, 0.53), image_scale=(0.18, 0.18, 0.18), image1_scale=(0.20, 0.20, 0.20), image2_scale=(0.20, 0.20, 0.20), image3_scale=(0.18, 0.18, 0.18), command=self.changeDevice)
         self.leftArrow = DirectButton(parent=self, relief=None, image=matButton_set, pos=(-0.4, 0, 0.53), image_scale=(-0.18, 0.18, 0.18), image1_scale=(-0.20, 0.20, 0.20), image2_scale=(-0.20, 0.20, 0.20), image3_scale=(-0.18, 0.18, 0.18), command=self.changeDevice)
         self.rightArrow.setX(len(self.InputType_Label['text']) * 0.025 + 0.2)
-        self.leftArrow.setX(-(len(self.InputType_Label['text']) * 0.025 + 0.2))
-        #self.audioLabel = DirectLabel(parent=self, relief=None, text="Controls", text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_align=TextNode.ALeft, text_scale=0.07, pos=(-0.8, 0, textStartHeight - 0.03))
-        #self.bindDialog = TTDialog.TTDialog(text="", text_wordwrap=14, pos=(0, 0, 0.2), style=TTDialog.CancelOnly, command=self.hideBindDialog)
+        self.leftArrow.setX(-(len(self.InputType_Label['text']) * 0.025 + 0.2)
+        self._buttons = [self.leftArrow, self.rightArrow, self.Forward_Bind]
         return
 
     def changeDevice(self):
         pass
 
     def refresh(self):
-        keybinds = settings['customKeybinds']
+        keybinds = settings['keybinds']
         self.Forward_Bind.setText(keybinds['forward'])
 
     def showBindDialog(self, event):
@@ -768,9 +771,10 @@ class ControlsTabPage(DirectFrame):
         if key.startswith('mouse'): #no mouse events sorry
             return
         if self.bindDialog and self.current_event:
-            settings['customKeybinds'][self.current_event] = key
+            settings['keybinds'][self.current_event] = key
             self.refresh()
             self.hideBindDialog(None)
+
     def enter(self):
         base.buttonThrowers[0].node().setButtonUpEvent('key-pressed')
         self.show()
@@ -784,6 +788,6 @@ class ControlsTabPage(DirectFrame):
         self._parent.book.ignore('arrow_right')
 
     def unload(self):
-        #self.submitButton.destroy()
-        #self.submitButton = None
-        return
+        for button in self._buttons:
+            button.destroy()
+            del button
