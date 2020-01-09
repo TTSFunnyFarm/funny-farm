@@ -155,6 +155,8 @@ class ToonBase(OTPBase.OTPBase):
         self.needRestartAntialiasing = False
         self.needRestartSmoothing = False
         self.needRestartLOD = False
+        self.accept('connect-device', self.handleControllerConnect)
+        self.gamepad = None
         return
 
     def openMainWindow(self, *args, **kw):
@@ -341,7 +343,7 @@ class ToonBase(OTPBase.OTPBase):
 
     def removeGlitchMessage(self):
         self.ignore('InputState-forward')
-        print('ignoring InputState-forward')
+        self.notify.info('ignoring InputState-forward')
 
     def exitShow(self, errorCode = None):
         self.notify.setInfo(1)
@@ -421,3 +423,7 @@ class ToonBase(OTPBase.OTPBase):
         wp = WindowProperties()
         wp.setMinimized(True)
         base.win.requestProperties(wp)
+
+    def handleControllerConnect(self, controller):
+        dialog = TTDialog.TTDialog(parent=aspect2dp, text="%s has been connected.\n\nWould you like to use it?" % controller.name, style=TTDialog.YesNo, command=print)
+        dialog.show()
