@@ -746,7 +746,7 @@ class ControlsTabPage(DirectFrame):
         self.rightArrow = DirectButton(parent=self, relief=None, image=matButton_set, pos=(0.4, 0, 0.53), image_scale=(0.18, 0.18, 0.18), image1_scale=(0.20, 0.20, 0.20), image2_scale=(0.20, 0.20, 0.20), image3_scale=(0.18, 0.18, 0.18), command=self.changeDevice)
         self.leftArrow = DirectButton(parent=self, relief=None, image=matButton_set, pos=(-0.4, 0, 0.53), image_scale=(-0.18, 0.18, 0.18), image1_scale=(-0.20, 0.20, 0.20), image2_scale=(-0.20, 0.20, 0.20), image3_scale=(-0.18, 0.18, 0.18), command=self.changeDevice)
         self.rightArrow.setX(len(self.InputType_Label['text']) * 0.025 + 0.2)
-        self.leftArrow.setX(-(len(self.InputType_Label['text']) * 0.025 + 0.2)
+        self.leftArrow.setX(-(len(self.InputType_Label['text']) * 0.025 + 0.2))
         self._buttons = [self.leftArrow, self.rightArrow, self.Forward_Bind]
         return
 
