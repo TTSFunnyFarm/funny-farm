@@ -738,7 +738,7 @@ class ControlsTabPage(DirectFrame):
         self.current_event = None
         self.Forward_Label = DirectLabel(parent=self, relief=None, text='Forward', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.6, 0, 0.4))
         self.Forward_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.65, 1, 1), text=settings['customKeybinds']['forward'], text_scale=0.052, text_pos=(0.0, -0.02), pos=(-0.5, 0, 0.3), command=self.showBindDialog, extraArgs=['forward'])
-        self.InputType_Label = DirectLabel(parent=self, relief=None, text='Gamepad', text_font=ToontownGlobals.getSignFont(), text_fg=(1, 1, 1, 1), text_align=TextNode.ACenter, text_scale=0.1, pos=(0, 0, 0.5))
+        self.InputType_Label = DirectLabel(parent=self, relief=None, text='Keyboard', text_font=ToontownGlobals.getSignFont(), text_fg=(1, 1, 1, 1), text_align=TextNode.ACenter, text_scale=0.1, pos=(0, 0, 0.5))
         self.rightArrow = DirectButton(parent=self, relief=None, image=matButton_set, pos=(0.4, 0, 0.53), image_scale=(0.18, 0.18, 0.18), image1_scale=(0.20, 0.20, 0.20), image2_scale=(0.20, 0.20, 0.20), image3_scale=(0.18, 0.18, 0.18), command=self.changeDevice)
         self.leftArrow = DirectButton(parent=self, relief=None, image=matButton_set, pos=(-0.4, 0, 0.53), image_scale=(-0.18, 0.18, 0.18), image1_scale=(-0.20, 0.20, 0.20), image2_scale=(-0.20, 0.20, 0.20), image3_scale=(-0.18, 0.18, 0.18), command=self.changeDevice)
         self.rightArrow.setX(len(self.InputType_Label['text']) * 0.025 + 0.2)
