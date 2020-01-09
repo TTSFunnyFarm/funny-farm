@@ -197,8 +197,8 @@ class OptionsTabPage(DirectFrame):
     def exit(self):
         self.ignoreAll()
         self.hide()
-        self.book.accept('arrow_right', self.__rightArrow)
-        self.book.accept('arrow_left', self.__leftArrow)
+        self.book.accept('arrow_right', self.rightArrow)
+        self.book.accept('arrow_left', self.leftArrow)
 
     def unload(self):
         self.writeDisplaySettings()
