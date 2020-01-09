@@ -731,14 +731,22 @@ class ControlsTabPage(DirectFrame):
         rolloverColor = (0.15, 0.82, 1.0, 1)
         diabledColor = (1.0, 0.98, 0.15, 1)
         guiButton = loader.loadModel('phase_3/models/gui/quit_button')
+        matGui = loader.loadModel('phase_3/models/gui/tt_m_gui_mat_mainGui')
         button_set = (guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR'))
+        matButton_set = (matGui.find('**/tt_t_gui_mat_nextUp'), matGui.find('**/tt_t_gui_mat_nextDown'), matGui.find('**/tt_t_gui_mat_nextUp'), matGui.find('**/tt_t_gui_mat_nextDisabled'))
         self.bindDialog = None
         self.current_event = None
-        self.Forward_Label = DirectLabel(parent=self, relief=None, text='Forward', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.65, 0, 0.5))
-        self.Forward_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.65, 1, 1), text=settings['customKeybinds']['forward'], text_scale=0.052, text_pos=(0.0, -0.02), pos=(-0.55, 0, 0.4), command=self.showBindDialog, extraArgs=['forward'])
+        self.Forward_Label = DirectLabel(parent=self, relief=None, text='Forward', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.6, 0, 0.4))
+        self.Forward_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.65, 1, 1), text=settings['customKeybinds']['forward'], text_scale=0.052, text_pos=(0.0, -0.02), pos=(-0.5, 0, 0.3), command=self.showBindDialog, extraArgs=['forward'])
+        self.InputType_Label = DirectLabel(parent=self, relief=None, text='Keyboard', text_font=ToontownGlobals.getSignFont(), text_fg=(1, 1, 1, 1), text_align=TextNode.ALeft, text_scale=0.1, pos=(-0.3, 0, 0.45))
+        self.rightArrow = DirectButton(parent=self, relief=None, image=matButton_set, pos=(0.3, 0, 0.55), image_scale=(0.18, 0.18, 0.18), image1_scale=(0.20, 0.20, 0.20), image2_scale=(0.20, 0.20, 0.20), image3_scale=(0.18, 0.18, 0.18), command=self.changeDevice)
+        self.leftArrow = DirectButton(parent=self, relief=None, image=matButton_set, pos=(-0.3, 0, 0.55), image_scale=(-0.18, 0.18, 0.18), image1_scale=(-0.20, 0.20, 0.20), image2_scale=(-0.20, 0.20, 0.20), image3_scale=(-0.18, 0.18, 0.18), command=self.changeDevice)
         #self.audioLabel = DirectLabel(parent=self, relief=None, text="Controls", text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_align=TextNode.ALeft, text_scale=0.07, pos=(-0.8, 0, textStartHeight - 0.03))
         #self.bindDialog = TTDialog.TTDialog(text="", text_wordwrap=14, pos=(0, 0, 0.2), style=TTDialog.CancelOnly, command=self.hideBindDialog)
         return
+
+    def changeDevice(self):
+        pass
 
     def refresh(self):
         keybinds = settings['customKeybinds']
@@ -761,9 +769,6 @@ class ControlsTabPage(DirectFrame):
             settings['customKeybinds'][self.current_event] = key
             self.refresh()
             self.hideBindDialog(None)
-        print(key)
-        print(len(key))
-
     def enter(self):
         base.buttonThrowers[0].node().setButtonUpEvent('key-pressed')
         self.show()
