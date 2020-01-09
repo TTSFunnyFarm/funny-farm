@@ -191,14 +191,10 @@ class OptionsTabPage(DirectFrame):
         self.exitButton.show()
         self.enterVideoOptions()
         self.accept(base.win.getWindowEvent(), self.__handleWindowEvent)
-        self.book.ignore('arrow_left')
-        self.book.ignore('arrow_right')
 
     def exit(self):
         self.ignoreAll()
         self.hide()
-        self.book.accept('arrow_right', self.rightArrow)
-        self.book.accept('arrow_left', self.leftArrow)
 
     def unload(self):
         self.writeDisplaySettings()
@@ -772,9 +768,13 @@ class ControlsTabPage(DirectFrame):
         base.buttonThrowers[0].node().setButtonUpEvent('key-pressed')
         self.show()
         self.accept('key-pressed', self.keyPressed)
+        self._parent.book.accept('arrow_right', self._parent.book.rightArrow)
+        self._parent.book.accept('arrow_left', self._parent.book.leftArrow)
 
     def exit(self):
         self.hide()
+        self._parent.book.ignore('arrow_left')
+        self._parent.book.ignore('arrow_right')
 
     def unload(self):
         #self.submitButton.destroy()
