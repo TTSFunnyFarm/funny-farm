@@ -427,9 +427,9 @@ class ToonBase(OTPBase.OTPBase):
     def handleControllerConnect(self, controller):
         dialog = TTDialog.TTDialog(parent=aspect2d, text="%s has been connected.\n\nWould you like to use it?" % controller.name, style=TTDialog.YesNo, command=self.handleControllerAck, extraArgs=[controller])
         dialog.show()
-    
+
     def handleControllerAck(self, val, controller):
-        if buttonValue == DGG.DIALOG_OK:
+        if val == DGG.DIALOG_OK:
             base.gamepad = controller
             messenger.send('gamepad—enable')
         dialog.hide()
