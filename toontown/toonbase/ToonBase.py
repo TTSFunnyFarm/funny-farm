@@ -157,6 +157,7 @@ class ToonBase(OTPBase.OTPBase):
         self.needRestartLOD = False
         self.accept('connect-device', self.handleControllerConnect)
         self.gamepad = None
+        self._controllerDialog = None
         return
 
     def openMainWindow(self, *args, **kw):
@@ -425,11 +426,12 @@ class ToonBase(OTPBase.OTPBase):
         base.win.requestProperties(wp)
 
     def handleControllerConnect(self, controller):
-        dialog = TTDialog.TTDialog(parent=aspect2d, text="%s has been connected.\n\nWould you like to use it?" % controller.name, style=TTDialog.YesNo, command=self.handleControllerAck, extraArgs=[controller])
-        dialog.show()
+        self._controllerDialog = TTDialog.TTDialog(parent=aspect2d, text="%s has been connected.\n\nWould you like to use it?" % controller.name, style=TTDialog.YesNo, command=self.handleControllerAck, extraArgs=[controller])
+        self._controllerDialog.show()
 
     def handleControllerAck(self, val, controller):
         if val == DGG.DIALOG_OK:
             base.gamepad = controller
             messenger.send('gamepad—enable')
-        dialog.hide()
+        if self._controllerDialog:
+            self._controllerDialog.hide()
