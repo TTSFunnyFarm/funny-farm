@@ -158,6 +158,7 @@ class ToonBase(OTPBase.OTPBase):
         self.accept('connect-device', self.handleControllerConnect)
         self.accept('disconnect-device', self.handleControllerDisconnect)
         self.gamepad = None
+        self.currentDevices = ['keyboard']
         self._controllerDialog = None
         return
 
@@ -429,15 +430,23 @@ class ToonBase(OTPBase.OTPBase):
     def handleControllerConnect(self, controller):
         self._controllerDialog = TTDialog.TTDialog(parent=aspect2d, text="%s has been connected.\n\nWould you like to use it?" % controller.name, style=TTDialog.YesNo, command=self.handleControllerAck, extraArgs=[controller])
         self._controllerDialog.show()
+        if controller.name not in self.currentDevices:
+            self.currentDevices.append(controller.name)
 
     def handleControllerAck(self, val, controller):
         if val == DGG.DIALOG_OK:
             self.gamepad = controller
-            messenger.send('gamepad—enable')
+            messenger.send('gamepad-enable', controller)
         if self._controllerDialog:
             self._controllerDialog.hide()
 
     def handleControllerDisconnect(self, controller):
         if self.gamepad == controller:
             self.gamepad = None
-            messenger.send('gamepad-disable')
+            messenger.send('gamepad-disable', controller)
+
+    def getCurrentDevice(self):
+        if base.gamepad:
+            return base.gamepad.name
+        else:
+            return 'keyboard'

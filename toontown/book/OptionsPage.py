@@ -741,21 +741,37 @@ class ControlsTabPage(DirectFrame):
         self.bindDialog = None
         self.current_event = None
         self.Forward_Label = DirectLabel(parent=self, relief=None, text='Forward', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.6, 0, 0.4))
-        self.Forward_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.65, 1, 1), text=settings['keybinds']['forward'], text_scale=0.052, text_pos=(0.0, -0.02), pos=(-0.5, 0, 0.3), command=self.showBindDialog, extraArgs=['forward'])
+        self.Forward_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.65, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(-0.5, 0, 0.3), command=self.showBindDialog, extraArgs=['forward'])
         self.InputType_Label = DirectLabel(parent=self, relief=None, text='Keyboard', text_font=ToontownGlobals.getSignFont(), text_fg=(1, 1, 1, 1), text_align=TextNode.ACenter, text_scale=0.1, pos=(0, 0, 0.5))
-        self.rightArrow = DirectButton(parent=self, relief=None, image=matButton_set, pos=(0.4, 0, 0.53), image_scale=(0.18, 0.18, 0.18), image1_scale=(0.20, 0.20, 0.20), image2_scale=(0.20, 0.20, 0.20), image3_scale=(0.18, 0.18, 0.18), command=self.changeDevice)
-        self.leftArrow = DirectButton(parent=self, relief=None, image=matButton_set, pos=(-0.4, 0, 0.53), image_scale=(-0.18, 0.18, 0.18), image1_scale=(-0.20, 0.20, 0.20), image2_scale=(-0.20, 0.20, 0.20), image3_scale=(-0.18, 0.18, 0.18), command=self.changeDevice)
-        self.rightArrow.setX(len(self.InputType_Label['text']) * 0.025 + 0.2)
-        self.leftArrow.setX(-(len(self.InputType_Label['text']) * 0.025 + 0.2))
+        self.rightArrow = DirectButton(parent=self, relief=None, image=matButton_set, pos=(0.4, 0, 0.53), image_scale=(0.18, 0.18, 0.18), image1_scale=(0.20, 0.20, 0.20), image2_scale=(0.20, 0.20, 0.20), image3_scale=(0.18, 0.18, 0.18), command=self.changeDevice, extraArgs=[1])
+        self.leftArrow = DirectButton(parent=self, relief=None, image=matButton_set, pos=(-0.4, 0, 0.53), image_scale=(-0.18, 0.18, 0.18), image1_scale=(-0.20, 0.20, 0.20), image2_scale=(-0.20, 0.20, 0.20), image3_scale=(-0.18, 0.18, 0.18), command=self.changeDevice, extraArgs=[-1])
         self._buttons = [self.leftArrow, self.rightArrow, self.Forward_Bind]
         return
 
-    def changeDevice(self):
-        pass
+    def changeDevice(self, delta):
+        self.currentDevice += delta
+        print(self.currentDevice)
+        self.refresh()
+        print(settings['keybinds'][base.currentDevices[self.currentDevice]])
 
     def refresh(self):
-        keybinds = settings['keybinds']
+        if not base.currentDevices[self.currentDevice] in settings['keybinds']:
+            settings['keybinds'][base.currentDevices[self.currentDevice]] = {'forward': 'lstick_up', 'reverse': 'lstick_down', 'turn_left': 'rstick_left', 'turn_right': 'rstick_right',
+             'chat': 'back', 'jump': 'face_a', 'gags': 'lshoulder', 'tasks': 'rshoulder',
+             'camera': 'rstick', 'gui': 'guide', 'action': 'rtrigger', 'shtiker': 'start'}
+        keybinds = settings['keybinds'][base.currentDevices[self.currentDevice]]
         self.Forward_Bind.setText(keybinds['forward'])
+        self.InputType_Label.setText(base.currentDevices[self.currentDevice])
+        if self.currentDevice == 0:
+            self.leftArrow['state'] = DGG.DISABLED
+        else:
+            self.leftArrow['state'] = DGG.NORMAL
+        if len(base.currentDevices) > self.currentDevice + 1:
+            self.rightArrow['state'] = DGG.NORMAL
+        else:
+            self.rightArrow['state'] = DGG.DISABLED
+        self.rightArrow.setX(len(self.InputType_Label['text']) * 0.025 + 0.2)
+        self.leftArrow.setX(-(len(self.InputType_Label['text']) * 0.025 + 0.2))
 
     def showBindDialog(self, event):
         if self.bindDialog:
@@ -771,7 +787,8 @@ class ControlsTabPage(DirectFrame):
         if key.startswith('mouse'): #no mouse events sorry
             return
         if self.bindDialog and self.current_event:
-            settings['keybinds'][self.current_event] = key
+            keybinds = settings['keybinds'][base.currentDevices[self.currentDevice]]
+            keybinds[self.current_event] = key
             self.refresh()
             self.hideBindDialog(None)
 
@@ -781,6 +798,8 @@ class ControlsTabPage(DirectFrame):
         self.accept('key-pressed', self.keyPressed)
         self._parent.book.accept('arrow_right', self._parent.book.rightArrow)
         self._parent.book.accept('arrow_left', self._parent.book.leftArrow)
+        self.currentDevice = 0
+        self.refresh()
 
     def exit(self):
         self.hide()
