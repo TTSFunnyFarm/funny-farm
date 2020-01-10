@@ -38,7 +38,7 @@ class OptionsPage(ShtikerPage.ShtikerPage):
         diabledColor = (1.0, 0.98, 0.15, 1)
         titleHeight = 0.61
         self.optionsTab = DirectButton(parent=self, relief=None, text=TTLocalizer.OptionsPageTitle, text_scale=TTLocalizer.OPoptionsTab, text_align=TextNode.ALeft, text_pos=(0.01, 0.0, 0.0), image=gui.find('**/tabs/polySurface1'), image_pos=(0.55, 1, -0.91), image_hpr=(0, 0, -90), image_scale=(0.033, 0.033, 0.035), image_color=normalColor, image1_color=clickColor, image2_color=rolloverColor, image3_color=diabledColor, text_fg=Vec4(0.2, 0.1, 0, 1), command=self.setMode, extraArgs=[PageMode.Options], pos=(-0.36, 0, 0.77))
-        self.controlsTab = DirectButton(parent=self, relief=None, text="Controls", text_scale=TTLocalizer.OPoptionsTab, text_align=TextNode.ALeft, text_pos=(0.01, 0.0, 0.0), image=gui.find('**/tabs/polySurface2'), image_pos=(0.12, 1, -0.91), image_hpr=(0, 0, -90), image_scale=(0.033, 0.033, 0.035), image_color=normalColor, image1_color=clickColor, image2_color=rolloverColor, image3_color=diabledColor, text_fg=Vec4(0.2, 0.1, 0, 1), command=self.setMode, extraArgs=[PageMode.Controls], pos=(0.11, 0, 0.77))
+        self.controlsTab = DirectButton(parent=self, relief=None, text="Controls", text_scale=TTLocalizer.OPoptionsTab, text_align=TextNode.ALeft, text_pos=(0.0, 0.0, 0.0), image=gui.find('**/tabs/polySurface2'), image_pos=(0.12, 1, -0.91), image_hpr=(0, 0, -90), image_scale=(0.033, 0.033, 0.035), image_color=normalColor, image1_color=clickColor, image2_color=rolloverColor, image3_color=diabledColor, text_fg=Vec4(0.2, 0.1, 0, 1), command=self.setMode, extraArgs=[PageMode.Controls], pos=(0.11, 0, 0.77))
         return
 
     def enter(self):
@@ -738,6 +738,10 @@ class ControlsTabPage(DirectFrame):
         matGui = loader.loadModel('phase_3/models/gui/tt_m_gui_mat_mainGui')
         button_set = (guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR'))
         matButton_set = (matGui.find('**/tt_t_gui_mat_nextUp'), matGui.find('**/tt_t_gui_mat_nextDown'), matGui.find('**/tt_t_gui_mat_nextUp'), matGui.find('**/tt_t_gui_mat_nextDisabled'))
+        guiAcceptUp = matGui.find('**/tt_t_gui_mat_okUp')
+        guiAcceptDown = matGui.find('**/tt_t_gui_mat_okDown')
+        guiCancelUp = matGui.find('**/tt_t_gui_mat_closeUp')
+        guiCancelDown = matGui.find('**/tt_t_gui_mat_closeDown')
         self.bindDialog = None
         self.current_event = None
         self.Forward_Label = DirectLabel(parent=self, relief=None, text='Forward', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.6, 0, 0.4))
@@ -746,22 +750,25 @@ class ControlsTabPage(DirectFrame):
         self.rightArrow = DirectButton(parent=self, relief=None, image=matButton_set, pos=(0.4, 0, 0.53), image_scale=(0.18, 0.18, 0.18), image1_scale=(0.20, 0.20, 0.20), image2_scale=(0.20, 0.20, 0.20), image3_scale=(0.18, 0.18, 0.18), command=self.changeDevice, extraArgs=[1])
         self.leftArrow = DirectButton(parent=self, relief=None, image=matButton_set, pos=(-0.4, 0, 0.53), image_scale=(-0.18, 0.18, 0.18), image1_scale=(-0.20, 0.20, 0.20), image2_scale=(-0.20, 0.20, 0.20), image3_scale=(-0.18, 0.18, 0.18), command=self.changeDevice, extraArgs=[-1])
         self._buttons = [self.leftArrow, self.rightArrow, self.Forward_Bind]
+        self.turnOnDevice = DirectButton(parent=self, relief=None, image=(guiAcceptUp, guiAcceptDown, guiAcceptUp), pos=(0.6, 0, 0.63), image_scale=0.45, image2_scale=0.48, text='Use device!', text_pos=(0.0, -0.1), text_scale=0.06, command=self.toggleDevice)
+        self.turnOnDevice.show()
         return
 
     def changeDevice(self, delta):
         self.currentDevice += delta
         print(self.currentDevice)
         self.refresh()
-        print(settings['keybinds'][base.currentDevices[self.currentDevice]])
 
     def refresh(self):
-        if not base.currentDevices[self.currentDevice] in settings['keybinds']:
-            settings['keybinds'][base.currentDevices[self.currentDevice]] = {'forward': 'lstick_up', 'reverse': 'lstick_down', 'turn_left': 'rstick_left', 'turn_right': 'rstick_right',
+        device = self.getDeviceName()
+        if not device in settings['keybinds']:
+            settings['keybinds'][device] = {'forward': 'lstick_up', 'reverse': 'lstick_down', 'turn_left': 'rstick_left', 'turn_right': 'rstick_right',
              'chat': 'back', 'jump': 'face_a', 'gags': 'lshoulder', 'tasks': 'rshoulder',
              'camera': 'rstick', 'gui': 'guide', 'action': 'rtrigger', 'shtiker': 'start'}
-        keybinds = settings['keybinds'][base.currentDevices[self.currentDevice]]
+        keybinds = settings['keybinds'][device]
         self.Forward_Bind.setText(keybinds['forward'])
-        self.InputType_Label.setText(base.currentDevices[self.currentDevice])
+        print(device)
+        self.InputType_Label.setText(device)
         if self.currentDevice == 0:
             self.leftArrow['state'] = DGG.DISABLED
         else:
@@ -772,30 +779,53 @@ class ControlsTabPage(DirectFrame):
             self.rightArrow['state'] = DGG.DISABLED
         self.rightArrow.setX(len(self.InputType_Label['text']) * 0.025 + 0.2)
         self.leftArrow.setX(-(len(self.InputType_Label['text']) * 0.025 + 0.2))
+        if self.getCurrentDevice() == base.gamepad or (self.getCurrentDevice() == 'keyboard' and not base.gamepad):
+            self.turnOnDevice.hide()
+        else:
+            self.turnOnDevice.show()
 
     def showBindDialog(self, event):
         if self.bindDialog:
             self.hideBindDialog(None)
         self.current_event = event
-        self.bindDialog = TTDialog.TTDialog(text='Binding: %s\n\nPress any key to bind.' % event, text_wordwrap=14, pos=(0, 0, 0.2), style=TTDialog.CancelOnly, command=self.hideBindDialog)
+        self.bindDialog = TTDialog.TTDialog(text='Binding: %s\n\nPress any key to bind.' % event, pos=(0, 0, 0.2), style=TTDialog.CancelOnly, command=self.hideBindDialog)
 
     def hideBindDialog(self, unused):
         self.bindDialog.removeNode()
         self.bindDialog = None
 
-    def keyPressed(self, key):
-        if key.startswith('mouse'): #no mouse events sorry
+    def handleInput(self, input):
+        if input.startswith('mouse'): #no mouse events sorry
             return
         if self.bindDialog and self.current_event:
-            keybinds = settings['keybinds'][base.currentDevices[self.currentDevice]]
+            device = self.getDeviceName()
+            keybinds = settings['keybinds'][device]
             keybinds[self.current_event] = key
             self.refresh()
             self.hideBindDialog(None)
 
+    def getCurrentDevice(self):
+        return base.currentDevices[self.currentDevice]
+
+    def getDeviceName(self):
+        device = 'keyboard'
+        if self.currentDevice > 0:
+            device = self.getCurrentDevice().name
+        return device
+
+    def toggleDevice(self):
+        messenger.send('gamepad-disable', base.gamepad or 'keyboard')
+        device = self.getCurrentDevice()
+        if device == 'keyboard':
+            base.gamepad = None
+        else:
+            base.gamepad = device
+        messenger.send('gamepad-enable', device)
+
     def enter(self):
         base.buttonThrowers[0].node().setButtonUpEvent('key-pressed')
         self.show()
-        self.accept('key-pressed', self.keyPressed)
+        self.accept('key-pressed', self.handleInput)
         self._parent.book.accept('arrow_right', self._parent.book.rightArrow)
         self._parent.book.accept('arrow_left', self._parent.book.leftArrow)
         self.currentDevice = 0

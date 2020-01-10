@@ -428,10 +428,10 @@ class ToonBase(OTPBase.OTPBase):
         base.win.requestProperties(wp)
 
     def handleControllerConnect(self, controller):
-        self._controllerDialog = TTDialog.TTDialog(parent=aspect2d, text="%s has been connected.\n\nWould you like to use it?" % controller.name, style=TTDialog.YesNo, command=self.handleControllerAck, extraArgs=[controller])
+        self._controllerDialog = TTDialog.TTDialog(parent=aspect2d, text="%s has been connected.\n\nWould you like to use it?" % controller.name, style=TTDialog.YesNo, command=self.handleControllerAck, extraArgs=[controller], text_wordwrap=24)
         self._controllerDialog.show()
-        if controller.name not in self.currentDevices:
-            self.currentDevices.append(controller.name)
+        if controller not in self.currentDevices:
+            self.currentDevices.append(controller)
 
     def handleControllerAck(self, val, controller):
         if val == DGG.DIALOG_OK:
@@ -441,6 +441,7 @@ class ToonBase(OTPBase.OTPBase):
             self._controllerDialog.hide()
 
     def handleControllerDisconnect(self, controller):
+        self.currentDevices.remove(controller)
         if self.gamepad == controller:
             self.gamepad = None
             messenger.send('gamepad-disable', controller)
