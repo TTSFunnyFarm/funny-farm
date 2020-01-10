@@ -551,7 +551,7 @@ class FishingSpot(DirectObject):
             self.doCast()
             self.jar['text'] = str(base.localAvatar.getMoney())
         else:
-            self.__showBroke()
+            self.showBroke()
 
     def showCastGui(self):
         self.notify.debug("Showing cast buttons")
@@ -583,7 +583,7 @@ class FishingSpot(DirectObject):
 
     def clickCrank(self, param):
         if self.crankHeld:
-            self.__releaseCrank(param)
+            self.releaseCrank(param)
 
         self.reelButton.hide()
         self.crankHeld = True
@@ -616,17 +616,12 @@ class FishingSpot(DirectObject):
             old = self.crankHandle.getR()
             self.crankHandle.setR(angle)
             if self.isFishing():
-                if not self.crankTime:
-                    self.crankTime = globalClock.getFrameTime()
                 delta = self.crankHandle.getR() - old
                 delta = abs(delta)
-                print(delta)
-                print(globalClock.getFrameTime() -self.crankTime)
                 old = self.lineStrength
                 self.lineStrength += delta / (globalClock.getFrameTime() - self.crankTime)
                 if self.lineStrength > 100:
                     self.lineStrength = 100
-
 
         return Task.cont
 
@@ -785,7 +780,7 @@ class FishingSpot(DirectObject):
             #return Task.done
         pctDiff = self.lineStrength
         self.lineStrength = 0.0
-        self.notify.debug('pctDiff: {0}, avgSpeed: {1}'.format(pctDiff, avgSpeed))
+        #self.notify.debug('pctDiff: {0}, avgSpeed: {1}'.format(pctDiff, avgSpeed))
         print("LOLLL",  pctDiff)
         if pctDiff >= 65:
             self.setMovie(FishingGlobals.PullInMovie, FishingGlobals.TooFast, 0, 0)
