@@ -43,22 +43,26 @@ class ControlManager:
             ist.append(inputState.watchWithModifiers("turnRight", "arrow_right", inputSource=inputState.ArrowKeys))
 
 
+    if __debug__:
+        def lockControls(self):
+            self.ignoreUse = True
+
+        def unlockControls(self):
+            self.ignoreUse = False
+
     def __str__(self):
         return 'ControlManager: using \'%s\'' % self.currentControlsName
 
     def add(self, controls, name="basic"):
         """Add a control instance to the list of available control systems.
-
-        Args:
+        args:
             controls: an avatar control system.
-            name (str): any key that you want to use to refer to the controls
-                later (e.g. using the use(<name>) call).
-
-        See also: :meth:`use()`.
+            name (str): any key that you want to use to refer to the controls later (e.g. using the use(<name>) call).
         """
-        assert controls is not None
+        if not controls:
+            return
         oldControls = self.controls.get(name)
-        if oldControls is not None:
+        if oldControls:
             self.notify.debug("Replacing controls: %s" % name)
             oldControls.disableAvatarControls()
             oldControls.setCollisionsActive(0)
@@ -73,27 +77,14 @@ class ControlManager:
     def remove(self, name):
         """Remove a control instance from the list of available control
         systems.
-
-        Args:
-            name: any key that was used to refer to the controls when they were
-                added (e.g. using the add(<controls>, <name>) call).
-
-        See also: :meth:`add()`.
+        args:
+            name: any key that was used to refer to the controls when they were added (e.g. using the add(<controls>, <name>) call).
         """
-        assert self.notify.debugCall(id(self))
         oldControls = self.controls.pop(name,None)
-        if oldControls is not None:
-            assert self.notify.debug("Removing controls: %s" % name)
+        if oldControls:
+            self.notify.debug("Removing controls: %s" % name)
             oldControls.disableAvatarControls()
             oldControls.setCollisionsActive(0)
-
-    if __debug__:
-        def lockControls(self):
-            self.ignoreUse=True
-
-        def unlockControls(self):
-            if hasattr(self, "ignoreUse"):
-                del self.ignoreUse
 
     def use(self, name, avatar):
         """
@@ -103,14 +94,13 @@ class ControlManager:
 
         See also: :meth:`add()`.
         """
-        assert self.notify.debugCall(id(self))
-        if __debug__ and hasattr(self, "ignoreUse"):
+        if __debug__ or self.ignoreUse:
             return
         controls = self.controls.get(name)
 
-        if controls is not None:
-            if controls is not self.currentControls:
-                if self.currentControls is not None:
+        if controls:
+            if controls != self.currentControls:
+                if self.currentControls:
                     self.currentControls.disableAvatarControls()
                     self.currentControls.setCollisionsActive(0)
                     self.currentControls.setAvatar(None)
@@ -121,20 +111,15 @@ class ControlManager:
                 if self.isEnabled:
                     self.currentControls.enableAvatarControls()
                 messenger.send('use-%s-controls'%(name,), [avatar])
-            #else:
-            #    print "Controls are already", name
         else:
-            assert self.notify.debug("Unkown controls: %s" % name)
+            self.notify.debug("Unknown controls: %s" % name)
 
     def setSpeeds(self, forwardSpeed, jumpForce,
             reverseSpeed, rotateSpeed, strafeLeft=0, strafeRight=0):
-        assert self.notify.debugCall(id(self))
         for controls in self.controls.values():
-            controls.setWalkSpeed(
-                forwardSpeed, jumpForce, reverseSpeed, rotateSpeed)
+            controls.setWalkSpeed(forwardSpeed, jumpForce, reverseSpeed, rotateSpeed)
 
     def delete(self):
-        assert self.notify.debugCall(id(self))
         self.disable()
         for controls in self.controls.keys():
             self.remove(controls)
@@ -231,18 +216,17 @@ class ControlManager:
 
     def disableAvatarJump(self):
         assert self.forceAvJumpToken is None
-        self.forceAvJumpToken=inputState.force('jump', 0, 'ControlManager.disableAvatarJump')
+        self.forceAvJumpToken = inputState.force('jump', 0, 'ControlManager.disableAvatarJump')
 
     def enableAvatarJump(self):
         """
         Stop forcing the ctrl key to return 0's
         """
-        assert self.forceAvJumpToken is not None
-        self.forceAvJumpToken.release()
-        self.forceAvJumpToken = None
+        if self.forceAvJumpToken:
+            self.forceAvJumpToken.release()
+            del self.forceAvJumpToken
 
     def monitor(self, foo):
-        #assert self.debugPrint("monitor()")
         #if 1:
         #    airborneHeight=self.avatar.getAirborneHeight()
         #    onScreenDebug.add("airborneHeight", "% 10.4f"%(airborneHeight,))
