@@ -1,4 +1,3 @@
-
 from direct.showbase.InputStateGlobal import inputState
 #from DirectGui import *
 #from PythonUtil import *
@@ -23,8 +22,7 @@ class ControlManager:
     notify = DirectNotifyGlobal.directNotify.newCategory("ControlManager")
 
     def __init__(self, enable=True, passMessagesThrough = False):
-        assert self.notify.debug("init control manager %s" % (passMessagesThrough))
-        assert self.notify.debugCall(id(self))
+        self.notify.debug("init control manager %s" % (passMessagesThrough))
         self.passMessagesThrough = passMessagesThrough
         self.inputStateTokens = []
         # Used to switch between strafe and turn. We will reset to whatever was last set.
@@ -36,8 +34,6 @@ class ControlManager:
             self.enable()
         #self.monitorTask = taskMgr.add(self.monitor, "ControlManager-%s"%(id(self)), priority=-1)
         self.forceAvJumpToken = None
-
-
 
         if self.passMessagesThrough: # for not breaking toontown
             ist=self.inputStateTokens
@@ -60,11 +56,10 @@ class ControlManager:
 
         See also: :meth:`use()`.
         """
-        assert self.notify.debugCall(id(self))
         assert controls is not None
         oldControls = self.controls.get(name)
         if oldControls is not None:
-            assert self.notify.debug("Replacing controls: %s" % name)
+            self.notify.debug("Replacing controls: %s" % name)
             oldControls.disableAvatarControls()
             oldControls.setCollisionsActive(0)
             oldControls.delete()
@@ -162,33 +157,26 @@ class ControlManager:
         return False
 
     def setTag(self, key, value):
-        assert self.notify.debugCall(id(self))
         for controls in self.controls.values():
             controls.setTag(key, value)
 
     def deleteCollisions(self):
-        assert self.notify.debugCall(id(self))
         for controls in self.controls.values():
             controls.deleteCollisions()
 
     def collisionsOn(self):
-        assert self.notify.debugCall(id(self))
         if self.currentControls:
             self.currentControls.setCollisionsActive(1)
 
     def collisionsOff(self):
-        assert self.notify.debugCall(id(self))
         if self.currentControls:
             self.currentControls.setCollisionsActive(0)
 
     def placeOnFloor(self):
-        assert self.notify.debugCall(id(self))
         if self.currentControls:
             self.currentControls.placeOnFloor()
 
     def enable(self):
-        assert self.notify.debugCall(id(self))
-
         if self.isEnabled:
             return
 
@@ -218,7 +206,6 @@ class ControlManager:
             self.currentControls.enableAvatarControls()
 
     def disable(self):
-        assert self.notify.debugCall(id(self))
         self.isEnabled = 0
 
         for token in self.inputStateTokens:
@@ -229,7 +216,7 @@ class ControlManager:
             self.currentControls.disableAvatarControls()
 
         if self.passMessagesThrough: # for not breaking toontown
-            ist=self.inputStateTokens
+            ist = self.inputStateTokens
             ist.append(inputState.watchWithModifiers("forward", "arrow_up", inputSource=inputState.ArrowKeys))
             ist.append(inputState.watchWithModifiers("reverse", "arrow_down", inputSource=inputState.ArrowKeys))
             ist.append(inputState.watchWithModifiers("turnLeft", "arrow_left", inputSource=inputState.ArrowKeys))
@@ -244,8 +231,7 @@ class ControlManager:
 
     def disableAvatarJump(self):
         assert self.forceAvJumpToken is None
-        self.forceAvJumpToken=inputState.force(
-            "jump", 0, 'ControlManager.disableAvatarJump')
+        self.forceAvJumpToken=inputState.force('jump', 0, 'ControlManager.disableAvatarJump')
 
     def enableAvatarJump(self):
         """
