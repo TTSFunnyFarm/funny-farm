@@ -245,7 +245,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         Toon.Toon.setChatAbsolute(self, chatString, chatFlags, dialogue=dialogue, interrupt=interrupt)
         # Message is sent from NametagGroup
         self.accept('%s-clearChat' % self.nametag.getUniqueId(), self.chatTimeout)
-        if chatFlags&CFThought:
+        if chatFlags & CFThought:
             # Makes it so thought bubbles don't appear in the margins
             self.chatTimeout()
 

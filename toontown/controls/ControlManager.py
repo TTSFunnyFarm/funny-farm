@@ -1,4 +1,4 @@
-from direct.showbase.InputStateGlobal import inputState
+from toontown.controls.InputStateGlobal import inputState
 #from DirectGui import *
 #from PythonUtil import *
 #from IntervalGlobal import *
@@ -13,6 +13,7 @@ from direct.directnotify import DirectNotifyGlobal
 #    import DevWalker
 from direct.task import Task
 from panda3d.core import ConfigVariableBool
+from toontown.toonbase.ToontownGlobals import GP_CONTROLS
 
 # This is a hack, it may be better to use a line instead of a ray.
 CollisionHandlerRayStart = 4000.0
@@ -30,17 +31,21 @@ class ControlManager:
         self.currentControls = None
         self.currentControlsName = None
         self.isEnabled = 0
+        self.ignoreUse = 0
         if enable:
             self.enable()
         #self.monitorTask = taskMgr.add(self.monitor, "ControlManager-%s"%(id(self)), priority=-1)
         self.forceAvJumpToken = None
 
-        if self.passMessagesThrough: # for not breaking toontown
-            ist=self.inputStateTokens
-            ist.append(inputState.watchWithModifiers("forward", "arrow_up", inputSource=inputState.ArrowKeys))
-            ist.append(inputState.watchWithModifiers("reverse", "arrow_down", inputSource=inputState.ArrowKeys))
-            ist.append(inputState.watchWithModifiers("turnLeft", "arrow_left", inputSource=inputState.ArrowKeys))
-            ist.append(inputState.watchWithModifiers("turnRight", "arrow_right", inputSource=inputState.ArrowKeys))
+        if self.passMessagesThrough:
+            ist = self.inputStateTokens
+            source = inputState.Keyboard
+            if base.gamepad:
+                source = inputState.Gamepad
+            ist.append(inputState.watchWithModifiers("forward", settings[base.getCurrentDevice()]['forward'], inputSource=source))
+            ist.append(inputState.watchWithModifiers("reverse", settings[base.getCurrentDevice()]['reverse'], inputSource=source))
+            ist.append(inputState.watchWithModifiers("turnLeft", settings[base.getCurrentDevice()]['turn_left'], inputSource=source))
+            ist.append(inputState.watchWithModifiers("turnRight", settings[base.getCurrentDevice()]['turn_right'], inputSource=source))
 
 
     if __debug__:
@@ -89,12 +94,9 @@ class ControlManager:
     def use(self, name, avatar):
         """
         name is a key (string) that was previously passed to add().
-
         Use a previously added control system.
-
-        See also: :meth:`add()`.
         """
-        if __debug__ or self.ignoreUse:
+        if __debug__ and self.ignoreUse:
             return
         controls = self.controls.get(name)
 
@@ -121,8 +123,6 @@ class ControlManager:
 
     def delete(self):
         self.disable()
-        for controls in self.controls.keys():
-            self.remove(controls)
         del self.controls
         del self.currentControls
 
@@ -169,29 +169,42 @@ class ControlManager:
 
         # keep track of what we do on the inputState so we can undo it later on
         #self.inputStateTokens = []
+        source = inputState.Keyboard
+        if base.gamepad:
+            source = inputState.Gamepad
+        self.refreshInputStates(source)
+        print("YEP YEP")
+        if self.currentControls:
+            print("HUH")
+            self.currentControls.enableAvatarControls()
+
+    def refreshInputStates(self, source=None):
         ist = self.inputStateTokens
+        print(base.getCurrentDevice())
+        keybinds = settings['keybinds']
+        keybinds = keybinds.get(base.getCurrentDevice())
+        print(keybinds)
+        if not keybinds:
+            settings['keybinds'][base.getCurrentDevice()] = GP_CONTROLS
+            keybinds = GP_CONTROLS
         ist.append(inputState.watch("run", 'runningEvent', "running-on", "running-off"))
 
-        ist.append(inputState.watchWithModifiers("forward", "arrow_up", inputSource=inputState.ArrowKeys))
+        ist.append(inputState.watchWithModifiers("forward", keybinds['forward'], inputSource=source))
         ist.append(inputState.watch("forward", "force-forward", "force-forward-stop"))
 
-        ist.append(inputState.watchWithModifiers("reverse", "arrow_down", inputSource=inputState.ArrowKeys))
-        ist.append(inputState.watchWithModifiers("reverse", "mouse4", inputSource=inputState.Mouse))
+        ist.append(inputState.watchWithModifiers("reverse", keybinds['reverse'], inputSource=source))
 
-        ist.append(inputState.watchWithModifiers("turnLeft", "arrow_left", inputSource=inputState.ArrowKeys))
-        ist.append(inputState.watch("turnLeft", "mouse-look_left", "mouse-look_left-done"))
+        ist.append(inputState.watchWithModifiers("turnLeft", keybinds['turn_left'], inputSource=source))
+        ist.append(inputState.watch("turnleft", "force-turn_left", "force-turn_left-stop"))
         ist.append(inputState.watch("turnLeft", "force-turnLeft", "force-turnLeft-stop"))
 
-        ist.append(inputState.watchWithModifiers("turnRight", "arrow_right", inputSource=inputState.ArrowKeys))
-        ist.append(inputState.watch("turnRight", "mouse-look_right", "mouse-look_right-done"))
-        ist.append(inputState.watch("turnRight", "force-turnRight", "force-turnRight-stop"))
-        ist.append(inputState.watch("jump", "control", "control-up"))
-
-        if self.currentControls:
-            self.currentControls.enableAvatarControls()
+        ist.append(inputState.watchWithModifiers("turnRight", keybinds['turn_right'], inputSource=source))
+        ist.append(inputState.watch("turnRight", "force-turn_right", "force-turn_right-stop"))
+        ist.append(inputState.watch("jump", keybinds['jump'], keybinds['jump'] + '-up', inputSource=source))
 
     def disable(self):
         self.isEnabled = 0
+        print("NUUUUHHH")
 
         for token in self.inputStateTokens:
             token.release()
@@ -202,10 +215,13 @@ class ControlManager:
 
         if self.passMessagesThrough: # for not breaking toontown
             ist = self.inputStateTokens
-            ist.append(inputState.watchWithModifiers("forward", "arrow_up", inputSource=inputState.ArrowKeys))
-            ist.append(inputState.watchWithModifiers("reverse", "arrow_down", inputSource=inputState.ArrowKeys))
-            ist.append(inputState.watchWithModifiers("turnLeft", "arrow_left", inputSource=inputState.ArrowKeys))
-            ist.append(inputState.watchWithModifiers("turnRight", "arrow_right", inputSource=inputState.ArrowKeys))
+            source = inputState.Keyboard
+            if base.gamepad:
+                source = inputState.Gamepad
+            ist.append(inputState.watchWithModifiers("forward", settings[base.getCurrentDevice()]['forward'], inputSource=source))
+            ist.append(inputState.watchWithModifiers("reverse", settings[base.getCurrentDevice()]['reverse'], inputSource=source))
+            ist.append(inputState.watchWithModifiers("turnLeft", settings[base.getCurrentDevice()]['turn_left'], inputSource=source))
+            ist.append(inputState.watchWithModifiers("turnRight", settings[base.getCurrentDevice()]['turn_right'], inputSource=source))
 
     def stop(self):
         self.disable()
@@ -215,7 +231,8 @@ class ControlManager:
         self.currentControls = None
 
     def disableAvatarJump(self):
-        assert self.forceAvJumpToken is None
+        if not self.forceAvJumpToken:
+            return
         self.forceAvJumpToken = inputState.force('jump', 0, 'ControlManager.disableAvatarJump')
 
     def enableAvatarJump(self):

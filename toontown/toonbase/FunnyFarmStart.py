@@ -104,7 +104,7 @@ class FunnyFarmStart:
             settings['waterRefractionScale'] = 0
         if 'keybinds' not in settings:
             settings['keybinds'] = {'keyboard': {'forward': 'arrow_up', 'reverse': 'arrow_down', 'turn_left': 'arrow_left', 'turn_right': 'arrow_right', 'jump': 'control',
-             'chat': 'enter', 'gags': 'home', 'tasks': 'end',
+             'chat': 'enter', 'gags': 'home', 'tasks': 'end', 'options': 'escape',
              'camera': 'tab', 'gui': 'f3', 'action': 'delete', 'shtiker': 'f8'}}
         # Resolution is set above for windowed mode. This is in case the user is running fullscreen mode.
         # If we set the windowed resolution down here, the game wouldn't notice.
@@ -171,5 +171,5 @@ class FunnyFarmStart:
         base.air.createSafeZones()
 
 builtins.start = FunnyFarmStart()
-
+#messenger.toggleVerbose()
 base.run()

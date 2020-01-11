@@ -50,3 +50,5 @@ want-winter #f
 want-pets #f
 game-version ff-dev
 want-discord-integration true
+
+want-avatar-physics-indicator #t

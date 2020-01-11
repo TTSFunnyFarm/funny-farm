@@ -2,7 +2,7 @@ from panda3d.core import *
 from direct.gui.DirectGui import *
 from direct.showbase.PythonUtil import *
 from direct.interval.IntervalGlobal import *
-from direct.showbase.InputStateGlobal import inputState
+from toontown.controls.InputStateGlobal import inputState
 from direct.showbase.DirectObject import DirectObject
 from direct.controls.GhostWalker import GhostWalker
 from direct.controls.GravityWalker import GravityWalker
@@ -10,7 +10,7 @@ from direct.controls.ObserverWalker import ObserverWalker
 from direct.controls.PhysicsWalker import PhysicsWalker
 from direct.controls.SwimWalker import SwimWalker
 from direct.controls.TwoDWalker import TwoDWalker
-from toontown.toon import ControlManager
+from toontown.controls import ControlManager
 from direct.task import Task
 from otp.otpbase import OTPGlobals
 from otp.otpbase import OTPLocalizer
@@ -59,6 +59,7 @@ class LocalAvatar(DirectObject):
         self.jumpLandAnimFixTask = None
         self.fov = OTPGlobals.DefaultCameraFov
         self.accept('avatarMoving', self.clearPageUpDown)
+        self.accept('gamepad-enable', self.gamepadEnabled)
         self.nametag2dNormalContents = Nametag.CSpeech
         self.showNametag2d()
         self.setPickable(0)
@@ -126,7 +127,7 @@ class LocalAvatar(DirectObject):
     def wantLegacyLifter(self):
         return False
 
-    def setupControls(self, avatarRadius = 1.4, floorOffset = OTPGlobals.FloorOffset, reach = 4.0, wallBitmask = OTPGlobals.WallBitmask, floorBitmask = OTPGlobals.FloorBitmask, ghostBitmask = OTPGlobals.GhostBitmask):
+    def setupControls(self, avatarRadius = 1.4, floorOffset = OTPGlobals.FloorOffset, reach = 4.0, wallBitmask = OTPGlobals.WallBitmask, floorBitmask = OTPGlobals.FloorBitmask, ghostBitmask = OTPGlobals.GhostBitmask, disable=True):
         walkControls = GravityWalker(legacyLifter=self.wantLegacyLifter())
         walkControls.setWallBitMask(wallBitmask)
         walkControls.setFloorBitMask(floorBitmask)
@@ -159,10 +160,15 @@ class LocalAvatar(DirectObject):
         observerControls.setAirborneHeightFunc(self.getAirborneHeight)
         self.controlManager.add(observerControls, 'observer')
         self.controlManager.use('walk', self)
-        self.controlManager.disable()
+        if disable:
+            self.controlManager.disable()
 
     def initializeCollisions(self):
+        self.setupControls(False)
+
+    def refreshControls(self):
         self.setupControls()
+        messenger.send('refresh-controls')
 
     def deleteCollisions(self):
         self.controlManager.deleteCollisions()
@@ -1089,3 +1095,9 @@ class LocalAvatar(DirectObject):
             n = self.__geom
         self.ccPusherTrav.traverse(n)
         return
+
+    def gamepadEnabled(self, controller):
+        self.refreshControls()
+
+    def gamepadDisabled(self, controller):
+        self.refreshControls()

@@ -435,19 +435,24 @@ class ToonBase(OTPBase.OTPBase):
 
     def handleControllerAck(self, val, controller):
         if val == DGG.DIALOG_OK:
+            self.attachInputDevice(controller)
             self.gamepad = controller
             messenger.send('gamepad-enable', controller)
+            if not settings['keybinds'].get(self.getCurrentDevice()):
+                settings['keybinds'][self.getCurrentDevice()] = ToontownGlobals.GP_CONTROLS
         if self._controllerDialog:
             self._controllerDialog.hide()
 
     def handleControllerDisconnect(self, controller):
         self.currentDevices.remove(controller)
         if self.gamepad == controller:
+            self.detachInputDevice(controller)
             self.gamepad = None
             messenger.send('gamepad-disable', controller)
 
     def getCurrentDevice(self):
-        if base.gamepad:
-            return base.gamepad.name
+        print(self.gamepad)
+        if self.gamepad:
+            return self.gamepad.name
         else:
             return 'keyboard'

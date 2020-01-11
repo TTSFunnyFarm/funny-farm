@@ -762,9 +762,7 @@ class ControlsTabPage(DirectFrame):
     def refresh(self):
         device = self.getDeviceName()
         if not device in settings['keybinds']:
-            settings['keybinds'][device] = {'forward': 'lstick_up', 'reverse': 'lstick_down', 'turn_left': 'rstick_left', 'turn_right': 'rstick_right',
-             'chat': 'back', 'jump': 'face_a', 'gags': 'lshoulder', 'tasks': 'rshoulder',
-             'camera': 'rstick', 'gui': 'guide', 'action': 'rtrigger', 'shtiker': 'start'}
+            settings['keybinds'][device] = ToontownGlobals.GP_CONTROLS
         keybinds = settings['keybinds'][device]
         self.Forward_Bind.setText(keybinds['forward'])
         print(device)
@@ -800,7 +798,7 @@ class ControlsTabPage(DirectFrame):
         if self.bindDialog and self.current_event:
             device = self.getDeviceName()
             keybinds = settings['keybinds'][device]
-            keybinds[self.current_event] = key
+            keybinds[self.current_event] = input
             self.refresh()
             self.hideBindDialog(None)
 
