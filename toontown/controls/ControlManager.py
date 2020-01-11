@@ -37,16 +37,6 @@ class ControlManager:
         #self.monitorTask = taskMgr.add(self.monitor, "ControlManager-%s"%(id(self)), priority=-1)
         self.forceAvJumpToken = None
 
-        if self.passMessagesThrough:
-            ist = self.inputStateTokens
-            source = inputState.Keyboard
-            if base.gamepad:
-                source = inputState.Gamepad
-            ist.append(inputState.watchWithModifiers("forward", settings[base.getCurrentDevice()]['forward'], inputSource=source))
-            ist.append(inputState.watchWithModifiers("reverse", settings[base.getCurrentDevice()]['reverse'], inputSource=source))
-            ist.append(inputState.watchWithModifiers("turnLeft", settings[base.getCurrentDevice()]['turn_left'], inputSource=source))
-            ist.append(inputState.watchWithModifiers("turnRight", settings[base.getCurrentDevice()]['turn_right'], inputSource=source))
-
 
     if __debug__:
         def lockControls(self):
@@ -179,6 +169,15 @@ class ControlManager:
             self.currentControls.enableAvatarControls()
 
     def refreshInputStates(self, source=None):
+        if self.passMessagesThrough:
+            ist = self.inputStateTokens
+            source = inputState.Keyboard
+            if base.gamepad:
+                source = inputState.Gamepad
+            ist.append(inputState.watchWithModifiers("forward", settings[base.getCurrentDevice()]['forward'], inputSource=source))
+            ist.append(inputState.watchWithModifiers("reverse", settings[base.getCurrentDevice()]['reverse'], inputSource=source))
+            ist.append(inputState.watchWithModifiers("turnLeft", settings[base.getCurrentDevice()]['turn_left'], inputSource=source))
+            ist.append(inputState.watchWithModifiers("turnRight", settings[base.getCurrentDevice()]['turn_right'], inputSource=source))
         ist = self.inputStateTokens
         print(base.getCurrentDevice())
         keybinds = settings['keybinds']
