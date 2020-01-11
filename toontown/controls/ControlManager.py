@@ -169,6 +169,7 @@ class ControlManager:
             self.currentControls.enableAvatarControls()
 
     def refreshInputStates(self, source=None):
+        self.inputStateTokens = []
         if self.passMessagesThrough:
             ist = self.inputStateTokens
             source = inputState.Keyboard
