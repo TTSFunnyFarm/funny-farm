@@ -12,6 +12,7 @@ from direct.directnotify import DirectNotifyGlobal
 #if __debug__:
 #    import DevWalker
 from direct.task import Task
+from direct.showbase.DirectObject import DirectObject
 from panda3d.core import ConfigVariableBool
 from toontown.toonbase.ToontownGlobals import GP_CONTROLS
 
@@ -19,7 +20,7 @@ from toontown.toonbase.ToontownGlobals import GP_CONTROLS
 CollisionHandlerRayStart = 4000.0
 
 
-class ControlManager:
+class ControlManager(DirectObject):
     notify = DirectNotifyGlobal.directNotify.newCategory("ControlManager")
 
     def __init__(self, enable=True, passMessagesThrough = False):
@@ -62,6 +63,7 @@ class ControlManager:
             oldControls.disableAvatarControls()
             oldControls.setCollisionsActive(0)
             oldControls.delete()
+            del oldControls
         controls.disableAvatarControls()
         controls.setCollisionsActive(0)
         self.controls[name] = controls
