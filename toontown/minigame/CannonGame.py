@@ -47,11 +47,12 @@ class CannonGame(Minigame):
     HIT_GROUND = 0
     HIT_TOWER = 1
     HIT_WATER = 2
-    FIRE_KEY = 'control'
-    UP_KEY = 'arrow_up'
-    DOWN_KEY = 'arrow_down'
-    LEFT_KEY = 'arrow_left'
-    RIGHT_KEY = 'arrow_right'
+    keybinds = settings['keybinds'][base.getCurrentDevice()]
+    FIRE_KEY = keybinds['action']
+    UP_KEY = keybinds['forward']
+    DOWN_KEY = keybinds['reverse']
+    LEFT_KEY = keybinds['turn_left']
+    RIGHT_KEY = keybinds['turn_right']
     INTRO_TASK_NAME = 'CannonGameIntro'
     INTRO_TASK_NAME_CAMERA_LERP = 'CannonGameIntroCamera'
 

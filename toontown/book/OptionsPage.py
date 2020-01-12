@@ -780,7 +780,6 @@ class ControlsTabPage(DirectFrame):
 
     def changeDevice(self, delta):
         self.currentDevice += delta
-        print(self.currentDevice)
         self.refresh()
 
     def refresh(self):
@@ -790,6 +789,7 @@ class ControlsTabPage(DirectFrame):
             keybinds[controller.name] = ToontownGlobals.GP_CONTROLS
             settings['keybinds'] = keybinds
         keybinds = settings['keybinds'][device]
+        
         self.Forward_Bind.setText(keybinds['forward'])
         self.Reverse_Bind.setText(keybinds['reverse'])
         self.Left_Bind.setText(keybinds['turn_left'])
@@ -804,6 +804,7 @@ class ControlsTabPage(DirectFrame):
         self.Action_Bind.setText(keybinds['action'])
         self.Shtiker_Bind.setText(keybinds['shtiker'])
         print(device)
+
         self.InputType_Label.setText(device)
         if self.currentDevice == 0:
             self.leftArrow['state'] = DGG.DISABLED
@@ -835,8 +836,9 @@ class ControlsTabPage(DirectFrame):
             return
         if self.bindDialog and self.current_event:
             device = self.getDeviceName()
-            keybinds = settings['keybinds'][device]
-            keybinds[self.current_event] = input
+            keybinds = settings['keybinds']
+            keybinds[device][self.current_event] = input
+            settings['keybinds'] = keybinds
             self.refresh()
             self.hideBindDialog(None)
 
