@@ -41,7 +41,6 @@ class GamepadManager:
                 messenger.send('lstick_up')
                 self.l_up = True
             axis = base.gamepad.findAxis(InputDevice.Axis.right_x)
-            print(axis.value)
             if not axis.value < -ToontownGlobals.GP_DEADZONE and self.r_left:
                 self.r_left = False
                 messenger.send('rstick_left-up')

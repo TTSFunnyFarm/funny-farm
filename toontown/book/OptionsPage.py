@@ -762,7 +762,9 @@ class ControlsTabPage(DirectFrame):
     def refresh(self):
         device = self.getDeviceName()
         if not device in settings['keybinds']:
-            settings['keybinds'][device] = ToontownGlobals.GP_CONTROLS
+            keybinds = settings.get('keybinds')
+            keybinds[controller.name] = ToontownGlobals.GP_CONTROLS
+            settings['keybinds'] = keybinds
         keybinds = settings['keybinds'][device]
         self.Forward_Bind.setText(keybinds['forward'])
         print(device)

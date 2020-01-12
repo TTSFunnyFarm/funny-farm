@@ -192,6 +192,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         else:
             self.enabled = 1
             self.walkStateData.enter()
+            self.accept('refresh-controls', self.refresh)
             self.invPage.acceptOnscreenHooks()
             self.questPage.acceptOnscreenHooks()
             self.walkStateData.fsm.request('walking')
@@ -202,10 +203,17 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         else:
             self.enabled = 0
             self.walkStateData.exit()
+            self.ignore('refresh-controls')
             self.invPage.ignoreOnscreenHooks()
             self.invPage.hideInventoryOnscreen()
             self.questPage.ignoreOnscreenHooks()
             self.questPage.hideQuestsOnscreen()
+
+    def refresh(self):
+        self.invPage.ignoreOnscreenHooks()
+        self.questPage.ignoreOnscreenHooks()
+        self.invPage.acceptOnscreenHooks()
+        self.questPage.acceptOnscreenHooks()
 
     def setZoneId(self, zoneId):
         self.zoneId = zoneId

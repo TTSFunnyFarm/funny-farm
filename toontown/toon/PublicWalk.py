@@ -16,10 +16,11 @@ class PublicWalk(Walk.Walk):
     def enter(self, slowWalk = 0):
         Walk.Walk.enter(self, slowWalk)
         base.localAvatar.book.showButton()
-        self.sticker = settings[base.getCurrentDevice()]['shtiker']
+        keybinds = settings['keybinds'][base.getCurrentDevice()]
+        self.sticker = keybinds['shtiker']
         self.accept(self.sticker, self.__handleStickerBookEntry)
         self.accept('enterStickerBook', self.__handleStickerBookEntry)
-        self.options = settings[base.getCurrentDevice()]['options']
+        self.options = keybinds['options']
         self.accept(self.options, self.__handleOptionsEntry)
         self.accept('refresh-controls', self.refreshControls)
         base.localAvatar.beginAllowPies()
@@ -27,8 +28,9 @@ class PublicWalk(Walk.Walk):
     def refreshControls(self):
         self.ignore(self.sticker)
         self.ignore(self.options)
-        self.sticker = settings[base.getCurrentDevice()]['shtiker']
-        self.options = settings[base.getCurrentDevice()]['options']
+        keybinds = settings['keybinds'][base.getCurrentDevice()]
+        self.sticker = keybinds['shtiker']
+        self.options = keybinds['options']
         self.accept(self.options, self.__handleOptionsEntry)
         self.accept(self.sticker, self.__handleStickerBookEntry)
 

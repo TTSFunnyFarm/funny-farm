@@ -4,12 +4,12 @@ from direct.showbase.PythonUtil import *
 from direct.interval.IntervalGlobal import *
 from toontown.controls.InputStateGlobal import inputState
 from direct.showbase.DirectObject import DirectObject
-from direct.controls.GhostWalker import GhostWalker
+from toontown.controls.GhostWalker import GhostWalker
 from toontown.controls.GravityWalker import GravityWalker
 from direct.controls.ObserverWalker import ObserverWalker
-from direct.controls.PhysicsWalker import PhysicsWalker
-from direct.controls.SwimWalker import SwimWalker
-from direct.controls.TwoDWalker import TwoDWalker
+from toontown.controls.PhysicsWalker import PhysicsWalker
+from toontown.controls.SwimWalker import SwimWalker
+from toontown.controls.TwoDWalker import TwoDWalker
 from toontown.controls import ControlManager
 from direct.task import Task
 from otp.otpbase import OTPGlobals

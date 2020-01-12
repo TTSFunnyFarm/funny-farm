@@ -175,16 +175,14 @@ class ControlManager(DirectObject):
             source = inputState.Keyboard
             if base.gamepad:
                 source = inputState.Gamepad
-            ist.append(inputState.watchWithModifiers("forward", settings[base.getCurrentDevice()]['forward'], inputSource=source))
-            ist.append(inputState.watchWithModifiers("reverse", settings[base.getCurrentDevice()]['reverse'], inputSource=source))
-            ist.append(inputState.watchWithModifiers("turnLeft", settings[base.getCurrentDevice()]['turn_left'], inputSource=source))
-            ist.append(inputState.watchWithModifiers("turnRight", settings[base.getCurrentDevice()]['turn_right'], inputSource=source))
+            keybinds = settings['keybinds'][base.getCurrentDevice()]
+            ist.append(inputState.watchWithModifiers("forward", keybinds['forward'], inputSource=source))
+            ist.append(inputState.watchWithModifiers("reverse", keybinds['reverse'], inputSource=source))
+            ist.append(inputState.watchWithModifiers("turnLeft", keybinds['turn_left'], inputSource=source))
+            ist.append(inputState.watchWithModifiers("turnRight", keybinds['turn_right'], inputSource=source))
         ist = self.inputStateTokens
         keybinds = settings['keybinds']
         keybinds = keybinds.get(base.getCurrentDevice())
-        if not keybinds:
-            settings['keybinds'][base.getCurrentDevice()] = GP_CONTROLS
-            keybinds = GP_CONTROLS
         ist.append(inputState.watch("run", 'runningEvent', "running-on", "running-off"))
 
         ist.append(inputState.watchWithModifiers("forward", keybinds['forward'], inputSource=source))
@@ -216,10 +214,12 @@ class ControlManager(DirectObject):
             source = inputState.Keyboard
             if base.gamepad:
                 source = inputState.Gamepad
-            ist.append(inputState.watchWithModifiers("forward", settings[base.getCurrentDevice()]['forward'], inputSource=source))
-            ist.append(inputState.watchWithModifiers("reverse", settings[base.getCurrentDevice()]['reverse'], inputSource=source))
-            ist.append(inputState.watchWithModifiers("turnLeft", settings[base.getCurrentDevice()]['turn_left'], inputSource=source))
-            ist.append(inputState.watchWithModifiers("turnRight", settings[base.getCurrentDevice()]['turn_right'], inputSource=source))
+            keybinds = settings['keybinds'][base.getCurrentDevice()]
+            print(keybinds)
+            ist.append(inputState.watchWithModifiers("forward", keybinds['forward'], inputSource=source))
+            ist.append(inputState.watchWithModifiers("reverse", keybinds['reverse'], inputSource=source))
+            ist.append(inputState.watchWithModifiers("turnLeft", keybinds['turn_left'], inputSource=source))
+            ist.append(inputState.watchWithModifiers("turnRight", keybinds['turn_right'], inputSource=source))
 
     def stop(self):
         self.disable()
