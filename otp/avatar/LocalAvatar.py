@@ -5,7 +5,7 @@ from direct.interval.IntervalGlobal import *
 from toontown.controls.InputStateGlobal import inputState
 from direct.showbase.DirectObject import DirectObject
 from direct.controls.GhostWalker import GhostWalker
-from direct.controls.GravityWalker import GravityWalker
+from toontown.controls.GravityWalker import GravityWalker
 from direct.controls.ObserverWalker import ObserverWalker
 from direct.controls.PhysicsWalker import PhysicsWalker
 from direct.controls.SwimWalker import SwimWalker

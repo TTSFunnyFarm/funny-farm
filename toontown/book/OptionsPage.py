@@ -812,13 +812,13 @@ class ControlsTabPage(DirectFrame):
         return device
 
     def toggleDevice(self):
-        messenger.send('gamepad-disable', base.gamepad or 'keyboard')
+        messenger.send('gamepad-disable', [base.gamepad or 'keyboard'])
         device = self.getCurrentDevice()
         if device == 'keyboard':
             base.gamepad = None
         else:
             base.gamepad = device
-        messenger.send('gamepad-enable', device)
+        messenger.send('gamepad-enable', [device])
 
     def enter(self):
         base.buttonThrowers[0].node().setButtonUpEvent('key-pressed')

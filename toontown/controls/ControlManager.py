@@ -163,9 +163,8 @@ class ControlManager:
         if base.gamepad:
             source = inputState.Gamepad
         self.refreshInputStates(source)
-        print("YEP YEP")
+        self.accept('refresh-controls', self.refreshInputStates)
         if self.currentControls:
-            print("HUH")
             self.currentControls.enableAvatarControls()
 
     def refreshInputStates(self, source=None):
@@ -180,10 +179,8 @@ class ControlManager:
             ist.append(inputState.watchWithModifiers("turnLeft", settings[base.getCurrentDevice()]['turn_left'], inputSource=source))
             ist.append(inputState.watchWithModifiers("turnRight", settings[base.getCurrentDevice()]['turn_right'], inputSource=source))
         ist = self.inputStateTokens
-        print(base.getCurrentDevice())
         keybinds = settings['keybinds']
         keybinds = keybinds.get(base.getCurrentDevice())
-        print(keybinds)
         if not keybinds:
             settings['keybinds'][base.getCurrentDevice()] = GP_CONTROLS
             keybinds = GP_CONTROLS
@@ -204,11 +201,11 @@ class ControlManager:
 
     def disable(self):
         self.isEnabled = 0
-        print("NUUUUHHH")
 
         for token in self.inputStateTokens:
             token.release()
         self.inputStateTokens = []
+        self.ignore('refresh-controls')
 
         if self.currentControls:
             self.currentControls.disableAvatarControls()

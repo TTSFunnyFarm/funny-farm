@@ -412,7 +412,6 @@ class GravityWalker(DirectObject.DirectObject):
         slideLeft = inputState.isSet("slideLeft")
         slideRight = inputState.isSet("slideRight")
         jump = inputState.isSet("jump")
-        print("handleAvatarControls")
 
         # Check for Auto-Run
         if 'localAvatar' in __builtins__:
@@ -467,7 +466,6 @@ class GravityWalker(DirectObject.DirectObject):
             assert self.isAirborne == 0
             self.priorParent = Vec3.zero()
             if jump and self.mayJump:
-                print("YEET")
                 # The jump button is down and we're close
                 # enough to the ground to jump.
                 self.lifter.addVelocity(self.avatarControlJumpForce)
@@ -572,7 +570,6 @@ class GravityWalker(DirectObject.DirectObject):
         # spawn the new task
         taskName = "AvatarControls-%s"%(id(self),)
         self.controlsTask = taskMgr.add(self.handleAvatarControls, taskName, 25)
-        print("PEPEGA")
 
         self.isAirborne = 0
         self.mayJump = 1
@@ -589,7 +586,6 @@ class GravityWalker(DirectObject.DirectObject):
         Ignore the arrow keys, etc.
         """
         assert self.notify.debugStateCall(self)
-        print("NOT NICE")
         if self.controlsTask:
             self.controlsTask.remove()
             self.controlsTask = None
