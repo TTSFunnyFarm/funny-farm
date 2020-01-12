@@ -5,7 +5,7 @@ from panda3d.core import *
 
 class FlippySuitIntroScene(CutsceneBase):
     id = 1002
-    
+
     def __init__(self):
         CutsceneBase.__init__(self, self.id)
         self.bgm = base.loader.loadMusic('phase_12/audio/bgm/Bossbot_Entry_v1.ogg')
@@ -56,14 +56,23 @@ class FlippySuitIntroScene(CutsceneBase):
 
     def doDialog(self, index, elapsedTime):
         dialog = self.dialog[index]
+        extra = CutsceneUtil.GetExtra(dialog)
+        if extra:
+            dialog = dialog[0]
         suit = self.actors['suit']
         flippy = self.actors['flippy']
+        actor = None
         if index >= (len(self.dialog) - 1):
+            actor = suit
             suit.setLocalPageChat(dialog, 1)
             suit.acceptOnce(suit.uniqueName('doneChatPage'), self.sceneFinish)
         elif (index % 2) == 0:
+            actor = suit
             suit.setLocalPageChat(dialog, None)
             suit.acceptOnce(suit.uniqueName('doneChatPage'), self.doDialog, [index + 1])
         else:
+            actor = flippy
             flippy.setLocalPageChat(dialog, None)
             flippy.acceptOnce(flippy.uniqueName('doneChatPage'), self.doDialog, [index + 1])
+        if extra:
+            self.doAnimate(actor, *extra)

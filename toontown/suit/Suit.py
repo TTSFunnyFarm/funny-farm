@@ -76,7 +76,8 @@ cr = (('pickpocket', 'pickpocket', 5), ('throw-paper', 'throw-paper', 3.5), ('gl
 tbc = (('cigar-smoke', 'cigar-smoke', 8),
  ('glower', 'glower', 5),
  ('song-and-dance', 'song-and-dance', 8),
- ('golf-club-swing', 'golf-club-swing', 5))
+ ('golf-club-swing', 'golf-club-swing', 5),
+ ('finger-wag', 'fingerwag', 5))
 cc = (('speak', 'speak', 5),
  ('glower', 'glower', 5),
  ('phone', 'phone', 3.5),
