@@ -780,7 +780,6 @@ class ControlsTabPage(DirectFrame):
 
     def changeDevice(self, delta):
         self.currentDevice += delta
-        print(self.currentDevice)
         self.refresh()
 
     def refresh(self):
@@ -803,7 +802,6 @@ class ControlsTabPage(DirectFrame):
         self.GUI_Bind.setText("F3")
         self.Action_Bind.setText("Delete")
         self.Shtiker_Bind.setText("F8")
-        print(device)
         self.InputType_Label.setText(device)
         if self.currentDevice == 0:
             self.leftArrow['state'] = DGG.DISABLED
@@ -835,8 +833,9 @@ class ControlsTabPage(DirectFrame):
             return
         if self.bindDialog and self.current_event:
             device = self.getDeviceName()
-            keybinds = settings['keybinds'][device]
-            keybinds[self.current_event] = input
+            keybinds = settings['keybinds']
+            keybinds[device][self.current_event] = input
+            settings['keybinds'] = keybinds
             self.refresh()
             self.hideBindDialog(None)
 

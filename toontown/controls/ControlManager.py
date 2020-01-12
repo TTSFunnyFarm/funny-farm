@@ -215,7 +215,6 @@ class ControlManager(DirectObject):
             if base.gamepad:
                 source = inputState.Gamepad
             keybinds = settings['keybinds'][base.getCurrentDevice()]
-            print(keybinds)
             ist.append(inputState.watchWithModifiers("forward", keybinds['forward'], inputSource=source))
             ist.append(inputState.watchWithModifiers("reverse", keybinds['reverse'], inputSource=source))
             ist.append(inputState.watchWithModifiers("turnLeft", keybinds['turn_left'], inputSource=source))

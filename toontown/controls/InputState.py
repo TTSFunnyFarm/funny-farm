@@ -89,14 +89,11 @@ class InputState(DirectObject.DirectObject):
         """
         #assert self.debugPrint("isSet(name=%s)"%(name))
         if name in self._forcingOn:
-            print("YEH")
             return True
         elif name in self._forcingOff:
-            print("NOP")
             return False
         if inputSource:
             s = self._state.get(name)
-            print(inputSource, s)
             if s:
                 return inputSource in s
             else:
@@ -127,7 +124,6 @@ class InputState(DirectObject.DirectObject):
         # We change the name before sending it because this may
         # be the same name that messenger used to call InputState.set()
         # this avoids running in circles:
-        print(name, isActive, inputSource)
         messenger.send(self.getEventName(name), [self.isSet(name)])
 
     def releaseInputs(self, name):
