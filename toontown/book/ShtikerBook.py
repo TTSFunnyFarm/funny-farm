@@ -42,10 +42,15 @@ class ShtikerBook(DirectFrame):
             self.setPage(self.pages[0])
         else:
             self.setPage(self.pages[self.currPage])
-        self.accept(ToontownGlobals.StickerBookHotkey, self.close)
-        self.accept(ToontownGlobals.OptionsPageHotkey, self.close)
-        self.accept('arrow_right', self.rightArrow)
-        self.accept('arrow_left', self.leftArrow)
+        keybinds = settings['keybinds'][base.getCurrentDevice()]
+        self.shtiker = keybinds['shtiker']
+        self.option = keybinds['options']
+        self.accept(keybinds['shtiker'], self.close)
+        self.accept(keybinds['options'], self.close)
+        self.turn_right = keybinds['turn_right']
+        self.turn_left = keybinds['turn_left']
+        self.accept(keybinds['turn_right'], self.rightArrow)
+        self.accept(keybinds['turn_left'], self.leftArrow)
 
     def exit(self):
         if not self.isOpen:
@@ -61,10 +66,10 @@ class ShtikerBook(DirectFrame):
         self.hide()
         self.hideButton()
         self.pageTabFrame.hide()
-        self.ignore(ToontownGlobals.StickerBookHotkey)
-        self.ignore(ToontownGlobals.OptionsPageHotkey)
-        self.ignore('arrow_right')
-        self.ignore('arrow_left')
+        self.ignore(self.shtiker)
+        self.ignore(self.option)
+        self.ignore(self.turn_right)
+        self.ignore(self.turn_left)
 
     def load(self):
         bookModel = loader.loadModel('phase_3.5/models/gui/stickerbook_gui')
