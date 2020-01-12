@@ -62,7 +62,6 @@ class ControlManager(DirectObject):
             self.notify.debug("Replacing controls: %s" % name)
             oldControls.disableAvatarControls()
             oldControls.setCollisionsActive(0)
-            oldControls.delete()
             del oldControls
         controls.disableAvatarControls()
         controls.setCollisionsActive(0)
