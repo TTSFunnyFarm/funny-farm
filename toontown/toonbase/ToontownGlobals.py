@@ -1610,7 +1610,7 @@ AV_TOUCH_CHECK_TIMELIMIT_CL = 0.002
 AV_TOUCH_COUNT_LIMIT = 5
 AV_TOUCH_COUNT_TIME = 300
 
-GP_DEADZONE = 0.01
+GP_DEADZONE = 0.036
 GP_CONTROLS = {'forward': 'lstick_up', 'reverse': 'lstick_down', 'turn_left': 'rstick_left', 'turn_right': 'rstick_right',
     'chat': 'back', 'jump': 'face_a', 'gags': 'lshoulder', 'tasks': 'rshoulder',
     'camera': 'rstick', 'gui': 'guide', 'action': 'rtrigger', 'shtiker': 'start', 'options': 'dpad_up'}

@@ -21,6 +21,7 @@ import atexit
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.toontowngui import TTDialog
+from toontown.controls import GamepadManager
 from sys import platform
 import time
 from panda3d.core import TrueClock
@@ -343,6 +344,8 @@ class ToonBase(OTPBase.OTPBase):
         musicMgr.playPickAToon()
         titleScreen = TitleScreen()
         titleScreen.startShow()
+        self.gamepadMgr = GamepadManager.GamepadManager()
+        taskMgr.add(self.gamepadMgr.findInput, 'findInput')
 
     def removeGlitchMessage(self):
         self.ignore('InputState-forward')
@@ -451,7 +454,6 @@ class ToonBase(OTPBase.OTPBase):
             messenger.send('gamepad-disable', [controller])
 
     def getCurrentDevice(self):
-        print(self.gamepad)
         if self.gamepad:
             return self.gamepad.name
         else:

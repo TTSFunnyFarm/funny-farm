@@ -3,7 +3,7 @@ from direct.showbase.DirectObject import DirectObject
 from direct.interval.IntervalGlobal import *
 from direct.task.Task import Task
 from direct.gui.DirectGui import *
-from toontown.toonbase import FunnyFarmGlobals
+from toontown.toonbase import FunnyFarmGlobals, ToontownGlobals
 from toontown.effects.FireworkShowMixin import FireworkShowMixin
 from toontown.parties import PartyGlobals
 import random
