@@ -5,6 +5,7 @@ from direct.distributed.ClockDelta import *
 from direct.task.Task import Task
 from otp.otpbase import OTPGlobals
 from toontown.minigame import ArrowKeys
+from toontown.controls.InputStateGlobal import inputState
 
 class OrthoDrive:
     notify = directNotify.newCategory('OrthoDrive')
@@ -61,13 +62,13 @@ class OrthoDrive:
         vel = Vec3(0, 0, 0)
         xVel = 0
         yVel = 0
-        if self.arrowKeys.upPressed():
+        if inputState.isState('forward'):
             yVel += 1
-        if self.arrowKeys.downPressed():
+        if inputState.isState('reverse'):
             yVel -= 1
-        if self.arrowKeys.leftPressed():
+        if inputState.isState('turnLeft'):
             xVel -= 1
-        if self.arrowKeys.rightPressed():
+        if inputState.isState('turnRight'):
             xVel += 1
         vel.setX(xVel)
         vel.setY(yVel)
