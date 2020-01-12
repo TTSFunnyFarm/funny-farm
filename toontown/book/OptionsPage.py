@@ -789,7 +789,7 @@ class ControlsTabPage(DirectFrame):
             keybinds[controller.name] = ToontownGlobals.GP_CONTROLS
             settings['keybinds'] = keybinds
         keybinds = settings['keybinds'][device]
-        
+
         self.Forward_Bind.setText(keybinds['forward'])
         self.Reverse_Bind.setText(keybinds['reverse'])
         self.Left_Bind.setText(keybinds['turn_left'])
@@ -803,7 +803,6 @@ class ControlsTabPage(DirectFrame):
         self.GUI_Bind.setText(keybinds['gui'])
         self.Action_Bind.setText(keybinds['action'])
         self.Shtiker_Bind.setText(keybinds['shtiker'])
-        print(device)
 
         self.InputType_Label.setText(device)
         if self.currentDevice == 0:
@@ -864,15 +863,18 @@ class ControlsTabPage(DirectFrame):
         base.buttonThrowers[0].node().setButtonUpEvent('key-pressed')
         self.show()
         self.accept('key-pressed', self.handleInput)
-        self._parent.book.accept('arrow_right', self._parent.book.rightArrow)
-        self._parent.book.accept('arrow_left', self._parent.book.leftArrow)
+        self._parent.book.ignore(self._parent.book.turn_left)
+        self._parent.book.ignore(self._parent.book.turn_right)
         self.currentDevice = 0
         self.refresh()
 
     def exit(self):
         self.hide()
-        self._parent.book.ignore('arrow_left')
-        self._parent.book.ignore('arrow_right')
+        keybinds = settings['keybinds'][base.getCurrentDevice()]
+        self._parent.book.turn_left = keybinds['turn_left']
+        self._parent.book.turn_right = keybinds['turn_right']
+        self._parent.book.accept(self._parent.book.turn_right, self._parent.book.rightArrow)
+        self._parent.book.accept(self._parent.book.turn_left, self._parent.book.leftArrow)
 
     def unload(self):
         for button in self._buttons:
