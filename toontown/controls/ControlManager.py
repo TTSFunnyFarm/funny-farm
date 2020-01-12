@@ -32,7 +32,7 @@ class ControlManager(DirectObject):
         self.currentControls = None
         self.currentControlsName = None
         self.isEnabled = 0
-        self.ignoreUse = 0
+        self.ignoreUse = False
         if enable:
             self.enable()
         #self.monitorTask = taskMgr.add(self.monitor, "ControlManager-%s"%(id(self)), priority=-1)
@@ -47,7 +47,7 @@ class ControlManager(DirectObject):
             self.ignoreUse = False
 
     def __str__(self):
-        return 'ControlManager: using \'%s\'' % self.currentControlsName
+        return 'ControlManager (using %s, ignoring %s)' % self.currentControlsName, self.ignoreUse
 
     def add(self, controls, name="basic"):
         """Add a control instance to the list of available control systems.
