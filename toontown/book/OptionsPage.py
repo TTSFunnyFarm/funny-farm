@@ -745,11 +745,35 @@ class ControlsTabPage(DirectFrame):
         self.bindDialog = None
         self.current_event = None
         self.Forward_Label = DirectLabel(parent=self, relief=None, text='Forward', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.6, 0, 0.4))
-        self.Forward_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.65, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(-0.5, 0, 0.3), command=self.showBindDialog, extraArgs=['forward'])
+        self.Forward_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.65, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(-0.5, 0, 0.325), command=self.showBindDialog, extraArgs=['forward'])
+        self.Reverse_Label = DirectLabel(parent=self, relief=None, text='Reverse', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.6, 0, 0.2))
+        self.Reverse_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.7, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(-0.5, 0, 0.125), command=self.showBindDialog, extraArgs=['reverse'])
+        self.Left_Label = DirectLabel(parent=self, relief=None, text='Turn Left', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.6125, 0, 0.0))
+        self.Left_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.7, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(-0.5, 0, -0.075), command=self.showBindDialog, extraArgs=['turn_left'])
+        self.Right_Label = DirectLabel(parent=self, relief=None, text='Turn Right', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.61875, 0, -0.2))
+        self.Right_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.75, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(-0.5, 0, -0.275), command=self.showBindDialog, extraArgs=['turn_right'])
+        self.Jump_Label = DirectLabel(parent=self, relief=None, text='Jump', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.57, 0, -0.4))
+        self.Jump_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.6, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(-0.5, 0, -0.475), command=self.showBindDialog, extraArgs=['jump'])
+        self.Chat_Label = DirectLabel(parent=self, relief=None, text='Chat', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.065, 0, 0.4))
+        self.Chat_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.5, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(0.0, 0, 0.325), command=self.showBindDialog, extraArgs=['chat'])
+        self.Gags_Label = DirectLabel(parent=self, relief=None, text='Gags', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.065, 0, 0.2))
+        self.Gags_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.45, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(0.0, 0, 0.125), command=self.showBindDialog, extraArgs=['gags'])
+        self.Tasks_Label = DirectLabel(parent=self, relief=None, text='Tasks', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.075, 0, 0.0))
+        self.Tasks_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.4, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(0.0, 0, -0.075), command=self.showBindDialog, extraArgs=['tasks'])
+        self.Options_Label = DirectLabel(parent=self, relief=None, text='Options', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.1, 0, -0.2))
+        self.Options_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.55, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(0.0, 0, -0.275), command=self.showBindDialog, extraArgs=['options'])
+        self.Camera_Label = DirectLabel(parent=self, relief=None, text='Camera', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.1, 0, -0.4))
+        self.Camera_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.4, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(0.0, 0, -0.475), command=self.showBindDialog, extraArgs=['camera'])
+        self.GUI_Label = DirectLabel(parent=self, relief=None, text='GUI', text_align=TextNode.ALeft, text_scale=0.06, pos=(0.45, 0, 0.4))
+        self.GUI_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.35, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(0.5, 0, 0.325), command=self.showBindDialog, extraArgs=['gui'])
+        self.Action_Label = DirectLabel(parent=self, relief=None, text='Action', text_align=TextNode.ALeft, text_scale=0.06, pos=(0.425, 0, 0.07))
+        self.Action_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.55, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(0.5, 0, -0.005), command=self.showBindDialog, extraArgs=['action'])
+        self.Shitker_Label = DirectLabel(parent=self, relief=None, text='Shtiker', text_align=TextNode.ALeft, text_scale=0.06, pos=(0.41, 0, -0.26))
+        self.Shtiker_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.35, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(0.5, 0, -0.335), command=self.showBindDialog, extraArgs=['shtiker'])
         self.InputType_Label = DirectLabel(parent=self, relief=None, text='Keyboard', text_font=ToontownGlobals.getSignFont(), text_fg=(1, 1, 1, 1), text_align=TextNode.ACenter, text_scale=0.1, pos=(0, 0, 0.5))
         self.rightArrow = DirectButton(parent=self, relief=None, image=matButton_set, pos=(0.4, 0, 0.53), image_scale=(0.18, 0.18, 0.18), image1_scale=(0.20, 0.20, 0.20), image2_scale=(0.20, 0.20, 0.20), image3_scale=(0.18, 0.18, 0.18), command=self.changeDevice, extraArgs=[1])
         self.leftArrow = DirectButton(parent=self, relief=None, image=matButton_set, pos=(-0.4, 0, 0.53), image_scale=(-0.18, 0.18, 0.18), image1_scale=(-0.20, 0.20, 0.20), image2_scale=(-0.20, 0.20, 0.20), image3_scale=(-0.18, 0.18, 0.18), command=self.changeDevice, extraArgs=[-1])
-        self._buttons = [self.leftArrow, self.rightArrow, self.Forward_Bind]
+        self._buttons = [self.leftArrow, self.rightArrow, self.Forward_Bind, self.Reverse_Bind, self.Left_Bind, self.Right_Bind, self.Jump_Bind, self.Chat_Bind, self.Gags_Bind, self.Tasks_Bind, self.Options_Bind, self.Camera_Bind, self.GUI_Bind, self.Action_Bind, self.Shtiker_Bind]
         self.turnOnDevice = DirectButton(parent=self, relief=None, image=(guiAcceptUp, guiAcceptDown, guiAcceptUp), pos=(0.6, 0, 0.63), image_scale=0.45, image2_scale=0.48, text='Use device!', text_pos=(0.0, -0.1), text_scale=0.06, command=self.toggleDevice)
         self.turnOnDevice.show()
         return
@@ -766,7 +790,19 @@ class ControlsTabPage(DirectFrame):
             keybinds[controller.name] = ToontownGlobals.GP_CONTROLS
             settings['keybinds'] = keybinds
         keybinds = settings['keybinds'][device]
-        self.Forward_Bind.setText(keybinds['forward'])
+        self.Forward_Bind.setText("Up Arrow")
+        self.Reverse_Bind.setText("Down Arrow")
+        self.Left_Bind.setText("Left Arrow")
+        self.Right_Bind.setText("Right Arrow")
+        self.Jump_Bind.setText("Control")
+        self.Chat_Bind.setText("Enter")
+        self.Gags_Bind.setText("Home")
+        self.Tasks_Bind.setText("End")
+        self.Options_Bind.setText("Escape")
+        self.Camera_Bind.setText("Tab")
+        self.GUI_Bind.setText("F3")
+        self.Action_Bind.setText("Delete")
+        self.Shtiker_Bind.setText("F8")
         print(device)
         self.InputType_Label.setText(device)
         if self.currentDevice == 0:
