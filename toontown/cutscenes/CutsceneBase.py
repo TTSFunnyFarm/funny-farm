@@ -3,6 +3,7 @@ from toontown.toonbase import TTLocalizer
 from toontown.cutscenes.CutscenesGlobals import *
 from toontown.toon import NPCToons, Toon
 from direct.directnotify import DirectNotifyGlobal
+from direct.interval.IntervalGlobal import *
 
 class CutsceneBase:
     notify = DirectNotifyGlobal.directNotify.newCategory('CutsceneBase')
@@ -88,4 +89,4 @@ class CutsceneBase:
                 else:
                     actor.showNormalMuzzle()
         if anim:
-            actor.play(anim)
+            ActorInterval(actor, anim).start()

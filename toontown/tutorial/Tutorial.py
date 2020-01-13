@@ -51,7 +51,6 @@ class Tutorial(ToonHood):
             self.book['command'] = self.toon.book.open
             self.chat['command'] = self.toon.chatMgr.openChatInput
             self.chat['extraArgs'] = ['']
-            self.toon.chatMgr.enableKeyboardShortcuts()
             self.toon.experienceBar.show()
 
     def __handleEntered(self):
@@ -382,7 +381,6 @@ class Tutorial(ToonHood):
     def chatSequence(self, elapsedTime):
         self.flippy.clearChat()
         self.toon.startChat()
-        self.toon.chatMgr.disableKeyboardShortcuts()
         self.chat = self.toon.chatMgr.chatButton
         self.chat['command'] = None
         chatSeq = Sequence(
@@ -504,7 +502,7 @@ class Tutorial(ToonHood):
         self.toon.book.hideButton()
         self.stopSuitWalkInterval()
         self.battle = Battle(self.townBattle, toons=[self.toon], suits=[self.suit], tutorialFlag=1)
-        # Never parent a battle directly to render, always use a battle cell 
+        # Never parent a battle directly to render, always use a battle cell
         # otherwise __faceOff will fuck you in the ass
         self.battle.reparentTo(self.battleCell)
         self.battle.enter()

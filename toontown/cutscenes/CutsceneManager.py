@@ -40,7 +40,7 @@ class CutsceneManager(DirectObject):
     def getCutscene(self, questId):
         return self.cutscenes.get(questId)
 
-    def getCurrentScene():
+    def getCurrentScene(self):
         return self.currScene
 
     def exitCutscene(self):
