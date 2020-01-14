@@ -81,7 +81,7 @@ class AvatarChooser:
         self.bg.setBin('background', 1)
         self.bg.hide()
         self.title = OnscreenText(TTLocalizer.AvatarChooserPickAToon, scale=TTLocalizer.ACtitle, parent=self.bg, font=ToontownGlobals.getSignFont(), fg=(1, 0.9, 0.1, 1), pos=(0.0, 0.82))
-        
+
         for i in range(0, FunnyFarmGlobals.MaxAvatars):
             button = DirectButton(parent=self.bg, image=btnImages[i], relief=None, pos=POSITIONS[i], scale=1.01, text=(TTLocalizer.AvatarChoiceMakeAToon,), text_scale=0.1, text_font=ToontownGlobals.getSignFont(), text_fg=(0, 1, 0.8, 0.5), text1_scale=TTLocalizer.ACmakeAToon, text1_font=ToontownGlobals.getSignFont(), text1_fg=(0, 1, 0.8, 1), text2_scale=TTLocalizer.ACmakeAToon, text2_font=ToontownGlobals.getSignFont(), text2_fg=(0.3, 1, 0.9, 1), command=self.__handleCreate, extraArgs=[i + 1])
             button.delete = DirectButton(parent=button, image=(trashcanGui.find('**/TrashCan_CLSD'), trashcanGui.find('**/TrashCan_OPEN'), trashcanGui.find('**/TrashCan_RLVR')), text=('', TTLocalizer.AvatarChoiceDelete, TTLocalizer.AvatarChoiceDelete), text_fg=(1, 1, 1, 1), text_shadow=(0, 0, 0, 1), text_scale=0.15, text_pos=(0, -0.1), text_font=ToontownGlobals.getInterfaceFont(), relief=None, pos=DELETE_POSITIONS[i], scale=0.45, command=self.__handleDelete, extraArgs=[i + 1])
@@ -255,42 +255,14 @@ class AvatarChooser:
         self.verify = TTDialog.TTDialog(parent=aspect2dp, text=TTLocalizer.AvatarChoiceDeleteConfirm % name, style=TTDialog.TwoChoice, command=self.__handleVerifyDelete, extraArgs=[index])
         self.verify.show()
 
-    # Let's just spam the user with dialogs and piss them off
+    # Let's just spam the user with dialogs and piss them off shut up
 
     def __handleVerifyDelete(self, choice, index):
         self.verify.destroy()
         del self.verify
         if choice == 1:
-            self.confirm = TTDialog.TTDialog(parent=aspect2dp, text=TTLocalizer.AvatarChoiceVerifyDelete, style=TTDialog.TwoChoice, command=self.__handleConfirmDelete, extraArgs=[index])
+            self.confirm = TTDialog.TTDialog(parent=aspect2dp, text=TTLocalizer.AvatarChoiceVerifyDelete, style=TTDialog.TwoChoice, command=self.__handleLastChance, extraArgs=[index])
             self.confirm.show()
-
-    def __handleConfirmDelete(self, choice, index):
-        self.confirm.destroy()
-        del self.confirm
-        if choice == 1:
-            self.seriously = TTDialog.TTDialog(parent=aspect2dp, text=TTLocalizer.AvatarChoiceSeriously, style=TTDialog.TwoChoice, command=self.__handleSeriously, extraArgs=[index])
-            self.seriously.show()
-
-    def __handleSeriously(self, choice, index):
-        self.seriously.destroy()
-        del self.seriously
-        if choice == 1:
-            self.stop = TTDialog.TTDialog(parent=aspect2dp, text=TTLocalizer.AvatarChoiceStop, style=TTDialog.TwoChoice, command=self.__handleStop, extraArgs=[index])
-            self.stop.show()
-
-    def __handleStop(self, choice, index):
-        self.stop.destroy()
-        del self.stop
-        if choice == 1:
-            self.positive = TTDialog.TTDialog(parent=aspect2dp, text=TTLocalizer.AvatarChoicePositive, style=TTDialog.TwoChoice, command=self.__handlePositive, extraArgs=[index])
-            self.positive.show()
-
-    def __handlePositive(self, choice, index):
-        self.positive.destroy()
-        del self.positive
-        if choice == 1:
-            self.lastChance = TTDialog.TTDialog(parent=aspect2dp, text=TTLocalizer.AvatarChoiceLastChance, style=TTDialog.TwoChoice, command=self.__handleLastChance, extraArgs=[index])
-            self.lastChance.show()
 
     def __handleLastChance(self, choice, index):
         self.lastChance.destroy()
