@@ -45,6 +45,7 @@ class MeterDisasterScene(CutsceneBase):
     def byeFlippy(self):
         if self.actors.get('flippy'):
             actor = self.actors['flippy']
+            actor.removeActive()
             actor.delete()
             del actor
 

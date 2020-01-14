@@ -36,6 +36,7 @@ class MeterAlertScene(CutsceneBase):
     def sceneFinish(self, elapsedTime):
         if self.actors.get('dimm'):
             actor = self.actors['dimm']
+            actor.removeActive()
             actor.delete()
             del actor
         messenger.send('cutscene-done')
