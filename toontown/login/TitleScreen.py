@@ -106,5 +106,11 @@ class TitleScreen(DirectObject):
         return Task.done
 
     def useController(self, controller):
-        self.titleText.setText('Press start to begin!')
-        self.acceptOnce('start', self.exitShow)
+        if base.gamepad:
+            self.titleText.setText('Press start to begin!')
+            self.acceptOnce('start', self.exitShow)
+            self.ignore('mouse1')
+        else:
+            self.titleText.setText('Click to begin!')
+            self.acceptOnce('mouse1', self.exitShow)
+            self.ignore('start')
