@@ -158,8 +158,8 @@ class ToonBase(OTPBase.OTPBase):
         self.needRestartLOD = False
         self.accept('connect-device', self.handleControllerConnect)
         self.accept('disconnect-device', self.handleControllerDisconnect)
-        self.accept('gamepad-enable', self.handleGamepadEnabled)
-        self.accept('gamepad-disable', self.handleGamepadDisabled)
+        self.accept('device-enable', self.handleDeviceEnabled)
+        self.accept('device-disable', self.handleDeviceDisabled)
         self.gamepad = None
         self.currentDevices = ['keyboard']
         self._controllerDialog = None
@@ -444,7 +444,7 @@ class ToonBase(OTPBase.OTPBase):
         if val == DGG.DIALOG_OK:
             self.attachInputDevice(controller)
             self.gamepad = controller
-            messenger.send('gamepad-enable', [controller])
+            messenger.send('device-enable', [controller])
         if self._controllerDialog:
             self._controllerDialog.hide()
 
@@ -452,14 +452,14 @@ class ToonBase(OTPBase.OTPBase):
         self.currentDevices.remove(controller)
         if self.gamepad == controller:
             self.detachInputDevice(controller)
-            messenger.send('gamepad-disable', [controller])
+            messenger.send('device-disable', [controller])
             props = WindowProperties()
             props.setCursorHidden(True)
             props.setMouseMode(WindowProperties.M_absolute)
         if self._controllerDialog:
             self._controllerDialog.hide()
 
-    def handleGamepadEnabled(self, controller):
+    def handleDeviceEnabled(self, controller):
         self.gamepad = controller
         if not settings['keybinds'].get(self.getCurrentDevice()):
             keybinds = settings.get('keybinds')
@@ -478,7 +478,7 @@ class ToonBase(OTPBase.OTPBase):
         props.setMouseMode(mode)
         self.win.requestProperties(props)
 
-    def handleGamepadDisabled(self, controller):
+    def handleDeviceDisabled(self, controller):
         if self.gamepad == controller:
             self.gamepad = None
         props = WindowProperties()

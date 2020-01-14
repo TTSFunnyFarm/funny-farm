@@ -59,7 +59,7 @@ class LocalAvatar(DirectObject):
         self.jumpLandAnimFixTask = None
         self.fov = OTPGlobals.DefaultCameraFov
         self.accept('avatarMoving', self.clearPageUpDown)
-        self.accept('gamepad-enable', self.gamepadEnabled)
+        self.accept('device-enable', self.deviceEnabled)
         self.nametag2dNormalContents = Nametag.CSpeech
         self.showNametag2d()
         self.setPickable(0)
@@ -1096,8 +1096,8 @@ class LocalAvatar(DirectObject):
         self.ccPusherTrav.traverse(n)
         return
 
-    def gamepadEnabled(self, controller):
+    def deviceEnabled(self, device):
         self.refreshControls()
 
-    def gamepadDisabled(self, controller):
+    def deviceDisabled(self, device):
         self.refreshControls()
