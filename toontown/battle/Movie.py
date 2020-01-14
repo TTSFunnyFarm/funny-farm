@@ -348,7 +348,7 @@ class Movie(DirectObject.DirectObject):
         self.tutorialTom.setDNA(dna)
         self.tutorialTom.setName(TTLocalizer.NPCToonNames[20000])
         self.tutorialTom.setPickable(0)
-        self.tutorialTom.setPlayerType(NametagConstants.CCNonPlayer)
+        self.tutorialTom.setPlayerType(NametagGroup.CCNonPlayer)
         self.tutorialTom.uniqueName = uniqueName
         if base.config.GetString('language', 'english') == 'japanese':
             self.tomDialogue03 = base.loader.loadSfx('phase_3.5/audio/dial/CC_tom_movie_tutorial_reward01.ogg')
