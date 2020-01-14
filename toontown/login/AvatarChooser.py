@@ -99,7 +99,8 @@ class AvatarChooser:
         self.renameEntry = None
         self.avatarIndex = 1
         if base.gamepad:
-            pass
+
+        self.accept('device-enable', self.handleDeviceEnabled)
         self.isLoaded = 1
 
     def unload(self):
@@ -318,3 +319,6 @@ class AvatarChooser:
             base.localAvatar.setHealth(20, 20)
         else:
             base.cr.enterTheTooniverse(data.setLastHood)
+
+    def handleDeviceEnabled(self, device):
+        pass
