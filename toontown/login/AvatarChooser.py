@@ -261,10 +261,10 @@ class AvatarChooser:
         self.verify.destroy()
         del self.verify
         if choice == 1:
-            command = self.__handleLastChance
+            ourCommand = self.__handleLastChance
             if base.air.holidayMgr.isAprilToons():
-                command = self.__handleConfirmDelete
-            self.confirm = TTDialog.TTDialog(parent=aspect2dp, text=TTLocalizer.AvatarChoiceVerifyDelete, style=TTDialog.TwoChoice, command=self.__handleConfirmDelete, extraArgs=[index])
+                ourCommand = self.__handleConfirmDelete
+            self.confirm = TTDialog.TTDialog(parent=aspect2dp, text=TTLocalizer.AvatarChoiceVerifyDelete, style=TTDialog.TwoChoice, command=ourCommand, extraArgs=[index])
             self.confirm.show()
 
     def __handleConfirmDelete(self, choice, index):
