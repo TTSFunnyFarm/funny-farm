@@ -42,6 +42,8 @@ textures-power-2 none
 
 # Performance
 gc-save-all 0
+want-garbage-collect-task 0
+transform-cache 0
 
 # Holidays
 want-halloween #f
