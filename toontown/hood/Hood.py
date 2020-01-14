@@ -324,5 +324,6 @@ class Hood(DirectObject):
 
     def unloadQuestChanges(self):
         for actor in list(self.actors.values()):
+            actor.removeActive()
             actor.delete()
             del actor
