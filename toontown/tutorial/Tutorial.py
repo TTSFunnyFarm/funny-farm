@@ -474,6 +474,7 @@ class Tutorial(ToonHood):
             Func(musicMgr.playMusic, self.spookyMusic, looping=1),
             Wait(1),
             Func(self.suit.reparentTo, render),
+            Func(self.suit.addActive),
             self.suit.beginSupaFlyMove(Point3(45, 95, -0.5), True, 'TutorialSuitFlyIn', walkAfterLanding=True),
             Func(self.startSuitWalkInterval),
             Wait(2),
