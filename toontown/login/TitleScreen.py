@@ -95,6 +95,7 @@ class TitleScreen(DirectObject):
         self.fireworkShow.startShow(random.choice(showTypes), 0, 0, 0)
         taskMgr.doMethodLater(self.fireworkShow.fireworkShow.getShowDuration(), self.exitShow, 'showTimeout')
         self.track.start()
+        self.accept('gamepad-enable', self.useController)
 
     def exitShow(self, *args):
         self.track.finish()
@@ -103,3 +104,7 @@ class TitleScreen(DirectObject):
         self.track.append(Parallel(self.titleText.colorScaleInterval(1.0, (1, 1, 1, 0)), Sequence(Func(base.transitions.fadeOut, 1.0), Wait(1.5), Func(self.unload), Func(base.cr.begin))))
         self.track.start()
         return Task.done
+
+    def useController(self, controller):
+        self.titleText.setText('Press start to begin!')
+        self.acceptOnce('start', self.exitShow)

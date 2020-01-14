@@ -158,6 +158,8 @@ class ToonBase(OTPBase.OTPBase):
         self.needRestartLOD = False
         self.accept('connect-device', self.handleControllerConnect)
         self.accept('disconnect-device', self.handleControllerDisconnect)
+        self.accept('gamepad-enable', self.handleGamepadEnabled)
+        self.accept('gamepad-disable', self.handleGamepadDisabled)
         self.gamepad = None
         self.currentDevices = ['keyboard']
         self._controllerDialog = None
@@ -431,6 +433,8 @@ class ToonBase(OTPBase.OTPBase):
         base.win.requestProperties(wp)
 
     def handleControllerConnect(self, controller):
+        if self._controllerDialog:
+            self._controllerDialog.hide()
         self._controllerDialog = TTDialog.TTDialog(parent=aspect2d, text="%s has been connected.\n\nWould you like to use it?" % controller.name, style=TTDialog.YesNo, command=self.handleControllerAck, extraArgs=[controller], text_wordwrap=24)
         self._controllerDialog.show()
         if controller not in self.currentDevices:
@@ -441,10 +445,6 @@ class ToonBase(OTPBase.OTPBase):
             self.attachInputDevice(controller)
             self.gamepad = controller
             messenger.send('gamepad-enable', [controller])
-            if not settings['keybinds'].get(self.getCurrentDevice()):
-                keybinds = settings.get('keybinds')
-                keybinds[controller.name] = ToontownGlobals.GP_CONTROLS
-                settings['keybinds'] = keybinds
         if self._controllerDialog:
             self._controllerDialog.hide()
 
@@ -452,10 +452,39 @@ class ToonBase(OTPBase.OTPBase):
         self.currentDevices.remove(controller)
         if self.gamepad == controller:
             self.detachInputDevice(controller)
-            self.gamepad = None
             messenger.send('gamepad-disable', [controller])
+            props = WindowProperties()
+            props.setCursorHidden(True)
+            props.setMouseMode(WindowProperties.M_absolute)
         if self._controllerDialog:
             self._controllerDialog.hide()
+
+    def handleGamepadEnabled(self, controller):
+        self.gamepad = controller
+        if not settings['keybinds'].get(self.getCurrentDevice()):
+            keybinds = settings.get('keybinds')
+            keybinds[controller.name] = ToontownGlobals.GP_CONTROLS
+            settings['keybinds'] = keybinds
+        mode = WindowProperties.M_absolute
+        if self.gamepad:
+            mode = WindowProperties.M_confined
+            mw = self.mouseWatcher
+            mw.removeNode()
+        else:
+            self.mouseWatcher = self.buttonThrowers[0].getParent()
+            self.mouseWatcherNode = self.mouseWatcher.node()
+        props = WindowProperties()
+        props.setCursorHidden(bool(self.gamepad))
+        props.setMouseMode(mode)
+        self.win.requestProperties(props)
+
+    def handleGamepadDisabled(self, controller):
+        if self.gamepad == controller:
+            self.gamepad = None
+        props = WindowProperties()
+        props.setCursorHidden(True)
+        props.setMouseMode(WindowProperties.M_confined)
+        self.win.requestProperties(props)
 
     def getCurrentDevice(self):
         if self.gamepad:
