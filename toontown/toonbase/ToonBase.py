@@ -241,11 +241,11 @@ class ToonBase(OTPBase.OTPBase):
         if aspect2d.isHidden() and not base.cr.cutsceneMgr.getCurrentScene():
             if settings['drawFps']:
                 base.setFrameRateMeter(True)
-            aspect2d.show()
+            self.showUi()
         else:
             if settings['drawFps']:
                 base.setFrameRateMeter(False)
-            aspect2d.hide()
+            self.hideUi()
 
     def initNametagGlobals(self):
         arrow = loader.loadModel('phase_3/models/props/arrow')
@@ -352,7 +352,7 @@ class ToonBase(OTPBase.OTPBase):
             self.cr.cleanupGame()
         self.enableMusic(0)
         render.hide()
-        aspect2d.hide()
+        self.hideUi()
         self.setBackgroundColor(ToontownGlobals.DefaultBackgroundColor)
         dialog = TTDialog.TTDialog(parent=aspect2dp, text=TTLocalizer.GameError % details, style=TTDialog.Acknowledge, text_wordwrap=16, command=self.exitShow)
         dialog.show()
@@ -383,3 +383,11 @@ class ToonBase(OTPBase.OTPBase):
         wp = WindowProperties()
         wp.setMinimized(True)
         base.win.requestProperties(wp)
+
+    def showUi(self):
+        aspect2d.show()
+        NodePath(self.marginManager).reparentTo(aspect2d)
+
+    def hideUi(self):
+        NodePath(self.marginManager).reparentTo(aspect2dp)
+        aspect2d.hide()

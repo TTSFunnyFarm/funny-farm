@@ -18,7 +18,7 @@ class MeterDisasterScene(CutsceneBase):
 
     def enter(self):
         CutsceneBase.enter(self)
-        aspect2d.hide()
+        base.hideUi()
         flippy = self.actors['flippy']
         flippy.initializeBodyCollisions('toon')
         self.track.append(LerpPosHprInterval(camera, duration=1.5, pos=Point3(8, 8, flippy.getHeight() - 0.5), hpr=Vec3(120, 0, 0), other=flippy, blendType='easeInOut'))
@@ -39,7 +39,7 @@ class MeterDisasterScene(CutsceneBase):
         track.append(Wait(7.0))
         track.append(LerpPosHprInterval(camera, duration=1.5, pos=Point3(12, 10, 5), hpr=Vec3(120, -5, 0), other=flippy, blendType='easeInOut'))
         track.append(Func(self.doDialog, len(self.dialog) - 1, 0))
-        track.append(Func(aspect2d.show))
+        track.append(Func(base.showUi))
         track.start()
 
     def byeFlippy(self):
