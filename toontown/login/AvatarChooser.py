@@ -296,8 +296,12 @@ class AvatarChooser:
             self.lastChance.show()
 
     def __handleLastChance(self, choice, index):
-        self.lastChance.destroy()
-        del self.lastChance
+     .  if self.lastChance:
+            self.lastChance.destroy()
+            del self.lastChance
+        else:
+            self.verify.destroy()
+            del self.verify
         if choice == 1:
             dataMgr.deleteToonData(index)
             # Hacky way of updating the gui
