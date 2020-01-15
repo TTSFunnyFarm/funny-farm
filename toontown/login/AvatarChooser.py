@@ -271,11 +271,7 @@ class AvatarChooser:
         self.confirm.destroy()
         del self.confirm
         if choice == 1:
-            dataMgr.deleteToonData(index)
-            # Hacky way of updating the gui
-            self.unload()
-            self.load()
-            self.enter()
+            self.__deleteToon(index)
 
     def __handleConfirmDelete(self, choice, index):
         self.confirm.destroy()
@@ -309,11 +305,7 @@ class AvatarChooser:
         self.lastChance.destroy()
         del self.lastChance
         if choice == 1:
-            dataMgr.deleteToonData(index)
-            # Hacky way of updating the gui
-            self.unload()
-            self.load()
-            self.enter()
+            self.__deleteToon(index)
 
     def __handleDone(self, data):
         loader.beginBulkLoad('main', TTLocalizer.EnteringLabel, 1000, TTLocalizer.TIP_GENERAL)
@@ -326,3 +318,10 @@ class AvatarChooser:
             base.localAvatar.setHealth(20, 20)
         else:
             base.cr.enterTheTooniverse(data.setLastHood)
+
+    def __deleteToon(self, index):
+        dataMgr.deleteToonData(index)
+        # Hacky way of updating the gui
+        self.unload()
+        self.load()
+        self.enter()
