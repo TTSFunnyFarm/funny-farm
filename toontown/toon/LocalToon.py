@@ -541,14 +541,23 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def setInventory(self, inventoryData):
         if not self.inventory:
-            self.inventory = InventoryNew.InventoryNew(self, inventoryData[:])
+            if type(inventoryData) != list:
+                self.inventory = InventoryNew.InventoryNew(self, inventoryData)
+            else:
+                self.inventory = InventoryNew.InventoryNew(self, inventoryData[:])
         else:
-            self.inventory.updateInvData(inventoryData[:])
+            if type(inventoryData) != list:
+                self.inventory.updateInvData(inventoryData)
+            else:
+                self.inventory.updateInvData(inventoryData[:])
         self.inventory.updateGUI()
         self.inventory.saveInventory()
 
     def setExperience(self, experience):
-        self.experience = Experience.Experience(experience[:], self)
+        if type(experience) != list:
+            self.experience = Experience.Experience(experience, self)
+        else:
+            self.experience = Experience.Experience(experience[:], self)
         if self.inventory:
             self.inventory.updateGUI()
         self.experience.saveExp()

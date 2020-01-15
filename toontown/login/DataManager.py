@@ -154,8 +154,14 @@ class DataManager:
         base.localAvatar.setMaxBankMoney(data.setMaxBankMoney)
         base.localAvatar.setMaxCarry(data.setMaxCarry)
         base.localAvatar.setTrackAccess(data.setTrackAccess[:])
-        base.localAvatar.setExperience(data.setExperience[:])
-        base.localAvatar.setInventory(data.setInventory[:])
+        if type(data.setExperience) != list:
+            base.localAvatar.setExperience(data.setExperience)
+        else:
+            base.localAvatar.setExperience(data.setExperience[:])
+        if type(data.setInventory) != list:
+            base.localAvatar.setInventory(data.setInventory)
+        else:
+            base.localAvatar.setInventory(data.setInventory[:])
         base.localAvatar.setQuestCarryLimit(data.setQuestCarryLimit)
         base.localAvatar.setQuestingZone(data.setQuestingZone)
         for questDesc in data.setQuests[:]:
