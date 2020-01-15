@@ -261,11 +261,21 @@ class AvatarChooser:
         self.verify.destroy()
         del self.verify
         if choice == 1:
-            ourCommand = self.__handleLastChance
+            ourCommand = self.__handleConfirmDeleteNow
             if base.air.holidayMgr.isAprilToons():
                 ourCommand = self.__handleConfirmDelete
             self.confirm = TTDialog.TTDialog(parent=aspect2dp, text=TTLocalizer.AvatarChoiceVerifyDelete, style=TTDialog.TwoChoice, command=ourCommand, extraArgs=[index])
             self.confirm.show()
+
+    def __handleConfirmDeleteNow(self, choice, index):
+        self.confirm.destroy()
+        del self.confirm
+        if choice == 1:
+            dataMgr.deleteToonData(index)
+            # Hacky way of updating the gui
+            self.unload()
+            self.load()
+            self.enter()
 
     def __handleConfirmDelete(self, choice, index):
         self.confirm.destroy()
@@ -296,12 +306,8 @@ class AvatarChooser:
             self.lastChance.show()
 
     def __handleLastChance(self, choice, index):
-     .  if self.lastChance:
-            self.lastChance.destroy()
-            del self.lastChance
-        else:
-            self.verify.destroy()
-            del self.verify
+        self.lastChance.destroy()
+        del self.lastChance
         if choice == 1:
             dataMgr.deleteToonData(index)
             # Hacky way of updating the gui
