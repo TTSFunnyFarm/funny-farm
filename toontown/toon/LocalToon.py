@@ -234,9 +234,11 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def startChat(self):
         self.chatMgr.createGui()
+        self.accept(OTPGlobals.ThinkPosHotkey, self.sayLocation)
 
     def stopChat(self):
         self.chatMgr.deleteGui()
+        self.ignore(OTPGlobals.ThinkPosHotkey)
 
     def initInterface(self):
         self.book = ShtikerBook.ShtikerBook()
@@ -289,7 +291,6 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         # self.accept('InputState-turnLeft', self.__toonMoved)
         # self.accept('InputState-turnRight', self.__toonMoved)
         # self.accept('InputState-slide', self.__toonMoved)
-        self.accept('shift-f1', self.sayLocation)
 
     def enableDebug(self):
         onScreenDebug.enabled = True
@@ -1737,7 +1738,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
     def sayLocation(self):
         locStr = "X: {0}\nY: {1}\nZ: {2}\nH: {3}\nZone: {4}\nVersion: {5}".format(round(self.getX(), 3), round(self.getY(), 3), round(self.getZ(), 3), round(self.getH(), 3),
                                                                                   self.zoneId, config.GetString('game-version', 'no_version_set'))
-        self.setChatAbsolute(locStr, CFThought)
+        self.setChatAbsolute(locStr, CFThought | CFTimeout)
 
     def disableBodyCollisions(self):
         pass
