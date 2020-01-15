@@ -1,12 +1,10 @@
 from panda3d.core import *
+from libotp import *
 from direct.gui.DirectGui import *
 from direct.showbase.DirectObject import *
-from otp.nametag.NametagConstants import *
 from otp.otpbase import OTPGlobals
 from otp.otpbase import OTPLocalizer
 from toontown.toonbase import TTLocalizer
-from toontown.chat.ChatBalloon import ChatBalloon
-from toontown.chat import ChatGlobals
 
 import string
 AcceptedKeystrokes = string.digits + string.ascii_letters + string.punctuation + ' '

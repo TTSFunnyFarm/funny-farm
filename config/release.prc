@@ -41,10 +41,7 @@ texture-anisotropic-degree 16
 textures-power-2 none
 
 # Performance
-garbage-collect-states #f
-support-threads #t
-lock-to-one-cpu #f
-lock-to-one-core #f
+gc-save-all 0
 
 # Holidays
 want-halloween #f

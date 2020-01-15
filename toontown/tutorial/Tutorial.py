@@ -1,11 +1,11 @@
 from panda3d.core import *
+from libotp import *
 from direct.interval.IntervalGlobal import *
 from direct.showbase import PythonUtil
 from toontown.toon import NPCToons
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.hood.ToonHood import ToonHood
-from otp.nametag.NametagConstants import *
 from toontown.tutorial.CogPinata import CogPinata
 from toontown.hood import SkyUtil
 from toontown.suit import SuitDNA
@@ -474,6 +474,7 @@ class Tutorial(ToonHood):
             Func(musicMgr.playMusic, self.spookyMusic, looping=1),
             Wait(1),
             Func(self.suit.reparentTo, render),
+            Func(self.suit.addActive),
             self.suit.beginSupaFlyMove(Point3(45, 95, -0.5), True, 'TutorialSuitFlyIn', walkAfterLanding=True),
             Func(self.startSuitWalkInterval),
             Wait(2),
@@ -548,6 +549,7 @@ class Tutorial(ToonHood):
             Func(self.flippy.enterTeleportOut, callback=self.flippy.delete),
             Wait(3.2),
             Func(self.flippy.hide),
+            Func(self.flippy.removeActive),
             Wait(0.2),
             Func(self.exitOutro)
         )

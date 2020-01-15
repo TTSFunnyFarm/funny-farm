@@ -233,7 +233,8 @@ class Hood(DirectObject):
         pass
 
     def exitPlace(self):
-        pass
+        for npc in self.npcs:
+            npc.addActive()
 
     def enterSuitBuilding(self, block, track, difficulty, numFloors):
         self.exit()
@@ -323,5 +324,6 @@ class Hood(DirectObject):
 
     def unloadQuestChanges(self):
         for actor in list(self.actors.values()):
+            actor.removeActive()
             actor.delete()
             del actor

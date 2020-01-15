@@ -1,6 +1,6 @@
 from panda3d.core import *
+from libotp import *
 from direct.interval.IntervalGlobal import *
-from otp.nametag.NametagConstants import *
 from toontown.quest import Quests
 from toontown.suit import SuitDNA
 from toontown.toonbase import ToontownGlobals

@@ -1,11 +1,10 @@
 from panda3d.core import *
+from libotp import *
 from direct.actor import Actor
 from direct.interval.IntervalGlobal import *
 from direct.distributed.ClockDelta import *
 from direct.showbase.DirectObject import DirectObject
 from direct.task.Task import Task
-from otp.nametag import NametagGlobals
-from otp.nametag.NametagConstants import *
 from otp.avatar import Emote
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
@@ -861,6 +860,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         if self.activeSuits.count(suit) != 0:
             self.activeSuits.remove(suit)
         self.suitGone = 1
+        suit.removeActive()
         suit.disable()
         suit.delete()
         messenger.send('removeActiveSuit', [suit.doId])

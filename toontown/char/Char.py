@@ -1,5 +1,5 @@
 from otp.avatar import Avatar
-from otp.nametag.NametagGroup import *
+from libotp import *
 from panda3d.core import *
 from direct.task import Task
 import random

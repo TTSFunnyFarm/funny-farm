@@ -89,4 +89,14 @@ class CutsceneBase:
                 else:
                     actor.showNormalMuzzle()
         if anim:
-            ActorInterval(actor, anim).start()
+            seq = Sequence()
+            anims = actor.getAnimNames()
+            if anim in anims:
+                animDuration = actor.getDuration(anim)
+                seq.append(ActorInterval(actor, anim))
+                seq.append(Wait(animDuration))
+
+            if 'neutral' in anims:
+                seq.append(Func(actor.loop, 'neutral'))
+
+            seq.start()

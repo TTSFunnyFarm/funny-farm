@@ -26,16 +26,17 @@ class MeterAlertScene(CutsceneBase):
 
     def enter(self):
         CutsceneBase.enter(self)
-        aspect2d.hide()
+        base.hideUi()
 
     def exit(self):
         CutsceneBase.exit(self)
         self.door.find('**/door_double_round_ur_left').setHpr(0, 0, 0)
-        aspect2d.show()
+        base.showUi()
 
     def sceneFinish(self, elapsedTime):
         if self.actors.get('dimm'):
             actor = self.actors['dimm']
+            actor.removeActive()
             actor.delete()
             del actor
         messenger.send('cutscene-done')

@@ -1,9 +1,9 @@
 from panda3d.core import *
+from libotp import *
 from direct.gui.DirectGui import *
 from direct.interval.IntervalGlobal import *
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
-from otp.nametag import NametagGlobals
 
 class ShtikerBook(DirectFrame):
     notify = directNotify.newCategory('ShtikerBook')

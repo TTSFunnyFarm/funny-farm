@@ -1,4 +1,5 @@
 from panda3d.core import *
+from libotp import *
 from direct.showbase import PythonUtil
 from direct.controls.ControlManager import CollisionHandlerRayStart
 from direct.interval.IntervalGlobal import *
@@ -8,7 +9,6 @@ from toontown.toonbase import ToontownBattleGlobals
 from toontown.toonbase import ToontownGlobals
 from toontown.battle import BattleProps
 from otp.otpbase import OTPGlobals
-from otp.nametag.NametagConstants import *
 from toontown.suit.SuitBase import SuitBase
 from toontown.suit.Suit import Suit
 from toontown.suit import SuitDialog
