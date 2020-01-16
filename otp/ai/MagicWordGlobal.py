@@ -74,14 +74,16 @@ class MagicWord:
             raise CoteError('Word %s requires a minimum of %d arguments!' % (self.name, len(output)))
         elif len(output) > maxArgs:
             raise CoteError('Args overflow! Word %s has a maximum of %d arguments!' % (self.name, len(output)))
+        new_output = []
         for i in range(len(output)):
             arg = output[i]
             try:
-                self.argTypes[i](arg)
+                new_arg = self.argTypes[i](arg)
+                new_output.append(new_arg)
             except ValueError as e:
                 raise CoteError('Failed to convert arg %s to %s!' % (output[i], self.types[i].__name__))
 
-        return output
+        return new_output
 
     def run(self, rawArgs):
         args = self.parseArgs(rawArgs)
