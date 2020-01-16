@@ -78,6 +78,7 @@ class ChatManager(DirectObject):
             mw = mw.split(' ')
             args = ' '.join(mw[1:])
             cotebook.run(mw[0].lower(), args)
+            self.closeChatInput()
             return # don't send the message
 
         self.sendChat()
