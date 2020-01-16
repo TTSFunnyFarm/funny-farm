@@ -481,9 +481,11 @@ class ToonBase(OTPBase.OTPBase):
     def handleDeviceDisabled(self, controller):
         if self.gamepad == controller:
             self.gamepad = None
-        props = WindowProperties()
-        props.setCursorHidden(True)
-        props.setMouseMode(WindowProperties.M_confined)
+            props = WindowProperties()
+            props.setCursorHidden(False)
+            props.setMouseMode(WindowProperties.M_absolute)
+            self.mouseWatcher = self.buttonThrowers[0].getParent()
+            self.mouseWatcherNode = self.mouseWatcher.node()
         self.win.requestProperties(props)
 
     def getCurrentDevice(self):
