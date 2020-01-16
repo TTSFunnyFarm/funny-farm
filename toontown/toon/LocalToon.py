@@ -1824,7 +1824,7 @@ def setHp(hp):
 @magicWord(argTypes=[int], aliases=['addQuest'])
 def questAdd(id):
     av = base.localAvatar
-    if not Quests.QuestDict.get(id):
+    if not Quests.isQuest   (id):
         return 'Invalid quest ID!'
     if len(av.quests) >= av.questCarryLimit:
         return 'Cannot add quest %d; maximum quests reached!' % id
@@ -1839,7 +1839,7 @@ def questAdd(id):
 @magicWord(argTypes=[int, int])
 def setQuest(taskId, slotId=0):
     av = base.localAvatar
-    if not Quests.QuestDict.get(taskId):
+    if not Quests.isQuest(taskId):
         return 'Invalid quest ID!'
     if len(av.quests) - 1 < slotId:
         return 'Cannot add quest %d, non-existent slot!' % taskId
@@ -1850,3 +1850,10 @@ def setQuest(taskId, slotId=0):
     if base.avatarData.setQuests != av.quests:
         base.avatarData.setQuests = av.quests[:]
         dataMgr.saveToonData(base.avatarData)
+
+@magicWord(argTypes=[int], aliases=['addQuestHistory'])
+def appendQuestHistory(taskId):
+    av = base.localAvatar
+    if not Quests.isQuest(taskId):
+        return 'Invalid quest ID!'
+    av.addQuestHistory(taskId)
