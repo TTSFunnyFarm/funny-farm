@@ -87,7 +87,10 @@ class MagicWord:
 
     def run(self, rawArgs):
         args = self.parseArgs(rawArgs)
-        return self.func(*args)
+        try:
+            return self.func(*args)
+        except TypeError as e:
+            return 'Invalid arguments!'
 
 class magicDecorator:
     def __init__(self, name=None, argTypes=[], aliases=[]):
