@@ -60,6 +60,7 @@ class FFStreet(Street):
             if questDesc[0] in range(1019, 1023):
                 self.npcs.append(NPCToons.createLocalNPC(1114, True))
                 origin = self.geom.find('**/npc_origin_1')
+                origin.setPosHpr(-97.042, 133.081, 0.025, 171, 0 , 0)
                 self.npcs[1].reparentTo(self.geom)
                 self.npcs[1].setPosHpr(origin, 0, 0, 0, 0, 0, 0)
                 self.npcs[1].origin = origin
