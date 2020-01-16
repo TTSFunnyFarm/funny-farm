@@ -4,6 +4,7 @@ from direct.gui.DirectGui import *
 from direct.showbase.DirectObject import *
 from otp.otpbase import OTPGlobals
 from otp.otpbase import OTPLocalizer
+from otp.ai.MagicWordGlobal import *
 from toontown.toonbase import TTLocalizer
 
 import string
@@ -72,6 +73,13 @@ class ChatManager(DirectObject):
         # To mimick how Toontown's clickSound is played
         if len(chat) > 1:
             base.playSfx(DGG.getDefaultClickSound())
+        if chat.startswith('~'):
+            mw = chat[1:]
+            mw = mw.split(' ')
+            args = ' '.join(mw[1:])
+            cotebook.run(mw[0].lower(), args)
+            return # don't send the message
+
         self.sendChat()
 
     def chatOverflow(self, chat):
