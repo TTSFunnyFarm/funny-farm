@@ -1839,8 +1839,6 @@ def questAdd(id):
 @magicWord(argTypes=[int, int])
 def setQuest(taskId, slotId=0):
     av = base.localAvatar
-    print(taskId, Quests.QuestDict)
-    print(Quests.QuestDict.get(taskId))
     if not Quests.QuestDict.get(taskId):
         return 'Invalid quest ID!'
     if len(av.quests) - 1 < slotId:
