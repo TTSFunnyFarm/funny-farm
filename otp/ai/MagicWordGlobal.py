@@ -22,7 +22,8 @@ class Cotebook:
     def addAlias(self, alias, name):
         if not self.words.get(name):
             return # yeah no buddy
-        self.name2word[alias] = name
+        word = self.words[name]
+        self.name2word[alias] = word
 
     def run(self, name, args):
         word = None
