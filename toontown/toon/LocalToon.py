@@ -5,6 +5,7 @@ from direct.distributed.ClockDelta import *
 from direct.showbase import PythonUtil
 from direct.showbase.PythonUtil import *
 from direct.task import Task
+from otp.ai.MagicWordGlobal import *
 from otp.avatar import LocalAvatar
 from otp.otpbase import OTPGlobals
 from toontown.chat.ChatManager import ChatManager
@@ -1811,3 +1812,11 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         else:
             self.reflection.setZ(-0.15)
         return Task.cont
+
+@magicWord(argTypes=[int], aliases=['setHealth'])
+def setHp(hp):
+    maxHp = base.localAvatar.maxHp
+    hp = int(hp)
+    if hp > maxHp or hp < -1:
+        return 'Your health must be within -1-%d!' % maxHp
+    base.localAvatar.setHealth(hp, maxHp)

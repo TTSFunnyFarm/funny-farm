@@ -13,10 +13,11 @@ class Cotebook:
     def addWord(self, word):
         if not __debug__:
             return
-        self.name2word[word.name] = word
-        self.words[word.name] = word
+        name = word.name.lower()
+        self.name2word[name] = word
+        self.words[name] = word
         for alias in word.aliases:
-            self.addAlias(alias, word.name)
+            self.addAlias(alias.lower(), name)
 
     def addAlias(self, alias, name):
         if not self.words.get(name):
@@ -72,6 +73,12 @@ class MagicWord:
             raise CoteError('Word %s requires a minimum of %d arguments!' % (self.name, len(output)))
         elif len(output) > maxArgs:
             raise CoteError('Args overflow! Word %s has a maximum of %d arguments!' % (self.name, len(output)))
+        for i in range(len(output)):
+            arg = output[i]
+            try:
+                self.argTypes[i](arg)
+            except ValueError as e:
+                raise CoteError('Failed to convert arg %s to %s!' % (output[i], self.types[i].__name__))
 
         return output
 
