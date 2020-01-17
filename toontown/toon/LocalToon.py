@@ -16,9 +16,10 @@ from toontown.book import InventoryPage
 from toontown.book import QuestPage
 from toontown.book import TrackPage
 from toontown.cutscenes import CutscenesGlobals
-from toontown.cutscenes import *
-from toontown.quest import Quests
+from toontown.cutscenes.BuyGagsScene import BuyGagsScene
+from toontown.cutscenes.DualTasksScene import DualTasksScene
 from toontown.cutscenes.InfoBubble import InfoBubble
+from toontown.quest import Quests
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
@@ -923,13 +924,13 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
                     return True
             # Special cases
             # "Ride the trolley" info bubble
-            id = BuyGagsScene.BuyGagsScene.id
+            id = BuyGagsScene.id
             if questDesc[0] == id and not self.hasQuestHistory(1):
                 if zoneId == FunnyFarmGlobals.FunnyFarm:
                     base.cr.cutsceneMgr.enterCutscene(id)
                     return True
             # Carry 2 ToonTasks info bubble
-            id = DualTasksScene.DualTasksScene.id
+            id = DualTasksScene.id
             if questDesc[0] == id and not self.hasQuestHistory(4):
                 if zoneId == FunnyFarmGlobals.FunnyFarm:
                     base.cr.cutsceneMgr.enterCutscene(id)

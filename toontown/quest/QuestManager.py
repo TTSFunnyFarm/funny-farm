@@ -3,7 +3,8 @@ from toontown.toonbase import ToontownBattleGlobals
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.quest import Quests
 from toontown.cutscenes import CutscenesGlobals
-from toontown.cutscenes import *
+from toontown.cutscenes.MeterAlertScene import MeterAlertScene
+from toontown.cutscenes.MeterDisasterScene import MeterDisasterScene
 
 class QuestManager:
     notify = directNotify.newCategory('QuestManager')
@@ -48,9 +49,9 @@ class QuestManager:
 
     def __handleCompleteQuest(self, npc, nextQuest):
         if nextQuest in CutscenesGlobals.Cutscenes:
-            if nextQuest == MeterDisasterScene.MeterDisasterScene.id:
+            if nextQuest == MeterDisasterScene.id:
                 # Loony Labs cutscene is a very special case; unfortunately we have to just hack this in for now.
-                base.cr.cutsceneMgr.enterCutscene(MeterAlertScene.MeterAlertScene.id)
+                base.cr.cutsceneMgr.enterCutscene(MeterAlertScene.id)
             else:
                 base.cr.cutsceneMgr.enterCutscene(nextQuest)
             base.localAvatar.addQuest(nextQuest)
