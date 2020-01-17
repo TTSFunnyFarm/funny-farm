@@ -235,11 +235,13 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def startChat(self):
         self.chatMgr.createGui()
+        self.chatMgr.enableKeyboardShortcuts()
         self.accept(OTPGlobals.ThinkPosHotkey, self.sayLocation)
 
     def stopChat(self):
-        self.chatMgr.deleteGui()
         self.ignore(OTPGlobals.ThinkPosHotkey)
+        self.chatMgr.deleteGui()
+        self.chatMgr.disableKeyboardShortcuts()
 
     def initInterface(self):
         self.book = ShtikerBook.ShtikerBook()
