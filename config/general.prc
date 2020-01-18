@@ -11,9 +11,6 @@ notify-integrate #f
 # Audio
 audio-library-name p3openal_audio
 
-# Shaders/OpenGL
-gl-version 3 2
-
 # Models
 vfs-mount resources/phase_3 resources/phase_3
 vfs-mount resources/phase_3.5 resources/phase_3.5
