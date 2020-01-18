@@ -12,6 +12,9 @@ notify-integrate #f
 # Audio
 audio-library-name p3openal_audio
 
+# Shaders/OpenGL
+gl-version 3 2
+
 # Display
 load-display pandagl
 
