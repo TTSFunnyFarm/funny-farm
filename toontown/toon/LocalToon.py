@@ -1813,7 +1813,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             self.reflection.setZ(-0.15)
         return Task.cont
 
-@magicWord(argTypes=[int], aliases=['setHealth'])
+@magicWord(argTypes=[int], aliases=['setHealth', 'hp', 'health'])
 def setHp(hp):
     maxHp = base.localAvatar.maxHp
     hp = int(hp)
