@@ -506,10 +506,6 @@ class Toon(Avatar.Avatar, ToonHead):
         self.inBattle = 0
         self.defaultColorScale = None
         self.jar = None
-        self.cogs = []
-        self.cogCounts = []
-        self.eliteCounts = []
-        self.skeleCounts = []
         self.setTag('pieCode', str(ToontownGlobals.PieCodeToon))
         self.setFont(ToontownGlobals.getToonFont())
         self.soundChatBubble = base.loader.loadSfx('phase_3/audio/sfx/GUI_balloon_popup.ogg')
