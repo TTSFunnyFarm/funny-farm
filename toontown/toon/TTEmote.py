@@ -5,7 +5,7 @@ from toontown.toonbase import TTLocalizer
 from otp.otpbase import OTPLocalizer
 from direct.showbase import PythonUtil
 from panda3d.core import *
-from otp.nametag.NametagConstants import *
+from libotp import *
 from otp.avatar import Emote
 from direct.directnotify import DirectNotifyGlobal
 EmoteSleepIndex = 4
