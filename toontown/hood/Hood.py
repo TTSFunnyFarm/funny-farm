@@ -33,6 +33,7 @@ class Hood(DirectObject):
         self.unloaded = False
         self.dialog = None
         self.actors = {}
+        self.npcs = []
 
     def enter(self, shop=None, tunnel=None, init=0):
         musicMgr.playCurrentZoneMusic()
@@ -73,9 +74,8 @@ class Hood(DirectObject):
             self.titleTrack = None
             self.title.cleanup()
             self.title = None
-        if hasattr(self, 'npcs'):
-            for npc in self.npcs:
-                npc.removeActive()
+        for npc in self.npcs:
+            npc.removeActive()
 
     def load(self):
         if base.air.holidayMgr.isHalloween():
