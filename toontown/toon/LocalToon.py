@@ -5,6 +5,7 @@ from direct.distributed.ClockDelta import *
 from direct.showbase import PythonUtil
 from direct.showbase.PythonUtil import *
 from direct.task import Task
+from otp.ai.MagicWordGlobal import *
 from otp.avatar import LocalAvatar
 from otp.otpbase import OTPGlobals
 from toontown.chat.ChatManager import ChatManager
@@ -1814,3 +1815,48 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         else:
             self.reflection.setZ(-0.15)
         return Task.cont
+
+@magicWord(argTypes=[int], aliases=['setHealth', 'hp', 'health'])
+def setHp(hp):
+    maxHp = base.localAvatar.maxHp
+    hp = int(hp)
+    if hp > maxHp or hp < -1:
+        return 'Your health must be within -1-%d!' % maxHp
+    base.localAvatar.setHealth(hp, maxHp)
+
+@magicWord(argTypes=[int], aliases=['addQuest'])
+def questAdd(id):
+    av = base.localAvatar
+    if not Quests.isQuest   (id):
+        return 'Invalid quest ID!'
+    if len(av.quests) >= av.questCarryLimit:
+        return 'Cannot add quest %d; maximum quests reached!' % id
+
+    av.quests.append([id, 0])
+    messenger.send('questsChanged')
+
+    if base.avatarData.setQuests != av.quests:
+        base.avatarData.setQuests = av.quests[:]
+        dataMgr.saveToonData(base.avatarData)
+
+@magicWord(argTypes=[int, int])
+def setQuest(taskId, slotId=0):
+    av = base.localAvatar
+    if not Quests.isQuest(taskId):
+        return 'Invalid quest ID!'
+    if len(av.quests) - 1 < slotId:
+        return 'Cannot add quest %d, non-existent slot!' % taskId
+
+    av.quests[slotId] = [taskId, 0]
+    messenger.send('questsChanged')
+
+    if base.avatarData.setQuests != av.quests:
+        base.avatarData.setQuests = av.quests[:]
+        dataMgr.saveToonData(base.avatarData)
+
+@magicWord(argTypes=[int], aliases=['addQuestHistory'])
+def appendQuestHistory(taskId):
+    av = base.localAvatar
+    if not Quests.isQuest(taskId):
+        return 'Invalid quest ID!'
+    av.addQuestHistory(taskId)
