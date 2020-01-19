@@ -21,7 +21,8 @@ class MusicManager(DirectObject):
         self.safezoneMusic = {
             FunnyFarmGlobals.Tutorial: base.loader.loadMusic('phase_6/audio/bgm/OZ_SZ.ogg'),
             FunnyFarmGlobals.FunnyFarm: base.loader.loadMusic('phase_14/audio/bgm/FF_nbrhood.ogg'),
-            FunnyFarmGlobals.SillySprings: base.loader.loadMusic('phase_14/audio/bgm/SS_nbrhood.ogg')
+            FunnyFarmGlobals.SillySprings: base.loader.loadMusic('phase_14/audio/bgm/SS_nbrhood.ogg'),
+            FunnyFarmGlobals.DebugLand: base.loader.loadMusic('phase_14/audio/bgm/FF_nbrhood.ogg'),
         }
         self.townMusic = {
             FunnyFarmGlobals.FunnyFarm: base.loader.loadMusic('phase_14/audio/bgm/FF_SZ.ogg'),

@@ -145,6 +145,7 @@ def getSuitFont():
     return SuitFont
 
 SafezoneToonupFrequency = 15
+DebugLand = 100000
 DonaldsDock = 1000
 ToontownCentral = 2000
 TheBrrrgh = 3000
@@ -313,7 +314,8 @@ Hoods = (DonaldsDock,
  SellbotHQ,
  CashbotHQ,
  LawbotHQ,
- GolfZone)
+ GolfZone,
+ DebugLand)
 HoodsForTeleportAll = (DonaldsDock,
  ToontownCentral,
  TheBrrrgh,
@@ -415,7 +417,8 @@ phaseMap = {Tutorial: 4,
  CashbotHQ: 10,
  LawbotHQ: 11,
  GolfZone: 6,
- PartyHood: 13}
+ PartyHood: 13,
+ DebugLand: 14}
 streetPhaseMap = {ToontownCentral: 5,
  DonaldsDock: 6,
  MinniesMelodyland: 6,
@@ -429,7 +432,8 @@ streetPhaseMap = {ToontownCentral: 5,
  SellbotHQ: 9,
  CashbotHQ: 10,
  LawbotHQ: 11,
- PartyHood: 13}
+ PartyHood: 13,
+ DebugLand: 14}
 dnaMap = {Tutorial: 'toontown_central',
  ToontownCentral: 'toontown_central',
  DonaldsDock: 'donalds_dock',
@@ -444,7 +448,8 @@ dnaMap = {Tutorial: 'toontown_central',
  SellbotHQ: 'cog_hq_sellbot',
  CashbotHQ: 'cog_hq_cashbot',
  LawbotHQ: 'cog_hq_lawbot',
- GolfZone: 'golf_zone'}
+ GolfZone: 'golf_zone',
+ DebugLand: 'debug_land'}
 hoodNameMap = {DonaldsDock: TTLocalizer.DonaldsDock,
  ToontownCentral: TTLocalizer.ToontownCentral,
  TheBrrrgh: TTLocalizer.TheBrrrgh,
@@ -452,6 +457,7 @@ hoodNameMap = {DonaldsDock: TTLocalizer.DonaldsDock,
  DaisyGardens: TTLocalizer.DaisyGardens,
  OutdoorZone: TTLocalizer.OutdoorZone,
  FunnyFarm: TTLocalizer.FunnyFarm,
+ DebugLand: "A Bug's Land",
  GoofySpeedway: TTLocalizer.GoofySpeedway,
  DonaldsDreamland: TTLocalizer.DonaldsDreamland,
  BossbotHQ: TTLocalizer.BossbotHQ,
@@ -474,7 +480,8 @@ safeZoneCountMap = {MyEstate: 8,
  DonaldsDreamland: 5,
  OutdoorZone: 500,
  GolfZone: 500,
- PartyHood: 500}
+ PartyHood: 500,
+ DebugLand: 500}
 townCountMap = {MyEstate: 8,
  Tutorial: 40,
  ToontownCentral: 37,
@@ -486,7 +493,8 @@ townCountMap = {MyEstate: 8,
  FunnyFarm: 40,
  DonaldsDreamland: 40,
  OutdoorZone: 40,
- PartyHood: 20}
+ PartyHood: 20,
+ DebugLand: 40}
 hoodCountMap = {MyEstate: 2,
  Tutorial: 2,
  ToontownCentral: 2,
@@ -503,7 +511,8 @@ hoodCountMap = {MyEstate: 2,
  CashbotHQ: 2,
  LawbotHQ: 2,
  GolfZone: 2,
- PartyHood: 2}
+ PartyHood: 2,
+ DebugLand: 2}
 TrophyStarLevels = (10,
  20,
  30,

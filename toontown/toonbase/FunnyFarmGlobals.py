@@ -22,7 +22,8 @@ HoodHierarchy = {
     FunnyFarm: (RicketyRoad,),
     SillySprings: (TulipTerrace,),
     ChillyVillage: (WintryWay,),
-    MoonlitMeadow: (BreezyBend,)
+    MoonlitMeadow: (BreezyBend,),
+    DebugLand: ()
 }
 hoodNameMap = {
     DebugLand: "A Bug's Land",
@@ -86,7 +87,7 @@ phaseMap = {
 }
 safeZoneCountMap = {
     FunnyFarm: 6,
-    DebugLand: 14,
+    DebugLand: 6,
     SillySprings: 6
 }
 townCountMap = {
