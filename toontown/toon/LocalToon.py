@@ -15,6 +15,7 @@ from toontown.book import ToonPage
 from toontown.book import InventoryPage
 from toontown.book import QuestPage
 from toontown.book import TrackPage
+from toontown.book import CogPage
 from toontown.cutscenes import CutscenesGlobals
 from toontown.cutscenes.BuyGagsScene import BuyGagsScene
 from toontown.cutscenes.DualTasksScene import DualTasksScene
@@ -267,6 +268,8 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         self.trackPage.load()
         self.book.addPage(self.trackPage, pageName=TTLocalizer.TrackPageShortTitle)
         self.questPage.acceptOnscreenHooks()
+        self.cogPage = CogPage.CogPage()
+        self.book.addPage(self.cogPage, pageName=TTLocalizer.SuitPageTitle)
         self.laffMeter = LaffMeter(self.style, self.hp, self.maxHp)
         self.laffMeter.setAvatar(self)
         self.laffMeter.setScale(0.075)
