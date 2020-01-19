@@ -3,6 +3,8 @@ from direct.showbase.DirectObject import DirectObject
 from toontown.ai.HolidayManagerAI import HolidayManagerAI
 from toontown.ai.CheesyEffectMgrAI import CheesyEffectMgrAI
 from toontown.hood import FFHoodAI
+if __debug__:
+    from toontown.hood import DebugLandAI
 from toontown.quest import Quests
 from toontown.toon import NPCToons
 from toontown.toon import Toon, ToonHead
@@ -42,6 +44,8 @@ class FFAIRepository(DirectObject):
     def createSafeZones(self):
         self.notify.info('Creating safe zones...')
         self.hoods.append(FFHoodAI.FFHoodAI(self))
+        if __debug__:
+            self.hoods.append(DebugLandAI.DebugLandAI(self))
         self.notify.info('Done.')
         self.isLoaded = 1
         messenger.send('ai-done')

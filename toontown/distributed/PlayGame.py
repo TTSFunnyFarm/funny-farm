@@ -5,6 +5,7 @@ from toontown.toonbase import TTLocalizer
 from toontown.hood import ZoneUtil
 from toontown.hood import FFHood
 from toontown.hood import SSHood
+from toontown.hood import DebugLand
 from toontown.town import FFStreet
 from toontown.tutorial import Tutorial
 from toontown.minigame import Purchase
@@ -16,13 +17,15 @@ from toontown.minigame import MazeGame
 from toontown.minigame import DivingGame
 from toontown.minigame import CogThiefGame
 from toontown.building.SuitInteriorBase import SuitInteriorBase
+from otp.ai.MagicWordGlobal import *
 import random
 
 class PlayGame(DirectObject):
     notify = directNotify.newCategory('PlayGame')
     Hood2ClassDict = {
         FunnyFarmGlobals.FunnyFarm: FFHood.FFHood,
-        FunnyFarmGlobals.SillySprings: SSHood.SSHood
+        FunnyFarmGlobals.SillySprings: SSHood.SSHood,
+        FunnyFarmGlobals.DebugLand: DebugLand.DebugLand
     }
     Street2ClassDict = {
         FunnyFarmGlobals.FunnyFarm: FFStreet.FFStreet
@@ -162,3 +165,15 @@ class PlayGame(DirectObject):
         self.purchase = None
         ModelPool.garbageCollect()
         TexturePool.garbageCollect()
+
+@magicWord(argTypes=[int], aliases=['tp'])
+def teleport(zoneId):
+    isStreet = (zoneId % 1000) != 0
+    if zoneId not in base.cr.playGame.Hood2ClassDict.keys() and not isStreet:
+        return 'Invalid zone ID!'
+    else:
+        base.cr.playGame.exitActiveZone()
+        if isStreet:
+            base.cr.playGame.enterStreet(zoneId)
+        else:
+            base.cr.playGame.enterHood(zoneId)

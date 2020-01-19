@@ -6,6 +6,7 @@ from toontown.toonbase.ToontownGlobals import *
 def getVar(var):
     return globals()[var]
 
+DebugLand = 100000
 Tutorial = 500
 FunnyFarm = 1000
 SillySprings = 2000
@@ -24,6 +25,7 @@ HoodHierarchy = {
     MoonlitMeadow: (BreezyBend,)
 }
 hoodNameMap = {
+    DebugLand: "A Bug's Land",
     Tutorial: TTLocalizer.Tutorial,
     FunnyFarm: TTLocalizer.lFunnyFarm,
     SillySprings: TTLocalizer.lSillySprings,
@@ -54,6 +56,9 @@ HoodId2Name = {
     ChillyVillage: 'cv',
     MoonlitMeadow: 'mm',
 }
+if __debug__:
+    HoodName2Id['db'] = DebugLand
+    HoodId2Name[DebugLand] = 'db'
 
 def getIdFromName(hoodName):
     id = HoodName2Id.get(hoodName)
@@ -75,11 +80,13 @@ def getHoodId(zoneId):
 
 phaseMap = {
     FunnyFarm: 'phase_14/models/neighborhoods/funny_farm',
+    DebugLand: 'phase_14/models/hoods/thebug_land',
     SillySprings: 'phase_14/models/neighborhoods/silly_springs',
     RicketyRoad: 'phase_14/models/streets/funny_farm_1100'
 }
 safeZoneCountMap = {
     FunnyFarm: 6,
+    DebugLand: 14,
     SillySprings: 6
 }
 townCountMap = {
