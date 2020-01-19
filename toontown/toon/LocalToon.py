@@ -133,6 +133,10 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             self.hoodsVisited = []
             self.teleportAccess = []
             self.CETimer = 0.0
+            self.cogs = []
+            self.cogCounts = []
+            self.eliteCounts = []
+            self.skeleCounts = []
             self.addActive()
 
     def generate(self):
@@ -707,6 +711,42 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
     def getMaxLevelExp(self):
         return FunnyFarmGlobals.LevelExperience[self.level - 1]
 
+    def setCogStatus(self, cogStatus):
+        self.cogStatus = cogStatus[:]
+        if base.avatarData.setCogStatus != cogStatus:
+            base.avatarData.setCogStatus = cogStatus[:]
+            dataMgr.saveToonData(base.avatarData)
+
+    def getCogStatus(self):
+        return self.cogStatus
+
+    def setCogCounts(self, cogCounts):
+        self.cogCounts = cogCounts[:]
+        if base.avatarData.setCogCounts != cogCounts:
+            base.avatarData.setCogCounts = cogCounts[:]
+            dataMgr.saveToonData(base.avatarData)
+
+    def getCogCounts(self):
+        return self.cogCounts
+
+    def setEliteCounts(self, eliteCounts):
+        self.eliteCounts = eliteCounts[:]
+        if base.avatarData.setEliteCounts != eliteCounts:
+            base.avatarData.setEliteCounts = eliteCounts[:]
+            dataMgr.saveToonData(base.avatarData)
+
+    def getEliteCounts(self):
+        return self.eliteCounts
+
+    def setSkeleCounts(self, skeleCounts):
+        self.skeleCounts = skeleCounts[:]
+        if base.avatarData.setSkeleCounts != skeleCounts:
+            base.avatarData.setSkeleCounts = skeleCounts[:]
+            dataMgr.saveToonData(base.avatarData)
+
+    def getSkeleCounts(self):
+        return self.skeleCounts
+
     def addLevelExp(self, exp, trackFrame = 0, carryIndex = 0, carryAmount = 0):
         totalExp = self.levelExp + exp
         if totalExp >= self.getMaxLevelExp():
@@ -885,6 +925,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         self.setBankMoney(12000)
         self.setLevel(40)
         self.setLevelExp(21000)
+        self.setCogStatus([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3])
 
     def resetToon(self):
         self.setHealth(20, 20, showText=1)
@@ -904,6 +945,10 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         self.setLevel(1)
         self.setLevelExp(0)
         self.setTrackProgress(-1, -1)
+        self.setCogStatus([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.setCogCounts([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.setEliteCounts([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.setSkeleCounts([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         self.clearQuestHistory()
 
     def setRandomSpawn(self, zoneId):

@@ -8,6 +8,7 @@ from toontown.login.AvatarChooser import AvatarChooser
 from toontown.makeatoon.MakeAToon import MakeAToon
 from toontown.cutscenes.CutsceneManager import CutsceneManager
 from toontown.quest.QuestManager import QuestManager
+from toontown.book.CogPageMgr import CogPageMgr
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toontowngui import TTDialog
 
@@ -28,6 +29,7 @@ class FFClientRepository(DirectObject):
         self.avCreate = None
         self.playGame = PlayGame()
         self.questManager = QuestManager()
+        self.cogPageMgr = CogPageMgr()
         self.cutsceneMgr = CutsceneManager()
         self.playingGame = 0
         self.waitDialog = None
