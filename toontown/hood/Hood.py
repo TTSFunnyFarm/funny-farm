@@ -73,8 +73,9 @@ class Hood(DirectObject):
             self.titleTrack = None
             self.title.cleanup()
             self.title = None
-        for npc in self.npcs:
-            npc.removeActive()
+        if hasattr(self, 'npcs'):
+            for npc in self.npcs:
+                npc.removeActive()
 
     def load(self):
         if base.air.holidayMgr.isHalloween():
