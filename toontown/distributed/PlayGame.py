@@ -55,7 +55,6 @@ class PlayGame(DirectObject):
     def enterHood(self, zoneId, tunnel=None, init=0):
         if zoneId not in self.Hood2ClassDict.keys():
             return
-        print('enterHood', zoneId)
         name = FunnyFarmGlobals.hoodNameMap[zoneId]
         count = FunnyFarmGlobals.safeZoneCountMap[zoneId]
         loader.beginBulkLoad('hood', TTLocalizer.HeadingToHood % name, count, TTLocalizer.TIP_GENERAL)

@@ -13,8 +13,8 @@ class DebugLand(ToonHood):
         self.spookyHoodFile = 'phase_14/models/hoods/thebug_land'
         self.titleColor = (0.5, 0.5, 0.5, 1.0)
 
-    def enter(self):
-        ToonHood.enter(self)
+    def enter(self, shop=None, tunnel=None, init=0):
+        ToonHood.enter(self, shop=shop, tunnel=tunnel, init=init)
 
     def exit(self):
         ToonHood.exit(self)

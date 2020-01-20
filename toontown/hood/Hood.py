@@ -85,12 +85,14 @@ class Hood(DirectObject):
             self.startSnowySky()
         else:
             self.geom = loader.loadModel(self.hoodFile)
-            self.sky = loader.loadModel(self.skyFile)
-            self.sky.setTag('sky', 'Regular')
-            self.sky.setScale(1.0)
-            self.sky.setFogOff()
-            self.startSky()
-        self.sky.flattenMedium()
+            if self.skyFile:
+                self.sky = loader.loadModel(self.skyFile)
+                self.sky.setTag('sky', 'Regular')
+                self.sky.setScale(1.0)
+                self.sky.setFogOff()
+                self.startSky()
+        if hasattr(self, 'sky'):
+            self.sky.flattenMedium()
         self.geom.reparentTo(render)
         self.geom.flattenMedium()
         self.generateNPCs()
