@@ -81,7 +81,7 @@ def getHoodId(zoneId):
 
 phaseMap = {
     FunnyFarm: 'phase_14/models/neighborhoods/funny_farm',
-    DebugLand: 'phase_14/models/hoods/thebug_land',
+    DebugLand: 'phase_14/models/debug/thebug_land',
     SillySprings: 'phase_14/models/neighborhoods/silly_springs',
     RicketyRoad: 'phase_14/models/streets/funny_farm_1100'
 }
@@ -106,6 +106,9 @@ SpawnPoints = {
         (Point3(-63, 59, 0.025), Vec3(215, 0, 0)),
         (Point3(-30, 15, 0.536), Vec3(190, 0, 0)),
         (Point3(-95, -153, 0.025), Vec3(270, 0, 0))
+    ],
+    DebugLand: [
+        (Point3(0,0,5), Vec3(0,0,0))
     ]
 }
 nametagFonts = []

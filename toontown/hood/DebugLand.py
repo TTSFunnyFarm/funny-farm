@@ -8,9 +8,9 @@ class DebugLand(ToonHood):
     def __init__(self):
         ToonHood.__init__(self)
         self.zoneId = FunnyFarmGlobals.DebugLand
-        self.hoodFile = 'phase_14/models/hoods/thebug_land'
-        self.winterHoodFile = 'phase_14/models/hoods/thebug_land'
-        self.spookyHoodFile = 'phase_14/models/hoods/thebug_land'
+        self.hoodFile = 'phase_14/models/debug/thebug_land'
+        self.winterHoodFile = 'phase_14/models/debug/thebug_land'
+        self.spookyHoodFile = 'phase_14/models/debug/thebug_land'
         self.titleColor = (0.5, 0.5, 0.5, 1.0)
 
     def enter(self, shop=None, tunnel=None, init=0):
