@@ -104,16 +104,17 @@ class Hood(DirectObject):
         self.unloaded = False
 
     def unload(self):
-        self.stopSky()
+        if hasattr(self, 'sky'):
+            self.stopSky()
+            self.sky.removeNode()
+            del self.sky
         if hasattr(self, 'npcs'):
             for npc in self.npcs:
                 npc.removeActive()
                 npc.delete()
                 del npc
         self.geom.removeNode()
-        self.sky.removeNode()
         del self.geom
-        del self.sky
         self.unloaded = True
 
     def getHoodText(self):
