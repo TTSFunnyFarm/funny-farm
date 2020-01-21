@@ -38,7 +38,6 @@ class FFAIRepository(DirectObject):
         self.notify.info('Creating managers...')
         self.holidayMgr = HolidayManagerAI()
         self.cheesyEffectMgr = CheesyEffectMgrAI()
-        self.cogPageManager = CogPageManagerAI()
 
     def createSafeZones(self):
         self.notify.info('Creating safe zones...')

@@ -160,11 +160,12 @@ class CogPage(ShtikerPage.ShtikerPage):
 
     def __init__(self):
         ShtikerPage.ShtikerPage.__init__(self)
+        self.load()
 
     def load(self):
         ShtikerPage.ShtikerPage.load(self)
         frameModel = loader.loadModel('phase_3.5/models/gui/suitpage_frame')
-        frameModel.setScale(0.03375, 1, 0.045)
+        frameModel.setScale(0.0253, 1, 0.045)
         frameModel.setPos(0, 10, -0.575)
         self.guiTop = NodePath('guiTop')
         self.guiTop.reparentTo(self)
@@ -182,19 +183,19 @@ class CogPage(ShtikerPage.ShtikerPage):
         screws.wrtReparentTo(self.iconNode)
         icons = frameModel.find('**/icons')
         del frameModel
-        self.title = DirectLabel(parent=self.iconNode, relief=None, text=TTLocalizer.SuitPageTitle, text_scale=0.1, text_pos=(0.04, 0), textMayChange=0)
+        self.title = DirectLabel(parent=self.iconNode, relief=None, text=TTLocalizer.SuitPageTitle, text_scale=0.1, text_pos=(0.04, 0), textMayChange=0, text_font=ToontownGlobals.getSuitFont())
         self.radarButtons = []
         icon = icons.find('**/corp_icon')
-        self.corpRadarButton = DirectButton(parent=self.iconNode, relief=None, state=DGG.DISABLED, image=icon, image_scale=(0.03375, 1, 0.045), image2_color=Vec4(1.0, 1.0, 1.0, 0.75), pos=(-0.2, 10, -0.575), command=self.toggleRadar, extraArgs=[0])
+        self.corpRadarButton = DirectButton(parent=self.iconNode, relief=None, state=DGG.DISABLED, image=icon, image_scale=(0.03375, 1, 0.045), image2_color=Vec4(1.0, 1.0, 1.0, 0.75), pos=(-0.2, 10, -0.575), command=print, extraArgs=[0])
         self.radarButtons.append(self.corpRadarButton)
         icon = icons.find('**/legal_icon')
-        self.legalRadarButton = DirectButton(parent=self.iconNode, relief=None, state=DGG.DISABLED, image=icon, image_scale=(0.03375, 1, 0.045), image2_color=Vec4(1.0, 1.0, 1.0, 0.75), pos=(-0.2, 10, -0.575), command=self.toggleRadar, extraArgs=[1])
+        self.legalRadarButton = DirectButton(parent=self.iconNode, relief=None, state=DGG.DISABLED, image=icon, image_scale=(0.03375, 1, 0.045), image2_color=Vec4(1.0, 1.0, 1.0, 0.75), pos=(-0.2, 10, -0.575), command=print, extraArgs=[1])
         self.radarButtons.append(self.legalRadarButton)
         icon = icons.find('**/money_icon')
-        self.moneyRadarButton = DirectButton(parent=self.iconNode, relief=None, state=DGG.DISABLED, image=(icon, icon, icon), image_scale=(0.03375, 1, 0.045), image2_color=Vec4(1.0, 1.0, 1.0, 0.75), pos=(-0.2, 10, -0.575), command=self.toggleRadar, extraArgs=[2])
+        self.moneyRadarButton = DirectButton(parent=self.iconNode, relief=None, state=DGG.DISABLED, image=(icon, icon, icon), image_scale=(0.03375, 1, 0.045), image2_color=Vec4(1.0, 1.0, 1.0, 0.75), pos=(-0.2, 10, -0.575), command=print, extraArgs=[2])
         self.radarButtons.append(self.moneyRadarButton)
         icon = icons.find('**/sales_icon')
-        self.salesRadarButton = DirectButton(parent=self.iconNode, relief=None, state=DGG.DISABLED, image=(icon, icon, icon), image_scale=(0.03375, 1, 0.045), image2_color=Vec4(1.0, 1.0, 1.0, 0.75), pos=(-0.2, 10, -0.575), command=self.toggleRadar, extraArgs=[3])
+        self.salesRadarButton = DirectButton(parent=self.iconNode, relief=None, state=DGG.DISABLED, image=(icon, icon, icon), image_scale=(0.03375, 1, 0.045), image2_color=Vec4(1.0, 1.0, 1.0, 0.75), pos=(-0.2, 10, -0.575), command=print, extraArgs=[3])
         self.radarButtons.append(self.salesRadarButton)
         for radarButton in self.radarButtons:
             radarButton.building = 0
@@ -216,12 +217,12 @@ class CogPage(ShtikerPage.ShtikerPage):
         emblemIcon = loader.loadModel('phase_3.5/models/gui/tt_m_gui_gen_emblemIcons')
         silverModel = emblemIcon.find('**/tt_t_gui_gen_emblemSilver')
         goldModel = emblemIcon.find('**/tt_t_gui_gen_emblemGold')
-        self.silverLabel = DirectLabel(parent=self, relief=None, pos=(-0.25, 0, -0.69), scale=priceScale, image=silverModel, image_pos=(-0.4, 0, 0.4), text=str(localAvatar.emblems[ToontownGlobals.EmblemTypes.Silver]), text_fg=(0.95, 0.95, 0, 1), text_shadow=(0, 0, 0, 1), text_font=ToontownGlobals.getSignFont(), text_align=TextNode.ALeft)
-        self.goldLabel = DirectLabel(parent=self, relief=None, pos=(0.25, 0, -0.69), scale=priceScale, image=goldModel, image_pos=(-0.4, 0, 0.4), text=str(localAvatar.emblems[ToontownGlobals.EmblemTypes.Gold]), text_fg=(0.95, 0.95, 0, 1), text_shadow=(0, 0, 0, 1), text_font=ToontownGlobals.getSignFont(), text_align=TextNode.ALeft)
-        if not base.cr.wantEmblems:
-            self.silverLabel.hide()
-            self.goldLabel.hide()
-        self.accept(localAvatar.uniqueName('emblemsChange'), self.__emblemChange)
+        #self.silverLabel = DirectLabel(parent=self, relief=None, pos=(-0.25, 0, -0.69), scale=priceScale, image=silverModel, image_pos=(-0.4, 0, 0.4), text=str(localAvatar.emblems[ToontownGlobals.EmblemTypes.Silver]), text_fg=(0.95, 0.95, 0, 1), text_shadow=(0, 0, 0, 1), text_font=ToontownGlobals.getSignFont(), text_align=TextNode.ALeft)
+        #self.goldLabel = DirectLabel(parent=self, relief=None, pos=(0.25, 0, -0.69), scale=priceScale, image=goldModel, image_pos=(-0.4, 0, 0.4), text=str(localAvatar.emblems[ToontownGlobals.EmblemTypes.Gold]), text_fg=(0.95, 0.95, 0, 1), text_shadow=(0, 0, 0, 1), text_font=ToontownGlobals.getSignFont(), text_align=TextNode.ALeft)
+        #if not base.cr.wantEmblems:
+            #self.silverLabel.hide()
+            #self.goldLabel.hide()
+        #self.accept(localAvatar.uniqueName('emblemsChange'), self.__emblemChange)
         self.guiTop.setZ(0.625)
         return
 
@@ -322,14 +323,56 @@ class CogPage(ShtikerPage.ShtikerPage):
 
     def updatePage(self):
         index = 0
-        cogs = base.localAvatar.cogs
-        for dept in range(0, len(SuitDNA.suitDepts)):
-            for type in range(0, SuitDNA.suitsPerDept):
-                self.updateCogStatus(dept, type, cogs[index])
-                index += 1
+        cogs = base.localAvatar.getCogStatus()
+        if len(cogs) > 0:
+            for dept in range(0, len(SuitDNA.suitDepts)):
+                for type in range(0, SuitDNA.suitsPerDept):
+                    self.updateCogStatus(dept, type, cogs[index])
+                    index += 1
 
-        self.updateCogRadarButtons(base.localAvatar.cogRadar)
-        self.updateBuildingRadarButtons(base.localAvatar.buildingRadar)
+        #self.updateCogRadarButtons(base.localAvatar.cogRadar)
+        #self.updateBuildingRadarButtons(base.localAvatar.buildingRadar)
+
+    def addSuitHead(self, panel, suitName):
+        panelIndex = self.panels.index(panel)
+        shadow = panel.attachNewNode('shadow')
+        shadowModel = self.shadowModels[panelIndex]
+        shadowModel.copyTo(shadow)
+        coords = SHADOW_SCALE_POS[panelIndex]
+        shadow.setScale(coords[0])
+        shadow.setPos(coords[1], coords[2], coords[3])
+        panel.shadow = shadow
+        panel.head = Suit.attachSuitHead(panel, suitName)
+
+    def addCogRadarLabel(self, panel):
+        cogRadarLabel = DirectLabel(parent=panel, pos=(0.0, 0.0, -0.215), relief=None, state=DGG.DISABLED, text='', text_scale=0.05, text_fg=(0, 0, 0, 1), text_font=ToontownGlobals.getSuitFont())
+        panel.cogRadarLabel = cogRadarLabel
+        return
+
+    def makePanels(self):
+        self.panels = []
+        base.panels = []
+        xStart = -0.66
+        yStart = -0.18
+        xOffset = 0.199
+        yOffset = 0.284
+        for dept in range(0, len(SuitDNA.suitDepts)):
+            row = []
+            color = PANEL_COLORS[dept]
+            for type in range(0, SuitDNA.suitsPerDept):
+                panel = DirectLabel(parent=self.panelNode, pos=(xStart + type * xOffset, 0.0, yStart - dept * yOffset), relief=None, state=DGG.NORMAL, image=self.panelModel, image_scale=(1, 1, 1), image_color=color, text=TTLocalizer.SuitPageMystery, text_scale=0.045, text_fg=(0, 0, 0, 1), text_pos=(0, 0.185, 0), text_font=ToontownGlobals.getSuitFont(), text_wordwrap=7)
+                panel.scale = 0.6
+                panel.setScale(panel.scale)
+                panel.quotaLabel = None
+                panel.head = None
+                panel.shadow = None
+                panel.count = 0
+                panel.summonButton = None
+                self.addCogRadarLabel(panel)
+                self.panels.append(panel)
+                base.panels.append(panel)
+
+        return
 
     def updateCogStatus(self, dept, type, status):
         if dept < 0 or dept > len(SuitDNA.suitDepts):

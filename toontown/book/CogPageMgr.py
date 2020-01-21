@@ -1,5 +1,5 @@
 from toontown.suit.SuitDNA import suitHeadTypes
-from toontown.shtiker.CogPageGlobals import *
+from toontown.book.CogPageGlobals import *
 
 class CogPageMgr:
     def toonEncounteredCogs(self, encounteredCogs):

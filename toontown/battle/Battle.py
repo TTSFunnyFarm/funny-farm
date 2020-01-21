@@ -112,6 +112,7 @@ class Battle(DirectObject, NodePath, BattleBase):
             self.toonOrigQuests[avId] = flattenedQuests
         if avId not in self.toonItems:
             self.toonItems[avId] = ([], [])
+        base.cr.cogPageMgr.toonEncounteredCogs(self.activeSuits)
         self.needAdjustTownBattle = 1
 
     def cleanupBattle(self):
@@ -804,8 +805,10 @@ class Battle(DirectObject, NodePath, BattleBase):
                  'isSupervisor': suit.isSupervisor(),
                  'isVirtual': suit.isVirtual(),
                  'hasRevives': suit.getMaxSkeleRevives(),
-                 'activeToons': self.activeToonIds[:]}
+                 'activeToons': self.activeToonIds[:],
+                 'isElite': suit.isElite}
                 self.suitsKilled.append(encounter)
+                base.cr.cogPageMgr.toonKilledCogs([encounter])
                 suitsToRemove.append(suit)
                 self.needAdjust = 1
                 self.needAdjustTownBattle = 1
@@ -1236,6 +1239,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         for s in self.adjustingSuits:
             self.pendingSuits.remove(s)
             self.activeSuits.append(s)
+        base.cr.cogPageMgr.toonEncounteredCogs(self.activeSuits)
         self.adjustingSuits = []
         self.adjustingToons = []
         self.__addTrainTrapForNewSuits()
