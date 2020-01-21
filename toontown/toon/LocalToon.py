@@ -1874,9 +1874,9 @@ def setMoney(money):
 @magicWord()
 def maxToon():
     av = base.localAvatar
-    ax.maxToon()
+    av.maxToon()
 
 @magicWord()
 def resetToon():
     av = base.localAvatar
-    ax.resetToon()
+    av.resetToon()
