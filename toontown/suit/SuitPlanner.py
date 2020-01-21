@@ -45,6 +45,7 @@ class SuitPlanner(DirectObject):
         newSuit.reparentTo(base.cr.playGame.street.geom)
         newSuit.enterFromSky(requestStatus['posA'], requestStatus['posB'])
         newSuit.startUpdatePosition()
+        newSuit.addActive()
         taskMgr.doMethodLater(SuitTimings.fromSky, self.__handleCreateSuit, '%d-sptCreateSuit' % self.zoneId, [newSuit])
 
     def __handleCreateSuit(self, suit):
