@@ -298,14 +298,15 @@ class CogPage(ShtikerPage.ShtikerPage):
                 panel.shadow.show()
             else:
                 self.addSuitHead(panel, suitName)
-            if base.localAvatar.hasCogSummons(index):
+            #if base.localAvatar.hasCogSummons(index):
+            if False:
                 if panel.summonButton:
                     panel.summonButton.show()
                 else:
                     self.addSummonButton(panel)
         elif status == COG_DEFEATED:
             count = str(base.localAvatar.cogCounts[index])
-            if base.localAvatar.cogs[index] < COG_COMPLETE1:
+            if base.localAvatar.getCogStatus()[index] < COG_COMPLETE1:
                 quota = str(COG_QUOTAS[0][index % SuitDNA.suitsPerDept])
             else:
                 quota = str(COG_QUOTAS[1][index % SuitDNA.suitsPerDept])
@@ -316,8 +317,8 @@ class CogPage(ShtikerPage.ShtikerPage):
             panel['image_color'] = PANEL_COLORS_COMPLETE2[index / SuitDNA.suitsPerDept]
 
     def updateAllCogs(self, status):
-        for index in range(0, len(base.localAvatar.cogs)):
-            base.localAvatar.cogs[index] = status
+        for index in range(0, len(base.localAvatar.getCogStatus())):
+            base.localAvatar.getCogStatus()[index] = status
 
         self.updatePage()
 
@@ -332,6 +333,17 @@ class CogPage(ShtikerPage.ShtikerPage):
 
         #self.updateCogRadarButtons(base.localAvatar.cogRadar)
         #self.updateBuildingRadarButtons(base.localAvatar.buildingRadar)
+
+    def addQuotaLabel(self, panel):
+        index = self.panels.index(panel)
+        count = str(base.localAvatar.cogCounts[index])
+        if base.localAvatar.getCogStatus()[index] < COG_COMPLETE1:
+            quota = str(COG_QUOTAS[0][index % SuitDNA.suitsPerDept])
+        else:
+            quota = str(COG_QUOTAS[1][index % SuitDNA.suitsPerDept])
+        quotaLabel = DirectLabel(parent=panel, pos=(0.0, 0.0, -0.215), relief=None, state=DGG.DISABLED, text=TTLocalizer.SuitPageQuota % (count, quota), text_scale=0.045, text_fg=(0, 0, 0, 1), text_font=ToontownGlobals.getSuitFont())
+        panel.quotaLabel = quotaLabel
+        return
 
     def addSuitHead(self, panel, suitName):
         panelIndex = self.panels.index(panel)
