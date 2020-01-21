@@ -5,12 +5,11 @@ class CogPageMgr:
     def toonEncounteredCogs(self, encounteredCogs):
         cogs = base.localAvatar.getCogStatus()
         for cog in encounteredCogs:
-            cogIndex = suitHeadTypes.index(cog['type'])
-            if toon.getDoId() in cog['activeToons']:
-                if cogs[cogIndex] == COG_UNSEEN: # We haven't seen this cog yet!
-                    cogs[cogIndex] = COG_BATTLED # Set it to battled!
+            cogIndex = suitHeadTypes.index(cog.dna.name)
+            if cogs[cogIndex] == COG_UNSEEN: # We haven't seen this cog yet!
+                cogs[cogIndex] = COG_BATTLED # Set it to battled!
 
-        toon.setCogStatus(cogs)
+        base.localAvatar.setCogStatus(cogs)
 
     def toonKilledCogs(self, killedCogs):
         toon = base.localAvatar
