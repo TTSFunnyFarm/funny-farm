@@ -1860,3 +1860,23 @@ def appendQuestHistory(taskId):
     if not Quests.isQuest(taskId):
         return 'Invalid quest ID!'
     av.addQuestHistory(taskId)
+
+@magicWord(argTypes=[int])
+def addMoney(money):
+    av = base.localAvatar
+    av.addMoney(money)
+
+@magicWord(argTypes=[int])
+def setMoney(money):
+    av = base.localAvatar
+    av.setMoney(money)
+
+@magicWord()
+def maxToon():
+    av = base.localAvatar
+    av.maxToon()
+
+@magicWord()
+def resetToon():
+    av = base.localAvatar
+    av.resetToon()
