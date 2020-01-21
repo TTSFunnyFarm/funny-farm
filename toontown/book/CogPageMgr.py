@@ -23,8 +23,7 @@ class CogPageMgr:
                 skeleCounts[cogIndex] += 1
             elif cog['isElite']:
                 eliteCounts[cogIndex] += 1
-            else:
-                cogCounts[cogIndex] += 1
+            cogCounts[cogIndex] += 1
             if cogs[cogIndex] == COG_BATTLED: # We haven't defeated this cog yet!
                 cogs[cogIndex] = COG_DEFEATED
         toon.setCogStatus(cogs)
