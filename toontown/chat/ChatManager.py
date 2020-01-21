@@ -73,7 +73,7 @@ class ChatManager(DirectObject):
         # To mimick how Toontown's clickSound is played
         if len(chat) > 1:
             base.playSfx(DGG.getDefaultClickSound())
-        if chat.startswith('~'):
+        if chat.startswith('~') and __debug__:
             mw = chat[1:]
             mw = mw.split(' ')
             args = ' '.join(mw[1:])

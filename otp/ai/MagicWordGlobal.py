@@ -99,6 +99,8 @@ class magicDecorator:
         self.aliases = aliases
 
     def __call__(self, mw):
+        if not __debug__:
+            return
         name = self.name
         if not name:
             name = mw.__name__
