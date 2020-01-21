@@ -1870,3 +1870,13 @@ def addMoney(money):
 def setMoney(money):
     av = base.localAvatar
     av.setMoney(money)
+
+@magicWord()
+def maxToon():
+    av = base.localAvatar
+    ax.maxToon()
+
+@magicWord()
+def resetToon():
+    av = base.localAvatar
+    ax.resetToon()
