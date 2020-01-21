@@ -273,8 +273,8 @@ class CogPage(ShtikerPage.ShtikerPage):
             panel.head.hide()
         if panel.shadow:
             panel.shadow.hide()
-        if panel.summonButton:
-            panel.summonButton.hide()
+        if panel.detailButton:
+            panel.detailButton.hide()
         color = PANEL_COLORS[dept]
         panel['image_color'] = color
         for button in self.radarButtons:
@@ -299,22 +299,45 @@ class CogPage(ShtikerPage.ShtikerPage):
             else:
                 self.addSuitHead(panel, suitName)
             #if base.localAvatar.hasCogSummons(index):
-            if False:
-                if panel.summonButton:
-                    panel.summonButton.show()
-                else:
-                    self.addSummonButton(panel)
+            if panel.detailButton:
+                panel.detailButton.show()
+            else:
+                self.addDetailButton(panel)
         elif status == COG_DEFEATED:
             count = str(base.localAvatar.cogCounts[index])
-            if base.localAvatar.getCogStatus()[index] < COG_COMPLETE1:
-                quota = str(COG_QUOTAS[0][index % SuitDNA.suitsPerDept])
-            else:
-                quota = str(COG_QUOTAS[1][index % SuitDNA.suitsPerDept])
-            panel.quotaLabel['text'] = TTLocalizer.SuitPageQuota % (count, quota)
+            panel.quotaLabel['text'] = '%s destroyed' % (count)
         elif status == COG_COMPLETE1:
             panel['image_color'] = PANEL_COLORS_COMPLETE1[index / SuitDNA.suitsPerDept]
         elif status == COG_COMPLETE2:
             panel['image_color'] = PANEL_COLORS_COMPLETE2[index / SuitDNA.suitsPerDept]
+
+    def addDetailButton(self, panel):
+        buttons = loader.loadModel('phase_3/models/gui/dialog_box_buttons_gui')
+        okButtonList = (buttons.find('**/ChtBx_OKBtn_UP'), buttons.find('**/ChtBx_OKBtn_DN'), buttons.find('**/ChtBx_OKBtn_Rllvr'))
+        gui = loader.loadModel('phase_3.5/models/gui/stickerbook_gui')
+        iconGeom = gui.find('**/summons')
+        detailButton = DirectButton(parent=panel, pos=(0.1, 0.0, -0.13), scale=0.1, relief=None, state=DGG.NORMAL, image=okButtonList, image_scale=13.0, geom=iconGeom, geom_scale=0.7, text=('',
+         'Details',
+         'Details',
+         ''), text_scale=0.5, text_pos=(-1.1, -0.4), command=self.detailButtonPressed, extraArgs=[panel])
+        panel.detailButton = detailButton
+        return
+
+    def detailButtonPressed(self, panel):
+        panelIndex = self.panels.index(panel)
+        #self.summonDialog = SummonCogDialog.SummonCogDialog(panelIndex)
+        #self.summonDialog.load()
+        #self.accept(self.summonDialog.doneEvent, self.summonDone, extraArgs=[panel])
+        #self.summonDialog.enter()
+
+    def detailClosed(self, panel):
+        #if self.summonDialog:
+            #self.summonDialog.unload()
+            #self.summonDialog = None
+        index = self.panels.index(panel)
+        #if not base.localAvatar.hasCogSummons(index):
+            #panel.summonButton.hide()
+        return
 
     def updateAllCogs(self, status):
         for index in range(0, len(base.localAvatar.getCogStatus())):
@@ -379,7 +402,7 @@ class CogPage(ShtikerPage.ShtikerPage):
                 panel.head = None
                 panel.shadow = None
                 panel.count = 0
-                panel.summonButton = None
+                panel.detailButton = None
                 self.addCogRadarLabel(panel)
                 self.panels.append(panel)
                 base.panels.append(panel)
