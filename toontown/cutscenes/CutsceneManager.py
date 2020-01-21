@@ -1,10 +1,26 @@
 from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
 from direct.interval.IntervalGlobal import *
-from toontown.cutscenes import *
-cutscenes = [BuyGagsScene.BuyGagsScene, DualTasksScene.DualTasksScene, FirstBuildingScene.FirstBuildingScene, FlippySuitIntroScene.FlippySuitIntroScene, MeterAlertScene.MeterAlertScene, MeterDisasterScene.MeterDisasterScene, IntroScene.IntroScene]
 from toontown.quest import Quests
 from direct.directnotify import DirectNotifyGlobal
+
+from toontown.cutscenes.BuyGagsScene import BuyGagsScene
+from toontown.cutscenes.DualTasksScene import DualTasksScene
+from toontown.cutscenes.FirstBuildingScene import FirstBuildingScene
+from toontown.cutscenes.FlippySuitIntroScene import FlippySuitIntroScene
+from toontown.cutscenes.MeterAlertScene import MeterAlertScene
+from toontown.cutscenes.MeterDisasterScene import MeterDisasterScene
+from toontown.cutscenes.IntroScene import IntroScene
+
+cutscenes = [
+    BuyGagsScene,
+    DualTasksScene,
+    FirstBuildingScene,
+    FlippySuitIntroScene,
+    MeterAlertScene,
+    MeterDisasterScene,
+    IntroScene
+]
 
 class CutsceneManager(DirectObject):
     notify = DirectNotifyGlobal.directNotify.newCategory('CutsceneManager')

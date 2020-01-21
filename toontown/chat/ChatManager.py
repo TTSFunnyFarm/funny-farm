@@ -25,6 +25,7 @@ class ChatManager(DirectObject):
         if self.state == 'open':
             self.closeChatInput()
         self.deleteGui()
+        self.disableKeyboardShortcuts()
         self.state = None
 
     def createGui(self):
@@ -52,10 +53,19 @@ class ChatManager(DirectObject):
         self.cancelButton.destroy()
         self.cancelButton = None
 
+    def enableKeyboardShortcuts(self):
+        base.buttonThrowers[0].node().setKeystrokeEvent('keystroke')
+        self.accept('keystroke', self.openChatInput)
+
+    def disableKeyboardShortcuts(self):
+        self.ignore('keystroke')
+        base.buttonThrowers[0].node().setKeystrokeEvent('')
+
     def openChatInput(self, key):
         # This is to eliminate keystrokes such as Tab, Enter, Esc
         if key not in AcceptedKeystrokes:
             return
+        self.disableKeyboardShortcuts()
         self.chatButton.hide()
         self.chatFrame.show()
         self.chatEntry['focus'] = 1
@@ -67,6 +77,7 @@ class ChatManager(DirectObject):
         self.chatEntry.set('')
         self.chatEntry['focus'] = 0
         self.chatButton.show()
+        self.enableKeyboardShortcuts()
         self.state = 'closed'
 
     def handleChat(self, chat):

@@ -33,6 +33,7 @@ class Hood(DirectObject):
         self.unloaded = False
         self.dialog = None
         self.actors = {}
+        self.npcs = []
 
     def enter(self, shop=None, tunnel=None, init=0):
         musicMgr.playCurrentZoneMusic()
