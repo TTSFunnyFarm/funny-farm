@@ -47,7 +47,7 @@ class SceneGraph(wx.Panel, DirectObject):
                 item = self.tree.AppendItem(parent, name)
                 if not self.previous.get(name):
                     self.previous[name] = item
-                self.tree.SetPyData(item, ('node', n))
+                self.tree.SetItemData(item, ('node', n))
                 if forced:
                     item = parent
                 self.recursiveAdd(item, n)

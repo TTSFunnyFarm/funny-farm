@@ -55,28 +55,15 @@ class LevelEditor(DirectObject):
         self.updateLs()
         self.updateText()
 
-    def findDNANode(self, nodePath):
-        if nodePath and base.dna_storage:
-            return base.dna_storage.findNode('node')
-        else:
-            return None
-
     def loadDNA(self, file):
         if base.geom:
             base.geom.removeNode()
-        dna2 = LPD.loadDNAFileAI(base.dna_storage, Filename.fromOsSpecific(file))
-        print(dir(base.dna_storage))
         dna = LPD.loadDNAFile(base.dna_storage, Filename.fromOsSpecific(file))
-        if True:
-            base.root = LPD.loadDNAFileAI(base.dna_storage, Filename.fromOsSpecific(file))
-            #print(base.root.traverse())
-            base.geom = NodePath(dna)
-            base.geom.reparentTo(render)
-            node = self.findDNANode(base.geom)
-            self.DNAData = LPD.DNAData('DNAData')
-            self.DNAData.add(base.root)
-            print(dir(base.root))
-            messenger.send('graph-refresh')
+        base.root = LPD.loadDNAFileAI(base.dna_storage, Filename.fromOsSpecific(file))
+        #print(base.root.traverse())
+        base.geom = NodePath(dna)
+        base.geom.reparentTo(render)
+        messenger.send('graph-refresh')
         return base.geom
 
     def saveDNA(self, file):
@@ -91,6 +78,8 @@ class LevelEditor(DirectObject):
         self.ls.reset()
         if self.lsNode:
             self.lsNode.removeNode()
+        if not self.selected.getTightBounds():
+            return
         min, max = self.selected.getTightBounds()
         self.ls.moveTo(min)
         self.ls.drawTo(min.x, min.y, max.z)
