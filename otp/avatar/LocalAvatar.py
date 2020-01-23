@@ -1,4 +1,5 @@
 from panda3d.core import *
+from libotp import Nametag, WhisperPopup
 from direct.gui.DirectGui import *
 from direct.showbase.PythonUtil import *
 from direct.interval.IntervalGlobal import *
@@ -12,9 +13,9 @@ from direct.controls.SwimWalker import SwimWalker
 from direct.controls.TwoDWalker import TwoDWalker
 from direct.controls import ControlManager
 from direct.task import Task
+from otp.ai.MagicWordGlobal import *
 from otp.otpbase import OTPGlobals
 from otp.otpbase import OTPLocalizer
-from otp.nametag.Nametag import Nametag
 from toontown.toonbase import ToontownGlobals
 import math
 import string
@@ -1089,3 +1090,8 @@ class LocalAvatar(DirectObject):
             n = self.__geom
         self.ccPusherTrav.traverse(n)
         return
+
+@magicWord(aliases=['sonic'])
+def run():
+    """Toggle "SUPER SONIC SPEED", which makes you move much faster."""
+    inputState.set('debugRunning', inputState.isSet('debugRunning') != True)

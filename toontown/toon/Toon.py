@@ -6,6 +6,7 @@ from toontown.suit import SuitDNA
 from direct.actor import Actor
 from toontown.toon.ToonHead import *
 from panda3d.core import *
+from libotp import *
 from direct.interval.IntervalGlobal import *
 from direct.directnotify import DirectNotifyGlobal
 from toontown.toonbase import ToontownGlobals
@@ -22,7 +23,6 @@ from otp.otpbase import OTPGlobals
 from toontown.effects import DustCloud, Splash
 from direct.showbase.PythonUtil import Functor
 from toontown.distributed import DelayDelete
-from otp.nametag.NametagConstants import *
 from toontown.toon import AccessoryGlobals
 
 def cmp(a, b):
@@ -508,7 +508,6 @@ class Toon(Avatar.Avatar, ToonHead):
         self.jar = None
         self.setTag('pieCode', str(ToontownGlobals.PieCodeToon))
         self.setFont(ToontownGlobals.getToonFont())
-        self.setSpeechFont(ToontownGlobals.getToonFont())
         self.soundChatBubble = base.loader.loadSfx('phase_3/audio/sfx/GUI_balloon_popup.ogg')
         self.doId = id(self)
         self.splash = None
@@ -2886,7 +2885,6 @@ class Toon(Avatar.Avatar, ToonHead):
         self.suit.loop('neutral')
         self.isDisguised = 1
         self.setFont(ToontownGlobals.getSuitFont())
-        self.setSpeechFont(ToontownGlobals.getSuitFont())
         if setDisplayName:
             if hasattr(base, 'idTags') and base.idTags:
                 name = self.getAvIdName()
@@ -2920,7 +2918,6 @@ class Toon(Avatar.Avatar, ToonHead):
         Emote.globalEmote.releaseAll(self)
         self.isDisguised = 0
         self.setFont(ToontownGlobals.getToonFont())
-        self.setSpeechFont(ToontownGlobals.getToonFont())
         self.nametag.setWordwrap(None)
         if hasattr(base, 'idTags') and base.idTags:
             name = self.getAvIdName()
@@ -3176,3 +3173,16 @@ class Toon(Avatar.Avatar, ToonHead):
 
     def setInBattle(self, inBattle):
         self.inBattle = inBattle
+
+    def setNametagFont(self, font):
+        self.setDisplayName(self.getName(), font)
+
+    def setDisplayName(self, displayName, font=None):
+        if displayName == None:
+            displayName = self.getName()
+
+        if font:
+            self.setFont(font)
+
+        Avatar.Avatar.setDisplayName(self, displayName)
+        self.setFont(ToontownGlobals.getToonFont())

@@ -1,5 +1,6 @@
 from toontown.toonbase.TTLocalizerEnglishProperty import *
 from otp.otpbase import OTPLocalizer as OL
+from toontown.cutscenes.CutscenesGlobals import SAD_EYES, ANGRY_EYES, NORMAL_EYES
 OL.SpeedChatStaticText = OL.SpeedChatStaticTextToontown.copy()
 for key in iter(OL.SpeedChatStaticTextCommon):
     OL.SpeedChatStaticText[key] = OL.SpeedChatStaticTextCommon[key]
@@ -621,18 +622,18 @@ QuestDialogDict = {
 }
 CutsceneDialogDict = {
  1001: 'Hmm... It doesn\'t look like Flippy is in here.\x07Maybe you should check back outside.',
- 1002: ('This is a warning.\x07We ask that you cease your operations here and terminate any further lab experiments you may be conducting.',
+ 1002: (['Consider this a warning.\x07We ask that you cease your operations here and terminate any further lab experiments you may be conducting.', 'finger-wag', None],
         'You can\'t stop us from doing anything.\x07We are not backing down this time.',
         'The size of our corporation and the plans we have are beyond the stretch of your imagination.\x07You will face consequences if you do not oblige.',
         'We are stronger than we\'ve ever been before.\x07I suggest YOU terminate your presence in our playground, or you\'ll taste my home-baked wrath!',
         'Suit yourself.'),
- 1004: ('Flippy! We have a problem!\x07This is urgent. Come quick!',
+ 1003: ('Flippy! We have a problem!\x07This is urgent. Come quick!',
         'Better go see what\'s going on.\x07Come inside with me.'),
- 1005: (('What\'s the matter, guys?',
+ 1004: ('What\'s the matter, guys?',
         'Our Silly Meter readings have plummeted.\x07Ever since you encountered those Cogs, the rates have been decreasing intensely.\x07It\'s almost at zero!',
-        'But then that means...',
-        'Uh, oh.'),
-        'Oh, this is a disaster!'),
+        ['But then that means...', None, SAD_EYES],
+        ['Uh, oh.', None, SAD_EYES],
+        ['Oh, this is a disaster!\x07_avName_, meet me back at my desk!', None, SAD_EYES]),
  1028: '_avName_! This is Flippy. Something\'s happened and we\'re gonna need your help.\x07Report to the Toon Hall immediately!'
 }
 MovieTutorialReward1 = 'You received 1 Throw point! When you get 10, you will get a new gag!'

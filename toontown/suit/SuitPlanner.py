@@ -45,6 +45,7 @@ class SuitPlanner(DirectObject):
         newSuit.reparentTo(base.cr.playGame.street.geom)
         newSuit.enterFromSky(requestStatus['posA'], requestStatus['posB'])
         newSuit.startUpdatePosition()
+        newSuit.addActive()
         taskMgr.doMethodLater(SuitTimings.fromSky, self.__handleCreateSuit, '%d-sptCreateSuit' % self.zoneId, [newSuit])
 
     def __handleCreateSuit(self, suit):
@@ -52,6 +53,7 @@ class SuitPlanner(DirectObject):
 
     def deleteSuit(self, suit):
         # Instantly removes the suit from the scene graph
+        suit.removeActive()
         suit.disable()
         suit.delete()
         self.removeActiveSuit(suit.doId)
@@ -183,7 +185,12 @@ class SuitPlanner(DirectObject):
                     ai.removeSuit(doId)
                     # Make inactive right away so we don't check him again
                     self.removeActiveSuit(doId)
-                    suit.removeActive()
-                    taskMgr.doMethodLater(SuitTimings.toSky, ai.upkeepPopulation, suit.uniqueName('upkeepDelay'))
+
+                    def suitRemoved(task):
+                        suit.removeActive()
+                        ai.upkeepPopulation()
+                        return task.done
+
+                    taskMgr.doMethodLater(SuitTimings.toSky, suitRemoved, suit.uniqueName('upkeepDelay'))
                 return task.cont
         return task.cont

@@ -1,4 +1,5 @@
 from panda3d.core import *
+from libotp import *
 from direct.task.Task import Task
 from toontown.toon.NPCToonBase import *
 from toontown.quest import Quests
@@ -6,7 +7,6 @@ from toontown.quest.QuestChoiceGui import QuestChoiceGui
 from toontown.quest.TrackChoiceGui import TrackChoiceGui
 from toontown.toonbase import TTLocalizer
 from toontown.hood import ZoneUtil
-from otp.nametag.NametagConstants import *
 ChoiceTimeout = 20
 
 class NPCToon(NPCToonBase):
@@ -84,7 +84,7 @@ class NPCToon(NPCToonBase):
             self.setMainQuest(1)
         if mode == NPCToons.QUEST_MOVIE_ASSIGN:
             questId, toNpcId = quests
-            # More hacks, sorry
+            # For Flippy/Suit intro scene
             if questId == 1003:
                 messenger.send('cutscene-done')
         if mode == NPCToons.QUEST_MOVIE_COMPLETE:

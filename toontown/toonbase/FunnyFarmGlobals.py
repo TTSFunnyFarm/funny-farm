@@ -1,8 +1,5 @@
 from panda3d.core import *
 from direct.gui import DirectGuiGlobals
-from otp.margins.MarginManager import MarginManager
-from otp.nametag import NametagGlobals
-from otp.nametag.ChatBalloon import ChatBalloon
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase.ToontownGlobals import *
 

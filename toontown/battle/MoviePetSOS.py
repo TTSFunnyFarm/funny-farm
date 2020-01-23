@@ -10,8 +10,7 @@ from toontown.battle import HealJokes
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.pets import Pet, PetTricks
-from otp.nametag.NametagConstants import *
-from otp.nametag import NametagGlobals
+from libotp import *
 notify = DirectNotifyGlobal.directNotify.newCategory('MoviePetSOS')
 soundFiles = ('AA_heal_tickle.ogg', 'AA_heal_telljoke.ogg', 'AA_heal_smooch.ogg', 'AA_heal_happydance.ogg', 'AA_heal_pixiedust.ogg', 'AA_heal_juggle.ogg')
 offset = Point3(0, 4.0, 0)
@@ -91,7 +90,7 @@ def __healJuggle(heal):
     petProxyId = heal['petId']
     pet = Pet.Pet()
     gender = 0
-    if base.cr.doId2do.has_key(petProxyId):
+    if base.cr.doId2do.has_key(petProxyId): #not nice
         petProxy = base.cr.doId2do[petProxyId]
         if petProxy == None:
             return

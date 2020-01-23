@@ -43,14 +43,12 @@ class MusicManager(DirectObject):
         return self.volume
 
     def setMultiplier(self, multi):
-        self.multipier = multi
+        self.multiplier = multi
 
     def getMultiplier(self):
         return self.multiplier
 
     def playMusic(self, music, looping=0, volume=1.0, time=0.0):
-        if not settings['music']:
-            return None
         if music:
             self.stopMusic()
             if self.pauseTime:
@@ -121,7 +119,7 @@ class MusicManager(DirectObject):
             self.pauseTime = self.track.getTime()
 
     def __audioRestarted(self):
-        if hasattr(base, "localAvatar"):
+        if hasattr(base, "localAvatar") and base.localAvatar:
             base.localAvatar.stopSound()
         if self.pauseTime and self.track:
             self.track.setTime(self.pauseTime)

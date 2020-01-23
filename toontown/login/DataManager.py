@@ -10,7 +10,7 @@ from toontown.toon.ToonData import ToonData
 from toontown.toonbase import FunnyFarmGlobals
 
 BASE_DB_ID = 1000001
-DATABASE_KEY = b'SrDlI9WqX4tsw6L4FkaYDtkCq-8fplC9q4iDsEeBrjI='
+DB_SECRET = b'SrDlI9WqX4tsw6L4FkaYDtkCq-8fplC9q4iDsEeBrjI='
 
 
 class DataManager:
@@ -70,7 +70,7 @@ class DataManager:
             return
 
         try:
-            fernet = Fernet(DATABASE_KEY)
+            fernet = Fernet(DB_SECRET)
             encryptedData = fernet.encrypt(fileData)
             toonDataToWrite = encryptedData
         except Exception as e:
@@ -97,7 +97,7 @@ class DataManager:
 
         if toonData:
             try:
-                fernet = Fernet(DATABASE_KEY)
+                fernet = Fernet(DB_SECRET)
                 decryptedData = fernet.decrypt(toonData)
                 jsonData = json.loads(decryptedData)
             except Exception as e:
@@ -153,31 +153,37 @@ class DataManager:
         base.localAvatar.setBankMoney(data.setBankMoney)
         base.localAvatar.setMaxBankMoney(data.setMaxBankMoney)
         base.localAvatar.setMaxCarry(data.setMaxCarry)
-        base.localAvatar.setTrackAccess(data.setTrackAccess)
-        base.localAvatar.setExperience(data.setExperience)
-        base.localAvatar.setInventory(data.setInventory)
+        base.localAvatar.setTrackAccess(data.setTrackAccess[:])
+        if type(data.setExperience) != list:
+            base.localAvatar.setExperience(data.setExperience)
+        else:
+            base.localAvatar.setExperience(data.setExperience[:])
+        if type(data.setInventory) != list:
+            base.localAvatar.setInventory(data.setInventory)
+        else:
+            base.localAvatar.setInventory(data.setInventory[:])
         base.localAvatar.setQuestCarryLimit(data.setQuestCarryLimit)
         base.localAvatar.setQuestingZone(data.setQuestingZone)
-        for questDesc in data.setQuests:
+        for questDesc in data.setQuests[:]:
             base.localAvatar.addQuest(questDesc[0])
             base.localAvatar.setQuestProgress(questDesc[0], questDesc[1])
-        base.localAvatar.setQuestHistory(data.setQuestHistory)
+        base.localAvatar.setQuestHistory(data.setQuestHistory[:])
         if type(data.setTrackProgress) != list:
             base.localAvatar.setTrackProgress(-1, -1)
         else:
-            base.localAvatar.setTrackProgress(*data.setTrackProgress)
-        base.localAvatar.setHoodsVisited(data.setHoodsVisited)
-        base.localAvatar.setTeleportAccess(data.setTeleportAccess)
+            base.localAvatar.setTrackProgress(*data.setTrackProgress[:])
+        base.localAvatar.setHoodsVisited(data.setHoodsVisited[:])
+        base.localAvatar.setTeleportAccess(data.setTeleportAccess[:])
         base.localAvatar.setNametagFont(FunnyFarmGlobals.getVar(data.setNametagStyle))
         base.localAvatar.setCETimer(data.setCETimer)
         base.localAvatar.setCheesyEffect(data.setCheesyEffect)
-        base.localAvatar.setHat(*data.setHat)
-        base.localAvatar.setGlasses(*data.setGlasses)
-        base.localAvatar.setBackpack(*data.setBackpack)
-        base.localAvatar.setShoes(*data.setShoes)
+        base.localAvatar.setHat(*data.setHat[:])
+        base.localAvatar.setGlasses(*data.setGlasses[:])
+        base.localAvatar.setBackpack(*data.setBackpack[:])
+        base.localAvatar.setShoes(*data.setShoes[:])
         base.localAvatar.setLevel(data.setLevel)
         base.localAvatar.setLevelExp(data.setLevelExp)
-        base.localAvatar.setDamage(data.setDamage)
-        base.localAvatar.setDefense(data.setDefense)
-        base.localAvatar.setAccuracy(data.setAccuracy)
+        base.localAvatar.setDamage(data.setDamage[:])
+        base.localAvatar.setDefense(data.setDefense[:])
+        base.localAvatar.setAccuracy(data.setAccuracy[:])
         base.localAvatar.setTutorialAck(data.setTutorialAck)

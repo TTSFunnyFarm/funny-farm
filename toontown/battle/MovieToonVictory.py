@@ -1,3 +1,4 @@
+from libotp import *
 from direct.interval.IntervalGlobal import *
 from direct.showbase.DirectObject import DirectObject
 from toontown.battle.RewardPanel import *
@@ -5,7 +6,6 @@ from toontown.battle.BattleSounds import *
 from toontown.battle import MovieCamera
 from direct.directnotify import DirectNotifyGlobal
 notify = DirectNotifyGlobal.directNotify.newCategory('MovieToonVictory')
-from otp.nametag import NametagGlobals
 
 def __findToonReward(rewards, toon):
     for r in rewards:
