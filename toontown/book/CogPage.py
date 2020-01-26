@@ -1,6 +1,6 @@
 from toontown.book import ShtikerPage
 from direct.task.Task import Task
-#from . import SummonCogDialog
+from toontown.book import DetailCogDialog
 from direct.gui.DirectGui import *
 from pandac.PandaModules import *
 from toontown.toonbase import ToontownGlobals
@@ -325,6 +325,9 @@ class CogPage(ShtikerPage.ShtikerPage):
 
     def detailButtonPressed(self, panel):
         panelIndex = self.panels.index(panel)
+        self.detailDialog = DetailCogDialog.DetailCogDialog(panelIndex)
+        self.detailDialog.load()
+        self.detailDialog.enter()
         #self.summonDialog = SummonCogDialog.SummonCogDialog(panelIndex)
         #self.summonDialog.load()
         #self.accept(self.summonDialog.doneEvent, self.summonDone, extraArgs=[panel])
