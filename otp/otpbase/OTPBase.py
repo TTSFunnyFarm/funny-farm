@@ -6,6 +6,7 @@ if not __debug__:
 
 from panda3d.core import Camera, TPLow, VBase4, ColorWriteAttrib, Filename, getModelPath, NodePath, TexturePool, Multifile
 from otp.otpbase import OTPRender
+from otp.ai.MagicWordGlobal import *
 import time
 import math
 import re
@@ -267,3 +268,9 @@ class OTPBase(ShowBase):
                 self.physicsMgrEnabled = 1
                 self.taskMgr.remove('manager-update')
                 self.taskMgr.add(self.updateManagers, 'manager-update')
+
+print('does this just not want to work')
+@magicWord()
+def oobe():
+    'Toggle "out of body experience" view.'
+    base.oobe()

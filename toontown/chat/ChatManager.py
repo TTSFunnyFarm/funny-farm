@@ -1,12 +1,11 @@
 from panda3d.core import *
+from libotp import *
 from direct.gui.DirectGui import *
 from direct.showbase.DirectObject import *
-from otp.nametag.NametagConstants import *
 from otp.otpbase import OTPGlobals
 from otp.otpbase import OTPLocalizer
+from otp.ai.MagicWordGlobal import *
 from toontown.toonbase import TTLocalizer
-from toontown.chat.ChatBalloon import ChatBalloon
-from toontown.chat import ChatGlobals
 
 import string
 AcceptedKeystrokes = string.digits + string.ascii_letters + string.punctuation + ' '
@@ -26,6 +25,7 @@ class ChatManager(DirectObject):
         if self.state == 'open':
             self.closeChatInput()
         self.deleteGui()
+        self.disableKeyboardShortcuts()
         self.state = None
 
     def createGui(self):
@@ -53,10 +53,19 @@ class ChatManager(DirectObject):
         self.cancelButton.destroy()
         self.cancelButton = None
 
+    def enableKeyboardShortcuts(self):
+        base.buttonThrowers[0].node().setKeystrokeEvent('keystroke')
+        self.accept('keystroke', self.openChatInput)
+
+    def disableKeyboardShortcuts(self):
+        self.ignore('keystroke')
+        base.buttonThrowers[0].node().setKeystrokeEvent('')
+
     def openChatInput(self, key):
         # This is to eliminate keystrokes such as Tab, Enter, Esc
         if key not in AcceptedKeystrokes:
             return
+        self.disableKeyboardShortcuts()
         self.chatButton.hide()
         self.chatFrame.show()
         self.chatEntry['focus'] = 1
@@ -68,12 +77,21 @@ class ChatManager(DirectObject):
         self.chatEntry.set('')
         self.chatEntry['focus'] = 0
         self.chatButton.show()
+        self.enableKeyboardShortcuts()
         self.state = 'closed'
 
     def handleChat(self, chat):
         # To mimick how Toontown's clickSound is played
         if len(chat) > 1:
             base.playSfx(DGG.getDefaultClickSound())
+        if chat.startswith('~') and __debug__:
+            mw = chat[1:]
+            mw = mw.split(' ')
+            args = ' '.join(mw[1:])
+            cotebook.run(mw[0].lower(), args)
+            self.closeChatInput()
+            return # don't send the message
+
         self.sendChat()
 
     def chatOverflow(self, chat):

@@ -1,6 +1,6 @@
 from direct.showbase.DirectObject import DirectObject
 
-from otp.nametag import NametagGlobals
+from libotp import *
 from otp.otpbase import OTPLocalizer
 from toontown.discord.FFDiscordIntegration import FFDiscordIntegration
 from toontown.distributed.PlayGame import PlayGame
@@ -143,6 +143,8 @@ class FFClientRepository(DirectObject):
                 self.playGame.hood = None
             else:
                 self.playGame.exitActiveZone()
+        else:
+            self.playGame.exitActiveZone()
 
         camera.reparentTo(render)
         base.air.cheesyEffectMgr.stopTimer()

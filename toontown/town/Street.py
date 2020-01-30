@@ -119,6 +119,7 @@ class Street(ToonHood):
         if doneStatus == 'victory':
             base.localAvatar.enable()
         elif doneStatus == 'defeat':
+            base.localAvatar.reparentTo(render)
             base.localAvatar.died()
 
     def setupLandmarkBuildings(self):

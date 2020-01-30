@@ -294,8 +294,17 @@ class AvatarChooser(DirectObject):
         self.verify.destroy()
         del self.verify
         if choice == 1:
-            self.confirm = TTDialog.TTDialog(parent=aspect2dp, text=TTLocalizer.AvatarChoiceVerifyDelete, style=TTDialog.TwoChoice, command=self.__handleConfirmDelete, extraArgs=[index])
+            ourCommand = self.__handleConfirmDeleteNow
+            if base.air.holidayMgr.isAprilToons():
+                ourCommand = self.__handleConfirmDelete
+            self.confirm = TTDialog.TTDialog(parent=aspect2dp, text=TTLocalizer.AvatarChoiceVerifyDelete, style=TTDialog.TwoChoice, command=ourCommand, extraArgs=[index])
             self.confirm.show()
+
+    def __handleConfirmDeleteNow(self, choice, index):
+        self.confirm.destroy()
+        del self.confirm
+        if choice == 1:
+            self.__deleteToon(index)
 
     def __handleConfirmDelete(self, choice, index):
         self.confirm.destroy()
@@ -329,11 +338,7 @@ class AvatarChooser(DirectObject):
         self.lastChance.destroy()
         del self.lastChance
         if choice == 1:
-            dataMgr.deleteToonData(index)
-            # Hacky way of updating the gui
-            self.unload()
-            self.load()
-            self.enter()
+            self.__deleteToon(index)
 
     def __handleDone(self, data):
         loader.beginBulkLoad('main', TTLocalizer.EnteringLabel, 1000, TTLocalizer.TIP_GENERAL)
@@ -358,3 +363,10 @@ class AvatarChooser(DirectObject):
         self.accept(keybinds['reverse'], self.cycleAvatar, [keybinds['reverse']])
         self.accept('dpad_up', self.cycleAvatar, ['dpad_up'])
         self.accept(keybinds['forward'], self.cycleAvatar, [keybinds['forward']])
+
+    def __deleteToon(self, index):
+        dataMgr.deleteToonData(index)
+        # Hacky way of updating the gui
+        self.unload()
+        self.load()
+        self.enter()

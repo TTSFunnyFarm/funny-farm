@@ -32,7 +32,7 @@ class FirstBuildingScene(CutsceneBase):
         del self.sky
 
     def loadStreet(self):
-        aspect2d.hide()
+        base.hideUi()
         self.interior.reparentTo(hidden)
         self.interior.stash()
         self.street.unstash()
@@ -54,7 +54,7 @@ class FirstBuildingScene(CutsceneBase):
         base.localAvatar.enable()
         base.localAvatar.disable()
         base.localAvatar.setAnimState('neutral')
-        aspect2d.show()
+        base.showUi()
         base.transitions.fadeIn(1.0)
 
     def enter(self):
