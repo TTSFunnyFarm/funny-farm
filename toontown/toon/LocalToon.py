@@ -319,6 +319,9 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         self.maxHp = maxHp
         if self.hp >= self.maxHp:
             self.hp = self.maxHp
+            self.stopToonUp()
+        if self.hp <= 0:
+            self.stopToonUp()
         if self.hp - oldHp == 0:
             return
         if self.laffMeter:
@@ -1548,7 +1551,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         hpLost = oldHp - newHp
         if hpLost >= 0:
             # a little hacky but whatever
-            if hasattr(base.cr.playGame.getActiveZone(), 'battle'):
+            if hasattr(base.cr.playGame.getActiveZone(), 'battle') and base.cr.playGame.getActiveZone().battle:
                 if base.cr.playGame.getActiveZone().battle.battleCalc.defenseBoostActive:
                     self.showHpTextBoost(-hpLost, 2)
                 else:
@@ -1557,13 +1560,13 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
                 self.showHpText(-hpLost, bonus)
             self.setHealth(newHp, self.maxHp)
             if self.hp <= 0 and oldHp > 0:
-                if hasattr(base.cr.playGame.getActiveZone(), 'battle'):
+                if hasattr(base.cr.playGame.getActiveZone(), 'battle') and base.cr.playGame.getActiveZone().battle:
                     # Give the movie some time to switch camera angles if it needs to before we take control of the camera
-                    taskMgr.doMethodLater(0.1, self.goSad, '%d-goSad' % self.doId)
+                    taskMgr.doMethodLater(0.5, self.goSad, '%d-goSad' % self.doId)
                 else:
-                    self.goSad()
+                    self.goSad(None, callback=self.died)
 
-    def goSad(self, *args):
+    def goSad(self, task, callback=None):
         self.enable()
         self.disable()
         camera.wrtReparentTo(render)
@@ -1571,6 +1574,10 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         self.inventory.zeroInv(killUber=1)
         self.inventory.updateGUI()
         self.inventory.saveInventory()
+        if callback:
+            Sequence(Wait(base.localAvatar.getDuration('lose')), Func(callback)).start()
+        if task:
+            return Task.done
 
     def startToonUp(self, healFrequency):
         self.stopToonUp()
@@ -1783,6 +1790,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         self.reparentTo(render)
         base.cr.playGame.exitActiveZone()
         self.enable()
+        self.disable()
         zoneId = self.getZoneId()
         hoodId = FunnyFarmGlobals.getHoodId(zoneId)
         base.cr.playGame.enterHood(hoodId)
