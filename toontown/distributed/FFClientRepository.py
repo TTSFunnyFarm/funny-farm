@@ -141,7 +141,10 @@ class FFClientRepository(DirectObject):
         if hasattr(self.playGame, 'hood') and self.playGame.hood:
             if hasattr(self.playGame.hood, 'unloaded') and self.playGame.hood.unloaded:
                 self.playGame.hood = None
-        self.playGame.exitActiveZone()
+            else:
+                self.playGame.exitActiveZone()
+        else:
+            self.playGame.exitActiveZone()
 
         camera.reparentTo(render)
         base.air.cheesyEffectMgr.stopTimer()
