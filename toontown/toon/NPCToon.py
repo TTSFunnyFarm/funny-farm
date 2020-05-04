@@ -41,8 +41,7 @@ class NPCToon(NPCToonBase):
             self.questChoiceGui = None
         self.ignore(self.uniqueName('doneChatPage'))
         if self.curQuestMovie:
-            self.curQuestMovie.timeout(fFinish=1)
-            self.curQuestMovie.cleanup()
+            self.curQuestMovie.finish()
             self.curQuestMovie = None
         if self.trackChoiceGui:
             self.trackChoiceGui.destroy()
@@ -99,11 +98,13 @@ class NPCToon(NPCToonBase):
         if mode == NPCToons.QUEST_MOVIE_QUEST_CHOICE or mode == NPCToons.QUEST_MOVIE_TRACK_CHOICE:
             quat = Quat()
             quat.setHpr((155, -2, 0))
-            camera.posQuatInterval(1, Point3(5, 9, self.getHeight() - 0.5), quat, other=self, blendType='easeOut').start()
+            self.curQuestMovie = camera.posQuatInterval(1, Point3(5, 9, self.getHeight() - 0.5), quat, other=self, blendType='easeOut')
+            self.curQuestMovie.start()
         else:
             quat = Quat()
             quat.setHpr((-150, -2, 0))
-            camera.posQuatInterval(1, Point3(-5, 9, self.getHeight() - 0.5), quat, other=self, blendType='easeOut').start()
+            self.curQuestMovie = camera.posQuatInterval(1, Point3(-5, 9, self.getHeight() - 0.5), quat, other=self, blendType='easeOut')
+            self.curQuestMovie.start()
 
     def setMovie(self, mode, npcId, avId, quests):
         isLocalToon = avId == base.localAvatar.doId
