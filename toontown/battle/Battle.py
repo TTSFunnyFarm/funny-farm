@@ -808,7 +808,7 @@ class Battle(DirectObject, NodePath, BattleBase):
                  'activeToons': self.activeToonIds[:],
                  'isElite': suit.isElite}
                 self.suitsKilled.append(encounter)
-                base.cr.cogPageMgr.toonKilledCogs([encounter])
+                base.cr.cogPageMgr.toonKilledCogs(self.suitsKilled)
                 suitsToRemove.append(suit)
                 self.needAdjust = 1
                 self.needAdjustTownBattle = 1

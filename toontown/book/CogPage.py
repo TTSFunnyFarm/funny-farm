@@ -267,8 +267,8 @@ class CogPage(ShtikerPage.ShtikerPage):
         panel['text'] = TTLocalizer.SuitPageMystery
         if panel.cogRadarLabel:
             panel.cogRadarLabel.hide()
-        if panel.quotaLabel:
-            panel.quotaLabel.hide()
+        if panel.statusLabel:
+            panel.statusLabel.hide()
         if panel.head:
             panel.head.hide()
         if panel.shadow:
@@ -289,10 +289,10 @@ class CogPage(ShtikerPage.ShtikerPage):
             suitName = SuitDNA.suitHeadTypes[index]
             suitFullName = SuitBattleGlobals.SuitAttributes[suitName]['name']
             panel['text'] = suitFullName
-            if panel.quotaLabel:
-                panel.quotaLabel.show()
+            if panel.statusLabel:
+                panel.statusLabel.show()
             else:
-                self.addQuotaLabel(panel)
+                self.addStatusLabel(panel)
             if panel.head and panel.shadow:
                 panel.head.show()
                 panel.shadow.show()
@@ -305,7 +305,7 @@ class CogPage(ShtikerPage.ShtikerPage):
                 self.addDetailButton(panel)
         elif status == COG_DEFEATED:
             count = str(base.localAvatar.cogCounts[index])
-            panel.quotaLabel['text'] = '%s destroyed' % (count)
+            panel.statusLabel['text'] = '%s destroyed' % (count)
         elif status == COG_COMPLETE1:
             panel['image_color'] = PANEL_COLORS_COMPLETE1[index / SuitDNA.suitsPerDept]
         elif status == COG_COMPLETE2:
@@ -360,15 +360,15 @@ class CogPage(ShtikerPage.ShtikerPage):
         #self.updateCogRadarButtons(base.localAvatar.cogRadar)
         #self.updateBuildingRadarButtons(base.localAvatar.buildingRadar)
 
-    def addQuotaLabel(self, panel):
+    def addStatusLabel(self, panel):
         index = self.panels.index(panel)
         count = str(base.localAvatar.cogCounts[index])
         if base.localAvatar.getCogStatus()[index] < COG_COMPLETE1:
             quota = str(COG_QUOTAS[0][index % SuitDNA.suitsPerDept])
         else:
             quota = str(COG_QUOTAS[1][index % SuitDNA.suitsPerDept])
-        quotaLabel = DirectLabel(parent=panel, pos=(0.0, 0.0, -0.215), relief=None, state=DGG.DISABLED, text=TTLocalizer.SuitPageQuota % (count, quota), text_scale=0.045, text_fg=(0, 0, 0, 1), text_font=ToontownGlobals.getSuitFont())
-        panel.quotaLabel = quotaLabel
+        statusLabel = DirectLabel(parent=panel, pos=(0.0, 0.0, -0.215), relief=None, state=DGG.DISABLED, text="SPOTTED!", text_scale=0.045, text_fg=(0, 0, 0, 1), text_font=ToontownGlobals.getSuitFont())
+        panel.statusLabel = statusLabel
         return
 
     def addSuitHead(self, panel, suitName):
@@ -401,7 +401,7 @@ class CogPage(ShtikerPage.ShtikerPage):
                 panel = DirectLabel(parent=self.panelNode, pos=(xStart + type * xOffset, 0.0, yStart - dept * yOffset), relief=None, state=DGG.NORMAL, image=self.panelModel, image_scale=(1, 1, 1), image_color=color, text=TTLocalizer.SuitPageMystery, text_scale=0.045, text_fg=(0, 0, 0, 1), text_pos=(0, 0.185, 0), text_font=ToontownGlobals.getSuitFont(), text_wordwrap=7)
                 panel.scale = 0.6
                 panel.setScale(panel.scale)
-                panel.quotaLabel = None
+                panel.statusLabel = None
                 panel.head = None
                 panel.shadow = None
                 panel.count = 0
