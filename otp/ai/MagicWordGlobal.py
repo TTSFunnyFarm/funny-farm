@@ -81,7 +81,7 @@ class MagicWord:
                 new_arg = self.argTypes[i](arg)
                 new_output.append(new_arg)
             except ValueError as e:
-                raise CoteError('Failed to convert arg %s to %s!' % (output[i], self.types[i].__name__))
+                raise CoteError('Failed to convert arg %s to %s!' % (output[i], self.argTypes[i].__name__))
 
         return new_output
 
