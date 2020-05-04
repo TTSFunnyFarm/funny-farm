@@ -389,7 +389,6 @@ class CogPage(ShtikerPage.ShtikerPage):
 
     def makePanels(self):
         self.panels = []
-        base.panels = []
         xStart = -0.66
         yStart = -0.18
         xOffset = 0.199
@@ -408,7 +407,6 @@ class CogPage(ShtikerPage.ShtikerPage):
                 panel.detailButton = None
                 self.addCogRadarLabel(panel)
                 self.panels.append(panel)
-                base.panels.append(panel)
 
         return
 
