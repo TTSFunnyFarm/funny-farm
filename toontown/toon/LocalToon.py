@@ -331,6 +331,10 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def setHealth(self, hp, maxHp, showText=0):
         oldHp = self.hp
+        try:
+            hp = int(hp)
+        except ValueError:
+            return
         self.hp = hp
         self.maxHp = maxHp
         if self.hp >= self.maxHp:
