@@ -23,7 +23,7 @@ def __doPowerUpLevel(powerUp):
     if level == 0 or level == 4:
         return __toonUp(powerUp)
     elif level == 1 or level == 5:
-        return #__damageUp(powerUp)
+        return __damageUp(powerUp)
     elif level == 2 or level == 6:
         return #__defenseUp(powerUp)
     elif level == 3:
