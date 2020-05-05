@@ -73,8 +73,7 @@ def __damageUp(powerUp):
      Func(hand_jointpath1.removeNode),
      Func(hand_jointpath0.removeNode),
      Func(MovieUtil.removeProp, glass))
-    damageUpTrack = Sequence(Wait(0.2),
-     Func(toon.setAnimState, 'jump'),
+    damageUpTrack = Sequence(ActorInterval(toon, 'jump', loop=0, startTime=0.2),
      Func(toon.setDamageEffect, dmg),
      Func(sfx.play),
      Wait(toon.getDuration('jump')))
