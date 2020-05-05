@@ -56,7 +56,7 @@ def __toonUp(powerUp):
     return tracks
 
 def __damageUp(powerUp):
-    # in progress #
+    # TODO: FINISH
     toon = powerUp['toon']
     level = powerUp['level']
     dmg = powerUp['target']['hp']
@@ -67,7 +67,17 @@ def __damageUp(powerUp):
     hands = toon.getRightHands()
     hand_jointpath0 = hands[0].attachNewNode('handJoint0-path')
     hand_jointpath1 = hand_jointpath0.instanceTo(hands[1])
-    glassTrack = Sequence(Func(MovieUtil.showProp, glass, hand_jointpath0), ActorInterval(glass, 'glass-dmg', startFrame=0, endFrame=67), Func(toon.loop, 'neutral'), Func(hand_jointpath1.removeNode), Func(hand_jointpath0.removeNode), Func(MovieUtil.removeProp, glass))
-    damageUpTrack = Sequence(Wait(0.2), Func(toon.setAnimState, 'jump'), Func(toon.setDamageEffect, dmg), Func(sfx.play), Wait(toon.getDuration('jump') + 1))
+    glassTrack = Sequence(Func(MovieUtil.showProp, glass, hand_jointpath0),
+     ActorInterval(glass, 'glass-dmg', startFrame=0, endFrame=67),
+     Func(toon.loop, 'neutral'),
+     Func(hand_jointpath1.removeNode),
+     Func(hand_jointpath0.removeNode),
+     Func(MovieUtil.removeProp, glass))
+    damageUpTrack = Sequence(Wait(0.2),
+     Func(toon.setAnimState, 'jump'),
+     Func(toon.setDamageEffect, dmg),
+     Func(sfx.play),
+     Wait(toon.getDuration('jump')))
     glassTrack.append(damageUpTrack)
     tracks.append(glassTrack)
+    return tracks
