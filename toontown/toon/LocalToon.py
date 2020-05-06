@@ -5,6 +5,7 @@ from direct.distributed.ClockDelta import *
 from direct.showbase import PythonUtil
 from direct.showbase.PythonUtil import *
 from direct.task import Task
+from otp.ai.MagicWordGlobal import *
 from otp.avatar import LocalAvatar
 from otp.otpbase import OTPGlobals
 from toontown.chat.ChatManager import ChatManager
@@ -307,10 +308,17 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
 
     def setHealth(self, hp, maxHp, showText=0):
         oldHp = self.hp
+        try:
+            hp = int(hp)
+        except ValueError:
+            return
         self.hp = hp
         self.maxHp = maxHp
         if self.hp >= self.maxHp:
             self.hp = self.maxHp
+            self.stopToonUp()
+        if self.hp <= 0:
+            self.stopToonUp()
         if self.hp - oldHp == 0:
             return
         if self.laffMeter:
@@ -1522,7 +1530,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         hpLost = oldHp - newHp
         if hpLost >= 0:
             # a little hacky but whatever
-            if hasattr(base.cr.playGame.getActiveZone(), 'battle'):
+            if hasattr(base.cr.playGame.getActiveZone(), 'battle') and base.cr.playGame.getActiveZone().battle:
                 if base.cr.playGame.getActiveZone().battle.battleCalc.defenseBoostActive:
                     self.showHpTextBoost(-hpLost, 2)
                 else:
@@ -1531,13 +1539,13 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
                 self.showHpText(-hpLost, bonus)
             self.setHealth(newHp, self.maxHp)
             if self.hp <= 0 and oldHp > 0:
-                if hasattr(base.cr.playGame.getActiveZone(), 'battle'):
+                if hasattr(base.cr.playGame.getActiveZone(), 'battle') and base.cr.playGame.getActiveZone().battle:
                     # Give the movie some time to switch camera angles if it needs to before we take control of the camera
-                    taskMgr.doMethodLater(0.1, self.goSad, '%d-goSad' % self.doId)
+                    taskMgr.doMethodLater(0.5, self.goSad, '%d-goSad' % self.doId)
                 else:
-                    self.goSad()
+                    self.goSad(None, callback=self.died)
 
-    def goSad(self, *args):
+    def goSad(self, task, callback=None):
         self.enable()
         self.disable()
         camera.wrtReparentTo(render)
@@ -1545,6 +1553,10 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         self.inventory.zeroInv(killUber=1)
         self.inventory.updateGUI()
         self.inventory.saveInventory()
+        if callback:
+            Sequence(Wait(base.localAvatar.getDuration('lose')), Func(callback)).start()
+        if task:
+            return Task.done
 
     def startToonUp(self, healFrequency):
         self.stopToonUp()
@@ -1757,6 +1769,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         self.reparentTo(render)
         base.cr.playGame.exitActiveZone()
         self.enable()
+        self.disable()
         zoneId = self.getZoneId()
         hoodId = FunnyFarmGlobals.getHoodId(zoneId)
         base.cr.playGame.enterHood(hoodId)
@@ -1837,3 +1850,68 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         else:
             self.reflection.setZ(-0.15)
         return Task.cont
+
+@magicWord(argTypes=[int], aliases=['setHealth', 'hp', 'health'])
+def setHp(hp):
+    maxHp = base.localAvatar.maxHp
+    hp = int(hp)
+    if hp > maxHp or hp < -1:
+        return 'Your health must be within -1-%d!' % maxHp
+    base.localAvatar.setHealth(hp, maxHp)
+
+@magicWord(argTypes=[int], aliases=['addQuest'])
+def questAdd(id):
+    av = base.localAvatar
+    if not Quests.isQuest   (id):
+        return 'Invalid quest ID!'
+    if len(av.quests) >= av.questCarryLimit:
+        return 'Cannot add quest %d; maximum quests reached!' % id
+
+    av.quests.append([id, 0])
+    messenger.send('questsChanged')
+
+    if base.avatarData.setQuests != av.quests:
+        base.avatarData.setQuests = av.quests[:]
+        dataMgr.saveToonData(base.avatarData)
+
+@magicWord(argTypes=[int, int])
+def setQuest(taskId, slotId=0):
+    av = base.localAvatar
+    if not Quests.isQuest(taskId):
+        return 'Invalid quest ID!'
+    if len(av.quests) - 1 < slotId:
+        return 'Cannot add quest %d, non-existent slot!' % taskId
+
+    av.quests[slotId] = [taskId, 0]
+    messenger.send('questsChanged')
+
+    if base.avatarData.setQuests != av.quests:
+        base.avatarData.setQuests = av.quests[:]
+        dataMgr.saveToonData(base.avatarData)
+
+@magicWord(argTypes=[int], aliases=['addQuestHistory'])
+def appendQuestHistory(taskId):
+    av = base.localAvatar
+    if not Quests.isQuest(taskId):
+        return 'Invalid quest ID!'
+    av.addQuestHistory(taskId)
+
+@magicWord(argTypes=[int])
+def addMoney(money):
+    av = base.localAvatar
+    av.addMoney(money)
+
+@magicWord(argTypes=[int])
+def setMoney(money):
+    av = base.localAvatar
+    av.setMoney(money)
+
+@magicWord()
+def maxToon():
+    av = base.localAvatar
+    av.maxToon()
+
+@magicWord()
+def resetToon():
+    av = base.localAvatar
+    av.resetToon()

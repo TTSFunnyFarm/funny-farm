@@ -124,6 +124,8 @@ class FFClientRepository(DirectObject):
 
     def enterTheTooniverse(self, zoneId):
         base.transitions.noTransitions()
+        if zoneId not in self.playGame.Hood2ClassDict.keys():
+            zoneId = FunnyFarmGlobals.FunnyFarm
         self.playGame.enterHood(zoneId, init=1)
         self.setupLocalAvatar()
         NametagGlobals.setMasterArrowsOn(1)
@@ -143,6 +145,8 @@ class FFClientRepository(DirectObject):
                 self.playGame.hood = None
             else:
                 self.playGame.exitActiveZone()
+        else:
+            self.playGame.exitActiveZone()
 
         camera.reparentTo(render)
         base.air.cheesyEffectMgr.stopTimer()

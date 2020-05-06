@@ -5,7 +5,7 @@ from panda3d.core import *
 
 class MeterAlertScene(CutsceneBase):
     id = 1003
-    
+
     def __init__(self):
         CutsceneBase.__init__(self, self.id)
         self.door = base.cr.playGame.hood.place.labDoor
@@ -26,12 +26,12 @@ class MeterAlertScene(CutsceneBase):
 
     def enter(self):
         CutsceneBase.enter(self)
-        base.hideUi()
+        base.hideUI()
 
     def exit(self):
         CutsceneBase.exit(self)
         self.door.find('**/door_double_round_ur_left').setHpr(0, 0, 0)
-        base.showUi()
+        base.showUI()
 
     def sceneFinish(self, elapsedTime):
         if self.actors.get('dimm'):

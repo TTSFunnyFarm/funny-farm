@@ -1617,3 +1617,6 @@ def fillInQuestNames(text, avName = None, fromNpcId = None, toNpcId = None):
         text = text.replace('_buildingName_', buildingName)
         text = text.replace('_streetDesc_', streetDesc)
     return text
+
+def isQuest(id):
+    return bool(QuestDict.get(id))

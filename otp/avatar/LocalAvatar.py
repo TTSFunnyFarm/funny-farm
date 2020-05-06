@@ -13,6 +13,7 @@ from direct.controls.SwimWalker import SwimWalker
 from direct.controls.TwoDWalker import TwoDWalker
 from direct.controls import ControlManager
 from direct.task import Task
+from otp.ai.MagicWordGlobal import *
 from otp.otpbase import OTPGlobals
 from otp.otpbase import OTPLocalizer
 from toontown.toonbase import ToontownGlobals
@@ -1089,3 +1090,8 @@ class LocalAvatar(DirectObject):
             n = self.__geom
         self.ccPusherTrav.traverse(n)
         return
+
+@magicWord(aliases=['sonic'])
+def run():
+    """Toggle "SUPER SONIC SPEED", which makes you move much faster."""
+    inputState.set('debugRunning', inputState.isSet('debugRunning') != True)

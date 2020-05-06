@@ -111,6 +111,7 @@ class BattleBldg(Battle):
     def addSuit(self, suit):
         self.notify.debug('addSuit(%d)' % suit.doId)
         self.suits.append(suit)
+        suit.addActive()
         suit.battleTrap = NO_TRAP
 
     def isJoinable(self):
