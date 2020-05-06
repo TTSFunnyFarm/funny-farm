@@ -936,7 +936,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         self.setTrackAccess([0, 0, 0, 0, 1, 1, 0])
         self.setMaxCarry(20)
         self.experience.zeroOutExp()
-        self.inventory.zeroInv()
+        self.inventory.zeroInv(killUber=1)
         self.inventory.addItem(4, 0)
         self.inventory.addItem(5, 0)
         self.inventory.updateGUI()
