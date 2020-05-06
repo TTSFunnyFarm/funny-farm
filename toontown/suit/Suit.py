@@ -3,7 +3,7 @@ from otp.avatar import Avatar
 from toontown.suit import SuitDNA
 from toontown.toonbase import ToontownGlobals
 from panda3d.core import *
-from otp.nametag.NametagGroup import NametagGroup
+from libotp import *
 from toontown.battle import SuitBattleGlobals
 from direct.task.Task import Task
 from toontown.battle import BattleProps
@@ -76,7 +76,8 @@ cr = (('pickpocket', 'pickpocket', 5), ('throw-paper', 'throw-paper', 3.5), ('gl
 tbc = (('cigar-smoke', 'cigar-smoke', 8),
  ('glower', 'glower', 5),
  ('song-and-dance', 'song-and-dance', 8),
- ('golf-club-swing', 'golf-club-swing', 5))
+ ('golf-club-swing', 'golf-club-swing', 5),
+ ('finger-wag', 'fingerwag', 5))
 cc = (('speak', 'speak', 5),
  ('glower', 'glower', 5),
  ('phone', 'phone', 3.5),
@@ -339,9 +340,8 @@ class Suit(Avatar.Avatar):
 
         Avatar.Avatar.__init__(self)
         self.setFont(ToontownGlobals.getSuitFont())
-        self.setSpeechFont(ToontownGlobals.getSuitFont())
         self.setPlayerType(NametagGroup.CCSuit)
-        self.setPickable(1)
+        self.setPickable(0)  # NOTE: Change 0 to 1 to make name tags clickable.
         self.leftHand = None
         self.rightHand = None
         self.shadowJoint = None

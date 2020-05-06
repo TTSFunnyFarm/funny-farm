@@ -1,12 +1,13 @@
 from panda3d.core import *
+from libotp import *
 from direct.task.Task import Task
+from toontown.cutscenes import FlippySuitIntroScene
 from toontown.toon.NPCToonBase import *
 from toontown.quest import Quests
 from toontown.quest.QuestChoiceGui import QuestChoiceGui
 from toontown.quest.TrackChoiceGui import TrackChoiceGui
 from toontown.toonbase import TTLocalizer
 from toontown.hood import ZoneUtil
-from otp.nametag.NametagConstants import *
 ChoiceTimeout = 20
 
 class NPCToon(NPCToonBase):
@@ -40,8 +41,7 @@ class NPCToon(NPCToonBase):
             self.questChoiceGui = None
         self.ignore(self.uniqueName('doneChatPage'))
         if self.curQuestMovie:
-            self.curQuestMovie.timeout(fFinish=1)
-            self.curQuestMovie.cleanup()
+            self.curQuestMovie.finish()
             self.curQuestMovie = None
         if self.trackChoiceGui:
             self.trackChoiceGui.destroy()
@@ -79,13 +79,13 @@ class NPCToon(NPCToonBase):
             self.setPosHpr(self.origin, 0, 0, 0, 0, 0, 0)
         self.freeAvatar()
         taskMgr.remove(self.uniqueName('clearMovie'))
-        
+
         if mode == NPCToons.QUEST_MOVIE_TRACK_CHOICE_CANCEL:
             self.setMainQuest(1)
         if mode == NPCToons.QUEST_MOVIE_ASSIGN:
             questId, toNpcId = quests
-            # More hacks, sorry
-            if questId == 1003:
+            # For Flippy/Suit intro scene
+            if questId == FlippySuitIntroScene.id:
                 messenger.send('cutscene-done')
         if mode == NPCToons.QUEST_MOVIE_COMPLETE:
             questId, toNpcId = quests
@@ -98,11 +98,13 @@ class NPCToon(NPCToonBase):
         if mode == NPCToons.QUEST_MOVIE_QUEST_CHOICE or mode == NPCToons.QUEST_MOVIE_TRACK_CHOICE:
             quat = Quat()
             quat.setHpr((155, -2, 0))
-            camera.posQuatInterval(1, Point3(5, 9, self.getHeight() - 0.5), quat, other=self, blendType='easeOut').start()
+            self.curQuestMovie = camera.posQuatInterval(1, Point3(5, 9, self.getHeight() - 0.5), quat, other=self, blendType='easeOut')
+            self.curQuestMovie.start()
         else:
             quat = Quat()
             quat.setHpr((-150, -2, 0))
-            camera.posQuatInterval(1, Point3(-5, 9, self.getHeight() - 0.5), quat, other=self, blendType='easeOut').start()
+            self.curQuestMovie = camera.posQuatInterval(1, Point3(-5, 9, self.getHeight() - 0.5), quat, other=self, blendType='easeOut')
+            self.curQuestMovie.start()
 
     def setMovie(self, mode, npcId, avId, quests):
         isLocalToon = avId == base.localAvatar.doId

@@ -10,6 +10,7 @@ from toontown.toon import NPCToons
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals
+from toontown.toontowngui import TTDialog
 
 
 class Hood(DirectObject):
@@ -29,9 +30,13 @@ class Hood(DirectObject):
         self.place = None
         self.battle = None
         self.battleCell = None
-        self.overwriteLastHood = True
+        self.unloaded = False
+        self.dialog = None
+        self.actors = {}
+        self.npcs = []
 
     def enter(self, shop=None, tunnel=None, init=0):
+        musicMgr.playCurrentZoneMusic()
         if tunnel:
             for linkTunnel in self.geom.findAllMatches('**/linktunnel*'):
                 name = linkTunnel.getName().split('_')
@@ -54,8 +59,11 @@ class Hood(DirectObject):
             hoodList = base.localAvatar.getHoodsVisited()
             hoodList.append(ZoneUtil.getCanonicalHoodId(self.zoneId))
             base.localAvatar.setHoodsVisited(hoodList)
-        base.avatarData.setLastHood = self.zoneId
-        dataMgr.saveToonData(base.avatarData)
+
+        if base.avatarData.setLastHood != self.zoneId:
+            base.avatarData.setLastHood = self.zoneId
+            dataMgr.saveToonData(base.avatarData)
+
         self.spawnTitleText()
 
     def exit(self):
@@ -91,6 +99,8 @@ class Hood(DirectObject):
         if gsg:
             self.geom.prepareScene(gsg)
 
+        self.unloaded = False
+
     def unload(self):
         self.stopSky()
         if hasattr(self, 'npcs'):
@@ -102,6 +112,7 @@ class Hood(DirectObject):
         self.sky.removeNode()
         del self.geom
         del self.sky
+        self.unloaded = True
 
     def getHoodText(self):
         hoodId = FunnyFarmGlobals.getHoodId(self.zoneId)
@@ -123,7 +134,19 @@ class Hood(DirectObject):
         base.localAvatar.enable()
         if base.localAvatar.hp <= 0:
             base.localAvatar.setAnimState('Sad')
+            self.showSadDialog()
         self.startActive()
+
+    def showSadDialog(self):
+        base.localAvatar.disable()
+        base.localAvatar.setAnimState('sad-neutral')
+        self.dialog = TTDialog.TTDialog(text=TTLocalizer.PlaygroundDeathAckMessage, style=TTDialog.Acknowledge, command=self.exitDialog)
+        self.dialog.show()
+
+    def exitDialog(self, response):
+        self.dialog.destroy()
+        self.dialog = None
+        base.localAvatar.enable()
 
     def generateNPCs(self):
         self.npcs = NPCToons.createNpcsInZone(self.zoneId)
@@ -147,7 +170,8 @@ class Hood(DirectObject):
                 quest.setQuestProgress(questDesc[1])
                 if quest.getCompletionStatus() == Quests.COMPLETE or quest.getType() in [Quests.QuestTypeGoTo,
                                                                                          Quests.QuestTypeChoose,
-                                                                                         Quests.QuestTypeDeliver]:
+                                                                                         Quests.QuestTypeDeliver,
+                                                                                         Quests.QuestTypeDeliverGag]:
                     if quest.toNpc == npc.getNpcId():
                         if quest.questCategory == Quests.MainQuest:
                             npc.setMainQuest(questDesc[0])
@@ -160,7 +184,7 @@ class Hood(DirectObject):
 
     def startActive(self):
         for door in self.geom.findAllMatches('**/*door_trigger*'):
-            self.acceptOnce('enter%s' % door.getName(), self.handleDoorTrigger)
+            self.accept('enter%s' % door.getName(), self.handleDoorTrigger)
         for linkTunnel in self.geom.findAllMatches('**/linktunnel*'):
             name = linkTunnel.getName().split('_')
             hoodStr = name[1]
@@ -169,7 +193,7 @@ class Hood(DirectObject):
             if linkSphere.isEmpty():
                 linkSphere = linkTunnel.find('**/tunnel_sphere')
             linkSphere.setName('tunnel_trigger_%s_%s' % (hoodStr, zoneStr))
-            self.acceptOnce('enter%s' % linkSphere.getName(), self.handleEnterTunnel)
+            self.accept('enter%s' % linkSphere.getName(), self.handleEnterTunnel)
         base.localAvatar.checkQuestCutscene()
         self.accept('questsChanged', self.refreshQuestIcons)
 
@@ -177,6 +201,9 @@ class Hood(DirectObject):
         pass
 
     def handleEnterTunnel(self, collEntry):
+        if base.localAvatar.hp <= 0:
+            self.showSadDialog()
+            return
         tunnel = collEntry.getIntoNodePath()
         name = tunnel.getName().split('_')
         zoneId = int(name[3])
@@ -207,7 +234,8 @@ class Hood(DirectObject):
         pass
 
     def exitPlace(self):
-        pass
+        for npc in self.npcs:
+            npc.addActive()
 
     def enterSuitBuilding(self, block, track, difficulty, numFloors):
         self.exit()
@@ -294,3 +322,9 @@ class Hood(DirectObject):
             self.sky.setTag('sky', 'Regular')
             self.sky.setScale(1.0)
             self.startSky()
+
+    def unloadQuestChanges(self):
+        for actor in list(self.actors.values()):
+            actor.removeActive()
+            actor.delete()
+            del actor

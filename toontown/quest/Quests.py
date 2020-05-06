@@ -175,7 +175,7 @@ class Quest:
             self.holder = self.questType[4]
             self.holderType = self.questType[5]
         elif self.questType[0] == QuestTypeDeliver:
-            self.item = self.questType[1] 
+            self.item = self.questType[1]
         elif self.questType[0] == QuestTypeDeliverGag:
             self.numGags = self.questType[1]
             self.gagTrack = self.questType[2]
@@ -1368,11 +1368,6 @@ QuestDict = {
         DefaultDialog)
 }
 
-Cutscenes = (1,
- 1001,
- 1002,
- 1004,
- 1028)
 ImportantQuests = (1004,
  1028,
  1030,
@@ -1622,3 +1617,6 @@ def fillInQuestNames(text, avName = None, fromNpcId = None, toNpcId = None):
         text = text.replace('_buildingName_', buildingName)
         text = text.replace('_streetDesc_', streetDesc)
     return text
+
+def isQuest(id):
+    return bool(QuestDict.get(id))

@@ -1,7 +1,5 @@
 from panda3d.core import *
-from otp.nametag.Nametag import Nametag
-from otp.nametag.NametagGroup import NametagGroup
-from otp.nametag.NametagConstants import CFSpeech, CFThought, CFTimeout, CFPageButton, CFNoQuitButton, CFQuitButton
+from libotp import *
 from otp.otpbase import OTPGlobals
 from otp.otpbase import OTPLocalizer
 from direct.actor.Actor import Actor
@@ -10,8 +8,6 @@ from direct.distributed import ClockDelta
 from otp.avatar.ShadowCaster import ShadowCaster
 import random
 from otp.otpbase import OTPRender
-from otp.ai.MagicWordGlobal import *
-from otp.ai import MagicWordManager
 teleportNotify = DirectNotifyGlobal.directNotify.newCategory('Teleport')
 teleportNotify.showTime = True
 if config.GetBool('want-teleport-debug', 1):
@@ -38,7 +34,6 @@ class Avatar(Actor, ShadowCaster):
         Actor.__init__(self, None, None, other, flattenable=0, setFinal=0)
         ShadowCaster.__init__(self)
         self.__font = OTPGlobals.getInterfaceFont()
-        self.__speechFont = OTPGlobals.getInterfaceFont()
         self.soundChatBubble = None
         self.avatarType = ''
         self.nametagNodePath = None
@@ -46,7 +41,6 @@ class Avatar(Actor, ShadowCaster):
         self.nametag = NametagGroup()
         self.nametag.setAvatar(self)
         self.nametag.setFont(OTPGlobals.getInterfaceFont())
-        self.nametag.setSpeechFont(OTPGlobals.getInterfaceFont())
         self.nametag2dContents = Nametag.CName | Nametag.CSpeech
         self.nametag2dDist = Nametag.CName | Nametag.CSpeech
         self.nametag2dNormalContents = Nametag.CName | Nametag.CSpeech
@@ -93,10 +87,8 @@ class Avatar(Actor, ShadowCaster):
                 self.ignoreNametagAmbientLightChange()
             self.Avatar_deleted = 1
             del self.__font
-            del self.__speechFont
             del self.style
             del self.soundChatBubble
-            self.nametag.destroy()
             del self.nametag
             self.nametag3d.removeNode()
             ShadowCaster.delete(self)
@@ -254,13 +246,6 @@ class Avatar(Actor, ShadowCaster):
     def setFont(self, font):
         self.__font = font
         self.nametag.setFont(font)
-
-    def getSpeechFont(self):
-        return self.__speechFont
-
-    def setSpeechFont(self, font):
-        self.__speechFont = font
-        self.nametag.setSpeechFont(font)
 
     def getStyle(self):
         return self.style
@@ -420,7 +405,7 @@ class Avatar(Actor, ShadowCaster):
         self.nametag.setActive(flag)
 
     def clickedNametag(self):
-        MagicWordManager.lastClickedNametag = self
+        #MagicWordManager.lastClickedNametag = self
         if self.nametag.hasButton():
             self.advancePageNumber()
         elif self.nametag.isActive():
@@ -598,30 +583,9 @@ class Avatar(Actor, ShadowCaster):
             except ValueError:
                 pass
 
-            self.nametag.unmanage(base.marginManager)
-            self.ignore(self.nametag.getUniqueId())
+            if hasattr(self, "nametag"):
+                self.nametag.unmanage(base.marginManager)
+                self.ignore(self.nametag.getUniqueId())
 
     def loop(self, animName, restart = 1, partName = None, fromFrame = None, toFrame = None):
         return Actor.loop(self, animName, restart, partName, fromFrame, toFrame)
-
-@magicWord(category=CATEGORY_GUI, types=[int])
-def clickNametag(avId):
-    """Simulate a click on an avatar's nametag, given their ID."""
-    try:
-        base
-    except NameError:
-        return
-
-    av = base.cr.doId2do.get(avId)
-    if not av:
-        return 'avId not found!'
-    if not isinstance(av, Avatar):
-        return 'ID not Avatar!'
-    if str(avId)[:2] == "40": #This implies AI object, since toons start with '1'
-        return '%s is an NPC!' % av.getName()
-    av.clickedNametag()
-
-@magicWord(category=CATEGORY_MODERATION)
-def showTarget():
-    """Show the moderators current Magic Word target."""
-    return 'Your current target is: %s [avId: %s]' % (spellbook.getTarget().getName(), spellbook.getTarget().doId)

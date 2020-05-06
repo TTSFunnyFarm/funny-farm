@@ -103,6 +103,7 @@ class SuitInterior(SuitInteriorBase):
         for index in range(len(self.suits)):
             self.suits[index].reparentTo(render)
             self.suits[index].setPos(SuitPositions[index])
+            self.suits[index].addActive()
             if len(self.suits) > 2:
                 self.suits[index].setH(SuitHs[index])
             else:
@@ -160,7 +161,7 @@ class SuitInterior(SuitInteriorBase):
             self.battle.setBossBattle(0)
             music = self.battleMusic
         self.battle.enter(creditMultiplier=2.0)
-        base.playMusic(music, looping=1, volume=0.9)
+        musicMgr.playMusic(music, looping=1, volume=0.9)
         self.accept(self.townBattle.doneEvent, self.exitBattle)
 
     def exitBattle(self, doneStatus):
@@ -195,7 +196,7 @@ class SuitInterior(SuitInteriorBase):
         return task.done
 
     def enterResting(self):
-        base.playMusic(self.waitMusic, looping=1, volume=0.7)
+        musicMgr.playMusic(self.waitMusic, looping=1, volume=0.7)
         self.entranceElevator.closeDoors()
         self.exitElevator.openDoors()
         self.exitElevator.addActive()
@@ -232,6 +233,7 @@ class SuitInterior(SuitInteriorBase):
         for info in self.joiningReserves:
             suit = info[0]
             suit.reparentTo(render)
+            suit.addActive()
             suit.setPos(self.exitElevator.np, Point3(ElevatorPoints[index + 1][0], ElevatorPoints[index + 1][1], ElevatorPoints[index + 1][2]))
             suit.setH(180)
             suit.enterBattle()

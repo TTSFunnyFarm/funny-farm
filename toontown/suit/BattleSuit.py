@@ -1,4 +1,5 @@
 from panda3d.core import *
+from libotp import *
 from direct.showbase import PythonUtil
 from direct.controls.ControlManager import CollisionHandlerRayStart
 from direct.interval.IntervalGlobal import *
@@ -8,7 +9,6 @@ from toontown.toonbase import ToontownBattleGlobals
 from toontown.toonbase import ToontownGlobals
 from toontown.battle import BattleProps
 from otp.otpbase import OTPGlobals
-from otp.nametag.NametagConstants import *
 from toontown.suit.SuitBase import SuitBase
 from toontown.suit.Suit import Suit
 from toontown.suit import SuitDialog
@@ -74,8 +74,10 @@ class BattleSuit(Suit, SuitBase):
 
     def delete(self):
         self.notify.debug('BattleSuit %d: deleting' % self.getDoId())
-        del self.dna
-        del self.sp
+        if hasattr(self, 'dna'):
+            del self.dna
+        if hasattr(self, 'sp'):
+            del self.sp
         Suit.delete(self)
         SuitBase.delete(self)
 
@@ -419,7 +421,7 @@ class BattleSuit(Suit, SuitBase):
 
         delta = posB - posA
         pos = posA + delta * (time / self.getLegTime(posA, posB))
-        
+
         return pos
 
     def setSkelecog(self, flag):
@@ -541,7 +543,7 @@ class BattleSuit(Suit, SuitBase):
             self.hpText.setScale(1)
             self.hpText.setBillboardPointEye()
             self.hpText.setBin('fixed', 100)
-            
+
             stringText.clearShadow()
             stringText.setAlign(TextNode.ACenter)
             stringText.setTextColor(r, g, b, a)
@@ -550,7 +552,7 @@ class BattleSuit(Suit, SuitBase):
             self.strText.setScale(0.5)
             self.strText.setBillboardPointEye()
             self.strText.setBin('fixed', 100)
-            
+
             self.nametag3d.setDepthTest(0)
             self.nametag3d.setBin('fixed', 99)
             self.hpText.setPos(0, 0, self.height / 2)

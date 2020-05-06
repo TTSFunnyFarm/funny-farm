@@ -1,5 +1,6 @@
 from toontown.toonbase.TTLocalizerEnglishProperty import *
 from otp.otpbase import OTPLocalizer as OL
+from toontown.cutscenes.CutscenesGlobals import SAD_EYES, ANGRY_EYES, NORMAL_EYES
 OL.SpeedChatStaticText = OL.SpeedChatStaticTextToontown.copy()
 for key in iter(OL.SpeedChatStaticTextCommon):
     OL.SpeedChatStaticText[key] = OL.SpeedChatStaticTextCommon[key]
@@ -624,18 +625,18 @@ QuestDialogDict = {
 }
 CutsceneDialogDict = {
  1001: 'Hmm... It doesn\'t look like Flippy is in here.\x07Maybe you should check back outside.',
- 1002: ('This is a warning.\x07We ask that you cease your operations here and terminate any further lab experiments you may be conducting.',
+ 1002: (['Consider this a warning.\x07We ask that you cease your operations here and terminate any further lab experiments you may be conducting.', 'finger-wag', None],
         'You can\'t stop us from doing anything.\x07We are not backing down this time.',
         'The size of our corporation and the plans we have are beyond the stretch of your imagination.\x07You will face consequences if you do not oblige.',
         'We are stronger than we\'ve ever been before.\x07I suggest YOU terminate your presence in our playground, or you\'ll taste my home-baked wrath!',
         'Suit yourself.'),
- 1004: ('Flippy! We have a problem!\x07This is urgent. Come quick!',
+ 1003: ('Flippy! We have a problem!\x07This is urgent. Come quick!',
         'Better go see what\'s going on.\x07Come inside with me.'),
- 1005: (('What\'s the matter, guys?',
+ 1004: ('What\'s the matter, guys?',
         'Our Silly Meter readings have plummeted.\x07Ever since you encountered those Cogs, the rates have been decreasing intensely.\x07It\'s almost at zero!',
-        'But then that means...',
-        'Uh, oh.'),
-        'Oh, this is a disaster!'),
+        ['But then that means...', None, SAD_EYES],
+        ['Uh, oh.', None, SAD_EYES],
+        ['Oh, this is a disaster!\x07_avName_, meet me back at my desk!', None, SAD_EYES]),
  1028: '_avName_! This is Flippy. Something\'s happened and we\'re gonna need your help.\x07Report to the Toon Hall immediately!'
 }
 MovieTutorialReward1 = 'You received 1 Throw point! When you get 10, you will get a new gag!'
@@ -1913,57 +1914,8 @@ FADoorCodes_SB_DISGUISE_INCOMPLETE = "You'll get caught going in there as a Toon
 FADoorCodes_CB_DISGUISE_INCOMPLETE = "You'll get caught going in there as a Toon! You need to complete your Cashbot Disguise first!\n\nBuild your Cashbot Disguise by doing ToonTasks in Donald's Dreamland."
 FADoorCodes_LB_DISGUISE_INCOMPLETE = "You'll get caught going in there as a Toon! You need to complete your Lawbot Disguise first!\n\nBuild your Lawbot Disguise by doing the ToonTasks after Donald's Dreamland."
 FADoorCodes_BB_DISGUISE_INCOMPLETE = "You'll get caught going in there as a Toon! You need to complete your Bossbot Disguise first!\n\nBuild your Bossbot Disguise by doing the ToonTasks after Donald's Dreamland."
-KnockKnockDoorNames = { 44: DoorNametag,
-        2: 'Furr Elise',
-        1:  'Overwhelming October',
-        3:  'Slate',
-        4: 'Fanshy',
-        5: 'Smirky Bumberpop',
-        6:  'Little Flappy Bananaberry',
-        7:  'Quackity',
-        49: 'P Cuddles',
-        60: 'lilreenie',
-        10:  'parker643',
-        11: 'Midnite Purr',
-        63: 'Chipythepig',
-        62: 'Amanda',
-        16: 'Tyrynn',
-        18: 'mrpiggywinkles',
-        66: 'Error',
-        21: 'Quackity',
-        65: 'Azure Swallowtail',
-        24: 'krae2121',
-        26: 'GeeMayn',
-        25: 'FancyJackL',
-        67: 'Kewldude',
-        61: 'Macca',
-        29: 'PicklesJesse2'}
 KnockKnockContestJokes = {
  2100: {44: ['Wally', "Wally's not looking, hit him with a pie!"],
-        2: ['Mirror', 'Mirror who?'],
-        1:  ['Act', 'No, we\'re starting from act one.'],
-        3:  ['Insane', 'I don\'t know, but you\'re the one talking to a door.'],
-        4: ['Candy', 'Candy have some jellybeans?'],
-        5: ['Santa', 'I santa you the key, now let me out!'],
-        6:  ['Sensor', 'Sensor not doing anything, mind opening the door?'],
-        7:  ['Donald', 'Donald your tasks yet?'],
-        49: ['Eureka', 'Eureka something weird!'],
-        60: ['Anomaly', 'Anomaly don\'t say this, but have you seen my spaceship?'],
-        10:  ['Toboggan', 'I hate toboggan with you, but will you open this door?'],
-        11: ['Goshi', 'Goshi wonder if I won an alpha key.'],
-        63: ['Shelly', 'Shelly compare thee to a summer\'s day?'],
-        62: ['Were', 'No, Werewolf! Owoooooo!'],
-        16: ['Stan', 'Stan back, or I\'ll throw this pie!'],
-        18: ['Snow', 'Snow way I\'m telling you!'],
-        66: ['Big Cheese', 'Big Cheese pizza delivery here, open up!'],
-        21: ['Telemarketer', 'Telemarketer I\'m not buying his offer.'],
-        65: ['June', 'Juneau how to get out of this fountain?'],
-        24: ['Mickey', 'Mickey is stuck! Help'],
-        26: ['Guess', 'Does he have a mustache?'],
-        25: ['Usain', 'Usain you forgot me?'],
-        67: ['Wayt', 'Wayt, you forgot my name?'],
-        61: ['Fuchsia', 'Fuchsia stop talking to doors and go finish that ToonTask!'],
-        29: ['Vincent', 'Vincent, where did my Van Gogh?']},
  2200: {28: ['Biscuit', 'Biscuit out of here the Cogs are coming!'],
         41: ['Dewey', 'Dewey want to go defeat some more Cogs?'],
         40: ['Minnie', "Minnie people have asked that, and it's driving me crazy!"],
@@ -1973,7 +1925,7 @@ KnockKnockContestJokes = {
         6: ['Weirdo', 'Weirdo all these Cogs come from?'],
         30: ['Bacon', 'Bacon a cake to throw at the Cogs.'],
         28: ['Isaiah', 'Isaiah we go ride the trolley.'],
-        12: ['Juliet', "Juliet me in that Cog building with you and I'll give you a Toon-Up."]}}
+        12: ['Juliet', "Juliet me in that Cog building with you and I'll give you a Toon-Up."]}}}
 KnockKnockJokes = [['Who', "Bad echo in here, isn't there?"],
  ['Dozen', 'Dozen anybody want to let me in?'],
  ['Freddie', 'Freddie or not, here I come.'],
@@ -6154,16 +6106,6 @@ PetTrait2descriptions = {'hungerThreshold': ('Always Hungry',
                         'Sometimes Affectionate',
                         'Often Affectionate',
                         'Always Affectionate')}
-
-# Election stuff
-# FireworksInstructions = 'Flippy: Look up using the "Page Up" key to see, or hop in Slappy\'s Balloon for a ride over the sky!'
-# startFireworksResponse = "Usage: startFireworksShow ['num']\n 'num' = %s - New Years\n %s - Party Summer \n %s - 4th of July"
-# FireworksJuly4Beginning = 'Flippy: Hiya, Toons! Get ready to see some fireworks to celebrate this last week of the election!'
-# FireworksJuly4Ending = 'Flippy: Hope you enjoyed the show. Don\'t forget to stop by Toontown Central for some pies!'
-# FireworksNewYearsEveBeginning = 'Flippy: Hiya, Toons! Get ready to see some fireworks to celebrate this last week of the election!'
-# FireworksNewYearsEveEnding =  'Flippy: Hope you enjoyed the show. Don\'t forget to stop by Toontown Central for some pies!'
-# FireworksComboBeginning = 'Flippy: Hiya, Toons! Get ready to see some fireworks to celebrate this last week of the election!'
-# FireworksComboEnding = 'Flippy: Hope you enjoyed the show. Don\'t forget to stop by Toontown Central for some pies!'
 
 # Regular fireworks stuff
 FireworksInstructions = lToonHQ + ': Hit the "Page Up" key to see better.'

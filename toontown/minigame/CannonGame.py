@@ -1,6 +1,5 @@
 from panda3d.core import *
-from otp.nametag.NametagFloat3d import NametagFloat3d
-from otp.nametag.Nametag import Nametag
+from libotp import *
 from toontown.minigame.Minigame import *
 from direct.distributed.ClockDelta import *
 from direct.interval.IntervalGlobal import *
@@ -241,7 +240,7 @@ class CannonGame(Minigame):
         base.camLens.setFar(FAR_PLANE_DIST)
         self.__startIntro()
         base.transitions.irisIn(0.4)
-        base.playMusic(self.music, looping=1, volume=0.8)
+        musicMgr.playMusic(self.music, looping=1, volume=0.8)
 
     def offstage(self):
         self.notify.debug('offstage')

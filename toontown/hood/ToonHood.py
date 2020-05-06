@@ -40,12 +40,12 @@ class ToonHood(Hood):
 
     def enter(self, shop=None, tunnel=None, init=0):
         base.localAvatar.setZoneId(self.zoneId)
-        musicMgr.playCurrentZoneMusic()
         self.setupLandmarkBuildings()
         if self.treasurePlanner:
             self.treasurePlanner.loadTreasures()
         self.loadButterflies()
         if shop:
+            musicMgr.playCurrentZoneMusic()
             building = self.geom.find('**/tb%s:toon_landmark*' % shop[2:])
             if building.isEmpty():
                 building = self.geom.find('**/%s' % shop)
@@ -127,7 +127,8 @@ class ToonHood(Hood):
                 quest.setQuestProgress(questDesc[1])
                 if quest.getCompletionStatus() == Quests.COMPLETE or quest.getType() in [Quests.QuestTypeGoTo,
                                                                                          Quests.QuestTypeChoose,
-                                                                                         Quests.QuestTypeDeliver]:
+                                                                                         Quests.QuestTypeDeliver,
+                                                                                         Quests.QuestTypeDeliverGag]:
                     if quest.toLocation == building.zoneId:
                         if quest.questCategory == Quests.MainQuest:
                             building.setMainQuest(questDesc[0])
@@ -197,6 +198,7 @@ class ToonHood(Hood):
         door.avatarExit(base.localAvatar)
 
     def exitPlace(self):
+        Hood.exitPlace(self)
         self.place.unload()
         self.place = None
         self.geom.unstash()

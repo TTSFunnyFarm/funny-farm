@@ -1,12 +1,12 @@
 from direct.showbase.DirectObject import DirectObject
 
-from otp.nametag import NametagGlobals
+from libotp import *
 from otp.otpbase import OTPLocalizer
 from toontown.discord.FFDiscordIntegration import FFDiscordIntegration
 from toontown.distributed.PlayGame import PlayGame
 from toontown.login.AvatarChooser import AvatarChooser
 from toontown.makeatoon.MakeAToon import MakeAToon
-from toontown.quest.CutsceneManager import CutsceneManager
+from toontown.cutscenes.CutsceneManager import CutsceneManager
 from toontown.quest.QuestManager import QuestManager
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toontowngui import TTDialog
@@ -124,6 +124,8 @@ class FFClientRepository(DirectObject):
 
     def enterTheTooniverse(self, zoneId):
         base.transitions.noTransitions()
+        if zoneId not in self.playGame.Hood2ClassDict.keys():
+            zoneId = FunnyFarmGlobals.FunnyFarm
         self.playGame.enterHood(zoneId, init=1)
         self.setupLocalAvatar()
         NametagGlobals.setMasterArrowsOn(1)
@@ -138,7 +140,14 @@ class FFClientRepository(DirectObject):
         self.enterChooseAvatar()
 
     def cleanupGame(self):
-        self.playGame.exitActiveZone()
+        if hasattr(self.playGame, 'hood') and self.playGame.hood:
+            if hasattr(self.playGame.hood, 'unloaded') and self.playGame.hood.unloaded:
+                self.playGame.hood = None
+            else:
+                self.playGame.exitActiveZone()
+        else:
+            self.playGame.exitActiveZone()
+
         camera.reparentTo(render)
         base.air.cheesyEffectMgr.stopTimer()
         # If we're in the tutorial, don't even bother cleaning up localAvatar; too many errors

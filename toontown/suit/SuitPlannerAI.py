@@ -341,7 +341,7 @@ class SuitPlannerAI(DirectObject):
         self.__waitForNextAdjust()
         return task.done
 
-    def upkeepPopulation(self, task):
+    def upkeepPopulation(self, task=None):
         # Considers adding another suit to upkeep the population
         suitCount = len(self.activeSuits)
         maxSuits = self.SuitHoodInfo[self.zoneId][self.SUIT_HOOD_INFO_MAX]
@@ -354,7 +354,8 @@ class SuitPlannerAI(DirectObject):
             choice = random.choice((0, 0, 0, 1, 1, 1))
         if choice:
             self.createNewSuit()
-        return Task.done
+        if task:
+            return task.done
 
     def requestBattle(self, suitId, pos):
         if suitId not in list(self.activeSuits.keys()):

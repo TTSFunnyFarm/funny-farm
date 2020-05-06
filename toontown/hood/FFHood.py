@@ -12,6 +12,7 @@ from toontown.toon import NPCToons
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import ToontownGlobals
 from toontown.safezone.FFTreasurePlanner import FFTreasurePlanner
+from toontown.cutscenes import CutsceneUtil
 
 
 class FFHood(ToonHood):
@@ -32,7 +33,7 @@ class FFHood(ToonHood):
     def enter(self, shop=None, tunnel=None, init=0):
         self.loadQuestChanges()
         ToonHood.enter(self, shop=shop, tunnel=tunnel, init=init)
-        taskMgr.doMethodLater(1, self.__birds, 'FF-birds')
+        taskMgr.doMethodLater(1, self.doBirds, 'FF-birds')
         self.waterShader.start('water', self.geom, self.sky)
         if hasattr(self, 'snow'):
             self.snow.start(camera, self.snowRender)
@@ -67,6 +68,10 @@ class FFHood(ToonHood):
             del self.snow
             del self.snowRender
 
+    def startActive(self):
+        ToonHood.startActive(self)
+        self.ignore('entertunnel_trigger_ff_1200')
+
     def skyTrack(self, task):
         return SkyUtil.cloudSkyTrack(task)
 
@@ -80,39 +85,34 @@ class FFHood(ToonHood):
     def loadQuestChanges(self):
         for questDesc in base.localAvatar.quests:
             if questDesc[0] == 1002 and questDesc[1] == 0:
-                if not hasattr(self, 'suit'):
+                if not base.air.holidayMgr.isHalloween() and not base.air.holidayMgr.isWinter():
+                    self.startSpookySky()
+                CutsceneUtil.FadeScreen(0.25)
+                if not self.actors.get('suit'):
                     dna = SuitDNA()
                     dna.newSuit('tbc')
-                    self.suit = BattleSuit()
-                    self.suit.setDNA(dna)
-                    self.suit.setLevel(4)
-                    self.suit.setElite(1)
-                    self.suit.initializeBodyCollisions('suit')
-                    self.suit.reparentTo(self.geom)
-                    self.suit.setPosHpr(-70, -20, 0, 270, 0, 0)
-                    self.suit.addActive()
-                    self.suit.loop('neutral')
-                if not hasattr(self, 'flippy'):
-                    self.flippy = NPCToons.createLocalNPC(1001, functional=True)
-                    self.flippy.initializeBodyCollisions('toon')
-                    self.flippy.reparentTo(self.geom)
-                    self.flippy.setPosHpr(-50, -20, 0, 90, 0, 0)
-                    self.flippy.setScale(1, 1, 1)
-                    self.flippy.useLOD(1000)
-                    self.flippy.addActive()
-                    self.flippy.stopLookAround()
+                    actor = self.actors['suit'] = BattleSuit()
+                    actor.setDNA(dna)
+                    actor.setLevel(4)
+                    actor.setElite(1)
+                    actor.initializeBodyCollisions('suit')
+                    actor.reparentTo(self.geom)
+                    actor.setPosHpr(-70, -20, 0, 270, 0, 0)
+                    actor.addActive()
+                    actor.loop('neutral')
+                if not self.actors.get('flippy'):
+                    actor = self.actors['flippy'] = NPCToons.createLocalNPC(1001, functional=True)
+                    actor.initializeBodyCollisions('toon')
+                    actor.reparentTo(self.geom)
+                    actor.setPosHpr(-50, -20, 0, 90, 0, 0)
+                    actor.setScale(1, 1, 1)
+                    actor.useLOD(1000)
+                    actor.addActive()
+                    actor.stopLookAround()
                 return
 
-    def unloadQuestChanges(self):
-        if hasattr(self, 'suit'):
-            self.suit.delete()
-            del self.suit
-        if hasattr(self, 'flippy'):
-            self.flippy.delete()
-            del self.flippy
-
-    def __birds(self, task):
+    def doBirds(self, task):
         base.playSfx(random.choice(self.birdSound))
         t = random.random() * 20.0 + 1
-        taskMgr.doMethodLater(t, self.__birds, 'FF-birds')
+        taskMgr.doMethodLater(t, self.doBirds, 'FF-birds')
         return task.done

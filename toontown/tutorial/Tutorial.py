@@ -1,11 +1,11 @@
 from panda3d.core import *
+from libotp import *
 from direct.interval.IntervalGlobal import *
 from direct.showbase import PythonUtil
 from toontown.toon import NPCToons
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.hood.ToonHood import ToonHood
-from otp.nametag.NametagConstants import *
 from toontown.tutorial.CogPinata import CogPinata
 from toontown.hood import SkyUtil
 from toontown.suit import SuitDNA
@@ -473,9 +473,10 @@ class Tutorial(ToonHood):
             Func(aspect2d.hide),
             Func(camera.setPosHpr, -5, 95, 4, 270, 12, 0),
             Func(base.transitions.fadeIn, 1.0),
-            Func(base.playMusic, self.spookyMusic, looping=1),
+            Func(musicMgr.playMusic, self.spookyMusic, looping=1),
             Wait(1),
             Func(self.suit.reparentTo, render),
+            Func(self.suit.addActive),
             self.suit.beginSupaFlyMove(Point3(45, 95, -0.5), True, 'TutorialSuitFlyIn', walkAfterLanding=True),
             Func(self.startSuitWalkInterval),
             Wait(2),
@@ -509,14 +510,14 @@ class Tutorial(ToonHood):
         self.battle.reparentTo(self.battleCell)
         self.battle.enter()
         self.spookyMusic.stop()
-        base.playMusic(self.battleMusic, looping=1)
+        musicMgr.playMusic(self.battleMusic, looping=1)
         self.accept(self.townBattle.doneEvent, self.exitBattle)
 
     def exitBattle(self, doneStatus):
         self.enableToon()
         self.toon.book.showButton()
         self.battleMusic.stop()
-        base.playMusic(self.spookyMusic, looping=1)
+        musicMgr.playMusic(self.spookyMusic, looping=1)
         self.ignore(self.townBattle.doneEvent)
         self.battle.cleanupBattle()
         self.battle.delete()
@@ -550,6 +551,7 @@ class Tutorial(ToonHood):
             Func(self.flippy.enterTeleportOut, callback=self.flippy.delete),
             Wait(3.2),
             Func(self.flippy.hide),
+            Func(self.flippy.removeActive),
             Wait(0.2),
             Func(self.exitOutro)
         )

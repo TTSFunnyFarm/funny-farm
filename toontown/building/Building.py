@@ -1,8 +1,7 @@
 from panda3d.core import *
+from libotp import *
 from direct.showbase.DirectObject import DirectObject
 from direct.interval.IntervalGlobal import *
-from otp.nametag.NametagGroup import NametagGroup
-from otp.nametag.Nametag import Nametag
 from toontown.hood import ZoneUtil
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import FunnyFarmGlobals
@@ -130,7 +129,6 @@ class Building(DirectObject):
         if self.nametag != None:
             self.nametag.unmanage(base.marginManager)
             self.nametag.setAvatar(NodePath())
-            self.nametag.destroy()
             self.nametag = None
         return
 
@@ -138,13 +136,13 @@ class Building(DirectObject):
         self.questOffer = questId
         if self.questIcon:
             self.questIcon.unload()
-        self.questIcon = QuestIcon(typeId=Offer)
+        self.questIcon = QuestIcon(typeId=OFFER)
         if hq:
             self.questIcon.reparentTo(self.getBuildingNodePath().find('**/door_origin_0'))
             self.questIcon.setPos(0, -3.5, 10)
             self.questIcon.setScale(3.0)
             self.questIcon.start()
-            self.questIcon2 = QuestIcon(typeId=Offer)
+            self.questIcon2 = QuestIcon(typeId=OFFER)
             self.questIcon2.reparentTo(self.getBuildingNodePath().find('**/door_origin_1'))
             self.questIcon2.setPos(0, -3.5, 10)
             self.questIcon2.setScale(3.0)
@@ -171,7 +169,7 @@ class Building(DirectObject):
         self.mainQuest = questId
         if self.questIcon:
             self.questIcon.unload()
-        self.questIcon = QuestIcon(typeId=Main)
+        self.questIcon = QuestIcon(typeId=MAIN)
         self.questIcon.reparentTo(self.getBuildingNodePath().find('**/*door_origin*'))
         self.questIcon.setPos(0, -1, 10)
         self.questIcon.setScale(3.0)
@@ -190,7 +188,7 @@ class Building(DirectObject):
         self.sideQuest = questId
         if self.questIcon:
             self.questIcon.unload()
-        self.questIcon = QuestIcon(typeId=Bonus)
+        self.questIcon = QuestIcon(typeId=BONUS)
         self.questIcon.reparentTo(self.getBuildingNodePath().find('**/*door_origin*'))
         self.questIcon.setPos(0, -1, 10)
         self.questIcon.setScale(3.0)
@@ -539,7 +537,7 @@ class Building(DirectObject):
         # TODO:
         # toonDoorPosHpr = self.cr.playGame.dnaStore.getDoorPosHprFromBlockNumber(self.block)
         # useFarExitPoints = toonDoorPosHpr.getPos().getZ() > 1.0
-        
+
         p0 = Point3(0, 0, 0)
         p1 = Point3(ElevatorPoints[i][0], ElevatorPoints[i][1] - 5.0, ElevatorPoints[i][2])
         # if useFarExitPoints:

@@ -21,7 +21,7 @@ tPieShrink = 0.7
 pieFlyTaskName = 'MovieThrow-pieFly'
 
 def addHit(dict, suitId, hitCount):
-    if dict.has_key(suitId):
+    if suitId in dict:
         dict[suitId] += hitCount
     else:
         dict[suitId] = hitCount
@@ -34,7 +34,7 @@ def doFires(fires):
     suitFiresDict = {}
     for fire in fires:
         suitId = fire['target']['suit'].doId
-        if suitFiresDict.has_key(suitId):
+        if suitId in suitFiresDict:
             suitFiresDict[suitId].append(fire)
         else:
             suitFiresDict[suitId] = [fire]
