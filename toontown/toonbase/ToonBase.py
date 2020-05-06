@@ -241,11 +241,11 @@ class ToonBase(OTPBase.OTPBase):
         if aspect2d.isHidden() and not base.cr.cutsceneMgr.getCurrentScene():
             if settings['drawFps']:
                 base.setFrameRateMeter(True)
-            self.showUi()
+            self.showUI()
         else:
             if settings['drawFps']:
                 base.setFrameRateMeter(False)
-            self.hideUi()
+            self.hideUI()
 
     def initNametagGlobals(self):
         arrow = loader.loadModel('phase_3/models/props/arrow')
@@ -384,10 +384,10 @@ class ToonBase(OTPBase.OTPBase):
         wp.setMinimized(True)
         base.win.requestProperties(wp)
 
-    def showUi(self):
+    def showUI(self):
         aspect2d.show()
         NodePath(self.marginManager).reparentTo(aspect2d)
 
-    def hideUi(self):
+    def hideUI(self):
         NodePath(self.marginManager).reparentTo(aspect2dp)
         aspect2d.hide()
