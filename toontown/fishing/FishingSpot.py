@@ -268,19 +268,12 @@ class FishingSpot(DirectObject):
             self.collSphere.setTangible(1)
             self.protNodePath.reparentTo(self.nodePath)
             self.__loadStuff()
-            base.setCellsAvailable([
-                base.bottomCells[1],
-                base.bottomCells[2]], 0)
             self.placedAvatar = 0
             base.localAvatar.wrtReparentTo(self.nodePath)
             base.localAvatar.fishingSpot = self
             base.localAvatar.setAnimState('neutral', 1.0)
             self.__setupNeutralBlend()
             self.hideGui()
-            base.setCellsAvailable([
-                base.bottomCells[1],
-                base.bottomCells[2]], 1
-            )
             base.localAvatar.disable()
         return
 
