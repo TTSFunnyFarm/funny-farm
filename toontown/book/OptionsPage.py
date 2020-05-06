@@ -42,7 +42,6 @@ class OptionsPage(ShtikerPage.ShtikerPage):
         return
 
     def enter(self):
-        #self.optionsTabPage.enter()
         self.setMode(PageMode.Options, updateAnyways=1)
         ShtikerPage.ShtikerPage.enter(self)
         self.accept('exitFunnyFarm', self.book.exitFunnyFarm)

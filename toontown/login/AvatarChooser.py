@@ -120,6 +120,7 @@ class AvatarChooser(DirectObject):
         del self.title
         self.bg.destroy()
         del self.bg
+        self.ignore('device-enable')
         self.isLoaded = 0
 
     def cycleAvatar(self, input):

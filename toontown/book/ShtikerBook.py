@@ -10,6 +10,9 @@ class ShtikerBook(DirectFrame):
 
     def __init__(self):
         DirectFrame.__init__(self, relief=None, sortOrder=DGG.BACKGROUND_SORT_INDEX)
+        keybinds = settings['keybinds'][base.getCurrentDevice()]
+        self.shtiker = keybinds['shtiker']
+        self.option = keybinds['options']
         self.initialiseoptions(ShtikerBook)
         self.pages = []
         self.pageTabs = []
@@ -45,12 +48,12 @@ class ShtikerBook(DirectFrame):
         keybinds = settings['keybinds'][base.getCurrentDevice()]
         self.shtiker = keybinds['shtiker']
         self.option = keybinds['options']
-        self.accept(keybinds['shtiker'], self.close)
-        self.accept(keybinds['options'], self.close)
+        self.accept(self.shtiker, self.close)
+        self.accept(self.option, self.close)
         self.turn_right = keybinds['turn_right']
         self.turn_left = keybinds['turn_left']
-        self.accept(keybinds['turn_right'], self.rightArrow)
-        self.accept(keybinds['turn_left'], self.leftArrow)
+        self.accept(self.turn_right, self.rightArrow)
+        self.accept(self.turn_left, self.leftArrow)
 
     def exit(self):
         if not self.isOpen:
@@ -269,14 +272,14 @@ class ShtikerBook(DirectFrame):
     def showButton(self):
         self.__shown = 1
         self.__setButtonVisibility()
-        self.accept(ToontownGlobals.StickerBookHotkey, self.open)
-        self.accept(ToontownGlobals.OptionsPageHotkey, self.open, [True])
+        self.accept(self.shtiker, self.open)
+        self.accept(self.options, self.open, [True])
 
     def hideButton(self):
         self.__shown = 0
         self.__setButtonVisibility()
-        self.ignore(ToontownGlobals.StickerBookHotkey)
-        self.ignore(ToontownGlobals.OptionsPageHotkey)
+        self.ignore(self.shtiker)
+        self.ignore(self.options)
 
     def __setButtonVisibility(self):
         if self.isOpen:
