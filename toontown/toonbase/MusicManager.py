@@ -22,7 +22,7 @@ class MusicManager(DirectObject):
             FunnyFarmGlobals.Tutorial: base.loader.loadMusic('phase_6/audio/bgm/OZ_SZ.ogg'),
             FunnyFarmGlobals.FunnyFarm: base.loader.loadMusic('phase_14/audio/bgm/FF_nbrhood.ogg'),
             FunnyFarmGlobals.SillySprings: base.loader.loadMusic('phase_14/audio/bgm/SS_nbrhood.ogg'),
-            FunnyFarmGlobals.Estate: None
+            FunnyFarmGlobals.Estate: base.loader.loadMusic('phase_4/audio/bgm/TC_nbrhood.ogg')
         }
         self.townMusic = {
             FunnyFarmGlobals.FunnyFarm: base.loader.loadMusic('phase_14/audio/bgm/FF_SZ.ogg'),
@@ -31,7 +31,7 @@ class MusicManager(DirectObject):
         self.activityMusic = {
             FunnyFarmGlobals.FunnyFarm: base.loader.loadMusic('phase_14/audio/bgm/FF_SZ_activity.ogg'),
             FunnyFarmGlobals.SillySprings: base.loader.loadMusic('phase_14/audio/bgm/SS_SZ_activity.ogg'),
-            FunnyFarmGlobals.Estate: None
+            FunnyFarmGlobals.Estate: base.loader.loadMusic('phase_3.5/audio/bgm/TC_SZ_activity.ogg')
         }
         self.accept('PandaPaused', self.__audioPaused)
         self.accept('PandaRestarted', self.__audioRestarted)
