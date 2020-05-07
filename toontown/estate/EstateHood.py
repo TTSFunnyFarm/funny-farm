@@ -80,7 +80,7 @@ class EstateHood(ToonHood):
         building = collEntry.getIntoNodePath().getParent().getParent().getParent().getParent().getParent() # ew
         zoneStr = building.getName().split(':')
         block = int(zoneStr[0][2:])
-        doorNP = self.houses[block - 1].door
+        doorNP = self.houses[block].door
         door = Door.Door(doorNP, 'estate')
         door.avatarEnter(base.localAvatar)
         if 'door' in building.getName():
