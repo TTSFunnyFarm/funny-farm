@@ -86,11 +86,12 @@ class ChatManager(DirectObject):
             base.playSfx(DGG.getDefaultClickSound())
         if chat.startswith('~') and __debug__:
             mw = chat[1:]
-            mw = mw.split(' ')
-            args = ' '.join(mw[1:])
-            cotebook.run(mw[0].lower(), args)
-            self.closeChatInput()
-            return # don't send the message
+            if len(mw) > 0:       
+                mw = mw.split(' ')
+                args = ' '.join(mw[1:])
+                cotebook.run(mw[0].lower(), args)
+                self.closeChatInput()
+                return # don't send the message
 
         self.sendChat()
 
