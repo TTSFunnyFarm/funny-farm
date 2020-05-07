@@ -27,7 +27,7 @@ class EstateHood(ToonHood):
     def enter(self, shop=None, tunnel=None, init=0):
         ToonHood.enter(self, shop=shop, tunnel=tunnel, init=init)
         if shop:
-            house = self.houses[int(shop[2:]) - 1]
+            house = self.houses[int(shop[2:])]
             door = Door.Door(house.door, 'estate')
             door.avatarExit(base.localAvatar)
             self.acceptOnce('avatarExitDone', self.startActive)
