@@ -5,3 +5,6 @@ class EstateHoodAI(HoodAI):
 
     def __init__(self, air):
         HoodAI.__init__(self, air, FunnyFarmGlobals.Estate)
+
+    def createTreasurePlanner(self):
+        return

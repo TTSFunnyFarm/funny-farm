@@ -1,9 +1,9 @@
 from panda3d.core import *
 from toontown.building import Door
-from toontown.hood import SkyUtil, Hood, SubmergeManager
+from toontown.hood import SkyUtil, Hood
 from toontown.hood.ToonHood import ToonHood
 from toontown.toonbase import ToontownGlobals, FunnyFarmGlobals
-import House
+from toontown.estate import House
 
 HOUSE_POSITIONS = [(-56.7788, -42.8756, 4.06471, -90, 0, 0),
  (83.3909, -77.5085, 0.0708361, 116.565, 0, 0),
@@ -23,20 +23,16 @@ class EstateHood(ToonHood):
         self.winterHoodFile = self.hoodFile
         self.skyFile = 'phase_3.5/models/props/TT_sky'
         self.titleColor = (1.0, 0.5, 0.4, 1.0)
-        self.overwriteLastHood = False
         self.houses = []
 
     def enter(self, shop=None, tunnel=None, init=0):
-        base.localAvatar.setZoneId(self.zoneId)
-        musicMgr.playCurrentZoneMusic()
-        self.setupLandmarkBuildings()
+        ToonHood.enter(self, shop=shop, tunnel=tunnel, init=init)
         if shop:
             house = self.houses[int(shop[2:]) - 1]
             door = Door.Door(house.door, 'estate')
             door.avatarExit(base.localAvatar)
             self.acceptOnce('avatarExitDone', self.startActive)
             return
-        Hood.Hood.enter(self, shop=shop, tunnel=tunnel, init=init)
 
     def exit(self):
         ToonHood.exit(self)
@@ -46,22 +42,22 @@ class EstateHood(ToonHood):
         self.geom.setTransparency(TransparencyAttrib.MBinary, 1)
         self.geom.find('**/water').setTransparency(TransparencyAttrib.MAlpha, 1)
         self.geom.find('**/water').setColorScale(1, 1, 1, 0.75)
-        for housePosIdx in xrange(len(HOUSE_POSITIONS)):
+        for housePosIdx in range(len(HOUSE_POSITIONS)):
             zoneId = self.zoneId + 500 + housePosIdx + 1
             house = House.House(zoneId, housePosIdx + 1)
             house.load()
             house.model.reparentTo(self.geom)
             house.model.setPosHpr(*HOUSE_POSITIONS[housePosIdx])
             self.houses.append(house)
-        self.submergeMgr = SubmergeManager.SubmergeManager(self.sky, ToontownGlobals.EstateWakeWaterHeight)
+        #self.submergeMgr = SubmergeManager.SubmergeManager(self.sky, ToontownGlobals.EstateWakeWaterHeight)
 
     def startActive(self):
         ToonHood.startActive(self)
-        self.submergeMgr.start()
+        #self.submergeMgr.start()
 
     def enterPlace(self, shopId, zoneId):
         ToonHood.enterPlace(self, shopId, zoneId)
-        self.submergeMgr.stop()
+        #self.submergeMgr.stop()
 
     def unload(self):
         self.submergeMgr.cleanup()

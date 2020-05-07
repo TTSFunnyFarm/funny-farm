@@ -71,7 +71,8 @@ class MapPage(ShtikerPage.ShtikerPage):
             text=TTLocalizer.MapPageGoHome,
             text_scale=TTLocalizer.MPgoHomeButton,
             text_pos=(0, -0.02),
-            textMayChange=0)
+            textMayChange=0,
+            command=self.goHome)
         self.goHomeButton.hide()
         guiButton.removeNode()
         self.hoodLabel = DirectLabel(

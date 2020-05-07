@@ -64,9 +64,10 @@ class Nametag2d(Nametag, MarginPopup):
     def getDistance2(self):
         if self.m_avatar:
             np = self.m_avatar
-
         else:
             np = self.m_group.getAvatar()
+        if np == None:
+            return 0
 
         if np.isEmpty():
             return 0

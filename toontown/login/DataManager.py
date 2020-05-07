@@ -24,7 +24,7 @@ class DataManager:
         self.corrupted = 0
         self.toons = []
         self.houses = []
-        for toonNum in xrange(FunnyFarmGlobals.MaxAvatars):
+        for toonNum in range(FunnyFarmGlobals.MaxAvatars):
             self.toons.append(str(BASE_DB_ID + toonNum))
             self.houses.append(str(BASE_DB_ID + toonNum + HOUSE_ID_OFFSET))
         return
