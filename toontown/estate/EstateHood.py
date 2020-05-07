@@ -4,7 +4,6 @@ from toontown.hood import SkyUtil, Hood
 from toontown.hood.ToonHood import ToonHood
 from toontown.toonbase import ToontownGlobals, FunnyFarmGlobals
 from toontown.estate import House
-
 HOUSE_POSITIONS = [(-56.7788, -42.8756, 4.06471, -90, 0, 0),
  (83.3909, -77.5085, 0.0708361, 116.565, 0, 0),
  (-69.077, -119.496, 0.025, 77.1957, 0, 0),
@@ -43,8 +42,8 @@ class EstateHood(ToonHood):
         self.geom.find('**/water').setTransparency(TransparencyAttrib.MAlpha, 1)
         self.geom.find('**/water').setColorScale(1, 1, 1, 0.75)
         for housePosIdx in range(len(HOUSE_POSITIONS)):
-            zoneId = self.zoneId + 500 + housePosIdx + 1
-            house = House.House(zoneId, housePosIdx + 1)
+            zoneId = self.zoneId + 500 + housePosIdx
+            house = House.House(zoneId, housePosIdx, dataMgr.loadToonData(housePosIdx))
             house.load()
             house.model.reparentTo(self.geom)
             house.model.setPosHpr(*HOUSE_POSITIONS[housePosIdx])
@@ -60,8 +59,8 @@ class EstateHood(ToonHood):
         #self.submergeMgr.stop()
 
     def unload(self):
-        self.submergeMgr.cleanup()
-        self.submergeMgr = None
+        #self.submergeMgr.cleanup()
+        #self.submergeMgr = None
         ToonHood.unload(self)
         for house in self.houses:
             house.unload()
