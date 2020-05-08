@@ -273,3 +273,18 @@ class OTPBase(ShowBase):
 def oobe():
     'Toggle "out of body experience" view.'
     base.oobe()
+
+@magicWord()
+def wire():
+    'Toggle wireframe mode.'
+    base.toggleWireframe()
+
+def showChildren(np):
+    for child in np.getChildren():
+        child.show()
+        showChildren(child)
+
+@magicWord()
+def showEverything():
+    'Show everything in render.'
+    showChildren(render)
