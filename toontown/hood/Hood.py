@@ -116,6 +116,7 @@ class Hood(DirectObject):
 
     def cleanupNavMesh(self):
         if self.navMeshNp:
+            base.navMeshMgr.destroy_nav_mesh(self.navMeshNp)
             self.navMeshNp.removeNode()
             self.navMeshNp = None
 
