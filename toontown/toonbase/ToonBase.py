@@ -22,6 +22,7 @@ from toontown.toontowngui import TTDialog
 from sys import platform
 import time
 from panda3d.core import TrueClock
+from p3recastnavigation import RNNavMeshManager
 
 class ToonBase(OTPBase.OTPBase):
     notify = DirectNotifyGlobal.directNotify.newCategory('ToonBase')
@@ -153,6 +154,12 @@ class ToonBase(OTPBase.OTPBase):
         self.needRestartAntialiasing = False
         self.needRestartSmoothing = False
         self.needRestartLOD = False
+        nmMgr = RNNavMeshManager.get_global_ptr()
+        nmMgr.set_root_node_path(render)
+        nmMgr.get_reference_node_path().reparentTo(render)
+        nmMgr.start_default_update()
+        nmMgr.get_reference_node_path_debug().reparentTo(render)
+        self.navMeshMgr = nmMgr
         return
 
     def openMainWindow(self, *args, **kw):

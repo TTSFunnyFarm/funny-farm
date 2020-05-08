@@ -34,6 +34,7 @@ class Hood(DirectObject):
         self.dialog = None
         self.actors = {}
         self.npcs = []
+        self.navMeshNp = None
 
     def enter(self, shop=None, tunnel=None, init=0):
         musicMgr.playCurrentZoneMusic()
@@ -97,11 +98,26 @@ class Hood(DirectObject):
         self.geom.reparentTo(render)
         self.geom.flattenMedium()
         self.generateNPCs()
+        self.cleanupNavMesh()
+        self.notify.warning('Creating navmesh...')
+        navMeshMgr = base.navMeshMgr
+        self.navMeshNp = navMeshMgr.create_nav_mesh()
+        navMesh = self.navMeshNp.node()
+        navMesh.set_owner_node_path(self.geom)
+        navMesh.setup()
+        navMesh.enable_debug_drawing(camera)
+        self.geom.reparentTo(navMeshMgr.get_reference_node_path())
+        navMeshMgr.get_reference_node_path().reparent_to(render)
         gsg = base.win.getGsg()
         if gsg:
             self.geom.prepareScene(gsg)
 
         self.unloaded = False
+
+    def cleanupNavMesh(self):
+        if self.navMeshNp:
+            self.navMeshNp.removeNode()
+            self.navMeshNp = None
 
     def unload(self):
         if hasattr(self, 'sky'):
@@ -115,6 +131,7 @@ class Hood(DirectObject):
                 del npc
         self.geom.removeNode()
         del self.geom
+        self.cleanupNavMesh()
         self.unloaded = True
 
     def getHoodText(self):
