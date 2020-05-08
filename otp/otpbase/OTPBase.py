@@ -269,8 +269,22 @@ class OTPBase(ShowBase):
                 self.taskMgr.remove('manager-update')
                 self.taskMgr.add(self.updateManagers, 'manager-update')
 
-print('does this just not want to work')
 @magicWord()
 def oobe():
     'Toggle "out of body experience" view.'
     base.oobe()
+
+@magicWord()
+def wire():
+    'Toggle wireframe mode.'
+    base.toggleWireframe()
+
+def showChildren(np):
+    for child in np.getChildren():
+        child.show()
+        showChildren(child)
+
+@magicWord()
+def showEverything():
+    'Show everything in render.'
+    showChildren(render)
