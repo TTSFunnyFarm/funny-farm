@@ -269,7 +269,6 @@ class OTPBase(ShowBase):
                 self.taskMgr.remove('manager-update')
                 self.taskMgr.add(self.updateManagers, 'manager-update')
 
-print('does this just not want to work')
 @magicWord()
 def oobe():
     'Toggle "out of body experience" view.'
