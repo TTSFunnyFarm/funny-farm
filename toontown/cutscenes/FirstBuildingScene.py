@@ -4,7 +4,7 @@ from panda3d.core import *
 
 class FirstBuildingScene(CutsceneBase):
     id = 1028
-    
+
     def __init__(self):
         CutsceneBase.__init__(self, self.id)
         self.interior = base.cr.playGame.street.place.interior
@@ -54,7 +54,7 @@ class FirstBuildingScene(CutsceneBase):
         base.localAvatar.enable()
         base.localAvatar.disable()
         base.localAvatar.setAnimState('neutral')
-        base.showUi()
+        base.showUI()
         base.transitions.fadeIn(1.0)
 
     def enter(self):
