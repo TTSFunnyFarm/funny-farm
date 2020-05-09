@@ -165,7 +165,7 @@ class CogPage(ShtikerPage.ShtikerPage):
     def load(self):
         ShtikerPage.ShtikerPage.load(self)
         frameModel = loader.loadModel('phase_3.5/models/gui/suitpage_frame')
-        frameModel.setScale(0.0239, 1, 0.045)
+        frameModel.setScale(0.025, 1, 0.045)
         frameModel.setPos(0, 10, -0.575)
         self.guiTop = NodePath('guiTop')
         self.guiTop.reparentTo(self)
@@ -179,8 +179,8 @@ class CogPage(ShtikerPage.ShtikerPage):
         self.enlargedPanelNode.reparentTo(self.guiTop)
         frame = frameModel.find('**/frame')
         frame.wrtReparentTo(self.frameNode)
-        screws = frameModel.find('**/screws')
-        screws.wrtReparentTo(self.iconNode)
+        #screws = frameModel.find('**/screws')
+        #screws.wrtReparentTo(self.iconNode)
         icons = frameModel.find('**/icons')
         del frameModel
         self.title = DirectLabel(parent=self.iconNode, relief=None, text=TTLocalizer.SuitPageTitle, text_scale=0.1, text_pos=(0.04, 0), textMayChange=0, text_font=ToontownGlobals.getSuitFont())
@@ -317,8 +317,8 @@ class CogPage(ShtikerPage.ShtikerPage):
         gui = loader.loadModel('phase_3.5/models/gui/stickerbook_gui')
         iconGeom = gui.find('**/summons')
         detailButton = DirectButton(parent=panel, pos=(0.1, 0.0, -0.13), scale=0.1, relief=None, state=DGG.NORMAL, image=okButtonList, image_scale=13.0, geom=iconGeom, geom_scale=0.7, text=('',
-         'Details',
-         'Details',
+         '',
+         '',
          ''), text_scale=0.5, text_pos=(-1.1, -0.4), command=self.detailButtonPressed, extraArgs=[panel])
         panel.detailButton = detailButton
         return

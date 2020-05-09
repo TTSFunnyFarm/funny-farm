@@ -44,6 +44,7 @@ class DetailCogDialog(DirectFrame):
         z = self.head.getZ()
         self.head.setPos(-0.4, -0.1, z + 0.2)
         self.suitLabel = DirectLabel(parent=self, relief=None, text=self.suitFullName, text_font=ToontownGlobals.getSuitFont(), pos=(-0.4, 0, 0), scale=0.07)
+        self.cogsKilled = DirectLabel(parent=self, relief=None, text="No. of Standard Destroyed: 4", text_font=ToontownGlobals.getSuitFont(), pos=(0.1, 0, 0.1), scale=0.05)
         closeButtonImage = (gui.find('**/CloseBtn_UP'), gui.find('**/CloseBtn_DN'), gui.find('**/CloseBtn_Rllvr'))
         buttonImage = (guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR'))
         disabledColor = Vec4(0.5, 0.5, 0.5, 1)
