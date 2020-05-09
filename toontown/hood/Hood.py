@@ -6,11 +6,12 @@ from panda3d.core import *
 from toontown.building.SuitInterior import SuitInterior
 from toontown.hood import ZoneUtil
 from toontown.quest import Quests
-from toontown.toon import NPCToons
+from toontown.toon import NPCToons, Toon
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals
 from toontown.toontowngui import TTDialog
+import random
 
 
 class Hood(DirectObject):
@@ -108,6 +109,17 @@ class Hood(DirectObject):
         navMesh.enable_debug_drawing(camera)
         self.geom.reparentTo(navMeshMgr.get_reference_node_path())
         navMeshMgr.get_reference_node_path().reparent_to(render)
+        self.toon = Toon.Toon()
+        self.toon.setDNA(base.localAvatar.getStyle())
+        self.toon.useLOD(1000)
+        self.agent = navMeshMgr.create_crowd_agent("crowdAgent")
+        spawn = random.choice(FunnyFarmGlobals.SpawnPoints[self.zoneId])
+        self.agent.setPos(spawn[0])
+        self.agent.setHpr(spawn[1])
+        #agent = self.agent.node()
+        self.toon.reparentTo(self.agent)
+        navMesh.add_crowd_agent(self.agent)
+        navMeshMgr.start_default_update()
         gsg = base.win.getGsg()
         if gsg:
             self.geom.prepareScene(gsg)

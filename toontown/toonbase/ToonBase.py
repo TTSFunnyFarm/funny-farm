@@ -157,7 +157,6 @@ class ToonBase(OTPBase.OTPBase):
         nmMgr = RNNavMeshManager.get_global_ptr()
         nmMgr.set_root_node_path(render)
         nmMgr.get_reference_node_path().reparentTo(render)
-        nmMgr.start_default_update()
         nmMgr.get_reference_node_path_debug().reparentTo(render)
         self.navMeshMgr = nmMgr
         return
