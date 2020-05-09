@@ -118,6 +118,8 @@ class Hood(DirectObject):
         self.agent.setHpr(spawn[1])
         #agent = self.agent.node()
         self.toon.reparentTo(self.agent)
+        self.toon.setH(180)
+        self.toon.setZ(-0.025)
         navMesh.add_crowd_agent(self.agent)
         navMeshMgr.start_default_update()
         gsg = base.win.getGsg()
