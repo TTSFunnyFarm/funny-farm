@@ -6,7 +6,7 @@ from panda3d.core import *
 from toontown.building.SuitInterior import SuitInterior
 from toontown.hood import ZoneUtil
 from toontown.quest import Quests
-from toontown.toon import NPCToons, Toon
+from toontown.toon import NPCToons, RoamingToon
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals
@@ -35,6 +35,7 @@ class Hood(DirectObject):
         self.dialog = None
         self.actors = {}
         self.npcs = []
+        self.agents = []
         self.navMeshNp = None
 
     def enter(self, shop=None, tunnel=None, init=0):
@@ -98,9 +99,17 @@ class Hood(DirectObject):
             self.sky.flattenMedium()
         self.geom.reparentTo(render)
         self.geom.flattenMedium()
+        self.startNavMesh()
         self.generateNPCs()
         self.cleanupNavMesh()
         self.notify.warning('Creating navmesh...')
+        gsg = base.win.getGsg()
+        if gsg:
+            self.geom.prepareScene(gsg)
+
+        self.unloaded = False
+
+    def startNavMesh(self):
         navMeshMgr = base.navMeshMgr
         self.navMeshNp = navMeshMgr.create_nav_mesh()
         navMesh = self.navMeshNp.node()
@@ -109,24 +118,7 @@ class Hood(DirectObject):
         navMesh.enable_debug_drawing(camera)
         self.geom.reparentTo(navMeshMgr.get_reference_node_path())
         navMeshMgr.get_reference_node_path().reparent_to(render)
-        self.toon = Toon.Toon()
-        self.toon.setDNA(base.localAvatar.getStyle())
-        self.toon.useLOD(1000)
-        self.agent = navMeshMgr.create_crowd_agent("crowdAgent")
-        spawn = random.choice(FunnyFarmGlobals.SpawnPoints[self.zoneId])
-        self.agent.setPos(spawn[0])
-        self.agent.setHpr(spawn[1])
-        #agent = self.agent.node()
-        self.toon.reparentTo(self.agent)
-        self.toon.setH(180)
-        self.toon.setZ(-0.025)
-        navMesh.add_crowd_agent(self.agent)
         navMeshMgr.start_default_update()
-        gsg = base.win.getGsg()
-        if gsg:
-            self.geom.prepareScene(gsg)
-
-        self.unloaded = False
 
     def cleanupNavMesh(self):
         if self.navMeshNp:
@@ -185,6 +177,7 @@ class Hood(DirectObject):
 
     def generateNPCs(self):
         self.npcs = NPCToons.createNpcsInZone(self.zoneId)
+        self.agents.append(RoamingToon.RoamingToon(self.navMeshNp, self.zoneId))
         for i in range(len(self.npcs)):
             origin = self.geom.find('**/npc_origin_%d' % i)
             if not origin.isEmpty():
