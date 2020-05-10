@@ -1,9 +1,9 @@
 from toontown.toon import Toon, ToonDNA, RoamingToonFSM
+from toontown.toon import RoamingToonGlobals as RTG
 from toontown.toonbase import FunnyFarmGlobals
 import random
 class RoamingToon:
     def __init__(self, navMesh, zoneId):
-        print(navMesh)
         if not navMesh:
             return
         navMesh = navMesh.node()
@@ -20,7 +20,6 @@ class RoamingToon:
         #self.toon.setNameVisible(0)
         #self.toon.startBlink()
         #self.toon.startLookAround()
-        print("HI!")
         self.agent = base.navMeshMgr.create_crowd_agent(str(id(self.toon)))
         spawn = random.choice(FunnyFarmGlobals.SpawnPoints[self.zoneId])
         self.agent.setPos(spawn[0])
@@ -32,8 +31,8 @@ class RoamingToon:
         self.toon.loop('neutral')
         self.navMesh.add_crowd_agent(self.agent)
         ap = self.getAgent().get_params()
-        ap.set_maxAcceleration(4)
-        ap.set_maxSpeed(8)
+        ap.set_maxAcceleration(RTG.MAX_ACCELERATION)
+        ap.set_maxSpeed(RTG.MAX_SPEED)
         self.getAgent().set_params(ap)
         self.fsm = RoamingToonFSM.RoamingToonFSM(id(self.toon), self.toon)
         taskMgr.add(self.updateMe, "update-" + str(id(self.toon)))
@@ -44,13 +43,13 @@ class RoamingToon:
         vel = vel.lengthSquared()
         print(vel)
         state = self.fsm.state
-        if vel > 1.0:
+        if vel > RTG.RUN_THRESHOLD:
             if state != "Running":
                 self.fsm.request('Running')
-        elif vel > 0.0:
+        elif vel > RTG.WALK_THRESHOLD:
             if state != "Walking":
                 self.fsm.request('Walking')
-        elif vel == 0.0:
+        elif vel < RTG.WALK_THRESHOLD:
             if state == 'Running' or state == 'Walking':
                 self.fsm.request('StandingAround')
         return task.cont
