@@ -31,3 +31,9 @@ class RoamingToonFSM(FSM):
 
     def exitRunning(self):
         return
+
+    def enterWalking(self):
+        self.toon.loop('walk')
+
+    def exitWalking(self):
+        return

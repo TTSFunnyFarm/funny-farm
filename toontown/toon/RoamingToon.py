@@ -27,7 +27,7 @@ class RoamingToon:
         self.agent.setHpr(spawn[1])
         self.toon.reparentTo(self.agent)
         self.toon.setH(180)
-        self.toon.setZ(-0.15)
+        self.toon.setZ(-0.17)
         self.toon.initializeBodyCollisions('toon')
         self.toon.loop('neutral')
         self.navMesh.add_crowd_agent(self.agent)
@@ -44,11 +44,14 @@ class RoamingToon:
         vel = vel.lengthSquared()
         print(vel)
         state = self.fsm.state
-        if vel > 0.0:
+        if vel > 1.0:
             if state != "Running":
                 self.fsm.request('Running')
+        elif vel > 0.0:
+            if state != "Walking":
+                self.fsm.request('Walking')
         elif vel == 0.0:
-            if state == 'Running':
+            if state == 'Running' or state == 'Walking':
                 self.fsm.request('StandingAround')
         return task.cont
 
