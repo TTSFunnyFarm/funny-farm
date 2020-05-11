@@ -133,6 +133,7 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
             self.hoodsVisited = []
             self.teleportAccess = []
             self.CETimer = 0.0
+            self.unlimitedGags = False
             self.addActive()
 
     def generate(self):
@@ -1892,3 +1893,8 @@ def maxToon():
 def resetToon():
     av = base.localAvatar
     av.resetToon()
+
+@magicWord()
+def unlimitedGags():
+    av = base.localAvatar
+    av.unlimitedGags = not av.unlimitedGags
