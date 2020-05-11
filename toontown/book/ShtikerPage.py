@@ -11,6 +11,8 @@ class ShtikerPage(DirectFrame, StateData.StateData):
         StateData.StateData.__init__(self, 'shtiker-page-done')
         self.book = None
         self.hide()
+        if settings['antialiasing']:
+            self.setAntialias(AntialiasAttrib.MAuto)
         return
 
     def load(self):

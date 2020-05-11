@@ -165,8 +165,7 @@ class CogPage(ShtikerPage.ShtikerPage):
     def load(self):
         ShtikerPage.ShtikerPage.load(self)
         frameModel = loader.loadModel('phase_3.5/models/gui/suitpage_frame')
-        frameModel.setScale(0.025, 1, 0.045)
-        frameModel.setPos(0, 10, -0.575)
+        self.frame = DirectFrame(parent=self, relief=None, image_scale=(0.045, 1, 0.045), image_pos=(0, 10, 0.05), image=frameModel.find('**/frame'), text_fg=(1, 1, 1, 1), text_scale=0.1)
         self.guiTop = NodePath('guiTop')
         self.guiTop.reparentTo(self)
         self.frameNode = NodePath('frameNode')
@@ -177,10 +176,6 @@ class CogPage(ShtikerPage.ShtikerPage):
         self.iconNode.reparentTo(self.guiTop)
         self.enlargedPanelNode = NodePath('enlargedPanelNode')
         self.enlargedPanelNode.reparentTo(self.guiTop)
-        frame = frameModel.find('**/frame')
-        frame.wrtReparentTo(self.frameNode)
-        #screws = frameModel.find('**/screws')
-        #screws.wrtReparentTo(self.iconNode)
         icons = frameModel.find('**/icons')
         del frameModel
         self.title = DirectLabel(parent=self.iconNode, relief=None, text=TTLocalizer.SuitPageTitle, text_scale=0.1, text_pos=(0.04, 0), textMayChange=0, text_font=ToontownGlobals.getSuitFont())
@@ -233,6 +228,7 @@ class CogPage(ShtikerPage.ShtikerPage):
         self.legalRadarButton.destroy()
         self.moneyRadarButton.destroy()
         self.salesRadarButton.destroy()
+        self.frame.destroy()
         for panel in self.panels:
             panel.destroy()
 
@@ -264,11 +260,9 @@ class CogPage(ShtikerPage.ShtikerPage):
 
     def resetPanel(self, dept, type):
         panel = self.panels[dept * SuitDNA.suitsPerDept + type]
-        panel['text'] = TTLocalizer.SuitPageMystery
+        panel['text'] = "?"
         if panel.cogRadarLabel:
             panel.cogRadarLabel.hide()
-        if panel.statusLabel:
-            panel.statusLabel.hide()
         if panel.head:
             panel.head.hide()
         if panel.shadow:
@@ -283,16 +277,15 @@ class CogPage(ShtikerPage.ShtikerPage):
 
     def setPanelStatus(self, panel, status):
         index = self.panels.index(panel)
+        if status != COG_UNSEEN:
+            panel['text_pos']=(0, 0.185, 0)
+            panel['text_scale']=0.045
         if status == COG_UNSEEN:
-            panel['text'] = TTLocalizer.SuitPageMystery
+            panel['text'] = "?"
         elif status == COG_BATTLED:
             suitName = SuitDNA.suitHeadTypes[index]
             suitFullName = SuitBattleGlobals.SuitAttributes[suitName]['name']
             panel['text'] = suitFullName
-            if panel.statusLabel:
-                panel.statusLabel.show()
-            else:
-                self.addStatusLabel(panel)
             if panel.head and panel.shadow:
                 panel.head.show()
                 panel.shadow.show()
@@ -305,7 +298,6 @@ class CogPage(ShtikerPage.ShtikerPage):
                 self.addDetailButton(panel)
         elif status == COG_DEFEATED:
             count = str(base.localAvatar.cogCounts[index])
-            panel.statusLabel['text'] = '%s destroyed' % (count)
         elif status == COG_COMPLETE1:
             panel['image_color'] = PANEL_COLORS_COMPLETE1[index / SuitDNA.suitsPerDept]
         elif status == COG_COMPLETE2:
@@ -360,17 +352,6 @@ class CogPage(ShtikerPage.ShtikerPage):
         #self.updateCogRadarButtons(base.localAvatar.cogRadar)
         #self.updateBuildingRadarButtons(base.localAvatar.buildingRadar)
 
-    def addStatusLabel(self, panel):
-        index = self.panels.index(panel)
-        count = str(base.localAvatar.cogCounts[index])
-        if base.localAvatar.getCogStatus()[index] < COG_COMPLETE1:
-            quota = str(COG_QUOTAS[0][index % SuitDNA.suitsPerDept])
-        else:
-            quota = str(COG_QUOTAS[1][index % SuitDNA.suitsPerDept])
-        statusLabel = DirectLabel(parent=panel, pos=(0.0, 0.0, -0.215), relief=None, state=DGG.DISABLED, text="SPOTTED!", text_scale=0.045, text_fg=(0, 0, 0, 1), text_font=ToontownGlobals.getSuitFont())
-        panel.statusLabel = statusLabel
-        return
-
     def addSuitHead(self, panel, suitName):
         panelIndex = self.panels.index(panel)
         shadow = panel.attachNewNode('shadow')
@@ -397,10 +378,9 @@ class CogPage(ShtikerPage.ShtikerPage):
             row = []
             color = PANEL_COLORS[dept]
             for type in range(0, SuitDNA.suitsPerDept):
-                panel = DirectLabel(parent=self.panelNode, pos=(xStart + type * xOffset, 0.0, yStart - dept * yOffset), relief=None, state=DGG.NORMAL, image=self.panelModel, image_scale=(1, 1, 1), image_color=color, text=TTLocalizer.SuitPageMystery, text_scale=0.045, text_fg=(0, 0, 0, 1), text_pos=(0, 0.185, 0), text_font=ToontownGlobals.getSuitFont(), text_wordwrap=7)
+                panel = DirectLabel(parent=self.panelNode, pos=(xStart + type * xOffset, 0.0, yStart - dept * yOffset), relief=None, state=DGG.NORMAL, image=self.panelModel, image_scale=(1, 1, 1), image_color=color, text="?", text_scale=0.25, text_fg=(0, 0, 0, 1), text_pos=(0, 0, -1), text_font=ToontownGlobals.getSuitFont(), text_wordwrap=7)
                 panel.scale = 0.6
                 panel.setScale(panel.scale)
-                panel.statusLabel = None
                 panel.head = None
                 panel.shadow = None
                 panel.count = 0
