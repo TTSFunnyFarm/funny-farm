@@ -308,7 +308,7 @@ class CogPage(ShtikerPage.ShtikerPage):
         okButtonList = (buttons.find('**/ChtBx_OKBtn_UP'), buttons.find('**/ChtBx_OKBtn_DN'), buttons.find('**/ChtBx_OKBtn_Rllvr'))
         gui = loader.loadModel('phase_3.5/models/gui/stickerbook_gui')
         iconGeom = gui.find('**/summons')
-        detailButton = DirectButton(parent=panel, pos=(0.1, 0.0, -0.13), scale=0.1, relief=None, state=DGG.NORMAL, image=okButtonList, image_scale=13.0, geom=iconGeom, geom_scale=0.7, text=('',
+        detailButton = DirectButton(parent=panel, pos=(0.1, 0.0, -0.17), scale=0.1, relief=None, state=DGG.NORMAL, image=okButtonList, image_scale=13.0, geom=iconGeom, geom_scale=0.7, text=('',
          '',
          '',
          ''), text_scale=0.5, text_pos=(-1.1, -0.4), command=self.detailButtonPressed, extraArgs=[panel])
