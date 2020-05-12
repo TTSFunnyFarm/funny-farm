@@ -35,6 +35,7 @@ def __toonUp(powerUp):
     level = powerUp['level']
     hp = powerUp['target']['hp']
     sfx = base.loader.loadSfx('phase_4/audio/sfx/MG_pairing_all_matched.ogg')
+    sfx2 = base.loader.loadSfx('phase_5/audio/sfx/AA_squirt_glasswater.ogg')
     tracks = Sequence()
     spitTracks = Parallel()
     spitAct = ActorInterval(toon, 'spit', startFrame=0, endFrame=67)
@@ -48,12 +49,15 @@ def __toonUp(powerUp):
      Func(hand_jointpath1.removeNode),
      Func(hand_jointpath0.removeNode),
      Func(MovieUtil.removeProp, glass))
+    soundTrack = Sequence(Wait(1),
+     SoundInterval(sfx2, node=toon, duration=0.8, volume=1.0))
     toonUpTrack = Sequence(ActorInterval(toon, 'jump', loop=0, startTime=0.2),
      Func(toon.setHealth, toon.hp + hp, toon.maxHp, showText=1),
      Func(sfx.play),
      Wait(toon.getDuration('jump')))
     spitTracks.append(glassTrack)
     spitTracks.append(spitAct)
+    spitTracks.append(soundTrack)
     tracks.append(spitTracks)
     tracks.append(toonUpTrack)
     return tracks
