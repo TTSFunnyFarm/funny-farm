@@ -1895,6 +1895,6 @@ def resetToon():
     av.resetToon()
 
 @magicWord()
-def unlimitedGags():
+def unlimited():
     av = base.localAvatar
     av.unlimitedGags = not av.unlimitedGags
