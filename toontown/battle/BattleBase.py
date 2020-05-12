@@ -63,7 +63,6 @@ CLIENT_INPUT_TIMEOUT = config.GetFloat('battle-input-timeout', TTLocalizer.BBbat
 def levelAffectsGroup(track, level):
     return attackAffectsGroup(track, level)
 
-
 def attackAffectsGroup(track, level, type = None):
     if track == NPCSOS or type == NPCSOS or track == PETSOS or type == PETSOS:
         return 1
@@ -71,7 +70,6 @@ def attackAffectsGroup(track, level, type = None):
         return AvPropTargetCat[AvPropTarget[track]][level]
     else:
         return 0
-
 
 def getToonAttack(id, track = NO_ATTACK, level = -1, target = -1):
     return [id,
@@ -84,7 +82,6 @@ def getToonAttack(id, track = NO_ATTACK, level = -1, target = -1):
      [],
      0,
      0]
-
 
 def getDefaultSuitAttacks():
     suitAttacks = [[NO_ID,
@@ -121,7 +118,6 @@ def getDefaultSuitAttacks():
       0]]
     return suitAttacks
 
-
 def getDefaultSuitAttack():
     return [NO_ID,
      NO_ATTACK,
@@ -130,7 +126,6 @@ def getDefaultSuitAttack():
      0,
      0,
      0]
-
 
 def findToonAttack(toons, attacks, track):
     foundAttacks = []
