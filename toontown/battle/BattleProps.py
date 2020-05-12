@@ -211,6 +211,7 @@ Props = ((5, 'partyBall', 'partyBall'),
   'splashdown',
   'SZ_splashdown-mod',
   'SZ_splashdown-chan'),
+ (14, 'soda_can', 'soda_can'),
  )
 CreampieColor = VBase4(250.0 / 255.0, 241.0 / 255.0, 24.0 / 255.0, 1.0)
 FruitpieColor = VBase4(55.0 / 255.0, 40.0 / 255.0, 148.0 / 255.0, 1.0)
@@ -249,7 +250,8 @@ Variants = ('tart',
  'glass-tu',
  'glass-dmg',
  'glass-def',
- 'glass-acc')
+ 'glass-acc',
+ 'soda_can')
 
 class PropPool:
     notify = DirectNotifyGlobal.directNotify.newCategory('PropPool')
@@ -314,6 +316,7 @@ class PropPool:
         propName = 'trolley'
         self.propStrings[propName] = ('phase_4/models/modules/trolley_station_TT',)
         self.propTypes[propName] = 'model'
+        print(self.propStrings)
 
     def getPath(self, phase, model):
         return 'phase_%s/models/props/%s' % (phase, model)
@@ -404,6 +407,9 @@ class PropPool:
             self.props[name].find('**/scale_joint_water/+GeomNode').setColor(0, 0, 1, 1)
         elif name == 'glass-acc':
             self.props[name].find('**/scale_joint_water/+GeomNode').setColor(1, 0.35, 0, 1)
+        elif name == 'soda_can':
+            self.props[name].setScale(0.35)
+        print(name)
 
     def unloadProps(self):
         for p in self.props.values():
