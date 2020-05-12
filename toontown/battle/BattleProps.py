@@ -316,7 +316,6 @@ class PropPool:
         propName = 'trolley'
         self.propStrings[propName] = ('phase_4/models/modules/trolley_station_TT',)
         self.propTypes[propName] = 'model'
-        print(self.propStrings)
 
     def getPath(self, phase, model):
         return 'phase_%s/models/props/%s' % (phase, model)
@@ -409,7 +408,6 @@ class PropPool:
             self.props[name].find('**/scale_joint_water/+GeomNode').setColor(1, 0.35, 0, 1)
         elif name == 'soda_can':
             self.props[name].setScale(0.35)
-        print(name)
 
     def unloadProps(self):
         for p in self.props.values():
