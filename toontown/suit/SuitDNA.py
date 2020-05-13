@@ -124,6 +124,9 @@ def getSuitDept(name):
         return None
     return None
 
+def getSuitTier(name):
+    idx = suitHeadTypes.index(name)
+    return (idx % suitsPerDept) + 1
 
 def getDeptFullname(dept):
     return suitDeptFullnames[dept]

@@ -97,7 +97,7 @@ class Street(ToonHood):
         self.battleCell.reparentTo(self.geom)
         self.battleCell.setPos(pos[0])
         self.battleCell.setH(pos[1])
-        self.battle = Battle(self.townBattle, toons=[base.localAvatar], suits=[suit])
+        self.battle = Battle(self.townBattle, toons=[base.localAvatar], cogs=[suit])
         self.battle.reparentTo(self.battleCell)
         self.battle.enter()
         musicMgr.stopMusic()

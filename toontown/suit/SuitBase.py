@@ -60,6 +60,16 @@ class SuitBase:
     def getSkelecog(self):
         return self.isSkelecog
 
+    def getElite(self):
+        return self.isElite
+
+    def getWeight(self):
+        weight = 0
+        weight += self.getLevel()
+        weight += SuitDNA.getSuitTier(self.getStyleName())
+        weight += self.getElite() * 5
+        return
+
     def setSkelecog(self, flag):
         self.isSkelecog = flag
 
