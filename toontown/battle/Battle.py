@@ -49,10 +49,19 @@ class Battle(DirectObject, NodePath, BattleBase):
         self.notify.info("Entering battle.")
         self.fsm.demand('FaceOff')
 
+    def update(self):
+        self.topCog = self.__determineTopCog()
+
+    def cogRequestJoin(self, cog):
+        return self.cogCanJoin(cog)
+
+    def cogCanJoin(self, cog):
+        return False
+
     def getCogs(self):
         return self.cogs
 
-    def _determineTopCog(self):
+    def __determineTopCog(self):
         cogs = self.getCogs()
         cogWeights = []
         for cog in cogs:

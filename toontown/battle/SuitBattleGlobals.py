@@ -3055,6 +3055,10 @@ WATERCOOLER = list(SuitAttacks).index('Watercooler')
 WITHDRAWAL = list(SuitAttacks).index('Withdrawal')
 WRITE_OFF = list(SuitAttacks).index('WriteOff')
 
+SuitFaceoffAnims = {'a': ['effort', 'speak', 'magic1', 'magic2', 'finger-wag'],
+ 'b': ['stomp', 'effort', 'magic1', 'magic2', 'magic3'],
+ 'c': ['effort', 'magic1', 'magic2']}
+
 def getFaceoffTaunt(suitName, doId, randomChoice = False):
     if suitName in SuitFaceoffTaunts:
         taunts = SuitFaceoffTaunts[suitName]

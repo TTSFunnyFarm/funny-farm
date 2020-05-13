@@ -175,7 +175,7 @@ class SuitPlanner(DirectObject):
             if dist <= 12:
                 ai = base.air.suitPlanners[self.zoneId]
                 battle = base.cr.playGame.street.battle
-                if battle.suitRequestJoin(suit):
+                if battle.cogRequestJoin(suit):
                     # Yay, the suit can join!
                     suit.exitWalk()
                     self.removeActiveSuit(doId)

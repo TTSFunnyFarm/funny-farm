@@ -18,14 +18,19 @@ cSize = 4.14
 
 SuitDialogArray = []
 SkelSuitDialogArray = []
-AllSuits = (('walk', 'walk'), ('run', 'walk'), ('neutral', 'neutral'))
-AllSuitsMinigame = (('victory', 'victory'),
+
+AllCogsAnims = [('walk', 'walk'),
+ ('run', 'walk'),
+ ('neutral', 'neutral'),
+ ('victory', 'victory'),
  ('flail', 'flailing'),
  ('tug-o-war', 'tug-o-war'),
  ('slip-backward', 'slip-backward'),
- ('slip-forward', 'slip-forward'))
-AllSuitsTutorialBattle = (('lose', 'lose'), ('pie-small-react', 'pie-small'), ('squirt-small-react', 'squirt-small'))
-AllSuitsBattle = (('drop-react', 'anvil-drop'),
+ ('slip-forward', 'slip-forward'),
+ ('lose', 'lose'),
+ ('pie-small-react', 'pie-small'),
+ ('squirt-small-react', 'squirt-small'),
+ ('drop-react', 'anvil-drop'),
  ('flatten', 'drop'),
  ('sidestep-left', 'sidestep-left'),
  ('sidestep-right', 'sidestep-right'),
@@ -35,137 +40,38 @@ AllSuitsBattle = (('drop-react', 'anvil-drop'),
  ('rake-react', 'rake'),
  ('hypnotized', 'hypnotize'),
  ('lured', 'lured'),
- ('soak', 'soak'))
-SuitsCEOBattle = (('sit', 'sit'),
- ('sit-eat-in', 'sit-eat-in'),
- ('sit-eat-loop', 'sit-eat-loop'),
- ('sit-eat-out', 'sit-eat-out'),
- ('sit-angry', 'sit-angry'),
- ('sit-hungry-left', 'leftsit-hungry'),
- ('sit-hungry-right', 'rightsit-hungry'),
- ('sit-lose', 'sit-lose'),
- ('tray-walk', 'tray-walk'),
- ('tray-neutral', 'tray-neutral'),
- ('sit-lose', 'sit-lose'))
-f = (('throw-paper', 'throw-paper', 3.5), ('phone', 'phone', 3.5), ('shredder', 'shredder', 3.5))
-p = (('pencil-sharpener', 'pencil-sharpener', 5),
- ('pen-squirt', 'pen-squirt', 5),
- ('hold-eraser', 'hold-eraser', 5),
- ('finger-wag', 'finger-wag', 5),
- ('hold-pencil', 'hold-pencil', 5))
-ym = (('throw-paper', 'throw-paper', 5),
- ('golf-club-swing', 'golf-club-swing', 5),
- ('magic3', 'magic3', 5),
- ('rubber-stamp', 'rubber-stamp', 5),
- ('smile', 'smile', 5))
-mm = (('speak', 'speak', 5),
- ('effort', 'effort', 5),
- ('magic1', 'magic1', 5),
- ('pen-squirt', 'fountain-pen', 5),
- ('finger-wag', 'finger-wag', 5))
-ds = (('magic1', 'magic1', 5),
- ('magic2', 'magic2', 5),
- ('throw-paper', 'throw-paper', 5),
- ('magic3', 'magic3', 5))
-hh = (('pen-squirt', 'fountain-pen', 7),
- ('glower', 'glower', 5),
- ('throw-paper', 'throw-paper', 5),
- ('magic1', 'magic1', 5),
- ('roll-o-dex', 'roll-o-dex', 5))
-cr = (('pickpocket', 'pickpocket', 5), ('throw-paper', 'throw-paper', 3.5), ('glower', 'glower', 5))
-tbc = (('cigar-smoke', 'cigar-smoke', 8),
- ('glower', 'glower', 5),
+ ('soak', 'soak'),
+ ('throw-paper', 'throw-paper'),
+ ('magic1', 'magic1'),
+ ('magic2', 'magic2'),
+ ('soak', 'soak'),
+ ('speak', 'speak')]
+
+CogAnimsDict = {'a': [('cigar-smoke', 'cigar-smoke', 8),
  ('song-and-dance', 'song-and-dance', 8),
- ('golf-club-swing', 'golf-club-swing', 5),
- ('finger-wag', 'fingerwag', 5))
-cc = (('speak', 'speak', 5),
- ('glower', 'glower', 5),
- ('phone', 'phone', 3.5),
- ('finger-wag', 'finger-wag', 5))
-tm = (('speak', 'speak', 5),
- ('throw-paper', 'throw-paper', 5),
- ('pickpocket', 'pickpocket', 5),
- ('roll-o-dex', 'roll-o-dex', 5),
- ('finger-wag', 'finger-wag', 5))
-nd = (('pickpocket', 'pickpocket', 5),
- ('roll-o-dex', 'roll-o-dex', 5),
- ('magic3', 'magic3', 5),
- ('smile', 'smile', 5))
-gh = (('speak', 'speak', 5), ('pen-squirt', 'fountain-pen', 5), ('rubber-stamp', 'rubber-stamp', 5))
-ms = (('effort', 'effort', 5),
- ('throw-paper', 'throw-paper', 5),
- ('stomp', 'stomp', 5),
- ('quick-jump', 'jump', 6))
-tf = (('phone', 'phone', 5),
- ('smile', 'smile', 5),
+ ('pen-squirt', 'fountain-pen', 5),
+ ('effort', 'effort', 5),
  ('throw-object', 'throw-object', 5),
- ('glower', 'glower', 5))
-m = (('speak', 'speak', 5),
- ('magic2', 'magic2', 5),
- ('magic1', 'magic1', 5),
- ('golf-club-swing', 'golf-club-swing', 5))
-mh = (('magic1', 'magic1', 5),
  ('smile', 'smile', 5),
- ('golf-club-swing', 'golf-club-swing', 5),
- ('song-and-dance', 'song-and-dance', 5))
-sc = (('throw-paper', 'throw-paper', 3.5), ('watercooler', 'watercooler', 5), ('pickpocket', 'pickpocket', 5))
-pp = (('throw-paper', 'throw-paper', 5), ('glower', 'glower', 5), ('finger-wag', 'fingerwag', 5))
-tw = (('throw-paper', 'throw-paper', 3.5),
- ('glower', 'glower', 5),
- ('magic2', 'magic2', 5),
- ('finger-wag', 'finger-wag', 5))
-bc = (('phone', 'phone', 5), ('hold-pencil', 'hold-pencil', 5))
-nc = (('phone', 'phone', 5), ('throw-object', 'throw-object', 5))
-mb = (('magic1', 'magic1', 5), ('throw-paper', 'throw-paper', 3.5))
-ls = (('throw-paper', 'throw-paper', 5), ('throw-object', 'throw-object', 5), ('hold-pencil', 'hold-pencil', 5))
-rb = (('glower', 'glower', 5), ('magic1', 'magic1', 5), ('golf-club-swing', 'golf-club-swing', 5))
-bf = (('pickpocket', 'pickpocket', 5),
  ('rubber-stamp', 'rubber-stamp', 5),
- ('shredder', 'shredder', 3.5),
- ('watercooler', 'watercooler', 5))
-b = (('effort', 'effort', 5),
- ('throw-paper', 'throw-paper', 5),
- ('throw-object', 'throw-object', 5),
- ('magic1', 'magic1', 5))
-dt = (('rubber-stamp', 'rubber-stamp', 5),
- ('throw-paper', 'throw-paper', 5),
- ('speak', 'speak', 5),
- ('finger-wag', 'fingerwag', 5),
- ('throw-paper', 'throw-paper', 5))
-ac = (('throw-object', 'throw-object', 5),
  ('roll-o-dex', 'roll-o-dex', 5),
- ('stomp', 'stomp', 5),
+ ('pickpocket', 'pickpocket', 5),
  ('phone', 'phone', 5),
- ('throw-paper', 'throw-paper', 5))
-bs = (('magic1', 'magic1', 5), ('throw-paper', 'throw-paper', 5), ('finger-wag', 'fingerwag', 5))
-sd = (('magic2', 'magic2', 5),
- ('quick-jump', 'jump', 6),
- ('stomp', 'stomp', 5),
  ('magic3', 'magic3', 5),
- ('hold-pencil', 'hold-pencil', 5),
- ('throw-paper', 'throw-paper', 5))
-le = (('speak', 'speak', 5),
- ('throw-object', 'throw-object', 5),
- ('glower', 'glower', 5),
- ('throw-paper', 'throw-paper', 5))
-bw = (('finger-wag', 'fingerwag', 5),
- ('cigar-smoke', 'cigar-smoke', 8),
- ('gavel', 'gavel', 8),
+ ('magic2', 'magic2', 5),
  ('magic1', 'magic1', 5),
- ('throw-object', 'throw-object', 5),
- ('throw-paper', 'throw-paper', 5))
+ ('golf-club-swing', 'golf-club-swing', 5),
+ ('glower', 'glower', 5),
+ ('finger-wag', 'finger-wag', 5)],
+ 'b': [('quick-jump', 'jump', 5),
+ ('')],
+ 'c': ()}
 if not config.GetBool('want-new-cogs', 0):
     ModelDict = {'a': ('/models/char/suitA-', 4),
      'b': ('/models/char/suitB-', 4),
      'c': ('/models/char/suitC-', 3.5)}
-    TutorialModelDict = {'a': ('/models/char/suitA-', 4),
-     'b': ('/models/char/suitB-', 4),
-     'c': ('/models/char/suitC-', 3.5)}
 else:
     ModelDict = {'a': ('/models/char/tt_a_ene_cga_', 4),
-     'b': ('/models/char/tt_a_ene_cgb_', 4),
-     'c': ('/models/char/tt_a_ene_cgc_', 3.5)}
-    TutorialModelDict = {'a': ('/models/char/tt_a_ene_cga_', 4),
      'b': ('/models/char/tt_a_ene_cgb_', 4),
      'c': ('/models/char/tt_a_ene_cgc_', 3.5)}
 HeadModelDict = {'a': ('/models/char/suitA-', 4),
@@ -173,7 +79,7 @@ HeadModelDict = {'a': ('/models/char/suitA-', 4),
  'c': ('/models/char/suitC-', 3.5)}
 
 def loadTutorialSuit():
-    loader.loadModelNode('phase_3.5/models/char/suitC-mod')
+    loader.loadModel('phase_3.5/models/char/suitC-mod')
     loadDialog(1)
 
 
@@ -190,6 +96,8 @@ def unloadSuits(level):
 def loadSuitModelsAndAnims(level, flag = 0):
     for key in ModelDict.keys():
         model, phase = ModelDict[key]
+        if not model or not phase:
+            return
         if config.GetBool('want-new-cogs', 0):
             headModel, headPhase = HeadModelDict[key]
         else:
@@ -197,16 +105,14 @@ def loadSuitModelsAndAnims(level, flag = 0):
         if flag:
             if config.GetBool('want-new-cogs', 0):
                 filepath = 'phase_3.5' + model + 'zero'
-                if cogExists(model + 'zero'):
-                    loader.loadModelNode(filepath)
+                loader.loadModel(filepath)
             else:
-                loader.loadModelNode('phase_3.5' + model + 'mod')
-            loader.loadModelNode('phase_' + str(headPhase) + headModel + 'heads')
+                loader.loadModel('phase_3.5' + model + 'mod')
+            loader.loadModel('phase_' + str(headPhase) + headModel + 'heads')
         else:
             if config.GetBool('want-new-cogs', 0):
                 filepath = 'phase_3.5' + model + 'zero'
-                if cogExists(model + 'zero'):
-                    loader.unloadModel(filepath)
+                loader.unloadModel(filepath)
             else:
                 loader.unloadModel('phase_3.5' + model + 'mod')
             loader.unloadModel('phase_' + str(headPhase) + headModel + 'heads')
@@ -218,28 +124,16 @@ def cogExists(filePrefix):
     filePrefix = filePrefix.strip('/')
     pfile = Filename(filePrefix)
     found = vfs.resolveFilename(pfile, searchPath)
-    if not found:
-        return False
-    return True
+    return found
 
 
 def loadSuitAnims(suit, flag = 1):
-    if suit in SuitDNA.suitHeadTypes:
-        try:
-            animList = globals()[suit]
-        except KeyError:
-            print('still keyError, gg')
-            animList = ()
-
-    else:
-        print('Invalid suit name: ', suit)
-        return -1
     for anim in animList:
         phase = 'phase_' + str(anim[2])
         filePrefix = ModelDict[bodyType][0]
         animName = filePrefix + anim[1]
         if flag:
-            loader.loadModelNode(animName)
+            loader.loadModel(animName)
         else:
             loader.unloadModel(animName)
 
@@ -640,16 +534,6 @@ class Suit(Avatar.Avatar):
         for anim in AllSuits:
             animDict[anim[0]] = 'phase_' + str(bodyPhase) + filePrefix + anim[1]
 
-        for anim in AllSuitsMinigame:
-            animDict[anim[0]] = 'phase_4' + filePrefix + anim[1]
-
-        for anim in AllSuitsTutorialBattle:
-            filePrefix, bodyPhase = TutorialModelDict[self.style.body]
-            animDict[anim[0]] = 'phase_' + str(bodyPhase) + filePrefix + anim[1]
-
-        for anim in AllSuitsBattle:
-            animDict[anim[0]] = 'phase_5' + filePrefix + anim[1]
-
         if not config.GetBool('want-new-cogs', 0):
             if self.style.body == 'a':
                 animDict['neutral'] = 'phase_4/models/char/suitA-neutral'
@@ -688,7 +572,7 @@ class Suit(Avatar.Avatar):
         dept = self.style.dept
         phase = 3.5
 
-        def __doItTheOldWay__():
+        def __doItTheOldWay():
             torsoTex = loader.loadTexture('phase_%s/maps/%s_blazer.jpg' % (phase, dept))
             torsoTex.setMinfilter(Texture.FTLinearMipmapLinear)
             torsoTex.setMagfilter(Texture.FTLinear)
@@ -717,7 +601,7 @@ class Suit(Avatar.Avatar):
             elif dept == 's':
                 texType = 'sellbot'
             if self.find('**/body').isEmpty():
-                __doItTheOldWay__()
+                __doItTheOldWay()
             else:
                 filepath = 'phase_3.5/maps/tt_t_ene_' + texType + '.jpg'
                 if cogExists('/maps/tt_t_ene_' + texType + '.jpg'):
@@ -728,7 +612,7 @@ class Suit(Avatar.Avatar):
                 self.shadowJoint = self.find('**/def_shadow')
                 self.nametagJoint = self.find('**/def_nameTag')
         else:
-            __doItTheOldWay__()
+            __doItTheOldWay()
 
     def makeWaiter(self, modelRoot = None):
         if not modelRoot:
@@ -925,7 +809,7 @@ class Suit(Avatar.Avatar):
         if self.healthBar:
             self.healthBar.removeNode()
             self.healthBar = None
-        if self.healthCondition == 4 or self.healthCondition == 5:
+        if self.healthCondition > 3:
             taskMgr.remove(self.uniqueName('blink-task'))
         self.healthCondition = 0
         return

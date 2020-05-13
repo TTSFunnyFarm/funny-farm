@@ -349,6 +349,7 @@ class BattleSuit(Suit, SuitBase):
         self.wrtReparentTo(render)
         self.showNametag3d()
         self.showNametag2d()
+        print('help?')
         self.loop('neutral', 0)
 
     def enterFromSky(self, posA, posB):
@@ -393,6 +394,7 @@ class BattleSuit(Suit, SuitBase):
         self.detachPropeller()
 
     def enterBattle(self):
+        print('yes!!')
         self.loop('neutral', 0)
         self.disableBattleDetect()
         self.corpMedallion.hide()
@@ -407,6 +409,7 @@ class BattleSuit(Suit, SuitBase):
         self.interactivePropTrackBonus = -1
 
     def enterWaitForBattle(self):
+        print("FUCK")
         self.loop('neutral', 0)
 
     def exitWaitForBattle(self):
