@@ -80,7 +80,6 @@ class BattleSuitAI(SuitBase):
         messenger.send('updatePos-%d' % self.doId, [prevPoint[-1], self.point[-1]])
         taskMgr.remove(self.uniqueName('move'))
         delay = self.getLegTime(prevPoint[-1], self.point[-1])
-        print(delay)
         taskMgr.doMethodLater(delay, self.nextPoint, self.uniqueName('move'))
         return task.done
 

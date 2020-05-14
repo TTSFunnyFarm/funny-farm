@@ -300,13 +300,15 @@ class Suit(Avatar.Avatar):
         self.scale = scale / look[0]
         self.handColor = look[1]
         self.generateBody()
-        if len(look) > 4:
-            self.headTexture = look[4]
-        if len(look) > 5:
-            self.headColor = look[5]
+        i = 0
         for head in look[2]:
+            if len(look) > 4:
+                if look[4]:
+                    self.headTexture = look[4][i]
+            if len(look) > 5:
+                self.headColor = look[5][i]
             self.generateHead(head)
-            self.headTexture = None
+            i += 1
         self.setHeight(look[3])
         self.setName(SuitBattleGlobals.SuitAttributes[dna.name]['name'])
         self.getGeomNode().setScale(self.scale)
