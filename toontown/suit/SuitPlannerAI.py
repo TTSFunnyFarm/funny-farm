@@ -212,7 +212,6 @@ class SuitPlannerAI(DirectObject):
         newSuit.setZoneId(self.zoneId)
         level, type, track = self.pickLevelTypeAndTrack()
         newSuit.setupSuitDNA(type, track)
-        print(level)
         newSuit.setLevel(level)
         newSuit.generate()
         self.activeSuits[newSuit.doId] = newSuit
@@ -257,7 +256,6 @@ class SuitPlannerAI(DirectObject):
 
     def pickLevelTypeAndTrack(self):
         actualLevel = random.randint(*self.SuitHoodInfo[self.zoneId][self.SUIT_HOOD_INFO_LVL]) - 1
-        print(actualLevel)
         minType = max(actualLevel - 4, 1)
         maxType = min(actualLevel, self.MAX_SUIT_TYPES) + 1
         type = random.randint(minType, maxType)

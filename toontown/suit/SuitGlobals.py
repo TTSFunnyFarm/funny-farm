@@ -12,7 +12,8 @@ suitDepts = ['c',
  'l',
  'm',
  's']
- 
+
+UNDEFINED = -1
 GOON = 0
 SUIT = 1
 BOSS = 2

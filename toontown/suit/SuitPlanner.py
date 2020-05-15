@@ -38,7 +38,6 @@ class SuitPlanner(DirectObject):
         newSuit.setDoId(doId)
         self.activeSuits[newSuit.doId] = newSuit
         newSuit.setDNA(requestStatus['dna'])
-        print("REQUEST", requestStatus)
         newSuit.setLevel(requestStatus['level'])
         newSuit.setElite(requestStatus['elite'])
         newSuit.initializeBodyCollisions('suit')

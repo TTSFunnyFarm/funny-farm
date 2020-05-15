@@ -175,30 +175,32 @@ class SuitDNA(AvatarDNA.AvatarDNA):
         if str != None:
             self.makeFromNetString(str)
         elif type != None:
-            if type == 's':
+            if type == SUIT:
                 self.newSuit()
         else:
-            self.type = 'u'
+            self.type = UNDEFINED
         return
 
     def __str__(self):
-        if self.type == 's':
+        if self.type == SUIT:
             return 'type = %s\nbody = %s, dept = %s, name = %s' % ('suit',
              self.body,
              self.dept,
              self.name)
-        elif self.type == 'b':
+        elif self.type == BOSS:
             return 'type = boss cog\ndept = %s' % self.dept
+        elif self.type == GOON:
+            return 'goon'
         else:
             return 'type undefined'
 
     def makeNetString(self):
         dg = PyDatagram()
-        dg.addFixedString(self.type, 1)
-        if self.type == 's':
+        dg.addInt8(self.type)
+        if self.type == SUIT:
             dg.addFixedString(self.name, 3)
             dg.addFixedString(self.dept, 1)
-        elif self.type == 'b':
+        elif self.type == BOSS:
             dg.addFixedString(self.dept, 1)
         elif self.type == 'u':
             notify.error('undefined avatar')
@@ -209,23 +211,23 @@ class SuitDNA(AvatarDNA.AvatarDNA):
     def makeFromNetString(self, string):
         dg = PyDatagram(string)
         dgi = PyDatagramIterator(dg)
-        self.type = dgi.getFixedString(1)
-        if self.type == 's':
+        self.type = dgi.getInt8()
+        if self.type == SUIT:
             self.name = dgi.getFixedString(3)
             self.dept = dgi.getFixedString(1)
             self.body = getSuitBodyType(self.name)
-        elif self.type == 'b':
+        elif self.type == BOSS:
             self.dept = dgi.getFixedString(1)
         else:
             notify.error('unknown avatar type: ', self.type)
         return None
 
     def __defaultGoon(self):
-        self.type = 'g'
+        self.type = GOON
         self.name = goonTypes[0]
 
     def __defaultSuit(self):
-        self.type = 's'
+        self.type = SUIT
         self.name = 'ds'
         self.dept = getSuitDept(self.name)
         self.body = getSuitBodyType(self.name)
@@ -234,21 +236,19 @@ class SuitDNA(AvatarDNA.AvatarDNA):
         if name == None:
             self.__defaultSuit()
         else:
-            self.type = 's'
+            self.type = SUIT
             self.name = name
             self.dept = getSuitDept(self.name)
             self.body = getSuitBodyType(self.name)
         return
 
     def newBossCog(self, dept):
-        self.type = 'b'
+        self.type = BOSS
         self.dept = dept
 
     def newSuitRandom(self, type = None, dept = None):
-        print(type)
-        self.type = 's'
+        self.type = SUIT
         if type == None:
-            print("UNGA")
             type = random.randint(1, suitsPerDept) - 1
         if dept == None:
             dept = random.choice(suitDepts)
@@ -261,7 +261,7 @@ class SuitDNA(AvatarDNA.AvatarDNA):
         if type == None:
             self.__defaultGoon()
         else:
-            self.type = 'g'
+            self.type = GOON
             if name in goonTypes:
                 self.name = name
             else:
@@ -269,9 +269,9 @@ class SuitDNA(AvatarDNA.AvatarDNA):
         return
 
     def getType(self):
-        if self.type == 's':
+        if self.type == SUIT:
             type = 'suit'
-        elif self.type == 'b':
+        elif self.type == BOSS:
             type = 'boss'
         else:
             notify.error('Invalid DNA type: ', self.type)
