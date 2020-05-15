@@ -96,12 +96,12 @@ class BattleSuit(Suit, SuitBase):
         if self.getSkeleRevives() > 0:
             nameInfo = TTLocalizer.SuitBaseNameWithLevel % {'name': self._name,
              'dept': self.getStyleDept(),
-             'level': '%s%s' % (self.getActualLevel(), TTLocalizer.SkeleRevivePostFix)}
+             'level': '%s%s' % (self.getDisplayLevel(), TTLocalizer.SkeleRevivePostFix)}
             self.setDisplayName(nameInfo)
         else:
             nameInfo = TTLocalizer.SuitBaseNameWithLevel % {'name': self._name,
              'dept': self.getStyleDept(),
-             'level': self.getActualLevel()}
+             'level': self.getDisplayLevel()}
             self.setDisplayName(nameInfo)
         return
 
@@ -443,7 +443,7 @@ class BattleSuit(Suit, SuitBase):
             Suit.makeElite(self)
             nameInfo = TTLocalizer.SuitBaseNameWithLevel % {'name': self._name,
              'dept': self.getStyleDept(),
-             'level': '%s %s' % (self.getActualLevel(), TTLocalizer.EliteCogName)}
+             'level': '%s %s' % (self.getDisplayLevel(), TTLocalizer.EliteCogName)}
             self.setDisplayName(nameInfo)
             self.maxHP = self.maxHP + int(round(self.maxHP * 0.25))
             self.currHP = self.maxHP
@@ -597,7 +597,7 @@ class BattleSuit(Suit, SuitBase):
 
     def getAvIdName(self):
         try:
-            level = self.getActualLevel()
+            level = self.getDisplayLevel()
         except:
             level = '???'
 

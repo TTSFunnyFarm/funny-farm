@@ -672,7 +672,7 @@ class BattleCalculator:
                         totalDamages = totalDamages + damageDone
                     else:
                         totalDamages = 0
-                    continue    
+                    continue
                 currTarget = targets[position]
                 currTarget.setHP(currTarget.getHP() - damageDone)
                 targetId = currTarget.getDoId()
@@ -1017,7 +1017,7 @@ class BattleCalculator:
         self.notify.debug('Traps: ' + str(self.traps))
         maxSuitLevel = 0
         for cog in self.battle.activeSuits:
-            maxSuitLevel = max(maxSuitLevel, cog.getActualLevel())
+            maxSuitLevel = max(maxSuitLevel, cog.getLevel())
 
         self.creditLevel = maxSuitLevel
         for toonId in self.toonAtkOrder:

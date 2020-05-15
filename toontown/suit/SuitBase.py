@@ -46,13 +46,15 @@ class SuitBase:
     def getLevel(self):
         return self.level
 
+    def getDisplayLevel(self):
+        return self.level + 1
+
     def setLevel(self, level):
-        print("HELP ME PLEASE", level)
         self.level = level
         if isinstance(self, Avatar):
             nameWLevel = TTLocalizer.SuitBaseNameWithLevel % {'name': self._name,
              'dept': self.getStyleDept(),
-             'level': self.getActualLevel()}
+             'level': self.getDisplayLevel()}
             self.setDisplayName(nameWLevel)
         attributes = SuitBattleGlobals.SuitAttributes[self.dna.name]
         self.maxHP = attributes['hp'][self.level]
@@ -79,10 +81,3 @@ class SuitBase:
 
     def setElite(self, flag):
         self.isElite = flag
-
-    def getActualLevel(self):
-        if hasattr(self, 'dna'):
-            return SuitBattleGlobals.getActualFromRelativeLevel(self.getStyleName(), self.level) + 1
-        else:
-            self.notify.warning('called getActualLevel with no DNA, returning 1 for level')
-            return 1

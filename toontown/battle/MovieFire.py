@@ -293,7 +293,7 @@ def __throwPie(throw, delay, hitCount, showCannon = 1):
         suit.reparentTo(cannonAttachPoint)
         suit.setPos(0, 0, 0)
         suit.setHpr(0, -90, 0)
-        suitLevel = suit.getActualLevel()
+        suitLevel = suit.getLevel()
         deep = 2.5 + suitLevel * 0.2
         suitScale = 0.9
         import math

@@ -41,8 +41,8 @@ class BattleBldg(Battle):
         highestLvl = 0
         leaderIndex = 0
         for suit in self.suits:
-            if suit.getActualLevel() > highestLvl:
-                highestLvl = suit.getActualLevel()
+            if suit.getLevel() > highestLvl:
+                highestLvl = suit.getLevel()
                 leaderIndex = self.suits.index(suit)
 
         delay = FACEOFF_TAUNT_T
@@ -162,7 +162,7 @@ class BattleBldg(Battle):
                 totalHp += suit.currHP
             if suit.getHP() <= 0:
                 encounter = {'type': suit.dna.name,
-                 'level': suit.getActualLevel(),
+                 'level': suit.getLevel(),
                  'track': suit.dna.dept,
                  'isSkelecog': suit.getSkelecog(),
                  'isForeman': suit.isForeman(),

@@ -456,7 +456,7 @@ class TownBattle(StateData.StateData):
         maxSuitLevel = 0
         cogFireCostIndex = 0
         for cog in cogs:
-            maxSuitLevel = max(maxSuitLevel, cog.getActualLevel())
+            maxSuitLevel = max(maxSuitLevel, cog.getLevel())
             self.cogFireCosts[cogFireCostIndex] = 1
             cogFireCostIndex += 1
 

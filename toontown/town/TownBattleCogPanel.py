@@ -56,7 +56,7 @@ class TownBattleCogPanel(DirectFrame):
 
     def setAvatar(self, avatar):
         self.avatar = avatar
-        self.setCogName(avatar.nametag.getName(), avatar.getActualLevel(), avatar.isElite)
+        self.setCogName(avatar.nametag.getName(), avatar.getLevel(), avatar.isElite)
         self.setHealth(avatar.currHP, avatar.maxHP)
         # self['image_color'] = self.medallionColors[avatar.style.dept]
 
