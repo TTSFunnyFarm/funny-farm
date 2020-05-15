@@ -37,7 +37,7 @@ class CogThiefGame(Minigame):
         Minigame.__init__(self)
         self.gameFSM = ClassicFSM.ClassicFSM('CogThiefGame', [State.State('off', self.enterOff, self.exitOff, ['play']), State.State('play', self.enterPlay, self.exitPlay, ['cleanup']), State.State('cleanup', self.enterCleanup, self.exitCleanup, [])], 'off', 'cleanup')
         self.addChildGameFSM(self.gameFSM)
-        self.cameraTopView = (0, 0, 55, 0, -90.0, 0)
+        self.cameraTopView = (0, 0, 53, 0, -90.0, 0)
         self.barrels = []
         self.cogInfo = {}
         self.barrelInfo = {}
@@ -462,9 +462,9 @@ class CogThiefGame(Minigame):
         startPos = parentNode.getPos()
         dropShadow = toon.dropShadow.copyTo(parentNode)
         dropShadow.setScale(toon.dropShadow.getScale(render))
-        trajectory = Trajectory.Trajectory(0, Point3(0, 0, 0), Point3(0, 0, 50), gravMult=1.0)
+        trajectory = Trajectory.Trajectory(0, Point3(0, 0, 0), Point3(0, 0, 20), gravMult=1.0)
         oldFlyDur = trajectory.calcTimeOfImpactOnPlane(0.0)
-        trajectory = Trajectory.Trajectory(0, Point3(0, 0, 0), Point3(0, 0, 50), gravMult=0.55)
+        trajectory = Trajectory.Trajectory(0, Point3(0, 0, 0), Point3(0, 0, 20), gravMult=0.55)
         flyDur = trajectory.calcTimeOfImpactOnPlane(0.0)
         avIndex = self.avIdList.index(avId)
         endPos = CTGG.ToonStartingPositions[avIndex]

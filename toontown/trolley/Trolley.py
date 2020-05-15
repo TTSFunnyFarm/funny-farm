@@ -203,43 +203,6 @@ class Trolley(DirectObject):
         base.localAvatar.enable()
         base.localAvatar.experienceBar.show()
 
-    def enterWaitCountdown(self, ts):
-        self.clockNode = TextNode('trolleyClock')
-        self.clockNode.setFont(ToontownGlobals.getSignFont())
-        self.clockNode.setAlign(TextNode.ACenter)
-        self.clockNode.setTextColor(0.9, 0.1, 0.1, 1)
-        self.clockNode.setText('10')
-        self.clock = self.trolleyStation.attachNewNode(self.clockNode)
-        self.clock.setBillboardAxis()
-        self.clock.setPosHprScale(15.86, 13.82, 11.68, -0.0, 0.0, 0.0, 3.02, 3.02, 3.02)
-        if ts < self.trolleyCountdownTime:
-            self.countdown(self.trolleyCountdownTime - ts)
-
-    def timerTask(self, task):
-        countdownTime = int(task.duration - task.time)
-        timeStr = str(countdownTime)
-        if self.clockNode.getText() != timeStr:
-            self.clockNode.setText(timeStr)
-        if task.time >= task.duration:
-            self.disableExitButton()
-            self.exitWaitCountdown()
-            self.enterLeaving()
-            return Task.done
-        else:
-            return Task.cont
-
-    def countdown(self, duration):
-        countdownTask = Task(self.timerTask)
-        countdownTask.duration = duration
-        taskMgr.remove('trolleyTimerTask')
-        return taskMgr.add(countdownTask, 'trolleyTimerTask')
-
-    def exitWaitCountdown(self):
-        taskMgr.remove('trolleyTimerTask')
-        self.clock.removeNode()
-        del self.clock
-        del self.clockNode
-
     def enableExitButton(self):
         self.exitButton = DirectButton(relief=None, text=TTLocalizer.TrolleyHopOff, text_fg=(1, 1, 0.65, 1), text_pos=(0, -0.23), text_scale=TTLocalizer.TexitButton, image=(self.upButton, self.downButton, self.rolloverButton), image_color=(1, 0, 0, 1), image_scale=(20, 1, 11), pos=(0, 0, 0.8), scale=0.15, command=self.emptySlot, extraArgs=[0])
         return
