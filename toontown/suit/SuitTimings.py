@@ -1,4 +1,3 @@
-dict = {}
 fromSky = 6.5
 toSky = 6.5
 victoryDance = 9.08
