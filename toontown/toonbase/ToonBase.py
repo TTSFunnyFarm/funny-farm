@@ -352,7 +352,7 @@ class ToonBase(OTPBase.OTPBase):
             self.cr.cleanupGame()
         self.enableMusic(0)
         render.hide()
-        self.hideUi()
+        self.hideUI()
         self.setBackgroundColor(ToontownGlobals.DefaultBackgroundColor)
         dialog = TTDialog.TTDialog(parent=aspect2dp, text=TTLocalizer.GameError % details, style=TTDialog.Acknowledge, text_wordwrap=16, command=self.exitShow)
         dialog.show()
