@@ -10,7 +10,7 @@ from toontown.battle import Fanfare
 from otp.otpbase import OTPGlobals
 from toontown.coghq import CogDisguiseGlobals
 from toontown.quest import Quests
-from toontown.suit import SuitDNA
+from toontown.suit import SuitDNA, SuitGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.toonbase import ToontownGlobals
@@ -218,8 +218,9 @@ class RewardPanel(DirectFrame):
                     meritBar['value'] = merits
                     if promoStatus != ToontownGlobals.PendingPromotion:
                         meritBar['text'] = '%s/%s %s' % (merits, totalMerits, TTLocalizer.RewardPanelMeritBarLabels[i])
-                maxSuitType = SuitDNA.suitsPerDept - 1
-                maxSuitLevel = (SuitDNA.levelsPerSuit-1) + maxSuitType
+                # TODO: finish this
+                maxSuitType = SuitGlobals.suitsPerDept - 1
+                maxSuitLevel = 1 + maxSuitType
                 if toon.cogLevels[i] == maxSuitLevel:
                     if promoStatus == ToontownGlobals.PendingPromotion:
                         meritBar['range'] = 1

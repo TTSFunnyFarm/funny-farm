@@ -47,6 +47,7 @@ class SuitBase:
         return self.level
 
     def setLevel(self, level):
+        print("HELP ME PLEASE", level)
         self.level = level
         if isinstance(self, Avatar):
             nameWLevel = TTLocalizer.SuitBaseNameWithLevel % {'name': self._name,
@@ -66,7 +67,7 @@ class SuitBase:
     def getWeight(self):
         weight = 0
         weight += self.getLevel()
-        weight += SuitDNA.getSuitTier(self.getStyleName())
+        weight += SuitDNA.getSuitType(self.getStyleName())
         weight += self.getElite() * 5
         return
 

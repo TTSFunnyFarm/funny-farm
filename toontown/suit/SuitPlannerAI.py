@@ -23,8 +23,8 @@ class SuitPlannerAI(DirectObject):
             5,
             45,
             45),
-            (1, 2, 3),
-            (0,)
+            (1, 3),
+            (0, 0)
         ),
         1200: (4,
             8,
@@ -36,7 +36,7 @@ class SuitPlannerAI(DirectObject):
             40,
             10,
             10),
-            (2, 3, 4),
+            (2, 4),
             (0, 1)
         ),
         2100: (4,
@@ -49,7 +49,7 @@ class SuitPlannerAI(DirectObject):
             40,
             40,
             10),
-            (3, 4, 5),
+            (3, 5),
             (1, 2)
         ),
         2200: (4,
@@ -62,7 +62,7 @@ class SuitPlannerAI(DirectObject):
             10,
             10,
             40),
-            (4, 5, 6),
+            (4, 6),
             (2, 3)
         ),
         3100: (4,
@@ -75,7 +75,7 @@ class SuitPlannerAI(DirectObject):
             70,
             10,
             10),
-            (5, 6, 7),
+            (5, 7),
             (3, 4)
         ),
         3200: (4,
@@ -88,7 +88,7 @@ class SuitPlannerAI(DirectObject):
             10,
             30,
             30),
-            (6, 7, 8),
+            (6, 8),
             (4, 5)
         ),
         3300: (4,
@@ -101,7 +101,7 @@ class SuitPlannerAI(DirectObject):
             25,
             25,
             25),
-            (6, 7, 8),
+            (6, 8),
             (5, 6)
         ),
         4100: (4,
@@ -114,7 +114,7 @@ class SuitPlannerAI(DirectObject):
             10,
             40,
             10),
-            (7, 8, 9),
+            (7, 9),
             (6, 7)
         ),
         4200: (4,
@@ -127,8 +127,8 @@ class SuitPlannerAI(DirectObject):
             40,
             10,
             40),
-            (8, 9, 10),
-            (6, 7, 8)
+            (8, 10),
+            (6, 8)
         ),
     }
     SUIT_HOOD_INFO_MIN = 0 # min number of active suits
@@ -138,12 +138,13 @@ class SuitPlannerAI(DirectObject):
     SUIT_HOOD_INFO_ELITE = 4 # elite buildings yes or no
     SUIT_HOOD_INFO_SMAX = 5 # max number of suits in a battle
     SUIT_HOOD_INFO_TRACK = 6 # suit dept probabilities
-    SUIT_HOOD_INFO_LVL = 7 # possible suit levels
-    SUIT_HOOD_INFO_HEIGHTS = 8 # possible bldg difficulties
+    SUIT_HOOD_INFO_LVL = 7 # possible suit levels (min, max)
+    SUIT_HOOD_INFO_HEIGHTS = 8 # possible bldg difficulties (min, max)
     MAX_SUIT_TYPES = 8
     POP_UPKEEP_DELAY = 10
     POP_ADJUST_DELAY = 120
     BLDG_ADJUST_DELAY = 240
+    BCHANCE_ELITE = 50
     # for zoneId in list(SuitHoodInfo.keys()):
     #     currHoodInfo = SuitHoodInfo[zoneId]
     #     levels = currHoodInfo[SUIT_HOOD_INFO_LVL]
@@ -203,32 +204,34 @@ class SuitPlannerAI(DirectObject):
             for i in range(spawn):
                 self.spawnBuilding()
 
-    def createNewSuit(self):
+    def createNewSuit(self, type=None, level=None):
         # Currently just generates a random suit based on the hood info.
         # We can add arguments to create specific suits later, if needed.
         newSuit = BattleSuitAI(self)
         newSuit.setDoId(base.air.getNextSuitIndex())
         newSuit.setZoneId(self.zoneId)
         level, type, track = self.pickLevelTypeAndTrack()
-        newSuit.setupSuitDNA(level, type, track)
+        newSuit.setupSuitDNA(type, track)
+        print(level)
+        newSuit.setLevel(level)
         newSuit.generate()
         self.activeSuits[newSuit.doId] = newSuit
-        self.notify.debug('creating suit %d in zone %d' % (newSuit.doId, self.zoneId))
+        self.notify.debug('Creating suit %d in zone (%d)' % (newSuit.doId, self.zoneId))
 
     def removeSuit(self, doId):
-        # Removes both AI and client
+        # Removes both AI and client presence
         self.removeSuitAI(doId)
         messenger.send('removeSuit', [doId])
 
     def removeSuitAI(self, doId):
-        # Removes only the AI side
+        # Removes only the AI presence
         if doId in list(self.activeSuits.keys()):
             suit = self.activeSuits[doId]
             suit.delete()
             self.activeSuits.pop(doId)
 
     def requestSuits(self):
-        # SuitPlanner asked what suits are on its street; give it all the info
+        # SuitPlanner asked what suits are on its street; give it all the info it might need
         suits = []
         for doId in list(self.activeSuits.keys()):
             suit = self.activeSuits[doId]
@@ -248,14 +251,17 @@ class SuitPlannerAI(DirectObject):
             suit = self.activeSuits[doId]
             if taskMgr.hasTaskNamed(suit.uniqueName('move')):
                 task = taskMgr.getTasksNamed(suit.uniqueName('move'))[0]
+                # TODO: DIAGNOSE WHY task.time is returning a negative!
                 return abs(task.time)
             return 0
 
     def pickLevelTypeAndTrack(self):
-        actualLevel = random.choice(self.SuitHoodInfo[self.zoneId][self.SUIT_HOOD_INFO_LVL])
-        typeChoices = range(max(actualLevel - 4, 1), min(actualLevel, self.MAX_SUIT_TYPES) + 1)
-        type = random.choice(typeChoices)
-        level = actualLevel - type
+        actualLevel = random.randint(*self.SuitHoodInfo[self.zoneId][self.SUIT_HOOD_INFO_LVL]) - 1
+        print(actualLevel)
+        minType = max(actualLevel - 4, 1)
+        maxType = min(actualLevel, self.MAX_SUIT_TYPES) + 1
+        type = random.randint(minType, maxType)
+        level = actualLevel
         track = SuitDNA.suitDepts[SuitBattleGlobals.pickFromFreqList(self.SuitHoodInfo[self.zoneId][self.SUIT_HOOD_INFO_TRACK])]
         self.notify.debug('pickLevelTypeAndTrack: %d %d %s' % (level, type, track))
         return (level, type, track)
@@ -268,9 +274,7 @@ class SuitPlannerAI(DirectObject):
             block = random.choice(self.toonBuildings)
         bldg = self.buildingMap[block]
         if self.SuitHoodInfo[self.zoneId][self.SUIT_HOOD_INFO_ELITE]:
-            elite = 0
-            if random.randint(0, 99) >= 50:
-                elite = 1
+            elite = int(random.randint(1, 100) >= BCHANCE_ELITE)
             if elite:
                 bldg.eliteTakeOver(track)
             else:
@@ -292,7 +296,7 @@ class SuitPlannerAI(DirectObject):
 
     def pickBuildingStats(self):
         track = SuitDNA.suitDepts[SuitBattleGlobals.pickFromFreqList(self.SuitHoodInfo[self.zoneId][self.SUIT_HOOD_INFO_TRACK])]
-        difficulty = random.choice(self.SuitHoodInfo[self.zoneId][self.SUIT_HOOD_INFO_HEIGHTS])
+        difficulty = random.randint(*self.SuitHoodInfo[self.zoneId][self.SUIT_HOOD_INFO_HEIGHTS])
         numFloors = random.randint(*SuitBuildingGlobals.SuitBuildingInfo[difficulty][0])
         return (track, difficulty, numFloors)
 
@@ -321,7 +325,7 @@ class SuitPlannerAI(DirectObject):
         max = hoodInfo[self.SUIT_HOOD_INFO_MAX]
         suitCount = len(self.activeSuits)
         # See how many suits we should add / remove
-        adjustment = random.choice((-1, -1, 0, 0, 0, 1, 1))
+        adjustment = random.choice((-1, 0, 0, 1))
         self.notify.debug('adjustment: %d' % adjustment)
         # Calculate the total suits we'd have on the street with the adjustment
         suitCount += adjustment
@@ -332,7 +336,7 @@ class SuitPlannerAI(DirectObject):
         if adjustment < 0:
             # Negative adjustment, take away a suit
             doId = list(self.activeSuits.keys())[0]
-            self.notify.debug('removing suit %d' % doId)
+            self.notify.debug('Removing suit (%d)' % doId)
             self.removeSuit(doId)
         else:
             # Positive adjustment, create a new suit
@@ -345,10 +349,8 @@ class SuitPlannerAI(DirectObject):
         suitCount = len(self.activeSuits)
         maxSuits = self.SuitHoodInfo[self.zoneId][self.SUIT_HOOD_INFO_MAX]
         minSuits = self.SuitHoodInfo[self.zoneId][self.SUIT_HOOD_INFO_MIN]
-        if suitCount >= maxSuits:
-            choice = 0
-        elif suitCount < minSuits:
-            choice = 1
+        if suitCount >= maxSuits or suitCount < minSuits:
+            choice = int(suitCount < minSuits)
         else:
             choice = random.choice((0, 0, 0, 1, 1, 1))
         if choice:
@@ -371,7 +373,7 @@ class SuitPlannerAI(DirectObject):
         # Find the nearest battle cell
         distances = []
         for cell in SuitPoints.BattleCells[self.zoneId]:
-            dist = (pos - cell[0]).length()
+            dist = (pos - cell[0]).lengthSquared()
             distances.append(dist)
         choice = min(distances)
         index = distances.index(choice)

@@ -30,6 +30,7 @@ class BattleSuitAI(SuitBase):
     def generate(self):
         self.initializePath()
         # Sends the info over to SuitPlanner
+        print(self.level, "YEH")
         messenger.send('generateSuit', [{'doId': self.doId,
          'zoneId': self.zoneId,
          'dna': self.dna,
@@ -50,11 +51,10 @@ class BattleSuitAI(SuitBase):
     def getZoneId(self):
         return self.zoneId
 
-    def setupSuitDNA(self, level, type, track):
+    def setupSuitDNA(self, type, track):
         dna = SuitDNA.SuitDNA()
         dna.newSuitRandom(type, track)
         self.dna = dna
-        self.setLevel(level)
 
     def initializePath(self):
         self.legList = SuitPoints.SuitPoints.get(self.zoneId, [])

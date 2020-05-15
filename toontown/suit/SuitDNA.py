@@ -2,6 +2,7 @@ import random
 from panda3d.core import *
 from direct.directnotify.DirectNotifyGlobal import *
 from toontown.toonbase import TTLocalizer
+from toontown.suit.SuitGlobals import *
 import random
 from direct.distributed.PyDatagram import PyDatagram
 from direct.distributed.PyDatagramIterator import PyDatagramIterator
@@ -71,31 +72,10 @@ suitCTypes = ['f',
  'mb',
  'cc',
  'gh']
-suitDepts = ['c',
- 'l',
- 'm',
- 's']
-suitDeptFullnames = {'c': TTLocalizer.Bossbot,
- 'l': TTLocalizer.Lawbot,
- 'm': TTLocalizer.Cashbot,
- 's': TTLocalizer.Sellbot}
-suitDeptFullnamesP = {'c': TTLocalizer.BossbotP,
- 'l': TTLocalizer.LawbotP,
- 'm': TTLocalizer.CashbotP,
- 's': TTLocalizer.SellbotP}
 corpPolyColor = VBase4(0.95, 0.75, 0.75, 1.0)
 legalPolyColor = VBase4(0.75, 0.75, 0.95, 1.0)
 moneyPolyColor = VBase4(0.65, 0.95, 0.85, 1.0)
 salesPolyColor = VBase4(0.95, 0.75, 0.95, 1.0)
-suitsPerLevel = [1,
- 1,
- 1,
- 1,
- 1,
- 1,
- 1,
- 1]
-suitsPerDept = 8
 goonTypes = ['pg', 'sg']
 
 aSize = 6.06
@@ -161,17 +141,11 @@ def getSuitDept(name):
         return None
     return None
 
-def getSuitTier(name):
-    idx = suitHeadTypes.index(name)
-    return (idx % suitsPerDept) + 1
-
 def getDeptFullname(dept):
     return suitDeptFullnames[dept]
 
-
 def getDeptFullnameP(dept):
     return suitDeptFullnamesP[dept]
-
 
 def getSuitDeptFullname(name):
     return suitDeptFullnames[getSuitDept(name)]
@@ -181,6 +155,10 @@ def getSuitType(name):
     index = suitHeadTypes.index(name)
     return index % suitsPerDept + 1
 
+def getSuitName(type, dept):
+    dept = suitDepts.index(dept)
+    type += suitsPerDept * dept
+    return suitHeadTypes[type - 1]
 
 def getRandomSuitType(level, rng = random):
     return random.randint(max(level - 4, 1), min(level, 8))
@@ -193,7 +171,7 @@ def getRandomSuitByDept(dept):
 
 class SuitDNA(AvatarDNA.AvatarDNA):
 
-    def __init__(self, str = None, type = None, dna = None, r = None, b = None, g = None):
+    def __init__(self, str = None, type = None):
         if str != None:
             self.makeFromNetString(str)
         elif type != None:
@@ -266,25 +244,16 @@ class SuitDNA(AvatarDNA.AvatarDNA):
         self.type = 'b'
         self.dept = dept
 
-    def newSuitRandom(self, level = None, dept = None):
+    def newSuitRandom(self, type = None, dept = None):
+        print(type)
         self.type = 's'
-        if level == None:
-            level = random.choice(range(1, len(suitsPerLevel)))
-        elif level < 0 or level > len(suitsPerLevel):
-            notify.error('Invalid suit level: %d' % level)
+        if type == None:
+            print("UNGA")
+            type = random.randint(1, suitsPerDept) - 1
         if dept == None:
             dept = random.choice(suitDepts)
         self.dept = dept
-        index = suitDepts.index(dept)
-        base = index * suitsPerDept
-        offset = 0
-        if level > 1:
-            for i in range(1, level):
-                offset = offset + suitsPerLevel[i - 1]
-
-        bottom = base + offset
-        top = bottom + suitsPerLevel[level - 1]
-        self.name = suitHeadTypes[random.choice(range(bottom, top))]
+        self.name = getSuitName(type, dept)
         self.body = getSuitBodyType(self.name)
         return
 
