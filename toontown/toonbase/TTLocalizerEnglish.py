@@ -546,7 +546,7 @@ QuestDialogDict = {
  1019: {GREETING: '',
         LEAVING: '',
         QUEST: 'Hello. What can I help you with?\x07You recovered a letter from the Cogs? Let me read that...\x07Hmm...\x07Ah, OK, and Flippy sent you here so that I could inform all of Rickety Road to search for this "manager".\x07Done. I\'ll get right on that.\x07In the meantime, could you help me out?\x07I sent my assistant, Scar D. Mouse, to retrieve some parts for one of our appliances, but he hasn\'t returned in a while.\x07Will you go out and look for him?\x07Just help him get back here safely.',
-        COMPLETE: 'Oh, jeez, you scared me.'},
+        COMPLETE: 'Oh, jeez, you scared me!'},
  1020: {GREETING: '',
         LEAVING: '',
         QUEST: 'Ahem, I mean, no I\'m not scared! Those Cogs are no match for me.\x07What\'s that? We weren\'t talking about Cogs. Right.\x07I\'m just enjoying nature over here. Nothing to worry about.\x07Uh oh, Mr. Wurst sent you? He\'s gonna be so mad...\x07Look, I tried fighting some Cogs for some parts, but they took all my gags!\x07They were really strong Cogs. Could you get them back for me?',
