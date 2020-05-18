@@ -16,6 +16,7 @@ preferences.json
 
 # Misc. files
 reindent.py
+convert.py
 *.swatch
 .DS_Store
 desktop.ini

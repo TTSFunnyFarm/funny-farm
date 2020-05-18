@@ -32,7 +32,7 @@ class FirstBuildingScene(CutsceneBase):
         del self.sky
 
     def loadStreet(self):
-        base.hideUi()
+        base.hideUI()
         self.interior.reparentTo(hidden)
         self.interior.stash()
         self.street.unstash()

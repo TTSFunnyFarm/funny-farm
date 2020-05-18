@@ -1,5 +1,6 @@
 from otp.otpbase import OTPBase
 from otp.otpbase import OTPGlobals
+from otp.ai.MagicWordGlobal import *
 from direct.showbase.PythonUtil import *
 from toontown.toonbase import ToontownGlobals
 from direct.directnotify import DirectNotifyGlobal
@@ -16,6 +17,7 @@ import math
 import tempfile
 import shutil
 import atexit
+import io
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.toontowngui import TTDialog
@@ -153,6 +155,11 @@ class ToonBase(OTPBase.OTPBase):
         self.needRestartAntialiasing = False
         self.needRestartSmoothing = False
         self.needRestartLOD = False
+        self.consoleDisplay = OnscreenText(text='h', fg=(1, 1, 1, 1), bg=(0,0,0,0.5), wordwrap=93, pos=(0.11, -0.04), scale=0.04, align=TextNode.ALeft, parent = base.a2dTopLeft, mayChange=1)
+        self.consoleData = io.StringIO()
+        logger.setDisplay(self.consoleDisplay)
+        self.consoleDisplay.hide()
+        taskMgr.add(logger.refreshDisplay, 'refreshConsole')
         return
 
     def openMainWindow(self, *args, **kw):
@@ -352,7 +359,7 @@ class ToonBase(OTPBase.OTPBase):
             self.cr.cleanupGame()
         self.enableMusic(0)
         render.hide()
-        self.hideUi()
+        self.hideUI()
         self.setBackgroundColor(ToontownGlobals.DefaultBackgroundColor)
         dialog = TTDialog.TTDialog(parent=aspect2dp, text=TTLocalizer.GameError % details, style=TTDialog.Acknowledge, text_wordwrap=16, command=self.exitShow)
         dialog.show()
@@ -391,3 +398,10 @@ class ToonBase(OTPBase.OTPBase):
     def hideUI(self):
         NodePath(self.marginManager).reparentTo(aspect2dp)
         aspect2d.hide()
+
+    @magicWord()
+    def console():
+        if base.consoleDisplay.isHidden():
+            base.consoleDisplay.show()
+        else:
+            base.consoleDisplay.hide()

@@ -19,7 +19,7 @@ class FlippySuitIntroScene(CutsceneBase):
 
     def enter(self):
         CutsceneBase.enter(self)
-        base.hideUi()
+        base.hideUI()
         taskMgr.remove('FF-birds')
 
     def exit(self):

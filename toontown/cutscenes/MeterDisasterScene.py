@@ -18,7 +18,7 @@ class MeterDisasterScene(CutsceneBase):
 
     def enter(self):
         CutsceneBase.enter(self)
-        base.hideUi()
+        base.hideUI()
         flippy = self.actors['flippy']
         flippy.initializeBodyCollisions('toon')
         self.track.append(LerpPosHprInterval(camera, duration=1.5, pos=Point3(8, 8, flippy.getHeight() - 0.5), hpr=Vec3(120, 0, 0), other=flippy, blendType='easeInOut'))
