@@ -32,8 +32,10 @@ class Battle(DirectObject, NodePath, BattleBase):
     camFOFov = ToontownBattleGlobals.BattleCamFaceOffFov
     camFOPos = ToontownBattleGlobals.BattleCamFaceOffPos
 
-    def __init__(self, townBattle, toons = [], cogs = [], maxSuits = 2, bldg = 0, tutorialFlag = 0):
+    def __init__(self, toons, cogs, maxSuits = 2, bldg = 0, tutorialFlag = 0):
         self.doId = id(self)
+        NodePath.__init__(self, 'Battle-%d' % self.doId)
+        BattleBase.__init__(self)
         self.notify.setInfo(1)
         self.toons = toons
         self.cogs = cogs
@@ -42,8 +44,6 @@ class Battle(DirectObject, NodePath, BattleBase):
         self.maxSuits = maxSuits
         self.fsm = BattleFSM.BattleFSM(self)
         self.topCog = None
-        NodePath.__init__(self, 'Battle-%d' % self.doId)
-        BattleBase.__init__(self)
 
     def enter(self):
         self.notify.info("Entering battle.")
@@ -62,6 +62,7 @@ class Battle(DirectObject, NodePath, BattleBase):
         return self.cogs
 
     def __determineTopCog(self):
+        print(self.cogs)
         cogs = self.getCogs()
         cogWeights = []
         for cog in cogs:

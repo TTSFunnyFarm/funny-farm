@@ -4,6 +4,7 @@ from direct.interval.IntervalGlobal import *
 from libotp import *
 from toontown.battle import *
 from toontown.battle.BattleGlobals import *
+from toontown.battle import BattleUtil
 from toontown.suit import SuitDNA
 import random
 
@@ -29,17 +30,13 @@ class BattleFSM(FSM):
         MidTauntCamZLim = cogHeight - 1.8
         if MidTauntCamZ < MidTauntCamZLim:
             MidTauntCamZ = MidTauntCamZLim
-        TauntCamX = random.choice((-5, 5))
-        TauntCamY = 16
-        TauntCamZ = random.choice((MidTauntCamZ, 1, 11))
         cog.setState('Battle')
-        cog.headsUp(toon)
+        BattleUtil.toonFaceCog(toon, cog)
         cog.setChatAbsolute(taunt, CFSpeech | CFTimeout)
-        toon.stopLookAround()
-        toon.headsUp(cog)
         toon.loop('neutral')
         camera.wrtReparentTo(cog)
-        camera.setPos(TauntCamX, TauntCamY, TauntCamZ)
+        print(MidTauntCamZ)
+        camera.setPos(random.choice((-5, 5)), 16, random.choice((MidTauntCamZ, 1, 11)))
         camera.lookAt(cog, cogOffsetPnt)
         cogTrack = Sequence(ActorInterval(cog, random.choice(SuitBattleGlobals.SuitFaceoffAnims[SuitDNA.getSuitBodyType(cogName)])))
         cogTrack.start()

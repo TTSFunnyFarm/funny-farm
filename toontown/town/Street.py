@@ -91,13 +91,13 @@ class Street(ToonHood):
     def enterBattle(self, suitId, pos):
         base.localAvatar.disable()
         base.localAvatar.experienceBar.hide()
-        suit = self.sp.activeSuits[suitId]
+        cog = self.sp.activeSuits[suitId]
         self.sp.removeActiveSuit(suitId)
         self.battleCell = NodePath('battleCell')
         self.battleCell.reparentTo(self.geom)
         self.battleCell.setPos(pos[0])
         self.battleCell.setH(pos[1])
-        self.battle = Battle(self.townBattle, toons=[base.localAvatar], cogs=[suit])
+        self.battle = Battle([base.localAvatar], [cog])
         self.battle.reparentTo(self.battleCell)
         self.battle.enter()
         musicMgr.stopMusic()
