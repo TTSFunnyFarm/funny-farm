@@ -17,17 +17,20 @@ class BattleFSM(FSM):
         delay = FACEOFF_TAUNT_T
         battle = self.battle
         battle.update()
+
         point = cogPoints[0][0]
         cog = battle.topCog
+        toon = base.localAvatar
         cogPos = point[0] # h = point[1]
         cogHeight = cog.getHeight()
         cogName = cog.getStyleName()
         cogOffsetPnt = Point3(0, 0, cogHeight)
         taunt = SuitBattleGlobals.getFaceoffTaunt(cogName, cog.doId)
-        toon = base.localAvatar
+
         MidTauntCamZ = cogHeight * 0.66
         MidTauntCamZLim = cogHeight - 1.8
         MidTauntCamZ = min((MidTauntCamZ, MidTauntCamZLim))
+
         cog.setState('Battle')
         BattleUtil.toonFaceCog(toon, cog)
         cog.setChatAbsolute(taunt, CFSpeech | CFTimeout)
@@ -35,5 +38,6 @@ class BattleFSM(FSM):
         camera.wrtReparentTo(cog)
         camera.setPos(random.choice((-5, 5)), 16, random.uniform(MidTauntCamZ, 11))
         camera.lookAt(cog, cogOffsetPnt)
+        
         cogTrack = Sequence(ActorInterval(cog, random.choice(SuitBattleGlobals.SuitFaceoffAnims[SuitDNA.getSuitBodyType(cogName)])))
         cogTrack.start()
