@@ -504,8 +504,8 @@ class Tutorial(ToonHood):
         self.disableToon()
         self.toon.book.hideButton()
         self.stopSuitWalkInterval()
-        self.battle = Battle(self.townBattle, toons=[self.toon], suits=[self.suit], tutorialFlag=1)
-        # Never parent a battle directly to render, always use a battle cell 
+        self.battle = Battle([self.toon], [self.suit], tutorialFlag=1)
+        # Never parent a battle directly to render, always use a battle cell
         # otherwise __faceOff will fuck you in the ass
         self.battle.reparentTo(self.battleCell)
         self.battle.enter()
