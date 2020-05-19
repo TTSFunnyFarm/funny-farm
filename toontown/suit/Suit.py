@@ -45,7 +45,8 @@ AllCogsAnims = [('walk', 'walk'),
  ('phone', 'phone'),
  ('pickpocket', 'pickpocket'),
  ('pen-squirt', 'pen-squirt'),
- ('effort', 'effort')]
+ ('effort', 'effort'),
+ ('finger-wag', 'finger-wag')]
 
 WaiterCogsAnims = [('leftsit-hungry', 'leftsit-hungry'),
  ('rightsit-hungry', 'rightsit-hungry'),
@@ -68,7 +69,6 @@ CogAnimsDict = {'a': [('cigar-smoke', 'cigar-smoke'),
  ('magic3', 'magic3'),
  ('golf-club-swing', 'golf-club-swing'),
  ('glower', 'glower'),
- ('finger-wag', 'finger-wag'),
  ('throw-object', 'throw-object')],
  'b': [('quick-jump', 'jump'),
  ('throw-object', 'throw-object'),
