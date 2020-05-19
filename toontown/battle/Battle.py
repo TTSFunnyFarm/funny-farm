@@ -53,9 +53,9 @@ class Battle(DirectObject, NodePath, BattleBase):
         self.topCog = self.__determineTopCog()
 
     def cogRequestJoin(self, cog):
-        return self.cogCanJoin(cog)
+        return self.__cogCanJoin(cog)
 
-    def cogCanJoin(self, cog):
+    def __cogCanJoin(self, cog):
         return False
 
     def getCogs(self):

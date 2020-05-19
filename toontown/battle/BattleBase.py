@@ -115,7 +115,7 @@ class BattleBase:
         self.resetLists()
 
     def resetLists(self):
-        self.suits = []
+        self.cogs = []
         self.pendingSuits = []
         self.joiningSuits = []
         self.activeSuits = []
