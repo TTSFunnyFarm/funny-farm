@@ -62,7 +62,6 @@ class Battle(DirectObject, NodePath, BattleBase):
         return self.cogs
 
     def __determineTopCog(self):
-        print(self.cogs)
         cogs = self.getCogs()
         cogWeights = []
         for cog in cogs:
