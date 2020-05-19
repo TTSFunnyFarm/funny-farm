@@ -68,3 +68,6 @@ class Battle(DirectObject, NodePath, BattleBase):
             weight = cog.getWeight()
             cogWeights.append(weight)
         return cogs[cogWeights.index(max(cogWeights))]
+
+    def assignRewards(self):
+        return
