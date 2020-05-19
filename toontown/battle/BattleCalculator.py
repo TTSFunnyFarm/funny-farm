@@ -14,7 +14,6 @@ class BattleCalculator:
     notify = DirectNotifyGlobal.directNotify.newCategory('BattleCalculator')
     toonsAlwaysHit = config.GetBool('toons-always-hit', 0)
     toonsAlwaysMiss = config.GetBool('toons-always-miss', 0)
-    toonsAlways5050 = config.GetBool('toons-always-5050', 0)
     suitsAlwaysHit = config.GetBool('suits-always-hit', 0)
     suitsAlwaysMiss = config.GetBool('suits-always-miss', 0)
     immortalSuits = config.GetBool('immortal-suits', 0)
