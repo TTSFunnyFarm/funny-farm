@@ -7,7 +7,6 @@ from toontown.toontowngui import TTDialog
 from toontown.toonbase import TTLocalizer
 from direct.showbase import PythonUtil
 from direct.showbase.DirectObject import DirectObject
-from otp.login import LeaveToPayDialog
 Pages = {'otherHoods': (TTLocalizer.TeaserOtherHoods,),
  'typeAName': (TTLocalizer.TeaserTypeAName,),
  'sixToons': (TTLocalizer.TeaserSixToons,),
@@ -67,7 +66,6 @@ class TeaserPanel(DirectObject):
             self.browser.setScale(0.75)
             self.browser.reparentTo(hidden)
         self.upsellBackground = loader.loadModel('phase_3/models/gui/tt_m_gui_ups_panelBg')
-        self.leaveDialog = None
         self.showPage(pageName)
         self.ignore('exitingStoppedState')
         self.accept('exitingStoppedState', self.cleanup)
@@ -88,11 +86,8 @@ class TeaserPanel(DirectObject):
 
     def __handlePay(self):
         if base.cr.isWebPlayToken() or __dev__:
-            if self.leaveDialog == None:
-                self.notify.debug('making LTP')
-                self.leaveDialog = LeaveToPayDialog.LeaveToPayDialog(0, doneFunc=self.doneFunc)
+            self.notify.debug('making LTP')
             self.notify.debug('showing LTP')
-            self.leaveDialog.show()
         else:
             self.notify.error('You should not have a TeaserPanel without a PlayToken')
         return
@@ -108,9 +103,6 @@ class TeaserPanel(DirectObject):
             base.transitions.noTransitions()
             self.dialog.cleanup()
             del self.dialog
-        if self.leaveDialog:
-            self.leaveDialog.destroy()
-            self.leaveDialog = None
         self.ignoreAll()
         return
 
@@ -151,8 +143,6 @@ class TeaserPanel(DirectObject):
     def removed(self):
         if hasattr(self, 'dialog') and self.dialog:
             return self.dialog.removed()
-        elif hasattr(self, 'leaveDialog') and self.leaveDialog:
-            return self.leaveDialog.removed()
         else:
             return 1
 
