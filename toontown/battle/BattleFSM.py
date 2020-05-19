@@ -35,7 +35,6 @@ class BattleFSM(FSM):
         cog.setState('Battle')
         cog.headsUp(toon)
         cog.setChatAbsolute(taunt, CFSpeech | CFTimeout)
-        toon.setShadowHeight(0)
         toon.stopLookAround()
         toon.headsUp(cog)
         toon.loop('neutral')
