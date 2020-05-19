@@ -19,11 +19,10 @@ class BattleFSM(FSM):
         battle.update()
         point = cogPoints[0][0]
         cog = battle.topCog
-        cogPos = point[0]
-        cogHpr = VBase3(point[1], 0.0, 0.0)
+        cogPos = point[0] # h = point[1]
         cogHeight = cog.getHeight()
-        cogOffsetPnt = Point3(0, 0, cogHeight)
         cogName = cog.getStyleName()
+        cogOffsetPnt = Point3(0, 0, cogHeight)
         taunt = SuitBattleGlobals.getFaceoffTaunt(cogName, cog.doId)
         toon = base.localAvatar
         MidTauntCamZ = cogHeight * 0.66
