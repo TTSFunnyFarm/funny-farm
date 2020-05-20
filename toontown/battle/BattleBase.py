@@ -107,30 +107,6 @@ def findToonAttack(toons, attacks, track):
 
 class BattleBase:
     notify = DirectNotifyGlobal.directNotify.newCategory('BattleBase')
-    suitPoints = (((Point3(0, 5, 0), 179),),
-     ((Point3(2, 5.3, 0), 170), (Point3(-2, 5.3, 0), 180)),
-     ((Point3(4, 5.2, 0), 170), (Point3(0, 6, 0), 179), (Point3(-4, 5.2, 0), 190)),
-     ((Point3(6, 4.4, 0), 160),
-      (Point3(2, 6.3, 0), 170),
-      (Point3(-2, 6.3, 0), 190),
-      (Point3(-6, 4.4, 0), 200)))
-    suitPendingPoints = ((Point3(-4, 8.2, 0), 190),
-     (Point3(0, 9, 0), 179),
-     (Point3(4, 8.2, 0), 170),
-     (Point3(8, 3.2, 0), 160))
-    toonPoints = (((Point3(0, -6, 0), 0),),
-     ((Point3(1.5, -6.5, 0), 5), (Point3(-1.5, -6.5, 0), -5)),
-     ((Point3(3, -6.75, 0), 5), (Point3(0, -7, 0), 0), (Point3(-3, -6.75, 0), -5)),
-     ((Point3(4.5, -7, 0), 10),
-      (Point3(1.5, -7.5, 0), 5),
-      (Point3(-1.5, -7.5, 0), -5),
-      (Point3(-4.5, -7, 0), -10)))
-    toonPendingPoints = ((Point3(-3, -8, 0), -5),
-     (Point3(0, -9, 0), 0),
-     (Point3(3, -8, 0), 5),
-     (Point3(5.5, -5.5, 0), 20))
-    suitSpeed = 4.8
-    toonSpeed = 8.0
 
     def __init__(self):
         self.pos = Point3(0, 0, 0)
@@ -159,14 +135,6 @@ class BattleBase:
         suitdest = Point3(centerpos - Point3(facing * 6.0))
         dist = Vec3(suitdest - suitpos).length()
         return dist / BattleBase.suitSpeed
-
-    def calcSuitMoveTime(self, pos0, pos1):
-        dist = Vec3(pos0 - pos1).length()
-        return dist / BattleBase.suitSpeed
-
-    def calcToonMoveTime(self, pos0, pos1):
-        dist = Vec3(pos0 - pos1).length()
-        return dist / BattleBase.toonSpeed
 
     def buildJoinPointList(self, avPos, destPos, toon = 0):
         minDist = 999999.0
