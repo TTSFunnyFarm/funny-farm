@@ -376,5 +376,6 @@ class SuitPlannerAI(DirectObject):
         choice = min(distances)
         index = distances.index(choice)
         cell = SuitPoints.BattleCells[self.zoneId][index]
+        print(cell)
         # Send it over to the client!
         messenger.send('sptRequestBattle-%d' % self.zoneId, [suitId, cell])

@@ -100,7 +100,6 @@ class Street(ToonHood):
         self.battle = Battle([base.localAvatar], [cog])
         self.battle.reparentTo(self.battleCell)
         self.battle.enter()
-        musicMgr.stopMusic()
         musicMgr.playMusic(self.battleMusic, looping=1)
         self.sp.startCheckBattleRange()
         self.accept(self.townBattle.doneEvent, self.exitBattle)
