@@ -38,7 +38,6 @@ class ProtoGame(DirectObject):
         type += 8 * random.randint(0, 3)
         type -= 1
         name = SuitDNA.suitHeadTypes[type]
-        type += 1
         dna.newSuit(name)
         self.suit.setDNA(dna)
         self.suit.setLevel(random.randint(0, 3))
