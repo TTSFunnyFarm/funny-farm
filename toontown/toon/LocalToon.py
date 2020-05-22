@@ -755,6 +755,19 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
     def getSkeleCounts(self):
         return self.skeleCounts
 
+    def getTotalCogCount(self, suitIndex):
+        count = 0
+        count += self.getCogCounts()[suitIndex]
+        count += self.getSkeleCounts()[suitIndex]
+        count += self.getEliteCounts()[suitIndex]
+        return count
+
+    def getTotalCogsCount(self):
+        count = sum(self.getCogCounts())
+        count += sum(self.getSkeleCounts())
+        count += sum(self.getEliteCounts())
+        return count
+
     def addLevelExp(self, exp, trackFrame = 0, carryIndex = 0, carryAmount = 0):
         totalExp = self.levelExp + exp
         if totalExp >= self.getMaxLevelExp():
