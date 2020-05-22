@@ -5,7 +5,7 @@ from toontown.toonbase import ToontownGlobals
 class AttackProjectile(NodePath):
     def __init__(self, propName):
         NodePath.__init__(self)
-        self.assign(globalPropPool.getProp('ripples'))
+        self.assign(BattleProps.globalPropPool.getProp(propName))
         self.collNode = CollisionNode('AttackProjectile')
         bounds = self.getBounds()
         center = bounds.getCenter()
