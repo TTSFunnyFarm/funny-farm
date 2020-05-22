@@ -3,7 +3,7 @@ window-title PROTOTYPE
 
 # Notify
 default-directnotify-level info
-notify-timestamp #t
+notify-timestamp #f
 notify-integrate #f
 
 # Audio
