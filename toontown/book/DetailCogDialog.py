@@ -1,6 +1,6 @@
 from direct.gui.DirectGui import *
 from direct.gui.DirectGuiGlobals import *
-from pandac.PandaModules import *
+from panda3d.core import *
 from direct.directnotify import DirectNotifyGlobal
 from direct.fsm import StateData
 from toontown.toonbase import TTLocalizer as TTL
@@ -41,14 +41,21 @@ class DetailCogDialog(DirectFrame):
         gui = loader.loadModel('phase_3/models/gui/dialog_box_buttons_gui')
         guiButton = loader.loadModel('phase_3/models/gui/quit_button')
         self.head = Suit.attachSuitHead(self, self.suitName)
-        z = self.head.getZ()
-        self.head.setPos(-0.4, -0.1, z + 0.2)
-        self.suitLabel = DirectLabel(parent=self, relief=None, text=self.suitFullName, text_font=ToontownGlobals.getSuitFont(), pos=(-0.4, 0, 0), scale=0.07)
-        self.cogsKilled = DirectLabel(parent=self, relief=None, text="No. of Standard Destroyed: 4", text_font=ToontownGlobals.getSuitFont(), pos=(0.1, 0, 0.1), scale=0.05)
+        z = self.head.getZ() + 0.2
+        self.head.setPos(-0.5, -0.1, z)
+        if settings['antialiasing']:
+            self.head.setAntialias(AntialiasAttrib.MAuto)
+        cogCounts = base.localAvatar.getCogCounts()
+        skelecogCounts = base.localAvatar.getSkeleCounts()
+        eliteCounts = base.localAvatar.getEliteCounts()
+        self.suitLabel = DirectLabel(parent=self, relief=None, text=self.suitFullName, text_font=ToontownGlobals.getSuitFont(), pos=(-0.5, 0, -0.04), scale=0.07)
+        self.cogsKilled = DirectLabel(parent=self, relief=None, text="Standard Destroyed: {}".format(cogCounts[self.suitIndex]), pos=(0.03, 0, 0.25), scale=0.06, text_align=TextNode.ACenter)
+        self.skelecogsKilled = DirectLabel(parent=self, relief=None, text="Skelecogs Destroyed: {}".format(skelecogCounts[self.suitIndex]), pos=(0.03, 0, 0.15), scale=0.06, text_align=TextNode.ACenter)
+        self.elitesKilled = DirectLabel(parent=self, relief=None, text="Elites Destroyed: {}".format(eliteCounts[self.suitIndex]), pos=(0.03, 0, 0.05), scale=0.06, text_align=TextNode.ACenter)
         closeButtonImage = (gui.find('**/CloseBtn_UP'), gui.find('**/CloseBtn_DN'), gui.find('**/CloseBtn_Rllvr'))
         buttonImage = (guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR'))
         disabledColor = Vec4(0.5, 0.5, 0.5, 1)
-        self.cancel = DirectButton(parent=self, relief=None, image=closeButtonImage, pos=(0.7, 0, -0.1), command=self.__cancel)
+        self.cancel = DirectButton(parent=self, relief=None, image=closeButtonImage, pos=(0.7, 0, -0.165), command=self.__cancel)
         gui.removeNode()
         guiButton.removeNode()
         self.hide()
