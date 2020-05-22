@@ -18,7 +18,6 @@ class ProtoBase(ShowBase):
         self.wantNametags = self.config.GetBool('want-nametags', 1)
         self.initNametagGlobals()
         self.game = ProtoGame.ProtoGame()
-        #self.game.start()
 
     def initNametagGlobals(self): #copied from ToonBase
         arrow = loader.loadModel('phase_3/models/props/arrow')
