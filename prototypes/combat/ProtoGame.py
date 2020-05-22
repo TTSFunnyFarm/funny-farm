@@ -1,6 +1,8 @@
 from toontown.toon import LocalToon, Toon, ToonDNA, ToonHead, LaffMeter
+from toontown.suit import BattleSuit, SuitDNA
 from direct.showbase.DirectObject import DirectObject
 from direct.directnotify import DirectNotifyGlobal
+import random
 
 class ProtoGame(DirectObject):
     notify = directNotify.newCategory('ProtoGame')
@@ -19,6 +21,7 @@ class ProtoGame(DirectObject):
         self.toon.startLookAround()
         self.toon.reparentTo(render)
         self.toon.loop('neutral')
+        self.toon.setPos(0, -5, 0.025)
         self.laffMeter = LaffMeter.LaffMeter(self.toon.style, self.toon.hp, self.toon.maxHp)
         self.laffMeter.setAvatar(self.toon)
         self.laffMeter.setScale(0.075)
@@ -28,6 +31,23 @@ class ProtoGame(DirectObject):
         else:
             self.laffMeter.setPos(0.133, 0.0, 0.13)
         self.laffMeter.start()
+        self.suit = BattleSuit.BattleSuit()
+        dna = SuitDNA.SuitDNA()
+        type = random.randint(1, 3)
+        tier = type
+        type += 8 * random.randint(0, 3)
+        type -= 1
+        name = SuitDNA.suitHeadTypes[type]
+        type += 1
+        dna.newSuit(name)
+        self.suit.setDNA(dna)
+        self.suit.setLevel(random.randint(0, 3))
+        self.suit.reparentTo(render)
+        self.suit.loop('neutral')
+        self.suit.setPos(0, 5, 0.025)
+        self.suit.setH(180)
+        self.suit.initializeBodyCollisions('suit')
+        self.suit.addActive()
 
     def preload(self):
         self.notify.info('Preloading things...')
