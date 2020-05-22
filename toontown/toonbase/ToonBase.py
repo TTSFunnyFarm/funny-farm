@@ -296,6 +296,13 @@ class ToonBase(OTPBase.OTPBase):
         self.cr = cr
         if settings['antialiasing']:
             render.setAntialias(AntialiasAttrib.MAuto)
+            aspect2d.setAntialias(AntialiasAttrib.MAuto)
+            base.a2dBottomCenter.setAntialias(AntialiasAttrib.MAuto)
+            base.a2dBottomLeft.setAntialias(AntialiasAttrib.MAuto)
+            base.a2dBottomRight.setAntialias(AntialiasAttrib.MAuto)
+            base.a2dTopRight.setAntialias(AntialiasAttrib.MAuto)
+            base.a2dTopLeft.setAntialias(AntialiasAttrib.MAuto)
+            base.a2dTopCenter.setAntialias(AntialiasAttrib.MAuto)
         from toontown.login.TitleScreen import TitleScreen
         musicMgr.playPickAToon()
         titleScreen = TitleScreen()
