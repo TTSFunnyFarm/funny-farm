@@ -10,6 +10,8 @@ class ProtoGame(DirectObject):
         self.preload()
         dna = ToonDNA.ToonDNA()
         dna.newToonRandom()
+        self.geom = loader.loadModel('phase_5/models/cogdominium/tt_m_ara_crg_penthouse')
+        self.geom.reparentTo(render)
         self.toon = Toon.Toon()
         self.toon.setDNA(dna)
         self.toon.useLOD(1000)
