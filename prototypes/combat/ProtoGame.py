@@ -27,6 +27,7 @@ class ProtoGame(DirectObject):
             self.laffMeter.setPos(0.153, 0.0, 0.13)
         else:
             self.laffMeter.setPos(0.133, 0.0, 0.13)
+        self.laffMeter.start()
 
     def preload(self):
         self.notify.info('Preloading things...')
