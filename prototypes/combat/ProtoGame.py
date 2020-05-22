@@ -3,7 +3,7 @@ from direct.showbase.DirectObject import DirectObject
 from direct.directnotify import DirectNotifyGlobal
 
 class ProtoGame(DirectObject):
-    notify = directNotify.newCategory('AIRepository')
+    notify = directNotify.newCategory('ProtoGame')
     notify.setInfo(True)
 
     def __init__(self):
