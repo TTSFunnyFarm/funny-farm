@@ -40,6 +40,7 @@ class GagMenu(DirectFrame):
         self.trackLabel = DirectLabel(parent=self, relief=None, pos=(0, 0, 0), text='', text_scale=0.12, text_fg=Vec4(1, 1, 1, 1), text_align=TextNode.ACenter, text_font=FunnyFarmGlobals.getMinnieFont(), text_shadow=(0, 0, 0, 1))
         invModel = loader.loadModel('phase_3.5/models/gui/inventory_icons')
         self.invModels = []
+        self.gagButtons = []
         for gagTrack in range(len(ToontownBattleGlobals.AvPropsNew)):
             itemList = []
             for item in range(len(ToontownBattleGlobals.AvPropsNew[gagTrack])):
@@ -50,16 +51,17 @@ class GagMenu(DirectFrame):
         self.setTrack(1)
 
     def setTrack(self, track):
+        for button in self.gagButtons:
+            button.removeNode()
+            del button
         self.track = track
         rads = deg2Rad(360)
         trackLen = len(ToontownBattleGlobals.AvPropsNew[track])
         for i in range(trackLen + 1):
             gagModel = self.invModels[track][i - 1]
-            gagModel.reparentTo(self)
-            gagModel.setScale(1)
             a = rads * i / trackLen + 1
             y = math.sin(a) * 0.4
             x = math.cos(a) * 0.4
-            gagModel.setPos(x, 0, y)
+            button = DirectButton(parent=self, relief=None, image_pos=(x,0,y), image=gagModel, image_scale=((1.2,1,1.2),(0.5,1,0.5), (0.75,1,0.75)))
         self.bg.setColor(Vec4(*ToontownBattleGlobals.TrackColors[1], 0.9))
         self.trackLabel['text'] = TTLocalizer.BattleGlobalTracks[track]
