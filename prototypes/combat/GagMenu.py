@@ -53,11 +53,11 @@ class GagMenu(DirectFrame):
         self.track = track
         rads = deg2Rad(360)
         trackLen = len(ToontownBattleGlobals.AvPropsNew[track])
-        for i in range(trackLen):
-            gagModel = self.invModels[track][i]
+        for i in range(trackLen + 1):
+            gagModel = self.invModels[track][i - 1]
             gagModel.reparentTo(self)
             gagModel.setScale(1)
-            a = rads * i / trackLen - 1
+            a = rads * i / trackLen + 1
             y = math.sin(a) * 0.4
             x = math.cos(a) * 0.4
             gagModel.setPos(x, 0, y)
