@@ -1,5 +1,6 @@
 from toontown.toon import LocalToon, Toon, ToonDNA, ToonHead, LaffMeter
 from toontown.suit import BattleSuit, SuitDNA
+from . import BattleManager
 from direct.showbase.DirectObject import DirectObject
 from direct.directnotify import DirectNotifyGlobal
 import random
@@ -18,7 +19,6 @@ class ProtoGame(DirectObject):
         self.toon.setDNA(dna)
         self.toon.useLOD(1000)
         self.toon.startBlink()
-        self.toon.startLookAround()
         self.toon.reparentTo(render)
         self.toon.loop('neutral')
         self.toon.setPos(0, -5, 0.025)
@@ -47,6 +47,7 @@ class ProtoGame(DirectObject):
         self.suit.setH(180)
         self.suit.initializeBodyCollisions('suit')
         self.suit.addActive()
+        self.battleMgr = BattleManager.BattleManager([self.toon], [self.suit])
 
     def preload(self):
         self.notify.info('Preloading things...')
