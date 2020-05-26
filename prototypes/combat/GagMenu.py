@@ -69,6 +69,7 @@ class GagMenu(DirectFrame):
             y = math.sin(a) * 0.4
             x = math.cos(a) * 0.4
             button = DirectButton(parent=self, relief=None, image_pos=(x,0,y), image=gagModel, image_scale=(1,1,1))
+            button.id = i
             self.gagButtons.append(button)
         self.bg.setColor(Vec4(*ToontownBattleGlobals.TrackColors[track], 0.9))
         self.trackLabel['text'] = TTLocalizer.BattleGlobalTracks[track]
