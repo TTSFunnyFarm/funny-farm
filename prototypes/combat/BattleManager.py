@@ -1,13 +1,22 @@
 from direct.showbase.DirectObject import DirectObject
 from toontown.toonbase import ToontownTimer
 from panda3d.core import *
-from . import BattleFSM
+from . import BattleFSM, GagMenu
 class BattleManager(DirectObject):
     def __init__(self, toons=[], cogs=[]):
         self.toons = toons
         self.cogs = cogs
         self.timer = ToontownTimer.ToontownTimer()
         self.timer.posInTopRightCorner()
-        self.timer.setTime(30)
-        self.timer.countdown(30, print)
+        self.timer.hide()
+        self.menu = GagMenu.GagMenu()
+        for cog in self.cogs:
+            cog.enterBattle()
         self.fsm = BattleFSM.BattleFSM(self)
+        self.fsm.request('ToonChoice')
+
+    def _timerExpired(self):
+        self.timer.stop()
+        self.timer.hide()
+        if self.fsm.state == 'ToonChoice':
+            self.fsm.request('ToonAttack')
