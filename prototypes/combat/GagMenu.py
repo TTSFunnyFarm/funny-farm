@@ -72,6 +72,5 @@ class GagMenu(DirectFrame):
             self.gagButtons.append(button)
         self.bg.setColor(Vec4(*ToontownBattleGlobals.TrackColors[track], 0.9))
         self.trackLabel['text'] = TTLocalizer.BattleGlobalTracks[track]
-        trackLen = len(self.trackLabel['text'])
-        self.leftArrow.setX(-(0.05 * trackLen))
-        self.rightArrow.setX(0.05 * trackLen)
+        self.leftArrow.setX(-0.5)
+        self.rightArrow.setX(0.5)
