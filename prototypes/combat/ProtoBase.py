@@ -22,9 +22,6 @@ class ProtoBase(ShowBase):
         self.game = ProtoGame.ProtoGame()
 
     def initDirectGUIGlobals(self):
-        test = loader.loadModel('phase_3/models/gui/dialog_box_gui.bam', noCache=True)
-        print(test.node().getFullpath())
-        print(test)
         DirectGuiGlobals.setDefaultRolloverSound(loader.loadSfx('phase_3/audio/sfx/GUI_rollover.ogg'))
         DirectGuiGlobals.setDefaultClickSound(loader.loadSfx('phase_3/audio/sfx/GUI_create_toon_fwd.ogg'))
         DirectGuiGlobals.setDefaultDialogGeom(loader.loadModel('phase_3/models/gui/dialog_box_gui.bam'))
