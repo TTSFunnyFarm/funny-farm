@@ -38,6 +38,19 @@ textures-power-2 none
 
 # Performance
 gc-save-all 0
+text-flatten 0
+text-dynamic-merge 1
+
+# Text
+text-minfilter linear
+text-magfilter linear
+
+# GL
+gl-finish #f
+gl-force-no-error #t
+gl-check-errors #f
+gl-force-no-flush #t
+gl-force-no-scissor #t
 
 # Holidays
 want-halloween #f
