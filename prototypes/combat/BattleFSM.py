@@ -9,10 +9,10 @@ class BattleFSM(FSM):
         timer.show()
         timer.setTime(45)
         timer.countdown(45, self.battle._timerExpired)
-        self.battle.attackMenu.show()
+        self.battle.combatMenu.show()
 
     def exitToonChoice(self):
         timer = self.battle.timer
         timer.stop()
         timer.hide()
-        self.battle.attackMenu.hide()
+        self.battle.cttackMenu.hide()

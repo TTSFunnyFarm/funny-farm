@@ -4,7 +4,7 @@ class CombatMenu(DirectFrame):
     def __init__(self):
         guiButton = loader.loadModel('phase_3/models/gui/quit_button')
         DirectFrame.__init__(self, relief=None, geom=DGG.getDefaultDialogGeom(), geom_scale=(1, 1, 0.5), pos=(0, 0, 0))
-        self.initialiseoptions(AttackMenu)
+        self.initialiseoptions(CombatMenu)
         buttonImage = (guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR'))
         buttonScale = (0.91, 1, 1.3)
         self.attackButton = DirectButton(parent=self, relief=None, image=buttonImage, image_scale=buttonScale, text="Attack", pos=(-0.26, 0, 0.12), text_scale=0.08, text_pos=(0, -0.02), command=print)
