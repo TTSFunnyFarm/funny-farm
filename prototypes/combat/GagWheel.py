@@ -31,7 +31,7 @@ def CreateCircle(scale = 0.5, color = Vec4(*ToontownBattleGlobals.TrackColors[1]
     node = loadEggData(data)
     return NodePath(node)
 
-class GagMenu(DirectFrame):
+class GagWheel(DirectFrame):
     def __init__(self):
         DirectFrame.__init__(self, relief=None)
         bg = CreateCircle()
