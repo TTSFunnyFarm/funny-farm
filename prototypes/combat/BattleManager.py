@@ -1,7 +1,7 @@
 from direct.showbase.DirectObject import DirectObject
 from toontown.toonbase import ToontownTimer
 from panda3d.core import *
-from . import BattleFSM, GagMenu
+from . import BattleFSM, GagMenu, AttackMenu
 class BattleManager(DirectObject):
     def __init__(self, toons=[], cogs=[]):
         self.toons = toons
@@ -9,7 +9,9 @@ class BattleManager(DirectObject):
         self.timer = ToontownTimer.ToontownTimer()
         self.timer.posInTopRightCorner()
         self.timer.hide()
-        self.menu = GagMenu.GagMenu()
+        self.gagMenu = GagMenu.GagMenu()
+        self.gagMenu.hide()
+        self.attackMenu = AttackMenu.AttackMenu()
         for cog in self.cogs:
             cog.enterBattle()
         self.fsm = BattleFSM.BattleFSM(self)

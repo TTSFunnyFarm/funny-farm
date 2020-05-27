@@ -1,15 +1,17 @@
 from direct.showbase.ShowBase import ShowBase
-from direct.gui import DirectGuiGlobals
+from toontown.toonbase import ToontownGlobals
 from libotp.nametag.MarginManager import MarginManager
 from panda3d.core import *
 from libotp import *
 from toontown.misc import Injector
+from direct.gui import DirectGuiGlobals
 
 class ProtoBase(ShowBase):
 
     def __init__(self):
         ShowBase.__init__(self)
         from prototypes.combat import ProtoGame
+        self.initDirectGUIGlobals()
         CullBinManager.getGlobalPtr().addBin('shadow', CullBinManager.BTFixed, 15)
         CullBinManager.getGlobalPtr().addBin('ground', CullBinManager.BTFixed, 14)
         injector = Injector.Injector()
@@ -18,6 +20,15 @@ class ProtoBase(ShowBase):
         self.wantNametags = self.config.GetBool('want-nametags', 1)
         self.initNametagGlobals()
         self.game = ProtoGame.ProtoGame()
+
+    def initDirectGUIGlobals(self):
+        test = loader.loadModel('phase_3/models/gui/dialog_box_gui.bam', noCache=True)
+        print(test.node().getFullpath())
+        print(test)
+        DirectGuiGlobals.setDefaultRolloverSound(loader.loadSfx('phase_3/audio/sfx/GUI_rollover.ogg'))
+        DirectGuiGlobals.setDefaultClickSound(loader.loadSfx('phase_3/audio/sfx/GUI_create_toon_fwd.ogg'))
+        DirectGuiGlobals.setDefaultDialogGeom(loader.loadModel('phase_3/models/gui/dialog_box_gui.bam'))
+        DirectGuiGlobals.setDefaultFont(ToontownGlobals.getInterfaceFont())
 
     def initNametagGlobals(self): #copied from ToonBase
         arrow = loader.loadModel('phase_3/models/props/arrow')
