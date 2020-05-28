@@ -5,11 +5,14 @@ from panda3d.core import *
 from libotp import *
 from toontown.misc import Injector
 from direct.gui import DirectGuiGlobals
+import builtins
+builtins.settings = {'musicVol': 1.0} #fake settings
 
 class ProtoBase(ShowBase):
 
     def __init__(self):
         ShowBase.__init__(self)
+        builtins.loader = self.loader
         from prototypes.combat import ProtoGame
         self.initDirectGUIGlobals()
         CullBinManager.getGlobalPtr().addBin('shadow', CullBinManager.BTFixed, 15)
@@ -17,6 +20,8 @@ class ProtoBase(ShowBase):
         injector = Injector.Injector()
         injector.daemon = True
         injector.start()
+        from toontown.toonbase.MusicManager import MusicManager
+        builtins.musicMgr = MusicManager()
         self.wantNametags = self.config.GetBool('want-nametags', 1)
         self.initNametagGlobals()
         self.game = ProtoGame.ProtoGame()
