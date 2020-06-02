@@ -1,18 +1,22 @@
 from direct.fsm.FSM import FSM
+from .CMenuContainer import *
 class BattleFSM(FSM):
     def __init__(self, battle):
         self.battle = battle
         FSM.__init__(self, 'BattleFSM')
 
     def enterToonChoice(self):
-        timer = self.battle.timer
+        battle = self.battle
+        timer = battle.timer
         timer.show()
         timer.setTime(45)
-        timer.countdown(45, self.battle._timerExpired)
-        self.battle.CMenu.show()
+        timer.countdown(45, battle._timerExpired)
+        battle.CMenu.show()
+        battle.CMenu.showNode(CMENU)
 
     def exitToonChoice(self):
-        timer = self.battle.timer
+        battle = self.battle
+        timer = battle.timer
         timer.stop()
         timer.hide()
-        self.battle.CMenu.hide()
+        battle.CMenu.hide()

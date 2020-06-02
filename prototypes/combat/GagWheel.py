@@ -32,8 +32,9 @@ def CreateCircle(scale = 0.5, color = Vec4(*ToontownBattleGlobals.TrackColors[1]
     return NodePath(node)
 
 class GagWheel(DirectFrame):
-    def __init__(self):
-        DirectFrame.__init__(self, relief=None)
+    def __init__(self, container):
+        DirectFrame.__init__(self, parent=hidden, relief=None)
+        self.container = container
         bg = CreateCircle()
         matGui = loader.loadModel('phase_3/models/gui/tt_m_gui_mat_mainGui')
         self.bg = bg
