@@ -2,8 +2,9 @@ from direct.gui.DirectGui import *
 from panda3d.core import *
 from .CMenuGlobals import *
 class CMenu(DirectFrame):
-    def __init__(self, container):
+    def __init__(self, container, battle):
         self.container = container
+        self.battle = battle
         guiButton = loader.loadModel('phase_3/models/gui/quit_button')
         DirectFrame.__init__(self, parent=hidden, relief=None, geom=DGG.getDefaultDialogGeom(), geom_scale=(1, 1, 0.5), pos=(0, 0, 0))
         self.initialiseoptions(CMenu)
