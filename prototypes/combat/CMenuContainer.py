@@ -3,7 +3,7 @@ from . import CMenu
 CMENU = 0
 class CMenuContainer(DirectFrame):
     def __init__(self):
-        DirectFrame.__init__(self, relief=None)
+        DirectFrame.__init__(self, parent=aspect2d, relief=None)
         self.__nodes = [CMenu.CMenu()]
         self.currentNode = None
         self.showNode(CMENU)
@@ -11,4 +11,4 @@ class CMenuContainer(DirectFrame):
     def showNode(self, menu):
         if self.currentNode:
             self.currentNode.reparentTo(hidden)
-        self.__nodes[menu].reparentTo(aspect2d)
+        self.__nodes[menu].reparentTo(self)
