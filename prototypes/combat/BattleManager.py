@@ -15,7 +15,11 @@ class BattleManager(DirectObject):
         self.fsm = BattleFSM.BattleFSM(self)
         self.fsm.request('ToonChoice')
 
-    def _timerExpired(self):
+    def resetTimer(self):
+        self.timer.setTime(45)
+        self.timer.countdown(45, self.__timerExpired)
+
+    def __timerExpired(self):
         self.timer.stop()
         self.timer.hide()
         if self.fsm.state == 'ToonChoice':

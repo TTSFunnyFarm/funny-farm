@@ -9,8 +9,7 @@ class BattleFSM(FSM):
         battle = self.battle
         timer = battle.timer
         timer.show()
-        timer.setTime(45)
-        timer.countdown(45, battle._timerExpired)
+        self.battle.resetTimer()
         battle.CMenu.show()
         battle.CMenu.showNode(CMENU)
 
