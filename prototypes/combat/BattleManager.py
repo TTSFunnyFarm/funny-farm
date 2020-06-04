@@ -9,7 +9,7 @@ class BattleManager(DirectObject):
         self.timer = ToontownTimer.ToontownTimer()
         self.timer.posInTopRightCorner()
         self.timer.hide()
-        self.CMenu = CMenuContainer.CMenuContainer()
+        self.CMenu = CMenuContainer.CMenuContainer(self)
         for cog in self.cogs:
             cog.enterBattle()
         self.fsm = BattleFSM.BattleFSM(self)
