@@ -11,9 +11,6 @@ Copyright (c) CIO Team. All rights reserved.
 
 """
 
-from elevate import elevate
-elevate()
-
 from panda3d.core import *
 
 print("Revamping models, this might take several minutes...")
@@ -79,9 +76,9 @@ def egg_extract_bin_name(line):
     line = line.split(" }")[0]
     return line
 
-phases = [3.5]#[3, 3.5, 4, 5, 5.5]#[3, 3.5, 4, 5, 5.5, 6, 7, 8, 9, 10, 11, 12, 13]
+#phases = [3.5]#[3, 3.5, 4, 5, 5.5]#[3, 3.5, 4, 5, 5.5, 6, 7, 8, 9, 10, 11, 12, 13]
 #phases = [3.5]
-#phases = [3]
+phases = [3]
 #phases = [10]
 
 ######################################################################################
@@ -93,8 +90,8 @@ if (fix_textures):
     orig_textures = []
 
     for phase in phases:
-        orig_textures += glob2.glob("phase_{0}/maps/**/*.jpg".format(phase))
-        orig_textures += glob2.glob("phase_{0}/maps/**/*.png".format(phase))
+        orig_textures += glob.glob("phase_{0}/maps/**/*.jpg".format(phase))
+        orig_textures += glob.glob("phase_{0}/maps/**/*.png".format(phase))
 
     for tex in orig_textures:
         tex = tex.replace("\\", "/")
@@ -127,6 +124,7 @@ for phase in phases:
 __progress = 0
 
 def runproc(cmd):
+    print(cmd)
     subprocess.call(cmd, stdin=FNULL, stdout=FNULL, stderr=FNULL)
 
 errors = []
