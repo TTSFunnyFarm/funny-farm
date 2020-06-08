@@ -4,6 +4,7 @@ from panda3d.core import *
 from . import BattleFSM, CMenuContainer
 class BattleManager(DirectObject):
     def __init__(self, toons=[], cogs=[]):
+        self.fsm = BattleFSM.BattleFSM(self)
         self.toons = toons
         self.cogs = cogs
         self.timer = ToontownTimer.ToontownTimer()
@@ -12,7 +13,6 @@ class BattleManager(DirectObject):
         self.CMenu = CMenuContainer.CMenuContainer(self)
         for cog in self.cogs:
             cog.enterBattle()
-        self.fsm = BattleFSM.BattleFSM(self)
         self.fsm.request('ToonChoice')
 
     def resetTimer(self):
