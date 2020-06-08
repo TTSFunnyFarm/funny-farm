@@ -47,7 +47,7 @@ want_threads = True
 
 import sys
 import os
-import glob2
+import glob
 
 def get_revamp_egg(path):
     path = "revamp\\egg\\" + path
@@ -117,7 +117,7 @@ orig_models = []
 FNULL = open(os.devnull, 'w')
 
 for phase in phases:
-    orig_models += glob2.glob("phase_{0}\\models\\**\\*.bam".format(phase))
+    orig_models += glob.glob("phase_{0}\\models\\**\\*.bam".format(phase))
 
 __progress = 0
 
