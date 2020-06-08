@@ -11,12 +11,17 @@ Copyright (c) CIO Team. All rights reserved.
 
 """
 
+from elevate import elevate
+elevate()
+
 from panda3d.core import *
 
 print("Revamping models, this might take several minutes...")
 
 from direct.showbase.Loader import Loader
 from direct.stdpy.threading import Thread, Lock
+
+
 
 import subprocess
 
