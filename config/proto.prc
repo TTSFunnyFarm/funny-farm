@@ -1,11 +1,9 @@
 # Window options
-window-title Toontown's Funny Farm
-win-origin 8 31
-win-size 1280 720
+window-title PROTOTYPE
 
 # Notify
 default-directnotify-level info
-notify-timestamp #t
+notify-timestamp #f
 notify-integrate #f
 
 # Audio
@@ -35,28 +33,3 @@ model-cache-textures #f
 texture-minfilter mipmap
 texture-anisotropic-degree 16
 textures-power-2 none
-
-# Performance
-gc-save-all 0
-text-flatten 0
-text-dynamic-merge 1
-
-# Text
-text-minfilter linear
-text-magfilter linear
-
-# GL
-gl-finish #f
-gl-force-no-error #t
-gl-check-errors #f
-gl-force-no-flush #t
-gl-force-no-scissor #t
-
-# Holidays
-want-halloween #f
-want-winter #f
-
-# Misc.
-want-pets #f
-game-version ff-dev
-want-discord-integration true
