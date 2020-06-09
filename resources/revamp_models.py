@@ -18,10 +18,6 @@ print("Revamping models, this might take several minutes...")
 from direct.showbase.Loader import Loader
 from direct.stdpy.threading import Thread, Lock
 
-
-
-import subprocess
-
 prog_lock = Lock()
 error_lock = Lock()
 
@@ -45,11 +41,10 @@ do_optchar = True
 fix_eggfile = True
 fix_textures = False
 fix_revampbam = True
-want_threads = True
+want_threads = False
 
-import sys
-import os
-import glob
+import sys, os, glob, shutil
+import subprocess
 
 def get_revamp_egg(path):
     path = "revamp\\egg\\" + path
@@ -104,7 +99,7 @@ if (fix_textures):
             # This doesn't seem to work well in Panda's shader generator.
             # Convert to rgb format.
             image.makeRgb()
-            if (not os.path.exists(fnout.getDirname())):
+            if (not os.path.isdir(fnout.getDirname())):
                 os.makedirs(fnout.getDirname())
             image.write(fnout)
 
@@ -150,6 +145,7 @@ def __threadRevamp(models):
     for mdl in models:
 
         try:
+            print(mdl)
             orig_mdl_filename = Filename(mdl.replace("\\", "/"))
             mdlNode = loader.loadModel(orig_mdl_filename)
 
@@ -158,14 +154,15 @@ def __threadRevamp(models):
                 continue
 
             out_filename = Filename(get_revamp_bam(mdl).replace("\\", "/"))
-            if (not os.path.exists(out_filename.getDirname())):
+            if (not os.path.isdir(out_filename.getDirname())):
                 os.makedirs(out_filename.getDirname())
 
             egg_out = Filename.fromOsSpecific(get_revamp_egg(mdl))
-            if (not os.path.exists(out_filename.getDirname())):
+            if (not os.path.isdir(out_filename.getDirname())):
                 os.makedirs(egg_out.getDirname())
 
-            os.popen("copy {0} {1}".format(mdl, get_revamp_bam(mdl)))
+            cwd = os.getcwd()
+            shutil.copy(os.path.join(cwd, mdl).replace("\\\\", "\\"),os.path.join(cwd, get_revamp_bam(mdl)).replace("\\\\", "\\"))
 
             joint2geometry = {}
             floor_bins = []
@@ -243,8 +240,8 @@ def __threadRevamp(models):
                         flag_list.append(name)
 
                 cmd = eggopt
-                cmd += "-o {0} ".format(get_revamp_egg(mdl))
-                cmd += "-nv 80 -tbnall -keepall -dart default "
+                cmd += " -o {0} ".format(get_revamp_egg(mdl))
+                cmd += " -nv 80 -tbnall -keepall -dart default "
                 for exp in expose_list:
                     cmd += "-expose " + exp + " "
                 for flg in flag_list:
@@ -359,7 +356,7 @@ def __threadRevamp(models):
                     char = get_character(revamp)
 
                     for child in char.getChildren():
-                        if (joint2geometry.has_key(child.getName())):
+                        if child.getName() in joint2geometry.keys():
                             for geom in joint2geometry[child.getName()]:
                                 geomnp = revamp.find("**/" + geom)
                                 if (not geomnp.isEmpty()):
