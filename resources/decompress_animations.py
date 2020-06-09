@@ -6,12 +6,13 @@ from panda3d.core import *
 
 import os
 import sys
-import glob2
+import glob
 import math
-phases = [3, 3.5, 4, 5, 5.5, 6, 7, 8, 9, 10, 11, 12, 13]
+#phases = [3, 3.5, 4, 5, 5.5, 6, 7, 8, 9, 10, 11, 12, 13]
+phases = [14]
 orig_models = []
 for phase in phases:
-    orig_models += glob2.glob("phase_{0}\\models\\**\\*.bam".format(phase))
+    orig_models += glob.glob("phase_{0}\\models\\**\\*.bam".format(phase))
 
 def is_animation(node):
     return not node.find("**/+AnimBundleNode").is_empty()
