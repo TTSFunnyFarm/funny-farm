@@ -45,13 +45,6 @@ text-dynamic-merge 1
 text-minfilter linear
 text-magfilter linear
 
-# GL
-gl-finish #f
-gl-force-no-error #t
-gl-check-errors #f
-gl-force-no-flush #t
-gl-force-no-scissor #t
-
 # Holidays
 want-halloween #f
 want-winter #f
