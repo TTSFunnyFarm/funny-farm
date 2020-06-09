@@ -41,7 +41,7 @@ do_optchar = True
 fix_eggfile = True
 fix_textures = False
 fix_revampbam = True
-want_threads = False
+want_threads = True
 
 import sys, os, glob, shutil
 import subprocess
