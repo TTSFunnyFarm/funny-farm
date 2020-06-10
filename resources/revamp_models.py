@@ -356,7 +356,7 @@ def __threadRevamp(models):
                     char = get_character(revamp)
 
                     for child in char.getChildren():
-                        if child.getName() in joint2geometry.keys():
+                        if child.getName() in joint2geometry:
                             for geom in joint2geometry[child.getName()]:
                                 geomnp = revamp.find("**/" + geom)
                                 if (not geomnp.isEmpty()):
