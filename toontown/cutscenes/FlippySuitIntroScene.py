@@ -19,13 +19,13 @@ class FlippySuitIntroScene(CutsceneBase):
 
     def enter(self):
         CutsceneBase.enter(self)
-        base.hideUi()
+        base.hideUI()
         taskMgr.remove('FF-birds')
 
     def exit(self):
         CutsceneBase.exit(self)
         base.localAvatar.enable()
-        base.showUi()
+        base.showUI()
         CutsceneUtil.UnfadeScreen()
         if not base.air.holidayMgr.isHalloween() and not base.air.holidayMgr.isWinter():
             base.cr.playGame.hood.endSpookySky()

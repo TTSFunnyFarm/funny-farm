@@ -1,7 +1,7 @@
 from panda3d.core import *
 from libotp import *
 from direct.task.Task import Task
-from toontown.cutscenes import FlippySuitIntroScene
+from toontown.cutscenes.FlippySuitIntroScene import FlippySuitIntroScene
 from toontown.toon.NPCToonBase import *
 from toontown.quest import Quests
 from toontown.quest.QuestChoiceGui import QuestChoiceGui
@@ -85,7 +85,7 @@ class NPCToon(NPCToonBase):
         if mode == NPCToons.QUEST_MOVIE_ASSIGN:
             questId, toNpcId = quests
             # For Flippy/Suit intro scene
-            if questId == FlippySuitIntroScene.id:
+            if questId == FlippySuitIntroScene.id + 1:
                 messenger.send('cutscene-done')
         if mode == NPCToons.QUEST_MOVIE_COMPLETE:
             questId, toNpcId = quests

@@ -1,5 +1,6 @@
 from otp.otpbase import OTPBase
 from otp.otpbase import OTPGlobals
+from otp.ai.MagicWordGlobal import *
 from direct.showbase.PythonUtil import *
 from toontown.toonbase import ToontownGlobals
 from direct.directnotify import DirectNotifyGlobal
@@ -16,6 +17,7 @@ import math
 import tempfile
 import shutil
 import atexit
+import io
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.toontowngui import TTDialog
@@ -154,13 +156,18 @@ class ToonBase(OTPBase.OTPBase):
         self.needRestartAntialiasing = False
         self.needRestartSmoothing = False
         self.needRestartLOD = False
-        self.accept('connect-device', self.handleControllerConnect)
-        self.accept('disconnect-device', self.handleControllerDisconnect)
-        self.accept('device-enable', self.handleDeviceEnabled)
-        self.accept('device-disable', self.handleDeviceDisabled)
+        #self.accept('connect-device', self.handleControllerConnect)
+        #self.accept('disconnect-device', self.handleControllerDisconnect)
+        #self.accept('device-enable', self.handleDeviceEnabled)
+        #self.accept('device-disable', self.handleDeviceDisabled)
         self.gamepad = None
         self.currentDevices = ['keyboard']
         self._controllerDialog = None
+        self.consoleDisplay = OnscreenText(text='h', fg=(1, 1, 1, 1), bg=(0,0,0,0.5), wordwrap=93, pos=(0.11, -0.04), scale=0.04, align=TextNode.ALeft, parent = base.a2dTopLeft, mayChange=1)
+        self.consoleData = io.StringIO()
+        logger.setDisplay(self.consoleDisplay)
+        self.consoleDisplay.hide()
+        taskMgr.add(logger.refreshDisplay, 'refreshConsole')
         return
 
     def openMainWindow(self, *args, **kw):
@@ -249,11 +256,11 @@ class ToonBase(OTPBase.OTPBase):
         if aspect2d.isHidden() and not base.cr.cutsceneMgr.getCurrentScene():
             if settings['drawFps']:
                 base.setFrameRateMeter(True)
-            self.showUi()
+            self.showUI()
         else:
             if settings['drawFps']:
                 base.setFrameRateMeter(False)
-            self.hideUi()
+            self.hideUI()
 
     def initNametagGlobals(self):
         arrow = loader.loadModel('phase_3/models/props/arrow')
@@ -304,6 +311,13 @@ class ToonBase(OTPBase.OTPBase):
         self.cr = cr
         if settings['antialiasing']:
             render.setAntialias(AntialiasAttrib.MAuto)
+            aspect2d.setAntialias(AntialiasAttrib.MAuto)
+            base.a2dBottomCenter.setAntialias(AntialiasAttrib.MAuto)
+            base.a2dBottomLeft.setAntialias(AntialiasAttrib.MAuto)
+            base.a2dBottomRight.setAntialias(AntialiasAttrib.MAuto)
+            base.a2dTopRight.setAntialias(AntialiasAttrib.MAuto)
+            base.a2dTopLeft.setAntialias(AntialiasAttrib.MAuto)
+            base.a2dTopCenter.setAntialias(AntialiasAttrib.MAuto)
         from toontown.login.TitleScreen import TitleScreen
         musicMgr.playPickAToon()
         titleScreen = TitleScreen()
@@ -362,7 +376,7 @@ class ToonBase(OTPBase.OTPBase):
             self.cr.cleanupGame()
         self.enableMusic(0)
         render.hide()
-        self.hideUi()
+        self.hideUI()
         self.setBackgroundColor(ToontownGlobals.DefaultBackgroundColor)
         dialog = TTDialog.TTDialog(parent=aspect2dp, text=TTLocalizer.GameError % details, style=TTDialog.Acknowledge, text_wordwrap=16, command=self.exitShow)
         dialog.show()
@@ -456,10 +470,17 @@ class ToonBase(OTPBase.OTPBase):
         else:
             return 'keyboard'
 
-    def showUi(self):
+    def showUI(self):
         aspect2d.show()
         NodePath(self.marginManager).reparentTo(aspect2d)
 
-    def hideUi(self):
+    def hideUI(self):
         NodePath(self.marginManager).reparentTo(aspect2dp)
         aspect2d.hide()
+
+    @magicWord()
+    def console():
+        if base.consoleDisplay.isHidden():
+            base.consoleDisplay.show()
+        else:
+            base.consoleDisplay.hide()

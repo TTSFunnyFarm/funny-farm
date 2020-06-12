@@ -29,9 +29,10 @@ class Cotebook:
         word = None
         try:
             word = self._runWord(name, args)
-        except CoteError as e:
+        except Exception as e:
             base.localAvatar.setSystemMessage(0, str(e))
             notify.warning(str(e))
+            return False
 
         if word:
             base.localAvatar.setSystemMessage(0, word)

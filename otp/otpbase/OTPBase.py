@@ -3,7 +3,7 @@ if not __debug__:
     from direct.showbase import PhysicsManagerGlobal
     from direct.particles import ParticleManagerGlobal
     from panda3d.physics import *
-
+from toontown.misc import PythonProfiler
 from panda3d.core import Camera, TPLow, VBase4, ColorWriteAttrib, Filename, getModelPath, NodePath, TexturePool, Multifile
 from otp.otpbase import OTPRender
 from otp.ai.MagicWordGlobal import *
@@ -20,6 +20,8 @@ class OTPBase(ShowBase):
     def __init__(self, windowType = None):
         self.wantEnviroDR = False
         ShowBase.__init__(self, windowType=windowType)
+        if __debug__:
+            self.profiler = PythonProfiler.PythonProfiler()
         if config.GetBool('want-phase-checker', 0):
             from direct.showbase import Loader
             Loader.phaseChecker = self.loaderPhaseChecker
@@ -269,8 +271,31 @@ class OTPBase(ShowBase):
                 self.taskMgr.remove('manager-update')
                 self.taskMgr.add(self.updateManagers, 'manager-update')
 
-print('does this just not want to work')
 @magicWord()
 def oobe():
     'Toggle "out of body experience" view.'
     base.oobe()
+
+@magicWord()
+def wire():
+    'Toggle wireframe mode.'
+    base.toggleWireframe()
+
+def showChildren(np):
+    for child in np.getChildren():
+        child.show()
+        showChildren(child)
+
+@magicWord()
+def showEverything():
+    'Show everything in render.'
+    showChildren(render)
+
+
+@magicWord(argTypes=[str])
+def startProfiling(sort='cumulative'):
+    base.profiler.startProfiling(sort)
+
+@magicWord()
+def stopProfiling():
+    messenger.send("stopProfiling")

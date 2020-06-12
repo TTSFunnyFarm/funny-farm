@@ -7,7 +7,7 @@ from panda3d.core import *
 
 class MeterDisasterScene(CutsceneBase):
     id = 1004
-    
+
     def __init__(self):
         CutsceneBase.__init__(self, self.id)
         self.actors = {'flippy': base.cr.playGame.hood.place.flippy,
@@ -18,7 +18,7 @@ class MeterDisasterScene(CutsceneBase):
 
     def enter(self):
         CutsceneBase.enter(self)
-        base.hideUi()
+        base.hideUI()
         flippy = self.actors['flippy']
         flippy.initializeBodyCollisions('toon')
         self.track.append(LerpPosHprInterval(camera, duration=1.5, pos=Point3(8, 8, flippy.getHeight() - 0.5), hpr=Vec3(120, 0, 0), other=flippy, blendType='easeInOut'))
@@ -39,7 +39,7 @@ class MeterDisasterScene(CutsceneBase):
         track.append(Wait(7.0))
         track.append(LerpPosHprInterval(camera, duration=1.5, pos=Point3(12, 10, 5), hpr=Vec3(120, -5, 0), other=flippy, blendType='easeInOut'))
         track.append(Func(self.doDialog, len(self.dialog) - 1, 0))
-        track.append(Func(base.showUi))
+        track.append(Func(base.showUI))
         track.start()
 
     def byeFlippy(self):

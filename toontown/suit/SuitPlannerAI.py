@@ -242,14 +242,13 @@ class SuitPlannerAI(DirectObject):
         return suits
 
     def requestTime(self, doId):
-        # Now it requested the task time of a suit's walking task
-        # so it can accurately place him in the right spot.
-        # * Can't confirm that this is working properly yet; needs some work
+        # Now request the current time of the suit's walking task
+        # so it can accurately place it in the right spot.
         if doId in list(self.activeSuits.keys()):
             suit = self.activeSuits[doId]
             if taskMgr.hasTaskNamed(suit.uniqueName('move')):
                 task = taskMgr.getTasksNamed(suit.uniqueName('move'))[0]
-                return task.time
+                return abs(task.time)
             return 0
 
     def pickLevelTypeAndTrack(self):

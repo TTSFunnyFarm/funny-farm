@@ -1,6 +1,5 @@
 from direct.gui.DirectGui import *
 from panda3d.core import *
-from toontown.toonbase import ToontownTimer
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.toonbase import TTLocalizer
@@ -46,11 +45,6 @@ class TrackChoiceGui(DirectFrame):
         guiButton = loader.loadModel('phase_3/models/gui/quit_button')
         self.cancelButton = DirectButton(parent=self, relief=None, image=(guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR')), image_scale=(0.7, 1, 1), text=TTLocalizer.TrackChoiceGuiCancel, pos=(0.15, 0, -0.625), text_scale=0.06, text_pos=(0, -0.02), command=self.chooseTrack, extraArgs=[-1])
         guiButton.removeNode()
-        self.timer = ToontownTimer.ToontownTimer()
-        self.timer.reparentTo(self)
-        self.timer.setScale(0.35)
-        self.timer.setPos(-0.2, 0, -0.6)
-        self.timer.countdown(timeout, self.timeout)
         self.trackChoicePosters = []
         for trackId in tracks:
             tp = TrackPoster(trackId, self.chooseTrack)
@@ -62,7 +56,6 @@ class TrackChoiceGui(DirectFrame):
         return
 
     def chooseTrack(self, trackId):
-        self.timer.stop()
         messenger.send('chooseTrack', [trackId])
 
     def timeout(self):

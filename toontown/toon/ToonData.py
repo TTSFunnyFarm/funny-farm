@@ -42,7 +42,11 @@ DefaultData = [
     ['setFishingRod', [int], 0],
     ['setFishCollection', [list], []],
     ['setFishTank', [list], []],
-    ['setTutorialAck', [int], 0]
+    ['setTutorialAck', [int], 0],
+    ['setCogStatus', [list], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]],
+    ['setCogCounts', [list], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
+    ['setEliteCounts', [list], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
+    ['setSkeleCounts', [list], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 ]
 
 
@@ -53,7 +57,8 @@ class ToonData:
                  inventory, experience, trackAccess, hat, glasses, backpack, shoes, nametagStyle, cheesyEffect,
                  CETimer, lastHood, level, levelExp, damage, defense, accuracy, clothesTopsList, clothesBottomsList,
                  hatList, glassesList, backpackList, shoesList, quests, questHistory, questCarryLimit, questingZone,
-                 trackProgress, hoodsVisited, teleportAccess, fishingRod, fishCollection, fishTank, tutorialAck):
+                 trackProgress, hoodsVisited, teleportAccess, fishingRod, fishCollection, fishTank, tutorialAck,
+                 cogStatus, cogCounts, eliteCounts, skeleCounts):
         self.index = index
         self.setDNA = dna
         self.setName = name
@@ -97,6 +102,10 @@ class ToonData:
         self.setFishCollection = fishCollection
         self.setFishTank = fishTank
         self.setTutorialAck = tutorialAck
+        self.setCogStatus = cogStatus
+        self.setCogCounts = cogCounts
+        self.setEliteCounts = eliteCounts
+        self.setSkeleCounts = skeleCounts
 
     def makeJsonData(self):
         jsonData = self.__dict__.copy()
@@ -180,7 +189,7 @@ class ToonData:
         defaultToonData = ToonData(index, dna, name, None, None, None, None, None, None, None, None, None, None, None,
                                    None, None, None, None, None, None, None, None, None, None, None, None, None, None,
                                    None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-                                   None)
+                                   None, None, None, None, None)
         for field in DefaultData:
             if hasattr(defaultToonData, field[0]):
                 setattr(defaultToonData, field[0], field[2])
