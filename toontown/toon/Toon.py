@@ -1780,9 +1780,9 @@ class Toon(Avatar.Avatar, ToonHead):
         self.playingAnim = 'closeBook'
         bookTracks = Parallel()
         for bookActor in self.getBookActors():
-            bookTracks.append(ActorInterval(bookActor, 'book', playRate = 1.1, startTime=4.96))
+            bookTracks.append(ActorInterval(bookActor, 'book', playRate = 1.25, startTime=4.96))
 
-        bookTracks.append(ActorInterval(self, 'book', playRate = 1.1, startTime=4.96))
+        bookTracks.append(ActorInterval(self, 'book', playRate = 1.25, startTime=4.96))
         if hasattr(self, 'uniqueName'):
             trackName = self.uniqueName('closeBook')
         else:
