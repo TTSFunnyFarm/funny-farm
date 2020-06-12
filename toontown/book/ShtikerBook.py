@@ -10,6 +10,7 @@ class ShtikerBook(DirectFrame):
 
     def __init__(self):
         DirectFrame.__init__(self, relief=None, sortOrder=DGG.BACKGROUND_SORT_INDEX)
+        self.setBin('gui-popup', 0)
         self.initialiseoptions(ShtikerBook)
         self.pages = []
         self.pageTabs = []
@@ -32,8 +33,7 @@ class ShtikerBook(DirectFrame):
         base.localAvatar.enterReadBook()
         base.playSfx(self.openSound)
         base.disableMouse()
-        base.render.hide()
-        base.setBackgroundColor(0.05, 0.15, 0.4)
+        base.transitions.fadeScreen(0.5)
         self.__setButtonVisibility()
         self.show()
         self.showPageArrows()
@@ -53,11 +53,7 @@ class ShtikerBook(DirectFrame):
         self.isOpen = 0
         base.playSfx(self.closeSound)
         self.pages[self.currPage].exit()
-        base.render.show()
-        base.setBackgroundColor(ToontownGlobals.DefaultBackgroundColor)
-        gsg = base.win.getGsg()
-        if gsg:
-            base.render.prepareScene(gsg)
+        base.transitions.noTransitions()
         self.hide()
         self.hideButton()
         self.pageTabFrame.hide()
