@@ -288,7 +288,7 @@ class ShtikerBook(DirectFrame):
         self.esc = esc
         base.localAvatar.disable()
         base.localAvatar.enterOpenBook()
-        Sequence(Wait(base.localAvatar.track.getDuration() - 0.1), Func(self.enter)).start()
+        self.enter()
 
     def close(self):
         self.exit()

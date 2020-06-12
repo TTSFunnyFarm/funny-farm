@@ -133,7 +133,8 @@ class InventoryBase(DirectObject.DirectObject):
         if type(track) == type(''):
             track = Tracks.index(track)
         if self.numItem(track, level) > 0:
-            self.inventory[track][level] -= 1
+            if not self.toon.unlimitedGags:
+                self.inventory[track][level] -= 1
             self.calcTotalProps()
             self.saveInventory()
         elif self.numItem(track, level) == -1:
