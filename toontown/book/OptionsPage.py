@@ -138,8 +138,9 @@ class OptionsTabPage(DirectFrame):
         disabled_arrow_color = Vec4(0.6, 0.6, 0.6, 1.0)
         self.speed_chat_scale = 0.055
 
-        self.audioLabel = DirectLabel(parent=self, relief=None, text=TTLocalizer.OptionsPageAudioLabel, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_align=TextNode.ALeft, text_scale=0.07, pos=(-0.8, 0, textStartHeight - 0.03))
-        self.videoLabel = DirectLabel(parent=self, relief=None, text=TTLocalizer.OptionsPageVideoLabel, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_align=TextNode.ALeft, text_scale=0.07, pos=(-0.8, 0, (textStartHeight - textRowHeight * 3) - 0.03))
+        label_color = (66 / 255, 135 / 255, 245 / 255, 1)
+        self.audioLabel = DirectLabel(parent=self, relief=None, text=TTLocalizer.OptionsPageAudioLabel, text_font=ToontownGlobals.getSignFont(), text_fg=label_color, text_align=TextNode.ALeft, text_scale=0.07, pos=(-0.8, 0, textStartHeight - 0.03))
+        self.videoLabel = DirectLabel(parent=self, relief=None, text=TTLocalizer.OptionsPageVideoLabel, text_font=ToontownGlobals.getSignFont(), text_fg=label_color, text_align=TextNode.ALeft, text_scale=0.07, pos=(-0.8, 0, (textStartHeight - textRowHeight * 3) - 0.03))
 
         self.Music_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, pos=(leftMargin, 0, textStartHeight - textRowHeight))
         self.SoundFX_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 2))
