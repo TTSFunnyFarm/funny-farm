@@ -10,10 +10,6 @@ class ShtikerBook(DirectFrame):
 
     def __init__(self):
         DirectFrame.__init__(self, relief=None, sortOrder=DGG.BACKGROUND_SORT_INDEX)
-        keybinds = settings['keybinds'][base.getCurrentDevice()]
-        self.shtiker = keybinds['shtiker']
-        self.option = keybinds['options']
-        self.setBin('gui-popup', 0)
         self.initialiseoptions(ShtikerBook)
         self.pages = []
         self.pageTabs = []
@@ -36,7 +32,8 @@ class ShtikerBook(DirectFrame):
         base.localAvatar.enterReadBook()
         base.playSfx(self.openSound)
         base.disableMouse()
-        base.transitions.fadeScreen(0.5)
+        base.render.hide()
+        base.setBackgroundColor(0.05, 0.15, 0.4)
         self.__setButtonVisibility()
         self.show()
         self.showPageArrows()
@@ -45,15 +42,10 @@ class ShtikerBook(DirectFrame):
             self.setPage(self.pages[0])
         else:
             self.setPage(self.pages[self.currPage])
-        keybinds = settings['keybinds'][base.getCurrentDevice()]
-        self.shtiker = keybinds['shtiker']
-        self.option = keybinds['options']
-        self.accept(self.shtiker, self.close)
-        self.accept(self.option, self.close)
-        self.turn_right = keybinds['turn_right']
-        self.turn_left = keybinds['turn_left']
-        self.accept(self.turn_right, self.rightArrow)
-        self.accept(self.turn_left, self.leftArrow)
+        self.accept(ToontownGlobals.StickerBookHotkey, self.close)
+        self.accept(ToontownGlobals.OptionsPageHotkey, self.close)
+        self.accept('arrow_right', self.__rightArrow)
+        self.accept('arrow_left', self.__leftArrow)
 
     def exit(self):
         if not self.isOpen:
@@ -61,14 +53,18 @@ class ShtikerBook(DirectFrame):
         self.isOpen = 0
         base.playSfx(self.closeSound)
         self.pages[self.currPage].exit()
-        base.transitions.noTransitions()
+        base.render.show()
+        base.setBackgroundColor(ToontownGlobals.DefaultBackgroundColor)
+        gsg = base.win.getGsg()
+        if gsg:
+            base.render.prepareScene(gsg)
         self.hide()
         self.hideButton()
         self.pageTabFrame.hide()
-        self.ignore(self.shtiker)
-        self.ignore(self.option)
-        self.ignore(self.turn_right)
-        self.ignore(self.turn_left)
+        self.ignore(ToontownGlobals.StickerBookHotkey)
+        self.ignore(ToontownGlobals.OptionsPageHotkey)
+        self.ignore('arrow_right')
+        self.ignore('arrow_left')
 
     def load(self):
         bookModel = loader.loadModel('phase_3.5/models/gui/stickerbook_gui')
@@ -79,8 +75,8 @@ class ShtikerBook(DirectFrame):
         self.bookCloseButton = DirectButton(image=(bookModel.find('**/BookIcon_OPEN'), bookModel.find('**/BookIcon_CLSD'), bookModel.find('**/BookIcon_RLVR2')), relief=None, pos=(-0.158, 0, 0.17), parent=base.a2dBottomRight, scale=0.305, command=self.close)
         self.bookOpenButton.hide()
         self.bookCloseButton.hide()
-        self.nextArrow = DirectButton(parent=self, relief=None, image=(bookModel.find('**/arrow_button'), bookModel.find('**/arrow_down'), bookModel.find('**/arrow_rollover')), scale=(0.1, 0.1, 0.1), pos=(0.838, 0, -0.661), command=self.rightArrow)
-        self.prevArrow = DirectButton(parent=self, relief=None, image=(bookModel.find('**/arrow_button'), bookModel.find('**/arrow_down'), bookModel.find('**/arrow_rollover')), scale=(-0.1, 0.1, 0.1), pos=(-0.838, 0, -0.661), command=self.leftArrow)
+        self.nextArrow = DirectButton(parent=self, relief=None, image=(bookModel.find('**/arrow_button'), bookModel.find('**/arrow_down'), bookModel.find('**/arrow_rollover')), scale=(0.1, 0.1, 0.1), pos=(0.838, 0, -0.661), command=self.__rightArrow)
+        self.prevArrow = DirectButton(parent=self, relief=None, image=(bookModel.find('**/arrow_button'), bookModel.find('**/arrow_down'), bookModel.find('**/arrow_rollover')), scale=(-0.1, 0.1, 0.1), pos=(-0.838, 0, -0.661), command=self.__leftArrow)
         bookModel.removeNode()
         self.openSound = base.loader.loadSfx('phase_3.5/audio/sfx/GUI_stickerbook_open.ogg')
         self.closeSound = base.loader.loadSfx('phase_3.5/audio/sfx/GUI_stickerbook_delete.ogg')
@@ -236,14 +232,14 @@ class ShtikerBook(DirectFrame):
         self.pageTabs[self.currPageTab]['relief'] = DGG.SUNKEN
         return
 
-    def rightArrow(self):
+    def __rightArrow(self):
         base.playSfx(self.pageSound)
         if self.currPage == self.pages.index(self.pages[-1]):
             self.setPage(self.pages[0])
         else:
             self.setPage(self.pages[self.currPage + 1])
 
-    def leftArrow(self):
+    def __leftArrow(self):
         base.playSfx(self.pageSound)
         self.setPage(self.pages[self.currPage - 1])
 
@@ -268,14 +264,14 @@ class ShtikerBook(DirectFrame):
     def showButton(self):
         self.__shown = 1
         self.__setButtonVisibility()
-        self.accept(self.shtiker, self.open)
-        self.accept(self.options, self.open, [True])
+        self.accept(ToontownGlobals.StickerBookHotkey, self.open)
+        self.accept(ToontownGlobals.OptionsPageHotkey, self.open, [True])
 
     def hideButton(self):
         self.__shown = 0
         self.__setButtonVisibility()
-        self.ignore(self.shtiker)
-        self.ignore(self.options)
+        self.ignore(ToontownGlobals.StickerBookHotkey)
+        self.ignore(ToontownGlobals.OptionsPageHotkey)
 
     def __setButtonVisibility(self):
         if self.isOpen:

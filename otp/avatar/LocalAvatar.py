@@ -3,15 +3,15 @@ from libotp import Nametag, WhisperPopup
 from direct.gui.DirectGui import *
 from direct.showbase.PythonUtil import *
 from direct.interval.IntervalGlobal import *
-from toontown.controls.InputStateGlobal import inputState
+from direct.showbase.InputStateGlobal import inputState
 from direct.showbase.DirectObject import DirectObject
-from toontown.controls.GhostWalker import GhostWalker
-from toontown.controls.GravityWalker import GravityWalker
+from direct.controls.GhostWalker import GhostWalker
+from direct.controls.GravityWalker import GravityWalker
 from direct.controls.ObserverWalker import ObserverWalker
-from toontown.controls.PhysicsWalker import PhysicsWalker
-from toontown.controls.SwimWalker import SwimWalker
-from toontown.controls.TwoDWalker import TwoDWalker
-from toontown.controls import ControlManager
+from direct.controls.PhysicsWalker import PhysicsWalker
+from direct.controls.SwimWalker import SwimWalker
+from direct.controls.TwoDWalker import TwoDWalker
+from direct.controls import ControlManager
 from direct.task import Task
 from otp.ai.MagicWordGlobal import *
 from otp.otpbase import OTPGlobals
@@ -60,7 +60,6 @@ class LocalAvatar(DirectObject):
         self.jumpLandAnimFixTask = None
         self.fov = OTPGlobals.DefaultCameraFov
         self.accept('avatarMoving', self.clearPageUpDown)
-        self.accept('device-enable', self.deviceEnabled)
         self.nametag2dNormalContents = Nametag.CSpeech
         self.showNametag2d()
         self.setPickable(0)
@@ -128,7 +127,7 @@ class LocalAvatar(DirectObject):
     def wantLegacyLifter(self):
         return False
 
-    def setupControls(self, avatarRadius = 1.4, floorOffset = OTPGlobals.FloorOffset, reach = 4.0, wallBitmask = OTPGlobals.WallBitmask, floorBitmask = OTPGlobals.FloorBitmask, ghostBitmask = OTPGlobals.GhostBitmask, disable=True):
+    def setupControls(self, avatarRadius = 1.4, floorOffset = OTPGlobals.FloorOffset, reach = 4.0, wallBitmask = OTPGlobals.WallBitmask, floorBitmask = OTPGlobals.FloorBitmask, ghostBitmask = OTPGlobals.GhostBitmask):
         walkControls = GravityWalker(legacyLifter=self.wantLegacyLifter())
         walkControls.setWallBitMask(wallBitmask)
         walkControls.setFloorBitMask(floorBitmask)
@@ -161,15 +160,10 @@ class LocalAvatar(DirectObject):
         observerControls.setAirborneHeightFunc(self.getAirborneHeight)
         self.controlManager.add(observerControls, 'observer')
         self.controlManager.use('walk', self)
-        if disable:
-            self.controlManager.disable()
+        self.controlManager.disable()
 
     def initializeCollisions(self):
-        self.setupControls(False)
-
-    def refreshControls(self):
         self.setupControls()
-        messenger.send('refresh-controls')
 
     def deleteCollisions(self):
         self.controlManager.deleteCollisions()
@@ -1096,12 +1090,6 @@ class LocalAvatar(DirectObject):
             n = self.__geom
         self.ccPusherTrav.traverse(n)
         return
-
-    def deviceEnabled(self, device):
-        self.refreshControls()
-
-    def deviceDisabled(self, device):
-        self.refreshControls()
 
 @magicWord(aliases=['sonic'])
 def run():

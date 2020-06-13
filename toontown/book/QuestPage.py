@@ -41,13 +41,12 @@ class QuestPage(ShtikerPage.ShtikerPage):
         return
 
     def acceptOnscreenHooks(self):
-        self.tasks = settings['keybinds'][base.getCurrentDevice()]['tasks']
-        self.accept(self.tasks, self.showQuestsOnscreen)
-        self.accept(self.tasks + '-up', self.hideQuestsOnscreen)
+        self.accept(ToontownGlobals.QuestsHotkeyOn, self.showQuestsOnscreen)
+        self.accept(ToontownGlobals.QuestsHotkeyOff, self.hideQuestsOnscreen)
 
     def ignoreOnscreenHooks(self):
-        self.ignore(self.tasks)
-        self.ignore(self.tasks + '-up')
+        self.ignore(ToontownGlobals.QuestsHotkeyOn)
+        self.ignore(ToontownGlobals.QuestsHotkeyOff)
 
     def unload(self):
         self.ignore('questsChanged')

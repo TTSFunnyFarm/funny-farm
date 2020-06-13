@@ -1,14 +1,11 @@
 from panda3d.core import *
 from direct.gui.DirectGui import *
 from direct.task import Task
-from direct.showbase import PythonUtil
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownGlobals, FunnyFarmGlobals
 from toontown.toontowngui import TTDialog
 from toontown.book.DisplaySettingsDialog import DisplaySettingsDialog
 from toontown.book import ShtikerPage
-from direct.directnotify import DirectNotifyGlobal
-PageMode = PythonUtil.Enum('Options, Controls')
 
 class OptionsPage(ShtikerPage.ShtikerPage):
     notify = directNotify.newCategory('OptionsPage')
@@ -17,38 +14,26 @@ class OptionsPage(ShtikerPage.ShtikerPage):
         ShtikerPage.ShtikerPage.__init__(self)
 
         self.optionsTabPage = None
-        self.controlsTabPage = None
+        self.codesTabPage = None
         self.title = None
         self.optionsTab = None
-        self.controlsTab = None
+        self.codesTab = None
 
     def load(self):
         ShtikerPage.ShtikerPage.load(self)
         self.optionsTabPage = OptionsTabPage(self)
         self.optionsTabPage.hide()
-        self.controlsTabPage = ControlsTabPage(self)
-        self.controlsTabPage.hide()
         self.title = DirectLabel(
                 parent=self, relief=None, text=TTLocalizer.OptionsPageTitle,
                 text_scale=0.12, pos=(0, 0, 0.61))
-        gui = loader.loadModel('phase_3.5/models/gui/fishingBook')
-        normalColor = (1, 1, 1, 1)
-        clickColor = (0.8, 0.8, 0, 1)
-        rolloverColor = (0.15, 0.82, 1.0, 1)
-        diabledColor = (1.0, 0.98, 0.15, 1)
-        titleHeight = 0.61
-        self.optionsTab = DirectButton(parent=self, relief=None, text=TTLocalizer.OptionsPageTitle, text_scale=TTLocalizer.OPoptionsTab, text_align=TextNode.ALeft, text_pos=(0.01, 0.0, 0.0), image=gui.find('**/tabs/polySurface1'), image_pos=(0.55, 1, -0.91), image_hpr=(0, 0, -90), image_scale=(0.033, 0.033, 0.035), image_color=normalColor, image1_color=clickColor, image2_color=rolloverColor, image3_color=diabledColor, text_fg=Vec4(0.2, 0.1, 0, 1), command=self.setMode, extraArgs=[PageMode.Options], pos=(-0.36, 0, 0.77))
-        self.controlsTab = DirectButton(parent=self, relief=None, text="Controls", text_scale=TTLocalizer.OPoptionsTab, text_align=TextNode.ALeft, text_pos=(0.0, 0.0, 0.0), image=gui.find('**/tabs/polySurface2'), image_pos=(0.12, 1, -0.91), image_hpr=(0, 0, -90), image_scale=(0.033, 0.033, 0.035), image_color=normalColor, image1_color=clickColor, image2_color=rolloverColor, image3_color=diabledColor, text_fg=Vec4(0.2, 0.1, 0, 1), command=self.setMode, extraArgs=[PageMode.Controls], pos=(0.11, 0, 0.77))
-        return
 
     def enter(self):
-        self.setMode(PageMode.Options, updateAnyways=1)
+        self.optionsTabPage.enter()
         ShtikerPage.ShtikerPage.enter(self)
         self.accept('exitFunnyFarm', self.book.exitFunnyFarm)
 
     def exit(self):
         self.optionsTabPage.exit()
-        self.controlsTabPage.exit()
         ShtikerPage.ShtikerPage.exit(self)
 
     def unload(self):
@@ -56,9 +41,9 @@ class OptionsPage(ShtikerPage.ShtikerPage):
             self.optionsTabPage.unload()
             self.optionsTabPage = None
 
-        if self.controlsTabPage is not None:
-            self.controlsTabPage.unload()
-            self.controlsTabPage = None
+        if self.codesTabPage is not None:
+            self.codesTabPage.unload()
+            self.codesTabPage = None
 
         if self.title is not None:
             self.title.destroy()
@@ -68,35 +53,11 @@ class OptionsPage(ShtikerPage.ShtikerPage):
             self.optionsTab.destroy()
             self.optionsTab = None
 
-        if self.controlsTab is not None:
-            self.controlsTab.destroy()
-            self.controlsTab = None
+        if self.codesTab is not None:
+            self.codesTab.destroy()
+            self.codesTab = None
 
         ShtikerPage.ShtikerPage.unload(self)
-
-    def setMode(self, mode, updateAnyways = 0):
-        messenger.send('wakeup')
-        if not updateAnyways:
-            if self.mode == mode:
-                return
-            else:
-                self.mode = mode
-        if mode == PageMode.Options:
-            self.mode = PageMode.Options
-            self.title['text'] = TTLocalizer.OptionsPageTitle
-            self.optionsTab['state'] = DGG.DISABLED
-            self.optionsTabPage.enter()
-            self.controlsTab['state'] = DGG.NORMAL
-            self.controlsTabPage.exit()
-        elif mode == PageMode.Controls:
-            self.mode = PageMode.Controls
-            self.title['text'] = "Controls"
-            self.optionsTab['state'] = DGG.NORMAL
-            self.optionsTabPage.exit()
-            self.controlsTab['state'] = DGG.DISABLED
-            self.controlsTabPage.enter()
-        else:
-            raise(StandardError, 'OptionsPage::setMode - Invalid Mode %s' % mode)
 
 class OptionsTabPage(DirectFrame):
     notify = directNotify.newCategory('OptionsTabPage')
@@ -138,9 +99,8 @@ class OptionsTabPage(DirectFrame):
         disabled_arrow_color = Vec4(0.6, 0.6, 0.6, 1.0)
         self.speed_chat_scale = 0.055
 
-        label_color = (66 / 255, 135 / 255, 245 / 255, 1)
-        self.audioLabel = DirectLabel(parent=self, relief=None, text=TTLocalizer.OptionsPageAudioLabel, text_font=ToontownGlobals.getSignFont(), text_fg=label_color, text_align=TextNode.ALeft, text_scale=0.07, pos=(-0.8, 0, textStartHeight - 0.03))
-        self.videoLabel = DirectLabel(parent=self, relief=None, text=TTLocalizer.OptionsPageVideoLabel, text_font=ToontownGlobals.getSignFont(), text_fg=label_color, text_align=TextNode.ALeft, text_scale=0.07, pos=(-0.8, 0, (textStartHeight - textRowHeight * 3) - 0.03))
+        self.audioLabel = DirectLabel(parent=self, relief=None, text=TTLocalizer.OptionsPageAudioLabel, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_align=TextNode.ALeft, text_scale=0.07, pos=(-0.8, 0, textStartHeight - 0.03))
+        self.videoLabel = DirectLabel(parent=self, relief=None, text=TTLocalizer.OptionsPageVideoLabel, text_font=ToontownGlobals.getSignFont(), text_fg=(0.3, 0.3, 0.3, 1), text_align=TextNode.ALeft, text_scale=0.07, pos=(-0.8, 0, (textStartHeight - textRowHeight * 3) - 0.03))
 
         self.Music_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, pos=(leftMargin, 0, textStartHeight - textRowHeight))
         self.SoundFX_Label = DirectLabel(parent=self, relief=None, text='', text_align=TextNode.ALeft, text_scale=options_text_scale, text_wordwrap=16, pos=(leftMargin, 0, textStartHeight - textRowHeight * 2))
@@ -219,8 +179,6 @@ class OptionsTabPage(DirectFrame):
         self.LOD_Help.destroy()
         self.Fps_Help.destroy()
         self.WaterShader_Help.destroy()
-        self.leftArrow.destroy()
-        self.rightArrow.destroy()
         del self.audioLabel
         del self.videoLabel
         del self.Music_Label
@@ -252,8 +210,6 @@ class OptionsTabPage(DirectFrame):
         del self.Fps_Help
         del self.LOD_Help
         del self.WaterShader_Help
-        del self.leftArrow
-        del self.rightArrow
         self.currentSizeIndex = None
 
     def enterVideoOptions(self):
@@ -712,171 +668,3 @@ class OptionsTabPage(DirectFrame):
         del self.confirm
         if status == 'ok':
             messenger.send('exitFunnyFarm')
-
-class ControlsTabPage(DirectFrame):
-    notify = DirectNotifyGlobal.directNotify.newCategory('ControlsTabPage')
-
-    def __init__(self, parent = aspect2d):
-        self._parent = parent
-        DirectFrame.__init__(self, parent=self._parent, relief=None, pos=(0.0, 0.0, 0.0), scale=(1.0, 1.0, 1.0))
-        self.load()
-        #messenger.toggleVerbose()
-        return
-
-    def destroy(self):
-        self._parent = None
-        DirectFrame.destroy(self)
-        return
-
-    def load(self):
-        button_image_scale = (0.7, 1, 1)
-        normalColor = (1, 1, 1, 1)
-        clickColor = (0.8, 0.8, 0, 1)
-        rolloverColor = (0.15, 0.82, 1.0, 1)
-        diabledColor = (1.0, 0.98, 0.15, 1)
-        guiButton = loader.loadModel('phase_3/models/gui/quit_button')
-        matGui = loader.loadModel('phase_3/models/gui/tt_m_gui_mat_mainGui')
-        button_set = (guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR'))
-        matButton_set = (matGui.find('**/tt_t_gui_mat_nextUp'), matGui.find('**/tt_t_gui_mat_nextDown'), matGui.find('**/tt_t_gui_mat_nextUp'), matGui.find('**/tt_t_gui_mat_nextDisabled'))
-        guiAcceptUp = matGui.find('**/tt_t_gui_mat_okUp')
-        guiAcceptDown = matGui.find('**/tt_t_gui_mat_okDown')
-        guiCancelUp = matGui.find('**/tt_t_gui_mat_closeUp')
-        guiCancelDown = matGui.find('**/tt_t_gui_mat_closeDown')
-        self.bindDialog = None
-        self.current_event = None
-        self.Forward_Label = DirectLabel(parent=self, relief=None, text='Forward', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.6, 0, 0.4))
-        self.Forward_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.65, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(-0.5, 0, 0.325), command=self.showBindDialog, extraArgs=['forward'])
-        self.Reverse_Label = DirectLabel(parent=self, relief=None, text='Reverse', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.6, 0, 0.2))
-        self.Reverse_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.7, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(-0.5, 0, 0.125), command=self.showBindDialog, extraArgs=['reverse'])
-        self.Left_Label = DirectLabel(parent=self, relief=None, text='Turn Left', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.6125, 0, 0.0))
-        self.Left_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.7, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(-0.5, 0, -0.075), command=self.showBindDialog, extraArgs=['turn_left'])
-        self.Right_Label = DirectLabel(parent=self, relief=None, text='Turn Right', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.61875, 0, -0.2))
-        self.Right_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.75, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(-0.5, 0, -0.275), command=self.showBindDialog, extraArgs=['turn_right'])
-        self.Jump_Label = DirectLabel(parent=self, relief=None, text='Jump', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.57, 0, -0.4))
-        self.Jump_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.6, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(-0.5, 0, -0.475), command=self.showBindDialog, extraArgs=['jump'])
-        self.Chat_Label = DirectLabel(parent=self, relief=None, text='Chat', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.065, 0, 0.4))
-        self.Chat_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.5, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(0.0, 0, 0.325), command=self.showBindDialog, extraArgs=['chat'])
-        self.Gags_Label = DirectLabel(parent=self, relief=None, text='Gags', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.065, 0, 0.2))
-        self.Gags_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.45, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(0.0, 0, 0.125), command=self.showBindDialog, extraArgs=['gags'])
-        self.Tasks_Label = DirectLabel(parent=self, relief=None, text='Tasks', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.075, 0, 0.0))
-        self.Tasks_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.4, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(0.0, 0, -0.075), command=self.showBindDialog, extraArgs=['tasks'])
-        self.Options_Label = DirectLabel(parent=self, relief=None, text='Options', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.1, 0, -0.2))
-        self.Options_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.55, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(0.0, 0, -0.275), command=self.showBindDialog, extraArgs=['options'])
-        self.Camera_Label = DirectLabel(parent=self, relief=None, text='Camera', text_align=TextNode.ALeft, text_scale=0.06, pos=(-0.1, 0, -0.4))
-        self.Camera_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.4, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(0.0, 0, -0.475), command=self.showBindDialog, extraArgs=['camera'])
-        self.GUI_Label = DirectLabel(parent=self, relief=None, text='GUI', text_align=TextNode.ALeft, text_scale=0.06, pos=(0.45, 0, 0.4))
-        self.GUI_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.35, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(0.5, 0, 0.325), command=self.showBindDialog, extraArgs=['gui'])
-        self.Action_Label = DirectLabel(parent=self, relief=None, text='Action', text_align=TextNode.ALeft, text_scale=0.06, pos=(0.425, 0, 0.07))
-        self.Action_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.55, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(0.5, 0, -0.005), command=self.showBindDialog, extraArgs=['action'])
-        self.Shitker_Label = DirectLabel(parent=self, relief=None, text='Shtiker', text_align=TextNode.ALeft, text_scale=0.06, pos=(0.41, 0, -0.26))
-        self.Shtiker_Bind = DirectButton(parent=self, relief=None, image=button_set, image_scale=(0.35, 1, 1), text='', text_scale=0.052, text_pos=(0.0, -0.02), pos=(0.5, 0, -0.335), command=self.showBindDialog, extraArgs=['shtiker'])
-        self.InputType_Label = DirectLabel(parent=self, relief=None, text='Keyboard', text_font=ToontownGlobals.getSignFont(), text_fg=(1, 1, 1, 1), text_align=TextNode.ACenter, text_scale=0.1, pos=(0, 0, 0.5))
-        self.rightArrow = DirectButton(parent=self, relief=None, image=matButton_set, pos=(0.4, 0, 0.53), image_scale=(0.18, 0.18, 0.18), image1_scale=(0.20, 0.20, 0.20), image2_scale=(0.20, 0.20, 0.20), image3_scale=(0.18, 0.18, 0.18), command=self.changeDevice, extraArgs=[1])
-        self.leftArrow = DirectButton(parent=self, relief=None, image=matButton_set, pos=(-0.4, 0, 0.53), image_scale=(-0.18, 0.18, 0.18), image1_scale=(-0.20, 0.20, 0.20), image2_scale=(-0.20, 0.20, 0.20), image3_scale=(-0.18, 0.18, 0.18), command=self.changeDevice, extraArgs=[-1])
-        self._buttons = [self.leftArrow, self.rightArrow, self.Forward_Bind, self.Reverse_Bind, self.Left_Bind, self.Right_Bind, self.Jump_Bind, self.Chat_Bind, self.Gags_Bind, self.Tasks_Bind, self.Options_Bind, self.Camera_Bind, self.GUI_Bind, self.Action_Bind, self.Shtiker_Bind]
-        self.turnOnDevice = DirectButton(parent=self, relief=None, image=(guiAcceptUp, guiAcceptDown, guiAcceptUp), pos=(0.6, 0, 0.63), image_scale=0.45, image2_scale=0.48, text='Use device!', text_pos=(0.0, -0.1), text_scale=0.06, command=self.toggleDevice)
-        self.turnOnDevice.show()
-        return
-
-    def changeDevice(self, delta):
-        self.currentDevice += delta
-        self.refresh()
-
-    def refresh(self):
-        device = self.getDeviceName()
-        if not device in settings['keybinds']:
-            keybinds = settings.get('keybinds')
-            keybinds[controller.name] = ToontownGlobals.GP_CONTROLS
-            settings['keybinds'] = keybinds
-        keybinds = settings['keybinds'][device]
-
-        self.Forward_Bind.setText(keybinds['forward'])
-        self.Reverse_Bind.setText(keybinds['reverse'])
-        self.Left_Bind.setText(keybinds['turn_left'])
-        self.Right_Bind.setText(keybinds['turn_right'])
-        self.Jump_Bind.setText(keybinds['jump'])
-        self.Chat_Bind.setText(keybinds['chat'])
-        self.Gags_Bind.setText(keybinds['gags'])
-        self.Tasks_Bind.setText(keybinds['tasks'])
-        self.Options_Bind.setText(keybinds['options'])
-        self.Camera_Bind.setText(keybinds['camera'])
-        self.GUI_Bind.setText(keybinds['gui'])
-        self.Action_Bind.setText(keybinds['action'])
-        self.Shtiker_Bind.setText(keybinds['shtiker'])
-
-        self.InputType_Label.setText(device)
-        if self.currentDevice == 0:
-            self.leftArrow['state'] = DGG.DISABLED
-        else:
-            self.leftArrow['state'] = DGG.NORMAL
-        if len(base.currentDevices) > self.currentDevice + 1:
-            self.rightArrow['state'] = DGG.NORMAL
-        else:
-            self.rightArrow['state'] = DGG.DISABLED
-        self.rightArrow.setX(len(self.InputType_Label['text']) * 0.025 + 0.2)
-        self.leftArrow.setX(-(len(self.InputType_Label['text']) * 0.025 + 0.2))
-        if self.getCurrentDevice() == base.gamepad or (self.getCurrentDevice() == 'keyboard' and not base.gamepad):
-            self.turnOnDevice.hide()
-        else:
-            self.turnOnDevice.show()
-
-    def showBindDialog(self, event):
-        if self.bindDialog:
-            self.hideBindDialog(None)
-        self.current_event = event
-        self.bindDialog = TTDialog.TTDialog(text='Binding: %s\n\nPress any key to bind.' % event, pos=(0, 0, 0.2), style=TTDialog.CancelOnly, command=self.hideBindDialog)
-
-    def hideBindDialog(self, unused):
-        self.bindDialog.removeNode()
-        self.bindDialog = None
-
-    def handleInput(self, input):
-        if input.startswith('mouse'): #no mouse events sorry
-            return
-        if self.bindDialog and self.current_event:
-            device = self.getDeviceName()
-            keybinds = settings['keybinds']
-            keybinds[device][self.current_event] = input
-            settings['keybinds'] = keybinds
-            self.refresh()
-            self.hideBindDialog(None)
-
-    def getCurrentDevice(self):
-        return base.currentDevices[self.currentDevice]
-
-    def getDeviceName(self):
-        device = 'keyboard'
-        if self.currentDevice > 0:
-            device = self.getCurrentDevice().name
-        return device
-
-    def toggleDevice(self):
-        messenger.send('device-disable', [base.gamepad or 'keyboard'])
-        device = self.getCurrentDevice()
-        if device == 'keyboard':
-            base.gamepad = None
-        else:
-            base.gamepad = device
-        messenger.send('device-enable', [device])
-
-    def enter(self):
-        base.buttonThrowers[0].node().setButtonUpEvent('key-pressed')
-        self.show()
-        self.accept('key-pressed', self.handleInput)
-        self._parent.book.ignore(self._parent.book.turn_left)
-        self._parent.book.ignore(self._parent.book.turn_right)
-        self.currentDevice = 0
-        self.refresh()
-
-    def exit(self):
-        self.hide()
-        keybinds = settings['keybinds'][base.getCurrentDevice()]
-        self._parent.book.turn_left = keybinds['turn_left']
-        self._parent.book.turn_right = keybinds['turn_right']
-        self._parent.book.accept(self._parent.book.turn_right, self._parent.book.rightArrow)
-        self._parent.book.accept(self._parent.book.turn_left, self._parent.book.leftArrow)
-
-    def unload(self):
-        for button in self._buttons:
-            button.destroy()
-            del button

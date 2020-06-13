@@ -2,7 +2,6 @@ from panda3d.core import *
 from direct.gui.DirectGui import *
 from direct.directnotify import DirectNotifyGlobal
 from direct.interval.IntervalGlobal import *
-from direct.showbase.DirectObject import DirectObject
 from toontown.toonbase import ToontownGlobals, FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toontowngui import TTDialog
@@ -30,7 +29,7 @@ DELETE_POSITIONS = ((0.187, 0, -0.26),
  (0.243, 0, -0.233),
  (0.28, 0, -0.207))
 
-class AvatarChooser(DirectObject):
+class AvatarChooser:
 
     def __init__(self):
         self.isLoaded = 0
@@ -98,11 +97,6 @@ class AvatarChooser(DirectObject):
         trashcanGui.removeNode()
         self.renameFrame = None
         self.renameEntry = None
-        self.avatarIndex = -1
-        if base.gamepad:
-            self.avatarIndex = 1
-            self.handleDeviceEnabled(base.gamepad)
-        self.accept('device-enable', self.handleDeviceEnabled)
         self.isLoaded = 1
 
     def unload(self):
@@ -120,36 +114,7 @@ class AvatarChooser(DirectObject):
         del self.title
         self.bg.destroy()
         del self.bg
-        self.ignore('device-enable')
         self.isLoaded = 0
-
-    def cycleAvatar(self, input):
-        keybinds = settings['keybinds'][base.getCurrentDevice()]
-        delta = 0
-        x = False
-        if input in ['dpad_right', keybinds['turn_right']]:
-            delta = 1
-            x = True
-        elif input in ['dpad_down', keybinds['reverse']]:
-            delta = 3
-        elif input in ['dpad_up', keybinds['forward']]:
-            delta = -3
-        else:
-            delta = -1
-            x = True
-        messenger.send(PGButton.getExitPrefix() + self.buttons[self.avatarIndex].guiId)
-        index = self.avatarIndex + delta
-        if index < 0:
-            if x:
-                self.avatarIndex = 0
-            else:
-                self.avatarIndex = abs(index)
-        elif x:
-            if self.avatarIndex < index and (index == 3 or index == 6):
-                self.avatarIndex = index - 3
-            elif self.avatarIndex > index and (index == 2 or index == -1):
-                self.avatarIndex = index + 3
-        messenger.send(PGButton.getEnterPrefix() + self.buttons[self.avatarIndex].guiId)
 
     def loadAvatars(self):
         if dataMgr.checkToonFiles():
@@ -264,6 +229,7 @@ class AvatarChooser(DirectObject):
         name = self.renameEntry.get()
         data = dataMgr.loadToonData(index)
         reviewedName = self.reviewName(name, index)
+        print(" NAME: {0}, REVIEW: {1}".format(name, reviewedName))
         if name == reviewedName:
             self.renameFrame.hide()
             base.transitions.noTransitions()
@@ -352,18 +318,6 @@ class AvatarChooser(DirectObject):
             base.localAvatar.setHealth(20, 20)
         else:
             base.cr.enterTheTooniverse(data.setLastHood)
-
-    def handleDeviceEnabled(self, device):
-        messenger.send(PGButton.getEnterPrefix() + self.buttons[self.avatarIndex].guiId)
-        keybinds = settings['keybinds'][base.getCurrentDevice()]
-        self.accept('dpad_left', self.cycleAvatar, ['dpad_left'])
-        self.accept(keybinds['turn_left'], self.cycleAvatar, [keybinds['turn_left']])
-        self.accept('dpad_right', self.cycleAvatar, ['dpad_right'])
-        self.accept(keybinds['turn_right'], self.cycleAvatar, [keybinds['turn_right']])
-        self.accept('dpad_down', self.cycleAvatar, ['dpad_down'])
-        self.accept(keybinds['reverse'], self.cycleAvatar, [keybinds['reverse']])
-        self.accept('dpad_up', self.cycleAvatar, ['dpad_up'])
-        self.accept(keybinds['forward'], self.cycleAvatar, [keybinds['forward']])
 
     def __deleteToon(self, index):
         dataMgr.deleteToonData(index)

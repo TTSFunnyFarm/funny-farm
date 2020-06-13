@@ -16,43 +16,35 @@ class PublicWalk(Walk.Walk):
     def enter(self, slowWalk = 0):
         Walk.Walk.enter(self, slowWalk)
         base.localAvatar.book.showButton()
-        keybinds = settings['keybinds'][base.getCurrentDevice()]
-        self.sticker = keybinds['shtiker']
-        self.accept(self.sticker, self.__handleStickerBookEntry)
+        self.accept(StickerBookHotkey, self.__handleStickerBookEntry)
         self.accept('enterStickerBook', self.__handleStickerBookEntry)
-        self.options = keybinds['options']
-        self.accept(self.options, self.__handleOptionsEntry)
-        self.accept('refresh-controls', self.refreshControls)
+        self.accept(OptionsPageHotkey, self.__handleOptionsEntry)
         base.localAvatar.beginAllowPies()
-
-    def refreshControls(self):
-        self.ignore(self.sticker)
-        self.ignore(self.options)
-        keybinds = settings['keybinds'][base.getCurrentDevice()]
-        self.sticker = keybinds['shtiker']
-        self.options = keybinds['options']
-        self.accept(self.options, self.__handleOptionsEntry)
-        self.accept(self.sticker, self.__handleStickerBookEntry)
 
     def exit(self):
         Walk.Walk.exit(self)
         base.localAvatar.book.hideButton()
-        self.ignore(self.sticker)
+        self.ignore(StickerBookHotkey)
         self.ignore('enterStickerBook')
-        self.ignore(self.options)
-        self.ignore('refresh-controls')
+        self.ignore(OptionsPageHotkey)
         base.localAvatar.endAllowPies()
 
     def __handleStickerBookEntry(self):
         currentState = base.localAvatar.animFSM.getCurrentState().getName()
-        if base.localAvatar.book.isObscured() or currentState == 'jumpAirborne':
+        if currentState == 'jumpAirborne':
+            return
+        if base.localAvatar.book.isObscured():
             return
         else:
             base.localAvatar.book.open()
+            return
 
     def __handleOptionsEntry(self):
         currentState = base.localAvatar.animFSM.getCurrentState().getName()
-        if base.localAvatar.book.isObscured() or currentState == 'jumpAirborne':
+        if currentState == 'jumpAirborne':
+            return
+        if base.localAvatar.book.isObscured():
             return
         else:
             base.localAvatar.book.open(esc=True)
+            return

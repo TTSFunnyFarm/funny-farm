@@ -3,7 +3,7 @@ from direct.showbase.DirectObject import DirectObject
 from direct.interval.IntervalGlobal import *
 from direct.task.Task import Task
 from direct.gui.DirectGui import *
-from toontown.toonbase import FunnyFarmGlobals, ToontownGlobals
+from toontown.toonbase import FunnyFarmGlobals
 from toontown.effects.FireworkShowMixin import FireworkShowMixin
 from toontown.parties import PartyGlobals
 import random
@@ -95,7 +95,6 @@ class TitleScreen(DirectObject):
         self.fireworkShow.startShow(random.choice(showTypes), 0, 0, 0)
         taskMgr.doMethodLater(self.fireworkShow.fireworkShow.getShowDuration(), self.exitShow, 'showTimeout')
         self.track.start()
-        self.accept('device-enable', self.handleDeviceEnabled)
 
     def exitShow(self, *args):
         self.track.finish()
@@ -104,13 +103,3 @@ class TitleScreen(DirectObject):
         self.track.append(Parallel(self.titleText.colorScaleInterval(1.0, (1, 1, 1, 0)), Sequence(Func(base.transitions.fadeOut, 1.0), Wait(1.5), Func(self.unload), Func(base.cr.begin))))
         self.track.start()
         return Task.done
-
-    def handleDeviceEnabled(self, device):
-        if base.gamepad:
-            self.titleText.setText('Press start to begin!')
-            self.acceptOnce('start', self.exitShow)
-            self.ignore('mouse1')
-        else:
-            self.titleText.setText('Click to begin!')
-            self.acceptOnce('mouse1', self.exitShow)
-            self.ignore('start')

@@ -21,7 +21,6 @@ import io
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.toontowngui import TTDialog
-from toontown.controls import GamepadManager
 from sys import platform
 import time
 from panda3d.core import TrueClock
@@ -156,13 +155,6 @@ class ToonBase(OTPBase.OTPBase):
         self.needRestartAntialiasing = False
         self.needRestartSmoothing = False
         self.needRestartLOD = False
-        #self.accept('connect-device', self.handleControllerConnect)
-        #self.accept('disconnect-device', self.handleControllerDisconnect)
-        #self.accept('device-enable', self.handleDeviceEnabled)
-        #self.accept('device-disable', self.handleDeviceDisabled)
-        self.gamepad = None
-        self.currentDevices = ['keyboard']
-        self._controllerDialog = None
         self.consoleDisplay = OnscreenText(text='h', fg=(1, 1, 1, 1), bg=(0,0,0,0.5), wordwrap=93, pos=(0.11, -0.04), scale=0.04, align=TextNode.ALeft, parent = base.a2dTopLeft, mayChange=1)
         self.consoleData = io.StringIO()
         logger.setDisplay(self.consoleDisplay)
@@ -322,12 +314,10 @@ class ToonBase(OTPBase.OTPBase):
         musicMgr.playPickAToon()
         titleScreen = TitleScreen()
         titleScreen.startShow()
-        self.gamepadMgr = GamepadManager.GamepadManager()
-        taskMgr.add(self.gamepadMgr.findInput, 'findInput')
 
     def removeGlitchMessage(self):
         self.ignore('InputState-forward')
-        self.notify.info('ignoring InputState-forward')
+        print('ignoring InputState-forward')
 
     def exitShow(self, errorCode = None):
         self.notify.setInfo(1)
@@ -407,68 +397,6 @@ class ToonBase(OTPBase.OTPBase):
         wp = WindowProperties()
         wp.setMinimized(True)
         base.win.requestProperties(wp)
-
-    def handleControllerConnect(self, controller):
-        if self._controllerDialog:
-            self._controllerDialog.hide()
-        self._controllerDialog = TTDialog.TTDialog(parent=aspect2d, text="%s has been connected.\n\nWould you like to use it?" % controller.name, style=TTDialog.YesNo, command=self.handleControllerAck, extraArgs=[controller], text_wordwrap=24)
-        self._controllerDialog.show()
-        if controller not in self.currentDevices:
-            self.currentDevices.append(controller)
-
-    def handleControllerAck(self, val, controller):
-        if val == DGG.DIALOG_OK:
-            self.attachInputDevice(controller)
-            self.gamepad = controller
-            messenger.send('device-enable', [controller])
-        if self._controllerDialog:
-            self._controllerDialog.hide()
-
-    def handleControllerDisconnect(self, controller):
-        self.currentDevices.remove(controller)
-        if self.gamepad == controller:
-            self.detachInputDevice(controller)
-            messenger.send('device-disable', [controller])
-            props = WindowProperties()
-            props.setCursorHidden(True)
-            props.setMouseMode(WindowProperties.M_absolute)
-        if self._controllerDialog:
-            self._controllerDialog.hide()
-
-    def handleDeviceEnabled(self, controller):
-        self.gamepad = controller
-        if not settings['keybinds'].get(self.getCurrentDevice()):
-            keybinds = settings.get('keybinds')
-            keybinds[controller.name] = ToontownGlobals.GP_CONTROLS
-            settings['keybinds'] = keybinds
-        mode = WindowProperties.M_absolute
-        if self.gamepad:
-            mode = WindowProperties.M_confined
-            mw = self.mouseWatcher
-            mw.removeNode()
-        else:
-            self.mouseWatcher = self.buttonThrowers[0].getParent()
-            self.mouseWatcherNode = self.mouseWatcher.node()
-        props = WindowProperties()
-        props.setCursorHidden(bool(self.gamepad))
-        props.setMouseMode(mode)
-        self.win.requestProperties(props)
-
-    def handleDeviceDisabled(self, controller):
-        if self.gamepad == controller:
-            self.gamepad = None
-            props = WindowProperties()
-            props.setCursorHidden(False)
-            props.setMouseMode(WindowProperties.M_absolute)
-            self.mouseWatcher = self.buttonThrowers[0].getParent()
-            self.mouseWatcherNode = self.mouseWatcher.node()
-        self.win.requestProperties(props)
-
-    def getCurrentDevice(self):
-        if self.gamepad:
-            return self.gamepad.name
-        else:
-            return 'keyboard'
 
     def showUI(self):
         aspect2d.show()

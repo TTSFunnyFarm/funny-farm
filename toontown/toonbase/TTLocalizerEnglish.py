@@ -3420,7 +3420,7 @@ DanceAnimPush = 'The Mimetoon'
 DanceAnimAngry = "Rock n' Roll"
 DanceAnimLeft = 'Left'
 PartyCannonActivityTitle = 'Party Cannons'
-PartyCannonActivityInstructions = 'Hit the clouds to change their color and bounce in the air! While IN THE AIR, you can USE THE MOVEMENT KEYS to GLIDE.'
+PartyCannonActivityInstructions = 'Hit the clouds to change their color and bounce in the air! While IN THE AIR, you can USE THE ARROW KEYS to GLIDE.'
 PartyCannonResults = 'You collected %d jelly beans!\n\nNumber of Clouds Hit: %d'
 FireworksActivityInstructions = 'Look up using the "Page Up" key to see better.'
 FireworksActivityBeginning = 'Party fireworks are about to start! Enjoy the show!'
@@ -3462,7 +3462,7 @@ PartyCogRewardBonus = '\nYou got %d additional jellybean%s because your team won
 PartyCogJellybeanPlural = 's'
 PartyCogSignNote = 'HI-SCORE\n%s\n%d'
 PartyCogTitle = 'Cog-O-War'
-PartyCogInstructions = 'Throw pies at cogs to push them away from your team. ' + "When time's up, the team with most cogs on the other side wins!" + '\n\nThrow with the CONTROL KEY. Move with the MOVEMENT KEYS.'
+PartyCogInstructions = 'Throw pies at cogs to push them away from your team. ' + "When time's up, the team with most cogs on the other side wins!" + '\n\nThrow with the CONTROL KEY. Move with the ARROW KEYS.'
 PartyCogDistance = '%d ft'
 PartyCogTimeUp = "Time's up!"
 PartyCogGuiScoreLabel = 'SCORE'
@@ -3805,7 +3805,7 @@ BattleGlobalTracks = ['power-up',
  'squirt',
  'drop']
 BattleGlobalNPCTracks = ['restock', 'toons hit', 'cogs miss']
-BattleGlobalAvPropStrings = (('Laff Juice',
+BattleGlobalAvPropStrings = (('Toon-up Soda',
   'Damage Punch',
   'Defense Cola',
   'Accuracy Aid',
@@ -3854,7 +3854,7 @@ BattleGlobalAvPropStrings = (('Laff Juice',
   'Safe',
   'Grand Piano',
   'Toontanic'))
-BattleGlobalAvPropStringsSingular = (('a Laff Juice',
+BattleGlobalAvPropStringsSingular = (('a Toon-up Soda',
   'a Damage Punch',
   'a Defense Cola',
   'an Accuracy Aid',
@@ -3903,7 +3903,7 @@ BattleGlobalAvPropStringsSingular = (('a Laff Juice',
   'a Safe',
   'a Grand Piano',
   'the Toontanic'))
-BattleGlobalAvPropStringsPlural = (('Laff Juices',
+BattleGlobalAvPropStringsPlural = (('Toon-up Sodas',
   'Damage Punches',
   'Defense Colas',
   'Accuracy Aids',
@@ -4070,7 +4070,7 @@ FishPoker2Pair = '2 Pair'
 FishPokerPair = 'Pair'
 TutorialGreeting1 = 'Hi %s!'
 TutorialGreeting2 = 'Hi %s!\nCome over here!'
-TutorialGreeting3 = 'Hi %s!\nCome over here!\nUse the movement keys!'
+TutorialGreeting3 = 'Hi %s!\nCome over here!\nUse the arrow keys!'
 TutorialMickeyWelcome = 'Welcome to Toontown!'
 TutorialFlippyIntro = 'Let me introduce you to my friend %s...' % Flippy
 TutorialFlippyHi = 'Hi, %s!'
@@ -4167,20 +4167,20 @@ MinigamePowerMeterTooFast = 'Too\nfast'
 MinigameTemplateTitle = 'Minigame Template'
 MinigameTemplateInstructions = 'This is a template minigame. Use it to create new minigames.'
 CannonGameTitle = 'Cannon Game'
-CannonGameInstructions = 'Shoot your toon into the water tower as quickly as you can. Use the mouse or the movement keys to aim the cannon. Be quick and win a big reward for everyone!'
+CannonGameInstructions = 'Shoot your toon into the water tower as quickly as you can. Use the mouse or the arrow keys to aim the cannon. Be quick and win a big reward for everyone!'
 CannonGameReward = 'REWARD'
 TwoDGameTitle = 'Toon Escape'
-TwoDGameInstructions = 'Escape from the ' + Cog + ' den as soon as you can. Use movement keys to run/jump and Ctrl to squirt a ' + Cog + '. Collect ' + Cog + ' treasures to gain even more points.'
+TwoDGameInstructions = 'Escape from the ' + Cog + ' den as soon as you can. Use arrow keys to run/jump and Ctrl to squirt a ' + Cog + '. Collect ' + Cog + ' treasures to gain even more points.'
 TwoDGameElevatorExit = 'EXIT'
 TugOfWarGameTitle = 'Tug-of-War'
-TugOfWarInstructions = "Alternately tap the left and right movement keys just fast enough to line up the green bar with the red line. Don't tap them too slow or too fast, or you'll end up in the water!"
+TugOfWarInstructions = "Alternately tap the left and right arrow keys just fast enough to line up the green bar with the red line. Don't tap them too slow or too fast, or you'll end up in the water!"
 TugOfWarGameGo = 'GO!'
 TugOfWarGameReady = 'Ready...'
 TugOfWarGameEnd = 'Good game!'
 TugOfWarGameTie = 'You tied!'
 TugOfWarPowerMeter = 'Power meter'
 PatternGameTitle = 'Match %s' % Minnie
-PatternGameInstructions = Minnie + ' will show you a dance sequence. ' + 'Try to repeat ' + Minnie + "'s dance just the way you see it using the movement keys!"
+PatternGameInstructions = Minnie + ' will show you a dance sequence. ' + 'Try to repeat ' + Minnie + "'s dance just the way you see it using the arrow keys!"
 PatternGameWatch = 'Watch these dance steps...'
 PatternGameGo = 'GO!'
 PatternGameRight = 'Good, %s!'
@@ -4216,8 +4216,8 @@ RaceGameJellybeans2 = '2 jellybeans'
 RaceGameJellybeans4 = '4 jellybeans'
 RaceGameJellybeans10 = '10 jellybeans!'
 RingGameTitle = 'Ring Game'
-RingGameInstructionsSinglePlayer = 'Try to swim through as many of the %s rings as you can.  Use the movement keys to swim.'
-RingGameInstructionsMultiPlayer = 'Try to swim through the %s rings.  Other players will try for the other colored rings.  Use the movement keys to swim.'
+RingGameInstructionsSinglePlayer = 'Try to swim through as many of the %s rings as you can.  Use the arrow keys to swim.'
+RingGameInstructionsMultiPlayer = 'Try to swim through the %s rings.  Other players will try for the other colored rings.  Use the arrow keys to swim.'
 RingGameMissed = 'MISSED'
 RingGameGroupPerfect = 'GROUP\nPERFECT!!'
 RingGamePerfect = 'PERFECT!'
@@ -4230,8 +4230,8 @@ ColorWhite = 'white'
 ColorBlack = 'black'
 ColorYellow = 'yellow'
 DivingGameTitle = 'Treasure Dive'
-DivingInstructionsSinglePlayer = 'Treasures will appear at the bottom of the lake.  Use the movement keys to swim.  Avoid the fish and get the treasures up to the boat!'
-DivingInstructionsMultiPlayer = 'Treasures will appear at the bottom of the lake.  Use the movement keys to swim.  Work together to get the treasures up to the boat!'
+DivingInstructionsSinglePlayer = 'Treasures will appear at the bottom of the lake.  Use the arrow keys to swim.  Avoid the fish and get the treasures up to the boat!'
+DivingInstructionsMultiPlayer = 'Treasures will appear at the bottom of the lake.  Use the arrow keys to swim.  Work together to get the treasures up to the boat!'
 DivingGameTreasuresRetrieved = 'Treasures Retrieved'
 TargetGameTitle = 'Toon Slingshot'
 TargetGameInstructionsSinglePlayer = 'Land on targets to score points'
@@ -4240,7 +4240,7 @@ TargetGameBoard = 'Round %s - Keeping Best Score'
 TargetGameCountdown = 'Forced launch in %s seconds'
 TargetGameCountHelp = 'Pound left and right arrows for power, stop to launch'
 TargetGameFlyHelp = 'Press down to open umbrella'
-TargetGameFallHelp = 'Use the movement keys to land on target'
+TargetGameFallHelp = 'Use the arrow keys to land on target'
 TargetGameBounceHelp = ' Bouncing can knock you off target'
 PhotoGameScoreTaken = '%s: %s\nYou: %s'
 PhotoGameScoreBlank = 'Score: %s'
@@ -4537,7 +4537,7 @@ QuestScript150_1 = 'Great work!\x07Toontown is more fun when you have friends!'
 QuestScript150_2 = 'To make friends, find another player, and use the New Friend button.'
 QuestScript150_3 = 'Once you have made a friend, come back here.'
 QuestScript150_4 = 'Some tasks are too difficult to do alone!'
-TutorialGreeting = 'Hello! Come over here using the movement keys.'
+TutorialGreeting = 'Hello! Come over here using the arrow keys.'
 TutorialIntro = 'Welcome to Funny Farm.\x07Many many years ago, Toontown was invaded by evil business robots called Cogs.\x07The Cogs despise all silliness, and they can\'t take a joke!\x07For 10 long years the Toons fought Cogs with silly jokes and gags...\x07...until one day, they became too strong for us.\x07We left Toontown and built a new settlement here, called Funny Farm.\x07But it\'s only a matter of time before the Cogs find us again.\x07With that said, we need to get you prepared with some gags!'
 TutorialGags_0 = 'Throw and Squirt are the two most basic gag tracks, so I\'ll give you these to start.'
 TutorialGags_1 = 'As you progress, you will gain lots of new gags...\x07...including new inventions being worked on by our Loony Labs scientists!'

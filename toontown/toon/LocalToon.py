@@ -200,7 +200,6 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         else:
             self.enabled = 1
             self.walkStateData.enter()
-            self.accept('refresh-controls', self.refresh)
             self.invPage.acceptOnscreenHooks()
             self.questPage.acceptOnscreenHooks()
             self.walkStateData.fsm.request('walking')
@@ -211,17 +210,10 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
         else:
             self.enabled = 0
             self.walkStateData.exit()
-            self.ignore('refresh-controls')
             self.invPage.ignoreOnscreenHooks()
             self.invPage.hideInventoryOnscreen()
             self.questPage.ignoreOnscreenHooks()
             self.questPage.hideQuestsOnscreen()
-
-    def refresh(self):
-        self.invPage.ignoreOnscreenHooks()
-        self.questPage.ignoreOnscreenHooks()
-        self.invPage.acceptOnscreenHooks()
-        self.questPage.acceptOnscreenHooks()
 
     def setZoneId(self, zoneId):
         self.zoneId = zoneId
@@ -256,21 +248,6 @@ class LocalToon(Toon.Toon, LocalAvatar.LocalAvatar):
     def stopChat(self):
         self.ignore(OTPGlobals.ThinkPosHotkey)
         self.chatMgr.deleteGui()
-
-    def setChatAbsolute(self, chatString, chatFlags, dialogue = None, interrupt = 1):
-        # Only makes the local avatar active when they say something,
-        # so that their nametag isn't always showing in the margins
-        self.addActive()
-        Toon.Toon.setChatAbsolute(self, chatString, chatFlags, dialogue=dialogue, interrupt=interrupt)
-        # Message is sent from NametagGroup
-        self.accept('%s-clearChat' % self.nametag.getUniqueId(), self.chatTimeout)
-        if chatFlags & CFThought:
-            # Makes it so thought bubbles don't appear in the margins
-            self.chatTimeout()
-
-    def chatTimeout(self):
-        self.ignore('%s-clearChat' % self.nametag.getUniqueId())
-        self.removeActive()
         self.chatMgr.disableKeyboardShortcuts()
 
     def initInterface(self):
