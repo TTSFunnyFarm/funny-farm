@@ -42,6 +42,7 @@ class SuitPlanner(DirectObject):
         newSuit.setElite(requestStatus['elite'])
         newSuit.initializeBodyCollisions('suit')
         newSuit.enableRaycast(1)
+        newSuit.getGeomNode().setName('suit-%d' % newSuit.doId)
         newSuit.reparentTo(base.cr.playGame.street.geom)
         newSuit.enterFromSky(requestStatus['posA'], requestStatus['posB'])
         newSuit.startUpdatePosition()

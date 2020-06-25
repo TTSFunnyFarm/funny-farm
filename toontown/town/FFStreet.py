@@ -6,6 +6,9 @@ from toontown.shader import WaterShader
 from toontown.toon import NPCToons
 from toontown.toonbase import FunnyFarmGlobals
 from toontown.town.Street import Street
+from toontown.battle import BattleParticles
+from toontown.battle import BattleSounds
+from toontown.battle import MovieUtil
 
 class FFStreet(Street):
 
@@ -80,11 +83,18 @@ class FFStreet(Street):
     def loadTrain(self):
         self.train = loader.loadModel('phase_5/models/props/train')
         self.train.reparentTo(self.geom)
-        cb = CollisionBox(Point3(0, 14.25, 5), 3.5, 14.25, 6)
+        cs1 = CollisionSphere(0, 3, 3, 4)
+        cs2 = CollisionSphere(0, 10, 3, 4)
+        cs3 = CollisionSphere(0, 17, 3, 4)
+        cs4 = CollisionSphere(0, 24, 3, 4)
         self.trainColl = self.train.attachNewNode(CollisionNode('train_collision'))
-        self.trainColl.node().addSolid(cb)
+        self.trainColl.node().addSolid(cs1)
+        self.trainColl.node().addSolid(cs2)
+        self.trainColl.node().addSolid(cs3)
+        self.trainColl.node().addSolid(cs4)
         self.train.setH(90)
-        self.trainLoop = Sequence(self.train.posInterval(32, pos=Point3(445, 45, -0.5), startPos=(-260, 45, -0.5)), Wait(90))
+        
+        self.trainLoop = Sequence(self.train.posInterval(35, pos=Point3(445, 45, -0.5), startPos=(-260, 45, -0.5)), Wait(90))
         self.trainLoop.loop()
         self.audio3d = Audio3DManager.Audio3DManager(base.sfxManagerList[0], camera)
         self.trainSfx = self.audio3d.loadSfx('phase_14/audio/sfx/train_loop.ogg')
@@ -101,7 +111,14 @@ class FFStreet(Street):
         del self.trainSfx
         del self.audio3d
 
-    def __handleTrainCollision(self, entry):
+    def __handleTrainCollision(self, collEntry):
+        np = collEntry.getFromNodePath()
+        if np.getName() == 'cRay':
+            self.__trainHitCog(collEntry)
+        else:
+            self.__trainHitToon(collEntry)
+
+    def __trainHitToon(self, collEntry):
         if base.localAvatar.getInBattle():
             return
         base.localAvatar.disable()
@@ -114,6 +131,65 @@ class FFStreet(Street):
     def __squishDone(self):
         base.localAvatar.exitSquish()
         base.localAvatar.enable()
+
+    def __trainHitCog(self, collEntry):
+        suitNP = collEntry.getFromNodePath().getParent()
+        suitNP = suitNP.find('**/suit-*')
+        if suitNP.isEmpty():
+            # AI most likely gave us a bad suit if this is the case.
+            return 
+        doId = int(suitNP.getName().split('-')[1])
+        if doId not in self.sp.activeSuits.keys():
+            # Most likely got hit during the face-off of a battle.
+            return
+        suit = self.sp.activeSuits[doId]
+        suit.enableRaycast(0)
+        suit.exitWalk()
+        suit.setZ(-0.4)
+        base.air.suitPlanners[self.zoneId].removeSuitAI(doId)
+        
+        suitTrack = Sequence()
+        suitSfx = BattleSounds.globalBattleSoundCache.getSound('TL_train_cog.ogg')
+        suitReact = ActorInterval(suit, 'flatten')
+        suitDeath = self.getSuitDeathTrack(suit)
+        suitTrack.append(Func(base.playSfx, suitSfx, 0, 1, None, 0.0, suitNP))
+        suitTrack.append(suitReact)
+        suitTrack.append(suitDeath)
+        suitTrack.append(Func(self.sp.deleteSuit, suit))
+        suitTrack.append(Func(messenger.send, 'upkeepPopulation-%d' % self.zoneId, [None]))
+        suitTrack.start()
+
+    def getSuitDeathTrack(self, suit):
+        suitTrack = Sequence()
+        suitPos = suit.getPos()
+        suitHpr = suit.getHpr()
+        deathSuit = suit.getLoseActor()
+        suitTrack.append(Func(MovieUtil.insertDeathSuit, suit, deathSuit, self.geom, suitPos, suitHpr))
+        suitTrack.append(ActorInterval(deathSuit, 'lose', duration=6.0))
+        suitTrack.append(Func(MovieUtil.removeDeathSuit, suit, deathSuit, name='remove-death-suit'))
+        spinningSound = base.loader.loadSfx('phase_3.5/audio/sfx/Cog_Death.ogg')
+        deathSound = base.loader.loadSfx('phase_3.5/audio/sfx/ENC_cogfall_apart.ogg')
+        deathSoundTrack = Sequence(Wait(0.8), SoundInterval(spinningSound, duration=1.2, startTime=1.5, volume=0.2), SoundInterval(spinningSound, duration=3.0, startTime=0.6, volume=0.8), SoundInterval(deathSound, volume=0.32))
+        BattleParticles.loadParticles()
+        smallGears = BattleParticles.createParticleEffect(file='gearExplosionSmall')
+        singleGear = BattleParticles.createParticleEffect('GearExplosion', numParticles=1)
+        smallGearExplosion = BattleParticles.createParticleEffect('GearExplosion', numParticles=10)
+        bigGearExplosion = BattleParticles.createParticleEffect('BigGearExplosion', numParticles=30)
+        gearPoint = Point3(suitPos.getX(), suitPos.getY(), suitPos.getZ() + suit.height - 0.2)
+        smallGears.setPos(gearPoint)
+        singleGear.setPos(gearPoint)
+        smallGears.setDepthWrite(False)
+        singleGear.setDepthWrite(False)
+        smallGearExplosion.setPos(gearPoint)
+        bigGearExplosion.setPos(gearPoint)
+        smallGearExplosion.setDepthWrite(False)
+        bigGearExplosion.setDepthWrite(False)
+        explosionTrack = Sequence()
+        explosionTrack.append(Wait(5.4))
+        explosionTrack.append(MovieUtil.createKapowExplosionTrack(self.geom, explosionPoint=gearPoint))
+        gears1Track = Sequence(Wait(2.1), ParticleInterval(smallGears, self.geom, worldRelative=0, duration=4.3, cleanup=True), name='gears1Track')
+        gears2MTrack = Track((0.0, explosionTrack), (0.7, ParticleInterval(singleGear, self.geom, worldRelative=0, duration=5.7, cleanup=True)), (5.2, ParticleInterval(smallGearExplosion, self.geom, worldRelative=0, duration=1.2, cleanup=True)), (5.4, ParticleInterval(bigGearExplosion, self.geom, worldRelative=0, duration=1.0, cleanup=True)), name='gears2MTrack')
+        return Parallel(suitTrack, deathSoundTrack, gears1Track, gears2MTrack)
 
     def skyTrack(self, task):
         return SkyUtil.cloudSkyTrack(task)
