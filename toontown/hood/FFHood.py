@@ -70,7 +70,6 @@ class FFHood(ToonHood):
 
     def startActive(self):
         ToonHood.startActive(self)
-        self.ignore('entertunnel_trigger_ff_1200')
 
     def skyTrack(self, task):
         return SkyUtil.cloudSkyTrack(task)

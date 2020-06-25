@@ -57,6 +57,8 @@ class FFStreet(Street):
         if self.zoneId == FunnyFarmGlobals.RicketyRoad:
             self.accept('entertrain_collision', self.__handleTrainCollision)
             self.ignore('entertunnel_trigger_ss_2100') # temporary
+        elif self.zoneId == FunnyFarmGlobals.BarnyardBoulevard:
+            self.ignore('entertunnel_trigger_mm_4100') # temporary
 
     def loadQuestChanges(self):
         for questDesc in base.localAvatar.quests:

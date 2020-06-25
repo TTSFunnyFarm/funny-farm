@@ -18,7 +18,7 @@ PetalPathway = 2200
 WintryWay = 3100
 BreezyBend = 4100
 HoodHierarchy = {
-    FunnyFarm: (RicketyRoad,),
+    FunnyFarm: (RicketyRoad, BarnyardBoulevard),
     SillySprings: (TulipTerrace,),
     ChillyVillage: (WintryWay,),
     MoonlitMeadow: (BreezyBend,)
@@ -76,7 +76,8 @@ def getHoodId(zoneId):
 phaseMap = {
     FunnyFarm: 'phase_14/models/neighborhoods/funny_farm',
     SillySprings: 'phase_14/models/neighborhoods/silly_springs',
-    RicketyRoad: 'phase_14/models/streets/funny_farm_1100'
+    RicketyRoad: 'phase_14/models/streets/funny_farm_1100',
+    BarnyardBoulevard: 'phase_14/models/streets/funny_farm_1200'
 }
 safeZoneCountMap = {
     FunnyFarm: 6,

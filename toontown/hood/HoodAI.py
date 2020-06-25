@@ -43,7 +43,9 @@ class HoodAI:
     def createSuitPlanners(self):
         for zoneId in FunnyFarmGlobals.HoodHierarchy.get(self.zoneId, []):
             sp = SuitPlannerAI(zoneId)
-            sp.generate()
+            # TEMPORARY pls undo after you do SuitPoints
+            if zoneId != FunnyFarmGlobals.BarnyardBoulevard:
+                sp.generate()
             self.air.suitPlanners[zoneId] = sp
 
     def createButterflies(self, playground):
