@@ -278,8 +278,8 @@ class CogPage(ShtikerPage.ShtikerPage):
     def setPanelStatus(self, panel, status):
         index = self.panels.index(panel)
         if status != COG_UNSEEN:
-            panel['text_pos']=(0, 0.185, 0)
-            panel['text_scale']=0.045
+            panel['text_pos'] = (0, 0.185, 0)
+            panel['text_scale'] = 0.045
         if status == COG_UNSEEN:
             panel['text'] = "?"
         elif status == COG_BATTLED:

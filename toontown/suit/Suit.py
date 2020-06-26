@@ -309,7 +309,7 @@ def attachSuitHead(node, suitName):
     d = p2 - p1
     biggest = max(d[0], d[2])
     column = suitIndex % SuitDNA.suitsPerDept
-    s = (0.3 + column / 100.0) / biggest
+    s = (0.27 + column / 100.0) / biggest
     pos = -0.2 + (SuitDNA.suitsPerDept - column - 1) / 135.0
     head.setPosHprScale(0, 0, pos, 180, 0, 0, s, s, s)
     return head

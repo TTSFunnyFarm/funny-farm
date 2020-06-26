@@ -16,7 +16,7 @@ class DetailCogDialog(DirectFrame):
     notify.setInfo(True)
 
     def __init__(self, suitIndex):
-        DirectFrame.__init__(self, parent=aspect2dp, pos=(0, 0, 0.3), relief=None, image=DGG.getDefaultDialogGeom(), image_scale=(1.6, 1, 0.7), image_pos=(0, 0, 0.18), image_color=ToontownGlobals.GlobalDialogColor, text='Details', text_scale=0.12, text_pos=(0, 0.4), borderWidth=(0.01, 0.01), sortOrder=2000)
+        DirectFrame.__init__(self, parent=aspect2dp, pos=(0, 0, 0), relief=None, image=DGG.getDefaultDialogGeom(), image_scale=(1.6, 1, 0.7), image_pos=(0, 0, 0.18), image_color=ToontownGlobals.GlobalDialogColor, text='Details', text_scale=0.12, text_pos=(0, 0.4), borderWidth=(0.01, 0.01), sortOrder=2000)
         self.initialiseoptions(DetailCogDialog)
         self.suitIndex = suitIndex
         self.popup = None
@@ -49,9 +49,9 @@ class DetailCogDialog(DirectFrame):
         skelecogCounts = base.localAvatar.getSkeleCounts()
         eliteCounts = base.localAvatar.getEliteCounts()
         self.suitLabel = DirectLabel(parent=self, relief=None, text=self.suitFullName, text_font=ToontownGlobals.getSuitFont(), pos=(-0.5, 0, -0.04), scale=0.07)
-        self.cogsKilled = DirectLabel(parent=self, relief=None, text="Standard Destroyed: {}".format(cogCounts[self.suitIndex]), pos=(0.03, 0, 0.25), scale=0.06, text_align=TextNode.ACenter)
-        self.skelecogsKilled = DirectLabel(parent=self, relief=None, text="Skelecogs Destroyed: {}".format(skelecogCounts[self.suitIndex]), pos=(0.03, 0, 0.15), scale=0.06, text_align=TextNode.ACenter)
-        self.elitesKilled = DirectLabel(parent=self, relief=None, text="Elites Destroyed: {}".format(eliteCounts[self.suitIndex]), pos=(0.03, 0, 0.05), scale=0.06, text_align=TextNode.ACenter)
+        self.cogsKilled = DirectLabel(parent=self, relief=None, text="Cogs Destroyed: {}".format(cogCounts[self.suitIndex]), pos=(-0.17, 0, 0.25), scale=0.06, text_align=TextNode.ALeft)
+        self.skelecogsKilled = DirectLabel(parent=self, relief=None, text="Skelecogs Destroyed: {}".format(skelecogCounts[self.suitIndex]), pos=(-0.17, 0, 0.15), scale=0.06, text_align=TextNode.ALeft)
+        self.elitesKilled = DirectLabel(parent=self, relief=None, text="Elite Cogs Destroyed: {}".format(eliteCounts[self.suitIndex]), pos=(-0.17, 0, 0.05), scale=0.06, text_align=TextNode.ALeft)
         closeButtonImage = (gui.find('**/CloseBtn_UP'), gui.find('**/CloseBtn_DN'), gui.find('**/CloseBtn_Rllvr'))
         buttonImage = (guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR'))
         disabledColor = Vec4(0.5, 0.5, 0.5, 1)
