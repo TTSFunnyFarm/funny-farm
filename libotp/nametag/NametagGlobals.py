@@ -400,7 +400,7 @@ def getNameFg(color_code, state):
 
 
 def getNameWordwrap():
-    return 7.5
+    return 9.3
 
 
 _card_pad = Vec4(0.1, 0.1, 0.1, 0)
