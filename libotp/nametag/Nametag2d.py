@@ -100,10 +100,10 @@ class Nametag2d(Nametag, MarginPopup):
             result = 1
 
         self.m_group.setNametag3dFlag(0)
-        if result and self.m_group.getColorCode() in (NametagGroup.CCToonBuilding,
-                                                      NametagGroup.CCSuitBuilding,
-                                                      NametagGroup.CCHouseBuilding):
-            return self.getDistance2() < 1600
+        # if result and self.m_group.getColorCode() in (NametagGroup.CCToonBuilding,
+        #                                               NametagGroup.CCSuitBuilding,
+        #                                               NametagGroup.CCHouseBuilding):
+        #     return self.getDistance2() < 1600
 
         return result
 
