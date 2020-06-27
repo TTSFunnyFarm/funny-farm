@@ -844,6 +844,7 @@ class Battle(DirectObject, NodePath, BattleBase):
             self.setJoinable(0)
             self.setBattleExperience(*self.getBattleExperience())
             self.assignRewards()
+            base.localAvatar.experienceBar.show()
             if self.tutorialFlag:
                 self.movie.playTutorialReward(0, base.localAvatar.getName(), self.battleDone)
             else:

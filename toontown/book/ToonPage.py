@@ -124,14 +124,8 @@ class ToonPage(ShtikerPage.ShtikerPage):
         if self.levelExp:
             self.levelExp.removeNode()
         self.levelExp = base.localAvatar.experienceBar.container.copyTo(self)
-        self.levelExp.setPos(-0.72, 0, -0.35)
-        self.levelExp.setScale(0.06, 1, 0.02)
-        self.levelExp.find('**/DirectLabel*').removeNode()
-        exp = base.localAvatar.getLevelExp()
-        maxExp = base.localAvatar.getMaxLevelExp()
-        expText = DirectLabel(parent=self.levelExp.find('**/DirectWaitBar*'), relief=None, 
-         text=TTLocalizer.ToonPageExperience % (exp, maxExp), text_font=ToontownGlobals.getInterfaceFont(), 
-         pos=(0, 0, -0.03), scale=(0.1, 1, 0.1))
+        self.levelExp.setPos(-0.8, 0, -0.67)
+        self.levelExp.setScale(0.7, 1, 0.7)
         return
 
     def cleanupToonStats(self):

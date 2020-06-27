@@ -171,6 +171,7 @@ class ToonBase(OTPBase.OTPBase):
         OTPBase.OTPBase.setFrameRateMeter(self, flag)
         if self.frameRateMeter:
             self.frameRateMeter.setFont(ToontownGlobals.getSignFont())
+            self.frameRateMeter.setShadow(0.05)
 
     def windowEvent(self, win):
         OTPBase.OTPBase.windowEvent(self, win)
