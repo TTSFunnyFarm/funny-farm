@@ -600,6 +600,10 @@ class LocalAvatar(DirectObject):
     def setCameraPositionByIndex(self, index):
         self.notify.debug('switching to camera position %s' % index)
         self.setCameraSettings(self.cameraPositions[index])
+        if index == 1:
+            self.hideNametag3d()
+        else:
+            self.showNametag3d()
 
     def setCameraPosForPetInteraction(self):
         height = self.getClampedAvatarHeight()
