@@ -5996,7 +5996,19 @@ zone2TitleDict = {1510: lGagShop,
  1615: 'Turnip The Beet',
  1616: 'The Wurst Sausage Store',
  1617: 'Average Joe Coffeehouse',
- 1618: 'Used Clown Cars'
+ 1618: 'Used Clown Cars',
+ 1711: 'Hay Stacks and Needles',
+ 1712: 'Jagged Edge Jewelry',
+ 1713: 'Paul\'s Polish Palace & Pretzels',
+ 1714: 'Cardboard Pizzeria',
+ 1715: 'Used Napkins for Cheap',
+ 1716: 'Zoomin\' Zambonis',
+ 1717: 'Soup Forks',
+ 1718: 'Shave and a Haircut - 2 Jbs',
+ 1719: 'Professor Wiggle\'s House of Giggles',
+ 1720: 'Subpar Golf Clubs',
+ 1721: 'Wobbly Dinner Tables',
+ 1722: 'Corn Walls Housing'
 }
 ClosetTimeoutMessage = 'Sorry, you ran out\n of time.'
 ClosetNotOwnerMessage = "This isn't your closet, but you may try on the clothes."
