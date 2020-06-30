@@ -161,7 +161,7 @@ class SuitInterior(SuitInteriorBase):
             self.battle.setBossBattle(0)
             music = self.battleMusic
         self.battle.enter(creditMultiplier=2.0)
-        musicMgr.playMusic(music, looping=1, volume=0.9)
+        musicMgr.playMusic(music, looping=1, volume=0.75)
         self.accept(self.townBattle.doneEvent, self.exitBattle)
 
     def exitBattle(self, doneStatus):

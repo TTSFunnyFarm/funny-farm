@@ -81,10 +81,10 @@ class MusicManager(DirectObject):
             volume = 0.5
         elif base.cr.playGame.hood:
             lookupTable = self.safezoneMusic
-            volume = 1.0
+            volume = 0.75
         elif base.cr.playGame.street:
             lookupTable = self.townMusic
-            volume = 1.0
+            volume = 0.75
         else:
             self.notify.warning('playCurrentZoneMusic(): localAvatar is not currently in a valid zone.')
             return
@@ -98,14 +98,11 @@ class MusicManager(DirectObject):
     def playPickAToon(self):
         if base.air.holidayMgr.isWinter():
             music = self.pickAToonMusic[1]
-            volume = 1.0
         elif base.air.holidayMgr.isHalloween():
             music = self.pickAToonMusic[2]
-            volume = 1.0
         else:
             music = self.pickAToonMusic[0]
-            volume = 0.5
-        self.playMusic(music, looping=1, volume=volume)
+        self.playMusic(music, looping=1, volume=0.75)
 
     def pauseMusic(self):
         self.__audioPaused()
