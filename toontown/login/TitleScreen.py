@@ -89,10 +89,12 @@ class TitleScreen(DirectObject):
         self.track.append(Func(self.titleSeq.loop))
         self.track.append(Func(self.acceptOnce, 'mouse1', self.exitShow))
         if base.air.holidayMgr.isWinter():
-            showTypes = [FunnyFarmGlobals.NEWYEARS_FIREWORKS]
+            showType = FunnyFarmGlobals.NEWYEARS_FIREWORKS
+        elif base.air.holidayMgr.isHalloween():
+            showType = PartyGlobals.FireworkShows.Summer
         else:
-            showTypes = [FunnyFarmGlobals.JULY4_FIREWORKS, PartyGlobals.FireworkShows.Summer]
-        self.fireworkShow.startShow(random.choice(showTypes), 0, 0, 0)
+            showType = FunnyFarmGlobals.JULY4_FIREWORKS
+        self.fireworkShow.startShow(showType, 0, 0, 0)
         taskMgr.doMethodLater(self.fireworkShow.fireworkShow.getShowDuration(), self.exitShow, 'showTimeout')
         self.track.start()
 
