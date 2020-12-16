@@ -124,10 +124,7 @@ class Street(ToonHood):
 
     def setupLandmarkBuildings(self):
         # Overrides ToonHood because we don't want to load the nametags right away
-        self.buildings = []
-        for building in self.geom.findAllMatches('**/tb*toon_landmark*'):
-            zoneStr = building.getName().split(':')
-            block = int(zoneStr[0][2:])
+        for block in FunnyFarmGlobals.BuildingIds[self.zoneId]:
             zoneId = self.zoneId + 500 + block
             self.buildings.append(Building(zoneId))
         for building in self.buildings:

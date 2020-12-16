@@ -130,8 +130,6 @@ class SuitPlanner(DirectObject):
             suit.startUpdatePosition()
             self.activeSuits[suit.doId] = suit
             time = ai.requestTime(suit.doId)
-            if time == 0:
-                continue
             suit.enterWalk(status['posA'], status['posB'], time)
 
     def unloadSuits(self):

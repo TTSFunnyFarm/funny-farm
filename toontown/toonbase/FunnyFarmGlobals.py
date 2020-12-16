@@ -299,3 +299,8 @@ CheesyEffectDict = {
         CEInvisible: ('h', 24)
     }
 }
+BuildingIds = {
+    FunnyFarm: range(10, 15),
+    RicketyRoad: range(10, 19),
+    BarnyardBoulevard: range(10, 23)
+}

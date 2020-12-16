@@ -12,6 +12,7 @@ from toontown.building.Building import Building
 from toontown.hood.Hood import Hood
 from toontown.quest import Quests
 from toontown.safezone.Butterfly import Butterfly
+from toontown.toonbase import FunnyFarmGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.trolley.Trolley import Trolley
 
@@ -100,9 +101,7 @@ class ToonHood(Hood):
             self.trolley.addActive()
 
     def setupLandmarkBuildings(self):
-        for building in self.geom.findAllMatches('**/tb*toon_landmark*'):
-            zoneStr = building.getName().split(':')
-            block = int(zoneStr[0][2:])
+        for block in FunnyFarmGlobals.BuildingIds[self.zoneId]:
             zoneId = self.zoneId + 500 + block
             self.buildings.append(Building(zoneId))
         for building in self.buildings:
