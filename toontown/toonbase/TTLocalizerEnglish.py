@@ -3592,9 +3592,9 @@ CdrResultServiceUnavailable = "We're sorry. This feature is temporarily unavaila
 ToonPageTitle = 'My Toon'
 ToonPageLevel = 'Level %d'
 ToonPageExperience = '%d/%d XP'
-ToonPageDamage = 'Damage Boost (%)'
+ToonPageDamage = 'Damage (%)'
 ToonPageDefense = 'Defense (%)'
-ToonPageAccuracy = 'Accuracy Boost (%)'
+ToonPageAccuracy = 'Accuracy (%)'
 TrackPageTitle = 'Gag Track Training'
 TrackPageShortTitle = 'Gag Training'
 TrackPageSubtitle = 'Complete ToonTasks to learn how to use new gags!'
@@ -3805,12 +3805,12 @@ BattleGlobalTracks = ['power-up',
  'squirt',
  'drop']
 BattleGlobalNPCTracks = ['restock', 'toons hit', 'cogs miss']
-BattleGlobalAvPropStrings = (('Laff Juice',
-  'Damage Punch',
+BattleGlobalAvPropStrings = (('Toon-up Soda',
+  'Damage Draft',
   'Defense Cola',
   'Accuracy Aid',
   'Toon-up Smoothie',
-  'Damage Shake',
+  'Damage Libation',
   'Defense Daiquiri'),
  ('Banana Peel',
   'Rake',
@@ -3854,12 +3854,12 @@ BattleGlobalAvPropStrings = (('Laff Juice',
   'Safe',
   'Grand Piano',
   'Toontanic'))
-BattleGlobalAvPropStringsSingular = (('a Laff Juice',
-  'a Damage Punch',
+BattleGlobalAvPropStringsSingular = (('a Toon-up Soda',
+  'a Damage Draft',
   'a Defense Cola',
   'an Accuracy Aid',
   'a Toon-up Smoothie',
-  'a Damage Shake',
+  'a Damage Libation',
   'a Defense Daiquiri'),
  ('a Banana Peel',
   'a Rake',
@@ -3903,12 +3903,12 @@ BattleGlobalAvPropStringsSingular = (('a Laff Juice',
   'a Safe',
   'a Grand Piano',
   'the Toontanic'))
-BattleGlobalAvPropStringsPlural = (('Laff Juices',
-  'Damage Punches',
+BattleGlobalAvPropStringsPlural = (('Toon-up Sodas',
+  'Damage Drafts',
   'Defense Colas',
   'Accuracy Aids',
   'Toon-up Smoothies',
-  'Damage Shakes',
+  'Damage Libations',
   'Defense Daiquiris'),
  ('Banana Peels',
   'Rakes',

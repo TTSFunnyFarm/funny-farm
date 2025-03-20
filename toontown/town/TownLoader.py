@@ -120,7 +120,7 @@ class TownLoader(DirectObject):
                 bldg.clearNametag()
     
     def updateSuit(self, suit):
-        if suit.isStashed():
+        if suit is None or suit.isStashed():
             return
         dist = (base.localAvatar.getPos(self.streetClass.geom) - suit.getPos(self.streetClass.geom)).length()
         if dist <= 200:

@@ -388,8 +388,9 @@ class BattleSuit(Suit, SuitBase):
 
     def exitToSky(self):
         self.disableBattleDetect()
-        self.mtrack.finish()
-        del self.mtrack
+        if hasattr(self, 'mtrack'):
+            self.mtrack.finish()
+            del self.mtrack
         self.detachPropeller()
 
     def enterBattle(self):

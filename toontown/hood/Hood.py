@@ -183,9 +183,9 @@ class Hood(DirectObject):
             # todo: display quest offers on toons
 
     def startActive(self):
-        for door in self.geom.findAllMatches('**/*door_trigger*'):
+        for door in self.geom.findAllMatches('**/*door_trigger*;+s'):
             self.accept('enter%s' % door.getName(), self.handleDoorTrigger)
-        for linkTunnel in self.geom.findAllMatches('**/linktunnel*'):
+        for linkTunnel in self.geom.findAllMatches('**/linktunnel*;+s'):
             name = linkTunnel.getName().split('_')
             hoodStr = name[1]
             zoneStr = name[2]

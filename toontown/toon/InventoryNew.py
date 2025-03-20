@@ -1031,6 +1031,8 @@ class InventoryNew(InventoryBase.InventoryBase, DirectFrame):
     def getCurAndNextExpValues(self, track):
         curSkill = self.toon.experience.getExp(track)
         retVal = MaxSkill
+        if track == HEAL_TRACK:
+            retVal = MaxPowerUpSkill
         for amount in Levels[track]:
             if curSkill < amount:
                 retVal = amount
